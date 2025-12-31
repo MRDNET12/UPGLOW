@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  challengeDays     ChallengeDayProgress[]
+  journalEntries    JournalEntry[]
+  trackers          Tracker[]
+  visionBoardImages VisionBoardImage[]
+  routines          Routine[]
+  bonuses           BonusProgress[]
+  settings          Settings?
+}
+
+model ChallengeDayProgress {
+  id           String   @id @default(cuid())
+  userId       String
+  dayNumber    Int
+  completed    Boolean  @default(false)
+  completedAt  DateTime?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dayNumber])
+}
+
+model JournalEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime @default(now())
+  mood        String?
+  feelings    String?
+  glow        String?
+  learned     String?
+  freeContent String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Tracker {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime @default(now())
+
+  // Hydration
+  waterGlasses Int     @default(0)
+
+  // Sleep
+  sleepHours   Float?
+
+  // Mood (1-5 scale)
+  mood         Int?
+
+  // Activity
+  activityMinutes Int?
+
+  // Skincare (completed)
+  skincareCompleted Boolean @default(false)
+
+  // Daily habits checkboxes (stored as JSON string since SQLite doesn't support arrays)
+  habits       String   @default("{}")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model VisionBoardImage {
+  id        String   @id @default(cuid())
+  userId    String
+  imageUrl  String
+  caption   String?
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Routine {
+  id          String   @id @default(cuid())
+  userId      String
+  step1       String
+  step2       String
+  step3       String
+  step4       String
+  step5       String
+  completed   Boolean  @default(false)
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BonusProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  bonusType   String  // 'audio-affirmations', 'written-affirmations', 'pdf-checklists', 'beauty-routine', 'soft-life-guide'
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Settings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+
+  // Theme
+  theme             String   @default("light") // 'light' or 'dark'
+
+  // Notifications
+  notificationsEnabled Boolean @default(true)
+  reminderTime      String?  // Time in HH:mm format
+
+  // Profile
+  name              String?
+  avatarUrl         String?
+
+  // Progress tracking
+  startDate         DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

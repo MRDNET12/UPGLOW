@@ -511,9 +511,17 @@ export default function GlowUpChallengeApp() {
                     <div className="grid gap-3">
                       {[
                         { label: t.challenge.beauty, icon: '💄', value: getCurrentDayData()?.actions.beauty },
-                        { label: t.challenge.mental, icon: '🧠', value: getCurrentDayData()?.actions.mental },
-                        { label: t.challenge.lifestyle, icon: '✨', value: getCurrentDayData()?.actions.lifestyle }
-                      ].map((action, index) => (
+                        getCurrentDayData()?.actions.mental && { label: t.challenge.mental, icon: '🧠', value: getCurrentDayData()?.actions.mental },
+                        { label: t.challenge.lifestyle, icon: '✨', value: getCurrentDayData()?.actions.lifestyle },
+                        getCurrentDayData()?.actions.personnalite && { label: 'Personnalité', icon: '🎭', value: getCurrentDayData()?.actions.personnalite },
+                        getCurrentDayData()?.actions.butDeVie && { label: 'But de vie', icon: '🎯', value: getCurrentDayData()?.actions.butDeVie },
+                        getCurrentDayData()?.actions.physique && { label: 'Physique', icon: '💪', value: getCurrentDayData()?.actions.physique },
+                        getCurrentDayData()?.actions.glowUp && { label: 'Glow Up', icon: '✨', value: getCurrentDayData()?.actions.glowUp },
+                        getCurrentDayData()?.actions.argent && { label: 'Argent', icon: '💰', value: getCurrentDayData()?.actions.argent },
+                        getCurrentDayData()?.actions.dieu && { label: 'Dieu', icon: '🙏', value: getCurrentDayData()?.actions.dieu },
+                        getCurrentDayData()?.actions.apparence && { label: 'Apparence', icon: '👗', value: getCurrentDayData()?.actions.apparence },
+                        getCurrentDayData()?.actions.vision && { label: 'Vision', icon: '🔮', value: getCurrentDayData()?.actions.vision }
+                      ].filter(Boolean).map((action, index) => (
                         <div key={index} className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
                           <div className="flex items-start gap-3">
                             <span className="text-2xl">{action.icon}</span>

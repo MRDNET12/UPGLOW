@@ -12,8 +12,17 @@ export interface ChallengeDay {
   affirmation: string;
   actions: {
     beauty: string;
-    mental: string;
+    mental?: string;
     lifestyle: string;
+    // Nouvelles actions supplémentaires
+    personnalite?: string;
+    butDeVie?: string;
+    physique?: string;
+    glowUp?: string;
+    argent?: string;
+    dieu?: string;
+    apparence?: string;
+    vision?: string;
   };
 }
 

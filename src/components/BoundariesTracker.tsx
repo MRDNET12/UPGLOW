@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useStore } from '../lib/store';
-import { useTranslation } from '../lib/translations';
-import { boundaries, getBoundaryLabel, getBoundaryDescription } from '../lib/boundaries-data';
+import { useStore } from '@/lib/store';
+import { useTranslation } from '@/lib/useTranslation';
+import { boundaries, getBoundaryLabel, getBoundaryDescription } from '@/lib/boundaries-data';
 import { Shield, Plus, History, Check } from 'lucide-react';
 
 export function BoundariesTracker() {

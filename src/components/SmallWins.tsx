@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useStore } from '../lib/store';
-import { useTranslation } from '../lib/translations';
+import { useStore } from '@/lib/store';
+import { useTranslation } from '@/lib/useTranslation';
 import { Trophy, Plus, History, Sparkles } from 'lucide-react';
 
 export function SmallWins() {

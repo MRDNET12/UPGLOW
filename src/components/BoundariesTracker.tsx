@@ -66,7 +66,7 @@ export function BoundariesTracker() {
       {/* Boundaries List */}
       <div className="space-y-3">
         {boundaries.map((boundary) => {
-          const count = getBoundaryCount(boundary.key);
+          const count = getBoundaryCountThisWeek(boundary.key);
           const isInRange = count >= boundary.idealFrequency.min && count <= boundary.idealFrequency.max;
           
           return (

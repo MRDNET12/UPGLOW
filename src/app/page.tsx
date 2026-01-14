@@ -10,6 +10,7 @@ import {
   getLocalizedBonusSections,
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
+import { newMePillars, newMeGloweeMessage } from '@/lib/new-me-data';
 import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
@@ -107,6 +108,7 @@ export default function GlowUpChallengeApp() {
   const [showSoftLifeGuide, setShowSoftLifeGuide] = useState(false);
   const [selectedGuideStep, setSelectedGuideStep] = useState<number | null>(null);
   const [selectedBonusSection, setSelectedBonusSection] = useState<ReturnType<typeof getLocalizedBonusSections>[0] | null>(null);
+  const [selectedNewMePillar, setSelectedNewMePillar] = useState<number | null>(null);
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
@@ -478,6 +480,25 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
+            {/* New Me Section */}
+            <Card
+              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-violet-900/30 to-purple-900/30' : 'bg-gradient-to-br from-violet-50 to-purple-50'}`}
+              onClick={() => setCurrentView('new-me')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-full bg-gradient-to-br from-violet-200 to-purple-200 dark:from-violet-800 dark:to-purple-800">
+                    <span className="text-2xl">🦋</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">New Me</h3>
+                    <p className="text-sm text-stone-600 dark:text-stone-400">Transformation sur 30 jours</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-violet-400" />
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-4">
               <Card
@@ -513,38 +534,50 @@ export default function GlowUpChallengeApp() {
                 </CardContent>
               </Card>
 
-              <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
-                onClick={() => setCurrentView('vision-board')}
-              >
-                <CardContent className="p-4 text-center">
-                  <ImageIcon className="w-8 h-8 mx-auto mb-2 text-pink-400" />
-                  <h3 className="font-semibold text-sm">{t.visionBoard.title}</h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-500">{visionBoardImages.length} {t.visionBoard.images}</p>
-                </CardContent>
-              </Card>
-            </div>
+               <Card
+                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                 onClick={() => setCurrentView('vision-board')}
+               >
+                 <CardContent className="p-4 text-center">
+                   <ImageIcon className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                   <h3 className="font-semibold text-sm">{t.visionBoard.title}</h3>
+                   <p className="text-xs text-stone-500 dark:text-stone-500">{visionBoardImages.length} {t.visionBoard.images}</p>
+                 </CardContent>
+               </Card>
 
-            {/* Bonus Section */}
+               {/* New Me Card */}
+               <Card
+                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                 onClick={() => setCurrentView('new-me')}
+               >
+                 <CardContent className="p-4 text-center">
+                   <div className="text-3xl mb-2">🦋</div>
+                   <h3 className="font-semibold text-sm">New Me</h3>
+                   <p className="text-xs text-stone-500 dark:text-stone-500">Transformation 30j</p>
+                 </CardContent>
+               </Card>
+             </div>
+
+             {/* New Me Section */}
             <Card
-              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/30' : 'bg-gradient-to-br from-amber-50 to-orange-50'}`}
-              onClick={() => setCurrentView('bonus')}
+              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-violet-900/30 to-purple-900/30' : 'bg-gradient-to-br from-violet-50 to-purple-50'}`}
+              onClick={() => setCurrentView('new-me')}
             >
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-full bg-gradient-to-br from-amber-200 to-orange-200 dark:from-amber-800 dark:to-orange-800">
-                    <Gift className="w-6 h-6 text-amber-600 dark:text-amber-300" />
+                  <div className="p-3 rounded-full bg-gradient-to-br from-violet-200 to-purple-200 dark:from-violet-800 dark:to-purple-800">
+                    <span className="text-2xl">🦋</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold">{t.bonus.title}</h3>
-                    <p className="text-xs text-stone-500 dark:text-stone-500">{t.bonus.affirmations} & {t.bonus.guides}</p>
+                    <h3 className="font-semibold text-lg">New Me</h3>
+                    <p className="text-sm text-stone-600 dark:text-stone-400">Transformation sur 30 jours</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-orange-400" />
+                  <ChevronRight className="w-5 h-5 text-violet-400" />
                 </div>
               </CardContent>
             </Card>
-          </div>
-        )}
+
+            {/* Quick Actions */}
 
         {/* Challenge View */}
         {currentView === 'challenge' && (
@@ -1431,6 +1464,119 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
+        {/* New Me View */}
+        {currentView === 'new-me' && (
+          <div className="p-6 space-y-6 max-w-lg mx-auto pb-24">
+            {/* Header */}
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold">New Me</h1>
+                <p className="text-sm text-stone-600 dark:text-stone-400">Transformation sur 30 jours 🦋</p>
+              </div>
+            </div>
+
+            {/* Vision Card */}
+            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-violet-900/30 to-purple-900/30' : 'bg-gradient-to-br from-violet-50 to-purple-50'}`}>
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="text-xl">🦋</span>
+                  Glowee, ta mascotte
+                </h3>
+                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
+                  New Me est une section de transformation holistique sur 30 jours qui t'aide à devenir la meilleure version de toi-même, <strong>physiquement, mentalement et émotionnellement</strong>.
+                </p>
+                <p className="text-xs text-violet-600 dark:text-violet-400 mt-3 italic">
+                  {newMeGloweeMessage.tagline}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Les 13 Piliers */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Les 13 piliers de transformation</h2>
+              {newMePillars.map((pillar) => {
+                const isSelected = selectedNewMePillar === pillar.id;
+                return (
+                  <Card
+                    key={pillar.id}
+                    onClick={() => setSelectedNewMePillar(isSelected ? null : pillar.id)}
+                    className={`border-none shadow-lg cursor-pointer transition-all hover:scale-[1.02] ${isSelected ? 'bg-violet-100 dark:bg-violet-900/30 border-2 border-violet-400' : theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="text-2xl">{pillar.icon}</div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="outline" className="text-xs">Pilier {pillar.id}</Badge>
+                            {isSelected && <ChevronRight className={`w-4 h-4 text-violet-400 transition-transform ${isSelected ? 'rotate-90' : ''}`} />}
+                          </div>
+                          <h3 className="font-semibold text-sm mb-1">{pillar.title}</h3>
+                          <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">{pillar.shortDescription}</p>
+                        </div>
+                      </div>
+
+                      {isSelected && (
+                        <div className="mt-4 space-y-4">
+                          <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-violet-50'}`}>
+                            <p className="text-sm leading-relaxed">{pillar.detailedExplanation}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                              <Sparkles className="w-4 h-4 text-violet-400" />
+                              Ce que tu vas remarquer
+                            </h4>
+                            <div className="space-y-2">
+                              {pillar.benefits.map((benefit, index) => (
+                                <div
+                                  key={index}
+                                  className={`flex items-start gap-2 p-3 rounded-lg ${theme === 'dark' ? 'bg-stone-800' : 'bg-white'}`}
+                                >
+                                  <span className="text-violet-400 text-sm mt-0.5">✨</span>
+                                  <p className="text-sm flex-1">{benefit}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                           {pillar.gloweeMessage && (
+                            <div className={`p-4 rounded-xl border-l-4 border-violet-400 ${theme === 'dark' ? 'bg-violet-900/20' : 'bg-violet-100'}`}>
+                              <p className="text-sm italic font-medium flex items-center gap-2">
+                                <span>🦋</span>
+                                Glowee te rappelle : &laquo; {pillar.gloweeMessage} &raquo;
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Message final de Glowee */}
+            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}>
+              <CardContent className="p-6 text-center space-y-3">
+                <div className="text-4xl">🦋</div>
+                <p className="text-lg font-semibold italic text-rose-600 dark:text-rose-400">
+                  "{newMeGloweeMessage.final}"
+                </p>
+                <p className="text-sm text-stone-600 dark:text-stone-400">
+                  {newMeGloweeMessage.tagline}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Settings View */}
         {currentView === 'settings' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
@@ -1614,11 +1760,11 @@ export default function GlowUpChallengeApp() {
         <div className="flex items-center justify-around max-w-lg mx-auto">
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'dashboard' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('dashboard')}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'new-me' ? 'text-rose-500' : ''}`}
+            onClick={() => setCurrentView('new-me')}
           >
-            <Home className="w-6 h-6" />
-            <span className="text-xs">{t.nav.home}</span>
+            <span className="text-xl">🦋</span>
+            <span className="text-xs">New Me</span>
           </Button>
           <Button
             variant="ghost"
@@ -1630,8 +1776,24 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'journal' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('journal')}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'bonus' ? 'text-rose-500' : ''}`}
+            onClick={() => setCurrentView('bonus')}
+          >
+            <Gift className="w-6 h-6" />
+            <span className="text-xs">{t.nav.bonus}</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'new-me' ? 'text-rose-500' : ''}`}
+            onClick={() => setCurrentView('new-me')}
+          >
+            <span className="text-xl">🦋</span>
+            <span className="text-xs">New Me</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'settings' ? 'text-rose-500' : ''}`}
+            onClick={() => setCurrentView('settings')}
           >
             <BookOpen className="w-6 h-6" />
             <span className="text-xs">{t.nav.journal}</span>
@@ -1914,7 +2076,7 @@ export default function GlowUpChallengeApp() {
                         key={index}
                         className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'}`}
                       >
-                        <p className="text-sm font-medium mb-1">« {example.question} »</p>
+                         <p className="text-sm font-medium mb-1">&laquo; {example.question} &raquo;</p>
                         <p className="text-sm text-purple-600 dark:text-purple-400">→ {example.answer}</p>
                       </div>
                     ))}

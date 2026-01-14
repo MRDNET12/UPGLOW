@@ -1384,7 +1384,7 @@ export default function GlowUpChallengeApp() {
                   Glowee, ta mascotte
                 </h3>
                 <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
-                  New Me est une section de transformation holistique sur 30 jours qui t\'aide à devenir la meilleure version de toi-même, <strong>physiquement, mentalement et émotionnellement</strong>.
+                  New Me est une section de transformation holistique sur 30 jours qui t'aide à devenir la meilleure version de toi-même, <strong>physiquement, mentalement et émotionnellement</strong>.
                 </p>
                 <p className="text-xs text-violet-600 dark:text-violet-400 mt-3 italic">
                   {newMeGloweeMessage.tagline}
@@ -1441,10 +1441,10 @@ export default function GlowUpChallengeApp() {
                           </div>
 
                           {pillar.gloweeMessage && (
-                            <div className={`p-4 rounded-xl border-l-4 border-violet-400 ${theme === 'dark' ? 'bg-violet-900/20' : 'bg-violet-100'}`}>
+                             <div className={`p-4 rounded-xl border-l-4 border-violet-400 ${theme === 'dark' ? 'bg-violet-900/20' : 'bg-violet-100'}`}>
                               <p className="text-sm italic font-medium flex items-center gap-2">
                                 <span>🦋</span>
-                                Glowee te rappelle : « {pillar.gloweeMessage} »
+                                Glowee te rappelle : &laquo; {pillar.gloweeMessage} &raquo;
                               </p>
                             </div>
                           )}
@@ -1970,7 +1970,7 @@ export default function GlowUpChallengeApp() {
                         key={index}
                         className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'}`}
                       >
-                        <p className="text-sm font-medium mb-1">« {example.question} »</p>
+                         <p className="text-sm font-medium mb-1">&laquo; {example.question} &raquo;</p>
                         <p className="text-sm text-purple-600 dark:text-purple-400">→ {example.answer}</p>
                       </div>
                     ))}

@@ -245,14 +245,120 @@ export default function GlowUpChallengeApp() {
             ))}
           </div>
 
-          {/* Continue Button */}
+{/* Continue Button */}
           <Button
-            onClick={() => setCurrentView('onboarding')}
+            onClick={() => setCurrentView('presentation')}
             className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30"
           >
             {t.languageSelection.continue}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
+        </div>
+      </div>
+);
+  }
+
+  // Presentation Screen
+  if (currentView === 'presentation') {
+    return (
+      <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
+        <div className="flex-1 flex flex-col items-center justify-center p-6 pb-24">
+          <div className="max-w-2xl w-full text-center space-y-8">
+            {/* Logo / Title */}
+            <div className="space-y-6">
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-rose-200 via-pink-200 to-orange-100 dark:from-rose-900 dark:via-pink-900 dark:to-orange-900 shadow-lg">
+                <Sparkles className="w-12 h-12 text-rose-500 dark:text-rose-300" />
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+                {t.presentation.title}
+              </h1>
+              <p className="text-xl text-stone-600 dark:text-stone-400 font-light">
+                {t.presentation.subtitle}
+              </p>
+            </div>
+
+            {/* Quote */}
+            <div className={`p-6 rounded-2xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm border border-stone-200 dark:border-stone-800`}>
+              <p className="text-lg italic text-stone-700 dark:text-stone-300 font-serif">
+                "{t.presentation.quote}"
+              </p>
+            </div>
+
+            {/* Description */}
+            <div className={`p-6 rounded-2xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm border border-stone-200 dark:border-stone-800`}>
+              <p className="text-base text-stone-700 dark:text-stone-300">
+                {t.presentation.description}
+              </p>
+            </div>
+
+            {/* Triangle of Transformation */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-stone-800 dark:text-stone-200">
+                {t.presentation.triangleTitle}
+              </h2>
+              
+              <div className="grid gap-6">
+                {/* Pillar 1 */}
+                <div className={`p-6 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm border border-stone-200 dark:border-stone-800`}>
+                  <h3 className="text-lg font-semibold mb-3 text-rose-500">
+                    {t.presentation.pillar1Title}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.presentation.pillar1Desc}
+                  </p>
+                </div>
+
+                {/* Pillar 2 */}
+                <div className={`p-6 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm border border-stone-200 dark:border-stone-800`}>
+                  <h3 className="text-lg font-semibold mb-3 text-pink-500">
+                    {t.presentation.pillar2Title}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.presentation.pillar2Desc}
+                  </p>
+                </div>
+
+                {/* Pillar 3 */}
+                <div className={`p-6 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm border border-stone-200 dark:border-stone-800`}>
+                  <h3 className="text-lg font-semibold mb-3 text-orange-500">
+                    {t.presentation.pillar3Title}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.presentation.pillar3Desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Rules */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-stone-800 dark:text-stone-200">
+                {t.presentation.rulesTitle}
+              </h2>
+              
+              <div className="grid gap-3">
+                {[1, 2, 3, 4, 5].map((ruleNum) => (
+                  <div
+                    key={ruleNum}
+                    className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm border border-stone-200 dark:border-stone-800`}
+                  >
+                    <p className="text-sm text-stone-700 dark:text-stone-300">
+                      {(t.presentation as any)[`rule${ruleNum}`]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Start Button */}
+            <Button
+              onClick={() => setCurrentView('onboarding')}
+              className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30"
+            >
+              {t.presentation.startChallenge}
+              <Sparkles className="ml-2 w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -1723,51 +1829,6 @@ export default function GlowUpChallengeApp() {
                     <p className="text-base font-semibold text-center">
                       {selectedBonusSection.content.intro}
                     </p>
-                  </div>
-                )}
-
-                {/* Suivi Hebdomadaire - Pour les sections avec suivi */}
-                {selectedBonusSection.id !== '50-choses-seule' && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-sm flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {t.bonus.weeklyTracking}
-                      </h4>
-                      <Badge variant="outline" className="text-xs">
-                        {getSectionWeeklyCompletion(selectedBonusSection.id)} / 4 {t.bonus.weeks}
-                      </Badge>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[1, 2, 3, 4].map((week) => {
-                        const progress = getWeeklyBonusProgress(selectedBonusSection.id, week);
-                        const isCompleted = progress?.completed || false;
-                        return (
-                          <div
-                            key={week}
-                            onClick={() => toggleWeeklyBonus(selectedBonusSection.id, week)}
-                            className={`p-3 rounded-xl cursor-pointer transition-all text-center ${
-                              isCompleted
-                                ? `${theme === 'dark' ? 'bg-green-900/30 border-2 border-green-500' : 'bg-green-50 border-2 border-green-500'}`
-                                : `${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'}`
-                            }`}
-                          >
-                            <div className={`text-2xl mb-1 ${isCompleted ? 'text-green-500' : 'text-stone-400'}`}>
-                              {isCompleted ? '✓' : '○'}
-                            </div>
-                            <p className="text-xs font-medium">
-                              S{week}
-                            </p>
-                            {progress?.completedDate && (
-                              <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">
-                                {new Date(progress.completedDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'short' })}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <Progress value={(getSectionWeeklyCompletion(selectedBonusSection.id) / 4) * 100} className="h-2" />
                   </div>
                 )}
 

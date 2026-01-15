@@ -113,6 +113,9 @@ export default function GlowUpChallengeApp() {
   const [selectedHabit, setSelectedHabit] = useState<typeof newMePillars[0] | null>(null);
   const [newMeDailyHabits, setNewMeDailyHabits] = useState<Record<string, boolean>>({});
   const [newMeFeeling, setNewMeFeeling] = useState('');
+  const [newMeActiveTab, setNewMeActiveTab] = useState<'daily' | 'progress' | 'badges'>('daily');
+  const [newMeProgress, setNewMeProgress] = useState<Record<number, Record<string, boolean>>>({});
+  const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
@@ -1250,127 +1253,381 @@ export default function GlowUpChallengeApp() {
 
         {/* New Me View */}
         {currentView === 'new-me' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto pb-24">
+          <div className="pb-24">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-6">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                  <span className="text-3xl">🦋</span>
-                  {t.newMe.title}
-                </h1>
-                <p className="text-sm text-stone-600 dark:text-stone-400">
-                  {t.newMe.subtitle}
-                </p>
+            <div className="p-6 pb-0">
+              <div className="flex items-center gap-4 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+                <div className="flex-1">
+                  <h1 className="text-2xl font-bold flex items-center gap-2">
+                    <span className="text-3xl">🦋</span>
+                    {t.newMe.title}
+                  </h1>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.newMe.subtitle}
+                  </p>
+                </div>
+              </div>
+
+              {/* Glowee Mascot Card */}
+              <Card className={`border-none shadow-lg mb-6 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
+                <CardContent className="p-6 text-center">
+                  <div className="text-6xl mb-3">🦋</div>
+                  <h3 className="text-xl font-bold mb-2">{t.newMe.mascot}</h3>
+                  <p className="text-sm italic text-stone-600 dark:text-stone-400">
+                    {t.newMe.finalMessage}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-stone-950' : 'bg-stone-50'} border-b ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}`}>
+              <div className="flex overflow-x-auto scrollbar-hide">
+                <button
+                  onClick={() => setNewMeActiveTab('daily')}
+                  className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                    newMeActiveTab === 'daily'
+                      ? theme === 'dark'
+                        ? 'text-purple-400 border-b-2 border-purple-400'
+                        : 'text-purple-600 border-b-2 border-purple-600'
+                      : theme === 'dark'
+                        ? 'text-stone-400 hover:text-stone-300'
+                        : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 justify-center">
+                    <CheckSquare className="w-4 h-4" />
+                    {t.newMe.dailyTracking}
+                  </div>
+                </button>
+                <button
+                  onClick={() => setNewMeActiveTab('progress')}
+                  className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                    newMeActiveTab === 'progress'
+                      ? theme === 'dark'
+                        ? 'text-purple-400 border-b-2 border-purple-400'
+                        : 'text-purple-600 border-b-2 border-purple-600'
+                      : theme === 'dark'
+                        ? 'text-stone-400 hover:text-stone-300'
+                        : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 justify-center">
+                    <TrendingUp className="w-4 h-4" />
+                    {t.newMe.progressOn30Days}
+                  </div>
+                </button>
+                <button
+                  onClick={() => setNewMeActiveTab('badges')}
+                  className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                    newMeActiveTab === 'badges'
+                      ? theme === 'dark'
+                        ? 'text-purple-400 border-b-2 border-purple-400'
+                        : 'text-purple-600 border-b-2 border-purple-600'
+                      : theme === 'dark'
+                        ? 'text-stone-400 hover:text-stone-300'
+                        : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 justify-center">
+                    <Award className="w-4 h-4" />
+                    {t.newMe.badges}
+                  </div>
+                </button>
               </div>
             </div>
 
-            {/* Glowee Mascot Card */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
-              <CardContent className="p-6 text-center">
-                <div className="text-6xl mb-3">🦋</div>
-                <h3 className="text-xl font-bold mb-2">{t.newMe.mascot}</h3>
-                <p className="text-sm italic text-stone-600 dark:text-stone-400">
-                  {t.newMe.finalMessage}
-                </p>
-              </CardContent>
-            </Card>
+            {/* Content based on active tab */}
+            <div className="p-6 space-y-6 max-w-lg mx-auto">
+              {/* Tab 1: Suivi journalier */}
+              {newMeActiveTab === 'daily' && (
+                <>
+                  {/* Scroll horizontal des jours */}
+                  <div className="overflow-x-auto scrollbar-hide -mx-6 px-6">
+                    <div className="flex gap-2 pb-2">
+                      {Array.from({ length: 30 }, (_, i) => {
+                        const day = i + 1;
+                        const isToday = day === newMeCurrentDay;
+                        const dayProgress = newMeProgress[day] || {};
+                        const completedCount = Object.values(dayProgress).filter(Boolean).length;
+                        const isFullyCompleted = completedCount === 13;
 
-            {/* Progress Card */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-purple-500" />
-                  {t.newMe.progress}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">
-                    {Object.values(newMeDailyHabits).filter(Boolean).length} / 13 {t.newMe.habits}
-                  </span>
-                  <span className="text-2xl font-bold text-purple-500">
-                    {Math.round((Object.values(newMeDailyHabits).filter(Boolean).length / 13) * 100)}%
-                  </span>
-                </div>
-                <Progress
-                  value={(Object.values(newMeDailyHabits).filter(Boolean).length / 13) * 100}
-                  className="h-3"
-                />
-              </CardContent>
-            </Card>
-
-            {/* Daily Feeling */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle className="text-sm">{t.newMe.todayFeeling}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  placeholder="Comment te sens-tu aujourd'hui ?"
-                  value={newMeFeeling}
-                  onChange={(e) => setNewMeFeeling(e.target.value)}
-                  rows={3}
-                  className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                />
-              </CardContent>
-            </Card>
-
-            {/* 13 Habits List */}
-            <div className="space-y-3">
-              <h2 className="text-lg font-bold">Les 13 piliers de transformation</h2>
-              {newMePillars.map((habit) => (
-                <Card
-                  key={habit.id}
-                  className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
-                    newMeDailyHabits[habit.id.toString()]
-                      ? theme === 'dark'
-                        ? 'bg-purple-900/30 border-2 border-purple-500'
-                        : 'bg-purple-50 border-2 border-purple-500'
-                      : theme === 'dark'
-                        ? 'bg-stone-900'
-                        : 'bg-white'
-                  }`}
-                  onClick={() => setSelectedHabit(habit)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div
-                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setNewMeDailyHabits(prev => ({
-                            ...prev,
-                            [habit.id.toString()]: !prev[habit.id.toString()]
-                          }));
-                        }}
-                      >
-                        {newMeDailyHabits[habit.id.toString()] ? (
-                          <Check className="w-6 h-6 text-purple-500" />
-                        ) : (
-                          <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-2xl">{habit.icon}</span>
-                          <h3 className="font-semibold text-sm">{habit.title}</h3>
-                        </div>
-                        <p className="text-xs text-stone-600 dark:text-stone-400">
-                          {habit.shortDescription}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-stone-400" />
+                        return (
+                          <button
+                            key={day}
+                            onClick={() => setNewMeCurrentDay(day)}
+                            className={`flex-shrink-0 w-16 h-20 rounded-lg flex flex-col items-center justify-center transition-all ${
+                              isToday
+                                ? theme === 'dark'
+                                  ? 'bg-purple-600 text-white ring-2 ring-purple-400'
+                                  : 'bg-purple-500 text-white ring-2 ring-purple-300'
+                                : isFullyCompleted
+                                  ? theme === 'dark'
+                                    ? 'bg-purple-900/50 text-purple-300'
+                                    : 'bg-purple-100 text-purple-700'
+                                  : completedCount > 0
+                                    ? theme === 'dark'
+                                      ? 'bg-stone-800 text-stone-300'
+                                      : 'bg-stone-200 text-stone-700'
+                                    : theme === 'dark'
+                                      ? 'bg-stone-900 text-stone-500'
+                                      : 'bg-white text-stone-600'
+                            }`}
+                          >
+                            <span className="text-xs font-medium mb-1">{t.newMe.day}</span>
+                            <span className="text-xl font-bold">{day}</span>
+                            {isToday && <span className="text-[10px] font-semibold mt-1">{t.newMe.today}</span>}
+                          </button>
+                        );
+                      })}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  </div>
+
+                  {/* Liste des 13 habitudes pour le jour sélectionné */}
+                  <div className="space-y-3">
+                    <h2 className="text-lg font-bold">
+                      {t.newMe.day} {newMeCurrentDay} - Les 13 piliers
+                    </h2>
+                    {newMePillars.map((habit) => {
+                      const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
+
+                      return (
+                        <Card
+                          key={habit.id}
+                          className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
+                            isChecked
+                              ? theme === 'dark'
+                                ? 'bg-purple-900/30 border-2 border-purple-500'
+                                : 'bg-purple-50 border-2 border-purple-500'
+                              : theme === 'dark'
+                                ? 'bg-stone-900'
+                                : 'bg-white'
+                          }`}
+                          onClick={() => setSelectedHabit(habit)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-start gap-3">
+                              <div
+                                className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setNewMeProgress(prev => ({
+                                    ...prev,
+                                    [newMeCurrentDay]: {
+                                      ...(prev[newMeCurrentDay] || {}),
+                                      [habit.id.toString()]: !isChecked
+                                    }
+                                  }));
+                                }}
+                              >
+                                {isChecked ? (
+                                  <Check className="w-6 h-6 text-purple-500" />
+                                ) : (
+                                  <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-2xl">{habit.icon}</span>
+                                  <h3 className="font-semibold text-sm">{habit.title}</h3>
+                                </div>
+                                <p className="text-xs text-stone-600 dark:text-stone-400">
+                                  {habit.shortDescription}
+                                </p>
+                              </div>
+                              <ChevronRight className="w-5 h-5 text-stone-400" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+
+                    {/* Progression du jour */}
+                    <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">
+                            {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length} / 13 {t.newMe.habits}
+                          </span>
+                          <span className="text-2xl font-bold text-purple-500">
+                            {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={(Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100}
+                          className="h-3"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                </>
+              )}
+
+              {/* Tab 2: Progression sur 30 jours */}
+              {newMeActiveTab === 'progress' && (
+                <>
+                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Target className="w-5 h-5 text-purple-500" />
+                        {t.newMe.progressOn30Days}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* Calendrier des 30 jours */}
+                      <div className="grid grid-cols-7 gap-2">
+                        {Array.from({ length: 30 }, (_, i) => {
+                          const day = i + 1;
+                          const dayProgress = newMeProgress[day] || {};
+                          const completedCount = Object.values(dayProgress).filter(Boolean).length;
+                          const isFullyCompleted = completedCount === 13;
+                          const isToday = day === newMeCurrentDay;
+
+                          return (
+                            <div
+                              key={day}
+                              onClick={() => {
+                                setNewMeCurrentDay(day);
+                                setNewMeActiveTab('daily');
+                              }}
+                              className={`
+                                aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all
+                                ${isToday ? 'ring-2 ring-purple-500' : ''}
+                                ${isFullyCompleted
+                                  ? theme === 'dark'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-purple-500 text-white'
+                                  : completedCount > 0
+                                    ? theme === 'dark'
+                                      ? 'bg-purple-900/40 text-purple-300'
+                                      : 'bg-purple-100 text-purple-700'
+                                    : theme === 'dark'
+                                      ? 'bg-stone-800 text-stone-400'
+                                      : 'bg-stone-100 text-stone-600'
+                                }
+                                hover:scale-110
+                              `}
+                            >
+                              <span className="text-xs font-semibold">{day}</span>
+                              {completedCount > 0 && (
+                                <span className="text-[8px] mt-0.5">{completedCount}/13</span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Stats globales */}
+                      <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">
+                            {Object.keys(newMeProgress).filter(day => {
+                              const dayProgress = newMeProgress[parseInt(day)];
+                              return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                            }).length} / 30 {t.newMe.daysCompleted}
+                          </span>
+                          <span className="text-2xl font-bold text-purple-500">
+                            {Math.round((Object.keys(newMeProgress).filter(day => {
+                              const dayProgress = newMeProgress[parseInt(day)];
+                              return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                            }).length / 30) * 100)}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={(Object.keys(newMeProgress).filter(day => {
+                            const dayProgress = newMeProgress[parseInt(day)];
+                            return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                          }).length / 30) * 100}
+                          className="h-3"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+
+              {/* Tab 3: Badges & Encouragements */}
+              {newMeActiveTab === 'badges' && (
+                <>
+                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Award className="w-5 h-5 text-purple-500" />
+                        {t.newMe.badges}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {(() => {
+                        const completedDays = Object.keys(newMeProgress).filter(day => {
+                          const dayProgress = newMeProgress[parseInt(day)];
+                          return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                        }).length;
+
+                        const badges = [
+                          { threshold: 1, title: t.newMe.badge1Title, desc: t.newMe.badge1Desc },
+                          { threshold: 7, title: t.newMe.badge2Title, desc: t.newMe.badge2Desc },
+                          { threshold: 15, title: t.newMe.badge3Title, desc: t.newMe.badge3Desc },
+                          { threshold: 30, title: t.newMe.badge4Title, desc: t.newMe.badge4Desc },
+                        ];
+
+                        return badges.map((badge, index) => {
+                          const isUnlocked = completedDays >= badge.threshold;
+                          return (
+                            <div
+                              key={index}
+                              className={`p-4 rounded-lg ${
+                                isUnlocked
+                                  ? theme === 'dark'
+                                    ? 'bg-purple-900/30 border border-purple-500'
+                                    : 'bg-purple-50 border border-purple-300'
+                                  : theme === 'dark'
+                                    ? 'bg-stone-800 opacity-50'
+                                    : 'bg-stone-100 opacity-50'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="text-3xl">{badge.title.split(' ')[0]}</div>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-sm">{badge.title}</h4>
+                                  <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">{badge.desc}</p>
+                                </div>
+                                {isUnlocked && <Check className="w-5 h-5 text-purple-500" />}
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()}
+
+                      {/* Message d'encouragement de Glowee */}
+                      <div className={`p-4 rounded-lg mt-4 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/20 to-pink-900/20' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
+                        <div className="flex items-start gap-3">
+                          <div className="text-3xl">🦋</div>
+                          <p className="text-sm italic text-stone-700 dark:text-stone-300">
+                            {(() => {
+                              const completedDays = Object.keys(newMeProgress).filter(day => {
+                                const dayProgress = newMeProgress[parseInt(day)];
+                                return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                              }).length;
+
+                              if (completedDays >= 20) return t.newMe.encouragement4;
+                              if (completedDays >= 10) return t.newMe.encouragement3;
+                              if (completedDays >= 5) return t.newMe.encouragement2;
+                              return t.newMe.encouragement1;
+                            })()}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1937,24 +2194,28 @@ export default function GlowUpChallengeApp() {
             {/* Toggle Completion */}
             <Button
               className="w-full"
-              variant={newMeDailyHabits[selectedHabit?.id.toString() || ''] ? 'default' : 'outline'}
+              variant={newMeProgress[newMeCurrentDay]?.[selectedHabit?.id.toString() || ''] ? 'default' : 'outline'}
               onClick={() => {
                 if (selectedHabit) {
-                  setNewMeDailyHabits(prev => ({
+                  const isChecked = newMeProgress[newMeCurrentDay]?.[selectedHabit.id.toString()] || false;
+                  setNewMeProgress(prev => ({
                     ...prev,
-                    [selectedHabit.id.toString()]: !prev[selectedHabit.id.toString()]
+                    [newMeCurrentDay]: {
+                      ...(prev[newMeCurrentDay] || {}),
+                      [selectedHabit.id.toString()]: !isChecked
+                    }
                   }));
                 }
               }}
             >
-              {newMeDailyHabits[selectedHabit?.id.toString() || ''] ? (
+              {newMeProgress[newMeCurrentDay]?.[selectedHabit?.id.toString() || ''] ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Habitude complétée aujourd'hui
+                  Habitude complétée pour le {t.newMe.day} {newMeCurrentDay}
                 </>
               ) : (
                 <>
-                  Marquer comme fait aujourd'hui
+                  Marquer comme fait pour le {t.newMe.day} {newMeCurrentDay}
                 </>
               )}
             </Button>

@@ -1297,17 +1297,6 @@ export default function GlowUpChallengeApp() {
                   </p>
                 </div>
               </div>
-
-              {/* Glowee Mascot Card */}
-              <Card className={`border-none shadow-lg mb-6 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
-                <CardContent className="p-6 text-center">
-                  <div className="text-6xl mb-3">🦋</div>
-                  <h3 className="text-xl font-bold mb-2">{t.newMe.mascot}</h3>
-                  <p className="text-sm italic text-stone-600 dark:text-stone-400">
-                    {t.newMe.finalMessage}
-                  </p>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Navigation Tabs - Improved Design with Yellow */}
@@ -1381,7 +1370,7 @@ export default function GlowUpChallengeApp() {
                             key={day}
                             data-day={day}
                             onClick={() => setNewMeCurrentDay(day)}
-                            className={`flex-shrink-0 w-12 h-14 rounded-lg flex flex-col items-center justify-center transition-all ${
+                            className={`relative flex-shrink-0 w-12 h-14 rounded-lg flex flex-col items-center justify-center transition-all ${
                               isToday
                                 ? theme === 'dark'
                                   ? 'bg-[#FDC700] text-stone-900 ring-2 ring-[#FDC700]/50 shadow-lg shadow-[#FDC700]/30'
@@ -1401,46 +1390,16 @@ export default function GlowUpChallengeApp() {
                           >
                             <span className="text-[10px] font-medium">{t.newMe.day}</span>
                             <span className="text-lg font-bold">{day}</span>
+                            {isFullyCompleted && (
+                              <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#FDC700] rounded-full flex items-center justify-center shadow-md">
+                                <Check className="w-3 h-3 text-stone-900" />
+                              </div>
+                            )}
                           </button>
                         );
                       })}
                     </div>
                   </div>
-
-                  {/* Barre de progression en haut */}
-                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                    <CardContent className="p-4 space-y-3">
-                      {/* Message de bienvenue */}
-                      <p className="text-base font-semibold text-[#FDC700]">
-                        Bonjour, prête pour ton jour {newMeCurrentDay} !
-                      </p>
-
-                      {/* Stats */}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">
-                          {t.newMe.day} {newMeCurrentDay} / 30
-                        </span>
-                        <span className="font-medium">
-                          {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length} / 13 {t.newMe.habits}
-                        </span>
-                      </div>
-
-                      {/* Progression */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Progression du jour</span>
-                          <span className="text-lg font-bold text-[#FDC700]">
-                            {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
-                          </span>
-                        </div>
-                        <Progress
-                          value={(Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100}
-                          className="h-3 bg-stone-200 dark:bg-stone-800"
-                          indicatorColor="#FDC700"
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
 
                   {/* Liste des 13 habitudes pour le jour sélectionné */}
                   <div className="space-y-3">
@@ -1505,6 +1464,44 @@ export default function GlowUpChallengeApp() {
                         </Card>
                       );
                     })}
+                  </div>
+
+                  {/* Bouton "J'ai complété ce jour" */}
+                  <div className="sticky bottom-0 pt-4 pb-6 -mx-6 px-6 bg-gradient-to-t from-stone-50 dark:from-stone-950 via-stone-50 dark:via-stone-950 to-transparent">
+                    <Button
+                      className="w-full bg-[#FDC700] hover:bg-[#FDC700]/90 text-stone-900 font-semibold py-6 text-base shadow-lg shadow-[#FDC700]/30"
+                      onClick={() => {
+                        const allCompleted = Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13;
+                        if (allCompleted) {
+                          // Si déjà complété, on peut décocher
+                          setNewMeProgress(prev => ({
+                            ...prev,
+                            [newMeCurrentDay]: {}
+                          }));
+                        } else {
+                          // Sinon, on coche tout
+                          const allHabits: Record<string, boolean> = {};
+                          newMePillars.forEach(habit => {
+                            allHabits[habit.id.toString()] = true;
+                          });
+                          setNewMeProgress(prev => ({
+                            ...prev,
+                            [newMeCurrentDay]: allHabits
+                          }));
+                        }
+                      }}
+                    >
+                      {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13 ? (
+                        <>
+                          <Check className="w-5 h-5 mr-2" />
+                          Jour {newMeCurrentDay} complété !
+                        </>
+                      ) : (
+                        <>
+                          J'ai complété ce jour
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </>
               )}

@@ -247,12 +247,141 @@ export default function GlowUpChallengeApp() {
 
           {/* Continue Button */}
           <Button
-            onClick={() => setCurrentView('onboarding')}
+            onClick={() => setCurrentView('presentation')}
             className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30"
           >
             {t.languageSelection.continue}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Presentation Screen
+  if (currentView === 'presentation') {
+    return (
+      <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50 text-stone-900'}`}>
+        <div className="flex-1 overflow-y-auto p-6 pb-24">
+          <div className="max-w-2xl mx-auto space-y-8">
+            {/* Header */}
+            <div className="text-center space-y-4 pt-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 shadow-xl">
+                <Sparkles className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+                {t.presentation.title}
+              </h1>
+              <p className="text-lg md:text-xl text-stone-600 dark:text-stone-400 italic">
+                "{t.presentation.quote}"
+              </p>
+            </div>
+
+            {/* Subtitle */}
+            <Card className={`border-none shadow-xl ${theme === 'dark' ? 'bg-gradient-to-br from-stone-900 to-stone-800' : 'bg-white'}`}>
+              <CardContent className="p-6 text-center space-y-3">
+                <p className="text-lg leading-relaxed">
+                  {t.presentation.subtitle}
+                </p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+                  {t.presentation.description}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Triangle de transformation */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
+                <Target className="w-6 h-6 text-rose-500" />
+                {t.presentation.triangleTitle}
+              </h2>
+
+              {/* Pilier 1 */}
+              <Card className={`border-l-4 border-rose-500 shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-rose-500">
+                    <Sparkles className="w-5 h-5" />
+                    {t.presentation.pillar1Title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
+                    {t.presentation.pillar1Desc}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Pilier 2 */}
+              <Card className={`border-l-4 border-pink-500 shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-pink-500">
+                    <Heart className="w-5 h-5" />
+                    {t.presentation.pillar2Title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
+                    {t.presentation.pillar2Desc}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Pilier 3 */}
+              <Card className={`border-l-4 border-orange-500 shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-orange-500">
+                    <TrendingUp className="w-5 h-5" />
+                    {t.presentation.pillar3Title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
+                    {t.presentation.pillar3Desc}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Règles du Challenge */}
+            <Card className={`border-none shadow-xl ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-orange-900/30' : 'bg-gradient-to-br from-rose-50 to-orange-50'}`}>
+              <CardHeader>
+                <CardTitle className="text-center text-2xl flex items-center justify-center gap-2">
+                  <Award className="w-6 h-6 text-rose-500" />
+                  {t.presentation.rulesTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  t.presentation.rule1,
+                  t.presentation.rule2,
+                  t.presentation.rule3,
+                  t.presentation.rule4,
+                  t.presentation.rule5
+                ].map((rule, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-start gap-3 p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-white/80'}`}
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-orange-400 flex items-center justify-center text-white font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <p className={`flex-1 leading-relaxed ${index === 4 ? 'font-bold text-rose-500' : ''}`}>
+                      {rule}
+                    </p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* CTA Button */}
+            <Button
+              onClick={() => setCurrentView('onboarding')}
+              className="w-full h-16 text-xl bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-bold rounded-full shadow-2xl shadow-rose-300 dark:shadow-rose-900/50"
+            >
+              {t.presentation.startChallenge}
+              <ChevronRight className="ml-2 w-6 h-6" />
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -1723,51 +1852,6 @@ export default function GlowUpChallengeApp() {
                     <p className="text-base font-semibold text-center">
                       {selectedBonusSection.content.intro}
                     </p>
-                  </div>
-                )}
-
-                {/* Suivi Hebdomadaire - Pour les sections avec suivi */}
-                {selectedBonusSection.id !== '50-choses-seule' && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-sm flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {t.bonus.weeklyTracking}
-                      </h4>
-                      <Badge variant="outline" className="text-xs">
-                        {getSectionWeeklyCompletion(selectedBonusSection.id)} / 4 {t.bonus.weeks}
-                      </Badge>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[1, 2, 3, 4].map((week) => {
-                        const progress = getWeeklyBonusProgress(selectedBonusSection.id, week);
-                        const isCompleted = progress?.completed || false;
-                        return (
-                          <div
-                            key={week}
-                            onClick={() => toggleWeeklyBonus(selectedBonusSection.id, week)}
-                            className={`p-3 rounded-xl cursor-pointer transition-all text-center ${
-                              isCompleted
-                                ? `${theme === 'dark' ? 'bg-green-900/30 border-2 border-green-500' : 'bg-green-50 border-2 border-green-500'}`
-                                : `${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'}`
-                            }`}
-                          >
-                            <div className={`text-2xl mb-1 ${isCompleted ? 'text-green-500' : 'text-stone-400'}`}>
-                              {isCompleted ? '✓' : '○'}
-                            </div>
-                            <p className="text-xs font-medium">
-                              S{week}
-                            </p>
-                            {progress?.completedDate && (
-                              <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">
-                                {new Date(progress.completedDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'short' })}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <Progress value={(getSectionWeeklyCompletion(selectedBonusSection.id) / 4) * 100} className="h-2" />
                   </div>
                 )}
 

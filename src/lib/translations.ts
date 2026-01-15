@@ -33,7 +33,30 @@ export interface Translation {
     selectLanguage: string;
     continue: string;
   };
-  
+
+  // Presentation
+  presentation: {
+    title: string;
+    subtitle: string;
+    quote: string;
+    description: string;
+    cta: string;
+    triangleTitle: string;
+    pillar1Title: string;
+    pillar1Desc: string;
+    pillar2Title: string;
+    pillar2Desc: string;
+    pillar3Title: string;
+    pillar3Desc: string;
+    rulesTitle: string;
+    rule1: string;
+    rule2: string;
+    rule3: string;
+    rule4: string;
+    rule5: string;
+    startChallenge: string;
+  };
+
   // Dashboard
   dashboard: {
     welcome: string;
@@ -283,6 +306,27 @@ export const translations: Record<Language, Translation> = {
       selectLanguage: 'Sélectionner la langue',
       continue: 'Continuer',
     },
+    presentation: {
+      title: 'Révèle ta meilleure version',
+      subtitle: 'Un programme de 30 jours pour transformer ton corps, ton mental et ton style de vie avec douceur.',
+      quote: 'Le changement ne se produit pas par hasard, il se produit par le choix.',
+      description: 'Deviens la meilleure version de toi-même en 30 jours.',
+      cta: 'Commencer le Challenge',
+      triangleTitle: 'Le triangle de transformation',
+      pillar1Title: '1. Apparence (la base)',
+      pillar1Desc: 'Beauté intérieure et extérieure : corps, énergie, soins de la peau, coiffure, posture, maquillage minimal si souhaité, parfum.',
+      pillar2Title: '2. Personnalité',
+      pillar2Desc: 'Qui vous êtes vraiment (intérieur) et ce que vous dégagez (extérieur). Confiance, charisme, communication, authenticité.',
+      pillar3Title: '3. Sens de la vie & argent',
+      pillar3Desc: 'Vision, ambition, compétences, autonomie financière, Dieu.',
+      rulesTitle: 'RÈGLES DU CHALLENGE',
+      rule1: 'Réveil fixe (±30 min max)',
+      rule2: 'Téléphone interdit 30 min après le réveil',
+      rule3: 'Prendre des notes journalières (obligatoire)',
+      rule4: 'Chaque jour : 1 action pour chaque pilier',
+      rule5: 'ZÉRO excuse',
+      startChallenge: 'Commencer le Challenge',
+    },
     dashboard: {
       welcome: 'Bienvenue',
       progress: 'Progression',
@@ -513,6 +557,27 @@ export const translations: Record<Language, Translation> = {
       selectLanguage: 'Select language',
       continue: 'Continue',
     },
+    presentation: {
+      title: 'Reveal Your Best Version',
+      subtitle: 'A 30-day program to transform your body, mind and lifestyle with gentleness.',
+      quote: 'Change doesn\'t happen by chance, it happens by choice.',
+      description: 'Become the best version of yourself in 30 days.',
+      cta: 'Start the Challenge',
+      triangleTitle: 'The Transformation Triangle',
+      pillar1Title: '1. Appearance (the foundation)',
+      pillar1Desc: 'Inner and outer beauty: body, energy, skincare, hair, posture, minimal makeup if desired, fragrance.',
+      pillar2Title: '2. Personality',
+      pillar2Desc: 'Who you really are (inside) and what you radiate (outside). Confidence, charisma, communication, authenticity.',
+      pillar3Title: '3. Life Purpose & Money',
+      pillar3Desc: 'Vision, ambition, skills, financial autonomy, God.',
+      rulesTitle: 'CHALLENGE RULES',
+      rule1: 'Fixed wake-up time (±30 min max)',
+      rule2: 'No phone for 30 min after waking up',
+      rule3: 'Daily journaling (mandatory)',
+      rule4: 'Every day: 1 action for each pillar',
+      rule5: 'ZERO excuses',
+      startChallenge: 'Start the Challenge',
+    },
     dashboard: {
       welcome: 'Welcome',
       progress: 'Progress',
@@ -742,6 +807,27 @@ export const translations: Record<Language, Translation> = {
       subtitle: 'Elige tu idioma',
       selectLanguage: 'Seleccionar idioma',
       continue: 'Continuar',
+    },
+    presentation: {
+      title: 'Revela tu mejor versión',
+      subtitle: 'Un programa de 30 días para transformar tu cuerpo, mente y estilo de vida con suavidad.',
+      quote: 'El cambio no ocurre por casualidad, ocurre por elección.',
+      description: 'Conviértete en la mejor versión de ti misma en 30 días.',
+      cta: 'Comenzar el Desafío',
+      triangleTitle: 'El triángulo de transformación',
+      pillar1Title: '1. Apariencia (la base)',
+      pillar1Desc: 'Belleza interior y exterior: cuerpo, energía, cuidado de la piel, cabello, postura, maquillaje mínimo si se desea, perfume.',
+      pillar2Title: '2. Personalidad',
+      pillar2Desc: 'Quién eres realmente (interior) y lo que irradias (exterior). Confianza, carisma, comunicación, autenticidad.',
+      pillar3Title: '3. Sentido de la vida y dinero',
+      pillar3Desc: 'Visión, ambición, habilidades, autonomía financiera, Dios.',
+      rulesTitle: 'REGLAS DEL DESAFÍO',
+      rule1: 'Hora de despertar fija (±30 min máx)',
+      rule2: 'Teléfono prohibido 30 min después de despertar',
+      rule3: 'Tomar notas diarias (obligatorio)',
+      rule4: 'Cada día: 1 acción para cada pilar',
+      rule5: 'CERO excusas',
+      startChallenge: 'Comenzar el Desafío',
     },
     dashboard: {
       welcome: 'Bienvenida',

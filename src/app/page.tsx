@@ -1310,16 +1310,14 @@ export default function GlowUpChallengeApp() {
               </Card>
             </div>
 
-            {/* Navigation Tabs - Improved Design */}
+            {/* Navigation Tabs - Improved Design with Yellow */}
             <div className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-white/95'} backdrop-blur-sm shadow-sm`}>
               <div className="flex gap-2 p-2 max-w-lg mx-auto">
                 <button
                   onClick={() => setNewMeActiveTab('daily')}
                   className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     newMeActiveTab === 'daily'
-                      ? theme === 'dark'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
-                        : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
+                      ? 'bg-[#FDC700] text-stone-900 shadow-lg shadow-[#FDC700]/30'
                       : theme === 'dark'
                         ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
@@ -1334,9 +1332,7 @@ export default function GlowUpChallengeApp() {
                   onClick={() => setNewMeActiveTab('progress')}
                   className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     newMeActiveTab === 'progress'
-                      ? theme === 'dark'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
-                        : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
+                      ? 'bg-[#FDC700] text-stone-900 shadow-lg shadow-[#FDC700]/30'
                       : theme === 'dark'
                         ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
@@ -1351,9 +1347,7 @@ export default function GlowUpChallengeApp() {
                   onClick={() => setNewMeActiveTab('badges')}
                   className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     newMeActiveTab === 'badges'
-                      ? theme === 'dark'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
-                        : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
+                      ? 'bg-[#FDC700] text-stone-900 shadow-lg shadow-[#FDC700]/30'
                       : theme === 'dark'
                         ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
@@ -1373,18 +1367,7 @@ export default function GlowUpChallengeApp() {
               {newMeActiveTab === 'daily' && (
                 <>
                   {/* Scroll horizontal des jours - Taille réduite */}
-                  <div
-                    ref={(el) => {
-                      if (el && newMeActiveTab === 'daily') {
-                        // Auto-scroll vers le jour actuel
-                        const dayButton = el.querySelector(`[data-day="${newMeCurrentDay}"]`);
-                        if (dayButton) {
-                          dayButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        }
-                      }
-                    }}
-                    className="overflow-x-auto scrollbar-hide -mx-6 px-6"
-                  >
+                  <div className="overflow-x-auto scrollbar-hide -mx-6 px-6">
                     <div className="flex gap-2 pb-2">
                       {Array.from({ length: 30 }, (_, i) => {
                         const day = i + 1;
@@ -1532,7 +1515,7 @@ export default function GlowUpChallengeApp() {
                   <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Target className="w-5 h-5 text-purple-500" />
+                        <Target className="w-5 h-5 text-[#FDC700]" />
                         {t.newMe.progressOn30Days}
                       </CardTitle>
                     </CardHeader>
@@ -1555,15 +1538,13 @@ export default function GlowUpChallengeApp() {
                               }}
                               className={`
                                 aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all
-                                ${isToday ? 'ring-2 ring-purple-500' : ''}
+                                ${isToday ? 'ring-2 ring-[#FDC700]' : ''}
                                 ${isFullyCompleted
-                                  ? theme === 'dark'
-                                    ? 'bg-purple-600 text-white'
-                                    : 'bg-purple-500 text-white'
+                                  ? 'bg-[#FDC700] text-stone-900'
                                   : completedCount > 0
                                     ? theme === 'dark'
-                                      ? 'bg-purple-900/40 text-purple-300'
-                                      : 'bg-purple-100 text-purple-700'
+                                      ? 'bg-[#FDC700]/30 text-[#FDC700]'
+                                      : 'bg-[#FDC700]/20 text-[#FDC700]'
                                     : theme === 'dark'
                                       ? 'bg-stone-800 text-stone-400'
                                       : 'bg-stone-100 text-stone-600'
@@ -1589,7 +1570,7 @@ export default function GlowUpChallengeApp() {
                               return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
                             }).length} / 30 {t.newMe.daysCompleted}
                           </span>
-                          <span className="text-2xl font-bold text-purple-500">
+                          <span className="text-2xl font-bold text-[#FDC700]">
                             {Math.round((Object.keys(newMeProgress).filter(day => {
                               const dayProgress = newMeProgress[parseInt(day)];
                               return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
@@ -1601,7 +1582,8 @@ export default function GlowUpChallengeApp() {
                             const dayProgress = newMeProgress[parseInt(day)];
                             return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
                           }).length / 30) * 100}
-                          className="h-3"
+                          className="h-3 bg-stone-200 dark:bg-stone-800"
+                          indicatorColor="#FDC700"
                         />
                       </div>
                     </CardContent>
@@ -1615,7 +1597,7 @@ export default function GlowUpChallengeApp() {
                   <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Award className="w-5 h-5 text-purple-500" />
+                        <Award className="w-5 h-5 text-[#FDC700]" />
                         {t.newMe.badges}
                       </CardTitle>
                     </CardHeader>
@@ -1671,8 +1653,8 @@ export default function GlowUpChallengeApp() {
                               className={`p-4 rounded-lg transition-all ${
                                 isUnlocked
                                   ? theme === 'dark'
-                                    ? 'bg-gradient-to-r from-purple-900/40 to-pink-900/40 border-2 border-purple-500 shadow-lg'
-                                    : 'bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 shadow-lg'
+                                    ? 'bg-[#FDC700]/20 border-2 border-[#FDC700] shadow-lg shadow-[#FDC700]/20'
+                                    : 'bg-[#FDC700]/10 border-2 border-[#FDC700] shadow-lg shadow-[#FDC700]/20'
                                   : theme === 'dark'
                                     ? 'bg-stone-800/50 opacity-40'
                                     : 'bg-stone-100 opacity-40'
@@ -1684,7 +1666,7 @@ export default function GlowUpChallengeApp() {
                                   <h4 className="font-semibold text-base">{badge.title}</h4>
                                   <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">{badge.desc}</p>
                                 </div>
-                                {isUnlocked && <Check className="w-6 h-6 text-purple-500" />}
+                                {isUnlocked && <Check className="w-6 h-6 text-[#FDC700]" />}
                               </div>
                             </div>
                           );
@@ -2215,7 +2197,7 @@ export default function GlowUpChallengeApp() {
       {/* Drawer New Me Habit Details */}
       <Drawer open={!!selectedHabit} onOpenChange={(open) => !open && setSelectedHabit(null)}>
         <DrawerContent className="max-w-lg mx-auto">
-          <DrawerHeader className={`border-b ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-stone-800' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-stone-200'}`}>
+          <DrawerHeader className={`border-b ${theme === 'dark' ? 'bg-[#FDC700]/20 border-stone-800' : 'bg-[#FDC700]/10 border-stone-200'}`}>
             <div className="flex items-center gap-3">
               <div className="text-4xl">{selectedHabit?.icon}</div>
               <div className="flex-1 text-left">
@@ -2234,7 +2216,7 @@ export default function GlowUpChallengeApp() {
             {/* Detailed Explanation */}
             <div>
               <h3 className="font-semibold mb-2 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-500" />
+                <Sparkles className="w-4 h-4 text-[#FDC700]" />
                 Pourquoi c'est important
               </h3>
               <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
@@ -2245,13 +2227,13 @@ export default function GlowUpChallengeApp() {
             {/* Benefits */}
             <div>
               <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Star className="w-4 h-4 text-purple-500" />
+                <Star className="w-4 h-4 text-[#FDC700]" />
                 Les bénéfices
               </h3>
               <div className="space-y-2">
                 {selectedHabit?.benefits.map((benefit, index) => (
                   <div key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                    <Check className="w-4 h-4 text-[#FDC700] mt-0.5 flex-shrink-0" />
                     <span className="text-sm text-stone-600 dark:text-stone-400">{benefit}</span>
                   </div>
                 ))}
@@ -2260,12 +2242,12 @@ export default function GlowUpChallengeApp() {
 
             {/* Glowee Message */}
             {selectedHabit?.gloweeMessage && (
-              <Card className={`border-none ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'}`}>
+              <Card className={`border-none ${theme === 'dark' ? 'bg-[#FDC700]/20' : 'bg-[#FDC700]/10'}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <div className="text-2xl">🦋</div>
                     <div>
-                      <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+                      <p className="text-xs font-semibold text-[#FDC700] mb-1">
                         Message de Glowee
                       </p>
                       <p className="text-sm italic text-stone-700 dark:text-stone-300">

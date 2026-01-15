@@ -275,6 +275,23 @@ export interface Translation {
     habitDetails: string;
     gloweeMessage: string;
     finalMessage: string;
+    day: string;
+    today: string;
+    progressOn30Days: string;
+    daysCompleted: string;
+    badges: string;
+    badge1Title: string;
+    badge1Desc: string;
+    badge2Title: string;
+    badge2Desc: string;
+    badge3Title: string;
+    badge3Desc: string;
+    badge4Title: string;
+    badge4Desc: string;
+    encouragement1: string;
+    encouragement2: string;
+    encouragement3: string;
+    encouragement4: string;
   };
 
   // Common
@@ -557,6 +574,23 @@ export const translations: Record<Language, Translation> = {
       habitDetails: 'Détails de l\'habitude',
       gloweeMessage: 'Message de Glowee',
       finalMessage: 'En 30 jours, tu ne changes pas qui tu es. Tu redeviens qui tu étais censée être. 🦋',
+      day: 'Jour',
+      today: 'Aujourd\'hui',
+      progressOn30Days: 'Progression sur 30 jours',
+      daysCompleted: 'jours complétés',
+      badges: 'Badges & Encouragements',
+      badge1Title: '🌟 Première étape',
+      badge1Desc: 'Tu as commencé ton voyage ! Glowee est fière de toi.',
+      badge2Title: '✨ Une semaine de glow',
+      badge2Desc: '7 jours ! Tu prends soin de toi, continue comme ça.',
+      badge3Title: '💎 Transformation visible',
+      badge3Desc: '15 jours ! Les changements commencent à se voir.',
+      badge4Title: '🦋 New Me accomplie',
+      badge4Desc: '30 jours ! Tu es devenue ta meilleure version.',
+      encouragement1: 'Chaque petit pas compte. Tu es sur la bonne voie ! 🦋',
+      encouragement2: 'Tu rayonnes de plus en plus chaque jour ! ✨',
+      encouragement3: 'Regarde tout ce chemin parcouru, tu es incroyable ! 💜',
+      encouragement4: 'Continue, la transformation est en cours ! 🌸',
     },
   },
   en: {
@@ -822,6 +856,23 @@ export const translations: Record<Language, Translation> = {
       habitDetails: 'Habit details',
       gloweeMessage: 'Glowee\'s message',
       finalMessage: 'In 30 days, you don\'t change who you are. You become who you were meant to be. 🦋',
+      day: 'Day',
+      today: 'Today',
+      progressOn30Days: 'Progress over 30 days',
+      daysCompleted: 'days completed',
+      badges: 'Badges & Encouragements',
+      badge1Title: '🌟 First step',
+      badge1Desc: 'You started your journey! Glowee is proud of you.',
+      badge2Title: '✨ One week of glow',
+      badge2Desc: '7 days! You\'re taking care of yourself, keep it up.',
+      badge3Title: '💎 Visible transformation',
+      badge3Desc: '15 days! The changes are starting to show.',
+      badge4Title: '🦋 New Me achieved',
+      badge4Desc: '30 days! You\'ve become your best version.',
+      encouragement1: 'Every small step counts. You\'re on the right path! 🦋',
+      encouragement2: 'You\'re glowing more and more each day! ✨',
+      encouragement3: 'Look at all this progress, you\'re amazing! 💜',
+      encouragement4: 'Keep going, the transformation is happening! 🌸',
     },
   },
   es: {
@@ -1087,6 +1138,23 @@ export const translations: Record<Language, Translation> = {
       habitDetails: 'Detalles del hábito',
       gloweeMessage: 'Mensaje de Glowee',
       finalMessage: 'En 30 días, no cambias quién eres. Te conviertes en quien estabas destinada a ser. 🦋',
+      day: 'Día',
+      today: 'Hoy',
+      progressOn30Days: 'Progreso en 30 días',
+      daysCompleted: 'días completados',
+      badges: 'Insignias y Ánimos',
+      badge1Title: '🌟 Primer paso',
+      badge1Desc: '¡Comenzaste tu viaje! Glowee está orgullosa de ti.',
+      badge2Title: '✨ Una semana brillando',
+      badge2Desc: '¡7 días! Te estás cuidando, sigue así.',
+      badge3Title: '💎 Transformación visible',
+      badge3Desc: '¡15 días! Los cambios empiezan a notarse.',
+      badge4Title: '🦋 New Me lograda',
+      badge4Desc: '¡30 días! Te has convertido en tu mejor versión.',
+      encouragement1: 'Cada pequeño paso cuenta. ¡Estás en el camino correcto! 🦋',
+      encouragement2: '¡Brillas más y más cada día! ✨',
+      encouragement3: '¡Mira todo este progreso, eres increíble! 💜',
+      encouragement4: '¡Continúa, la transformación está en marcha! 🌸',
     },
   },
 };

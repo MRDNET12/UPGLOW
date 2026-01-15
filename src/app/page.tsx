@@ -116,11 +116,34 @@ export default function GlowUpChallengeApp() {
   const [newMeActiveTab, setNewMeActiveTab] = useState<'daily' | 'progress' | 'badges'>('daily');
   const [newMeProgress, setNewMeProgress] = useState<Record<number, Record<string, boolean>>>({});
   const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
+  const [newMeStartDate, setNewMeStartDate] = useState<string | null>(null);
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // Initialiser la date de début et calculer le jour actuel
+  useEffect(() => {
+    if (isHydrated) {
+      const storedStartDate = localStorage.getItem('newMeStartDate');
+      if (!storedStartDate) {
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem('newMeStartDate', today);
+        setNewMeStartDate(today);
+        setNewMeCurrentDay(1);
+      } else {
+        setNewMeStartDate(storedStartDate);
+        // Calculer le jour actuel basé sur la date de début
+        const start = new Date(storedStartDate);
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - start.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const calculatedDay = Math.min(diffDays, 30); // Max 30 jours
+        setNewMeCurrentDay(calculatedDay);
+      }
+    }
+  }, [isHydrated]);
 
   useEffect(() => {
     if (hasStarted && isHydrated) {
@@ -1349,8 +1372,19 @@ export default function GlowUpChallengeApp() {
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Scroll horizontal des jours */}
-                  <div className="overflow-x-auto scrollbar-hide -mx-6 px-6">
+                  {/* Scroll horizontal des jours - Taille réduite */}
+                  <div
+                    ref={(el) => {
+                      if (el && newMeActiveTab === 'daily') {
+                        // Auto-scroll vers le jour actuel
+                        const dayButton = el.querySelector(`[data-day="${newMeCurrentDay}"]`);
+                        if (dayButton) {
+                          dayButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+                      }
+                    }}
+                    className="overflow-x-auto scrollbar-hide -mx-6 px-6"
+                  >
                     <div className="flex gap-2 pb-2">
                       {Array.from({ length: 30 }, (_, i) => {
                         const day = i + 1;
@@ -1362,16 +1396,17 @@ export default function GlowUpChallengeApp() {
                         return (
                           <button
                             key={day}
+                            data-day={day}
                             onClick={() => setNewMeCurrentDay(day)}
-                            className={`flex-shrink-0 w-16 h-20 rounded-lg flex flex-col items-center justify-center transition-all ${
+                            className={`flex-shrink-0 w-12 h-14 rounded-lg flex flex-col items-center justify-center transition-all ${
                               isToday
                                 ? theme === 'dark'
-                                  ? 'bg-purple-600 text-white ring-2 ring-purple-400'
-                                  : 'bg-purple-500 text-white ring-2 ring-purple-300'
+                                  ? 'bg-[#FDC700] text-stone-900 ring-2 ring-[#FDC700]/50 shadow-lg shadow-[#FDC700]/30'
+                                  : 'bg-[#FDC700] text-stone-900 ring-2 ring-[#FDC700]/50 shadow-lg shadow-[#FDC700]/30'
                                 : isFullyCompleted
                                   ? theme === 'dark'
-                                    ? 'bg-purple-900/50 text-purple-300'
-                                    : 'bg-purple-100 text-purple-700'
+                                    ? 'bg-[#FDC700]/30 text-[#FDC700]'
+                                    : 'bg-[#FDC700]/20 text-[#FDC700]'
                                   : completedCount > 0
                                     ? theme === 'dark'
                                       ? 'bg-stone-800 text-stone-300'
@@ -1381,19 +1416,53 @@ export default function GlowUpChallengeApp() {
                                       : 'bg-white text-stone-600'
                             }`}
                           >
-                            <span className="text-xs font-medium mb-1">{t.newMe.day}</span>
-                            <span className="text-xl font-bold">{day}</span>
-                            {isToday && <span className="text-[10px] font-semibold mt-1">{t.newMe.today}</span>}
+                            <span className="text-[10px] font-medium">{t.newMe.day}</span>
+                            <span className="text-lg font-bold">{day}</span>
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
+                  {/* Barre de progression en haut */}
+                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                    <CardContent className="p-4 space-y-3">
+                      {/* Message de bienvenue */}
+                      <p className="text-base font-semibold text-[#FDC700]">
+                        Bonjour, prête pour ton jour {newMeCurrentDay} !
+                      </p>
+
+                      {/* Stats */}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium">
+                          {t.newMe.day} {newMeCurrentDay} / 30
+                        </span>
+                        <span className="font-medium">
+                          {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length} / 13 {t.newMe.habits}
+                        </span>
+                      </div>
+
+                      {/* Progression */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Progression du jour</span>
+                          <span className="text-lg font-bold text-[#FDC700]">
+                            {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={(Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100}
+                          className="h-3 bg-stone-200 dark:bg-stone-800"
+                          indicatorColor="#FDC700"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
                   {/* Liste des 13 habitudes pour le jour sélectionné */}
                   <div className="space-y-3">
                     <h2 className="text-lg font-bold">
-                      {t.newMe.day} {newMeCurrentDay} - Les 13 piliers
+                      Les 13 piliers
                     </h2>
                     {newMePillars.map((habit) => {
                       const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
@@ -1404,8 +1473,8 @@ export default function GlowUpChallengeApp() {
                           className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
                             isChecked
                               ? theme === 'dark'
-                                ? 'bg-purple-900/30 border-2 border-purple-500'
-                                : 'bg-purple-50 border-2 border-purple-500'
+                                ? 'bg-[#FDC700]/20 border-2 border-[#FDC700]'
+                                : 'bg-[#FDC700]/10 border-2 border-[#FDC700]'
                               : theme === 'dark'
                                 ? 'bg-stone-900'
                                 : 'bg-white'
@@ -1425,7 +1494,7 @@ export default function GlowUpChallengeApp() {
                             <div className="flex items-start gap-3">
                               <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
                                 {isChecked ? (
-                                  <Check className="w-6 h-6 text-purple-500" />
+                                  <Check className="w-6 h-6 text-[#FDC700]" />
                                 ) : (
                                   <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
                                 )}
@@ -1453,24 +1522,6 @@ export default function GlowUpChallengeApp() {
                         </Card>
                       );
                     })}
-
-                    {/* Progression du jour */}
-                    <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">
-                            {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length} / 13 {t.newMe.habits}
-                          </span>
-                          <span className="text-2xl font-bold text-purple-500">
-                            {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
-                          </span>
-                        </div>
-                        <Progress
-                          value={(Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100}
-                          className="h-3"
-                        />
-                      </CardContent>
-                    </Card>
                   </div>
                 </>
               )}

@@ -10,6 +10,7 @@ import {
   getLocalizedBonusSections,
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
+import { newMePillars, newMeGloweeMessage } from '@/lib/new-me-data';
 import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
@@ -107,6 +108,11 @@ export default function GlowUpChallengeApp() {
   const [showSoftLifeGuide, setShowSoftLifeGuide] = useState(false);
   const [selectedGuideStep, setSelectedGuideStep] = useState<number | null>(null);
   const [selectedBonusSection, setSelectedBonusSection] = useState<ReturnType<typeof getLocalizedBonusSections>[0] | null>(null);
+
+  // États pour New Me
+  const [selectedHabit, setSelectedHabit] = useState<typeof newMePillars[0] | null>(null);
+  const [newMeDailyHabits, setNewMeDailyHabits] = useState<Record<string, boolean>>({});
+  const [newMeFeeling, setNewMeFeeling] = useState('');
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
@@ -498,6 +504,26 @@ export default function GlowUpChallengeApp() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{getCurrentDayData()?.title}</h3>
                 <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">{getCurrentDayData()?.content}</p>
+              </CardContent>
+            </Card>
+
+            {/* New Me Card */}
+            <Card
+              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}
+              onClick={() => setCurrentView('new-me')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🦋</span>
+                    <Badge className="bg-purple-500 hover:bg-purple-600">{t.newMe.title}</Badge>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-purple-400" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{t.newMe.subtitle}</h3>
+                <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">
+                  13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee 🦋
+                </p>
               </CardContent>
             </Card>
 
@@ -1222,6 +1248,133 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
+        {/* New Me View */}
+        {currentView === 'new-me' && (
+          <div className="p-6 space-y-6 max-w-lg mx-auto pb-24">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-6">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <span className="text-3xl">🦋</span>
+                  {t.newMe.title}
+                </h1>
+                <p className="text-sm text-stone-600 dark:text-stone-400">
+                  {t.newMe.subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* Glowee Mascot Card */}
+            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
+              <CardContent className="p-6 text-center">
+                <div className="text-6xl mb-3">🦋</div>
+                <h3 className="text-xl font-bold mb-2">{t.newMe.mascot}</h3>
+                <p className="text-sm italic text-stone-600 dark:text-stone-400">
+                  {t.newMe.finalMessage}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Progress Card */}
+            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5 text-purple-500" />
+                  {t.newMe.progress}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">
+                    {Object.values(newMeDailyHabits).filter(Boolean).length} / 13 {t.newMe.habits}
+                  </span>
+                  <span className="text-2xl font-bold text-purple-500">
+                    {Math.round((Object.values(newMeDailyHabits).filter(Boolean).length / 13) * 100)}%
+                  </span>
+                </div>
+                <Progress
+                  value={(Object.values(newMeDailyHabits).filter(Boolean).length / 13) * 100}
+                  className="h-3"
+                />
+              </CardContent>
+            </Card>
+
+            {/* Daily Feeling */}
+            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+              <CardHeader>
+                <CardTitle className="text-sm">{t.newMe.todayFeeling}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  placeholder="Comment te sens-tu aujourd'hui ?"
+                  value={newMeFeeling}
+                  onChange={(e) => setNewMeFeeling(e.target.value)}
+                  rows={3}
+                  className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                />
+              </CardContent>
+            </Card>
+
+            {/* 13 Habits List */}
+            <div className="space-y-3">
+              <h2 className="text-lg font-bold">Les 13 piliers de transformation</h2>
+              {newMePillars.map((habit) => (
+                <Card
+                  key={habit.id}
+                  className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
+                    newMeDailyHabits[habit.id.toString()]
+                      ? theme === 'dark'
+                        ? 'bg-purple-900/30 border-2 border-purple-500'
+                        : 'bg-purple-50 border-2 border-purple-500'
+                      : theme === 'dark'
+                        ? 'bg-stone-900'
+                        : 'bg-white'
+                  }`}
+                  onClick={() => setSelectedHabit(habit)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setNewMeDailyHabits(prev => ({
+                            ...prev,
+                            [habit.id.toString()]: !prev[habit.id.toString()]
+                          }));
+                        }}
+                      >
+                        {newMeDailyHabits[habit.id.toString()] ? (
+                          <Check className="w-6 h-6 text-purple-500" />
+                        ) : (
+                          <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-2xl">{habit.icon}</span>
+                          <h3 className="font-semibold text-sm">{habit.title}</h3>
+                        </div>
+                        <p className="text-xs text-stone-600 dark:text-stone-400">
+                          {habit.shortDescription}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-stone-400" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Bonus View */}
         {currentView === 'bonus' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto pb-24">
@@ -1712,6 +1865,99 @@ export default function GlowUpChallengeApp() {
                 </div>
               ))}
             </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Drawer New Me Habit Details */}
+      <Drawer open={!!selectedHabit} onOpenChange={(open) => !open && setSelectedHabit(null)}>
+        <DrawerContent className="max-w-lg mx-auto">
+          <DrawerHeader className={`border-b ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-stone-800' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-stone-200'}`}>
+            <div className="flex items-center gap-3">
+              <div className="text-4xl">{selectedHabit?.icon}</div>
+              <div className="flex-1 text-left">
+                <DrawerTitle className="text-lg">{selectedHabit?.title}</DrawerTitle>
+                <DrawerDescription className="text-xs">{selectedHabit?.shortDescription}</DrawerDescription>
+              </div>
+              <DrawerClose asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <X className="w-5 h-5" />
+                </Button>
+              </DrawerClose>
+            </div>
+          </DrawerHeader>
+
+          <div className="p-6 overflow-y-auto max-h-[60vh] space-y-6">
+            {/* Detailed Explanation */}
+            <div>
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-500" />
+                Pourquoi c'est important
+              </h3>
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+                {selectedHabit?.detailedExplanation}
+              </p>
+            </div>
+
+            {/* Benefits */}
+            <div>
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <Star className="w-4 h-4 text-purple-500" />
+                Les bénéfices
+              </h3>
+              <div className="space-y-2">
+                {selectedHabit?.benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-stone-600 dark:text-stone-400">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Glowee Message */}
+            {selectedHabit?.gloweeMessage && (
+              <Card className={`border-none ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'}`}>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="text-2xl">🦋</div>
+                    <div>
+                      <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+                        Message de Glowee
+                      </p>
+                      <p className="text-sm italic text-stone-700 dark:text-stone-300">
+                        {selectedHabit.gloweeMessage}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Toggle Completion */}
+            <Button
+              className="w-full"
+              variant={newMeDailyHabits[selectedHabit?.id.toString() || ''] ? 'default' : 'outline'}
+              onClick={() => {
+                if (selectedHabit) {
+                  setNewMeDailyHabits(prev => ({
+                    ...prev,
+                    [selectedHabit.id.toString()]: !prev[selectedHabit.id.toString()]
+                  }));
+                }
+              }}
+            >
+              {newMeDailyHabits[selectedHabit?.id.toString() || ''] ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  Habitude complétée aujourd'hui
+                </>
+              ) : (
+                <>
+                  Marquer comme fait aujourd'hui
+                </>
+              )}
+            </Button>
           </div>
         </DrawerContent>
       </Drawer>

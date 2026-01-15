@@ -261,6 +261,22 @@ export interface Translation {
     percentage: string;
   };
   
+  // New Me
+  newMe: {
+    title: string;
+    subtitle: string;
+    mascot: string;
+    dailyTracking: string;
+    progress: string;
+    completed: string;
+    todayFeeling: string;
+    viewDetails: string;
+    habits: string;
+    habitDetails: string;
+    gloweeMessage: string;
+    finalMessage: string;
+  };
+
   // Common
   common: {
     close: string;
@@ -528,6 +544,20 @@ export const translations: Record<Language, Translation> = {
       error: 'Erreur',
       success: 'Succès',
     },
+    newMe: {
+      title: 'New Me',
+      subtitle: 'Deviens ta meilleure version en 30 jours',
+      mascot: 'Glowee 🦋',
+      dailyTracking: 'Suivi du jour',
+      progress: 'Progression',
+      completed: 'complétées',
+      todayFeeling: 'Comment te sens-tu aujourd\'hui ?',
+      viewDetails: 'Voir les détails',
+      habits: 'habitudes',
+      habitDetails: 'Détails de l\'habitude',
+      gloweeMessage: 'Message de Glowee',
+      finalMessage: 'En 30 jours, tu ne changes pas qui tu es. Tu redeviens qui tu étais censée être. 🦋',
+    },
   },
   en: {
     nav: {
@@ -779,6 +809,20 @@ export const translations: Record<Language, Translation> = {
       error: 'Error',
       success: 'Success',
     },
+    newMe: {
+      title: 'New Me',
+      subtitle: 'Become your best version in 30 days',
+      mascot: 'Glowee 🦋',
+      dailyTracking: 'Daily Tracking',
+      progress: 'Progress',
+      completed: 'completed',
+      todayFeeling: 'How do you feel today?',
+      viewDetails: 'View details',
+      habits: 'habits',
+      habitDetails: 'Habit details',
+      gloweeMessage: 'Glowee\'s message',
+      finalMessage: 'In 30 days, you don\'t change who you are. You become who you were meant to be. 🦋',
+    },
   },
   es: {
     nav: {
@@ -1029,6 +1073,20 @@ export const translations: Record<Language, Translation> = {
       loading: 'Cargando...',
       error: 'Error',
       success: 'Éxito',
+    },
+    newMe: {
+      title: 'New Me',
+      subtitle: 'Conviértete en tu mejor versión en 30 días',
+      mascot: 'Glowee 🦋',
+      dailyTracking: 'Seguimiento diario',
+      progress: 'Progreso',
+      completed: 'completadas',
+      todayFeeling: '¿Cómo te sientes hoy?',
+      viewDetails: 'Ver detalles',
+      habits: 'hábitos',
+      habitDetails: 'Detalles del hábito',
+      gloweeMessage: 'Mensaje de Glowee',
+      finalMessage: 'En 30 días, no cambias quién eres. Te conviertes en quien estabas destinada a ser. 🦋',
     },
   },
 };

@@ -1287,19 +1287,19 @@ export default function GlowUpChallengeApp() {
               </Card>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-stone-950' : 'bg-stone-50'} border-b ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}`}>
-              <div className="flex overflow-x-auto scrollbar-hide">
+            {/* Navigation Tabs - Improved Design */}
+            <div className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-white/95'} backdrop-blur-sm shadow-sm`}>
+              <div className="flex gap-2 p-2 max-w-lg mx-auto">
                 <button
                   onClick={() => setNewMeActiveTab('daily')}
-                  className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     newMeActiveTab === 'daily'
                       ? theme === 'dark'
-                        ? 'text-purple-400 border-b-2 border-purple-400'
-                        : 'text-purple-600 border-b-2 border-purple-600'
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
+                        : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
                       : theme === 'dark'
-                        ? 'text-stone-400 hover:text-stone-300'
-                        : 'text-stone-600 hover:text-stone-900'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
                   <div className="flex items-center gap-2 justify-center">
@@ -1309,14 +1309,14 @@ export default function GlowUpChallengeApp() {
                 </button>
                 <button
                   onClick={() => setNewMeActiveTab('progress')}
-                  className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     newMeActiveTab === 'progress'
                       ? theme === 'dark'
-                        ? 'text-purple-400 border-b-2 border-purple-400'
-                        : 'text-purple-600 border-b-2 border-purple-600'
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
+                        : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
                       : theme === 'dark'
-                        ? 'text-stone-400 hover:text-stone-300'
-                        : 'text-stone-600 hover:text-stone-900'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
                   <div className="flex items-center gap-2 justify-center">
@@ -1326,14 +1326,14 @@ export default function GlowUpChallengeApp() {
                 </button>
                 <button
                   onClick={() => setNewMeActiveTab('badges')}
-                  className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     newMeActiveTab === 'badges'
                       ? theme === 'dark'
-                        ? 'text-purple-400 border-b-2 border-purple-400'
-                        : 'text-purple-600 border-b-2 border-purple-600'
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
+                        : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30'
                       : theme === 'dark'
-                        ? 'text-stone-400 hover:text-stone-300'
-                        : 'text-stone-600 hover:text-stone-900'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
                   <div className="flex items-center gap-2 justify-center">
@@ -1410,23 +1410,20 @@ export default function GlowUpChallengeApp() {
                                 ? 'bg-stone-900'
                                 : 'bg-white'
                           }`}
-                          onClick={() => setSelectedHabit(habit)}
+                          onClick={() => {
+                            // Clic sur la carte = valider l'habitude
+                            setNewMeProgress(prev => ({
+                              ...prev,
+                              [newMeCurrentDay]: {
+                                ...(prev[newMeCurrentDay] || {}),
+                                [habit.id.toString()]: !isChecked
+                              }
+                            }));
+                          }}
                         >
                           <CardContent className="p-4">
                             <div className="flex items-start gap-3">
-                              <div
-                                className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setNewMeProgress(prev => ({
-                                    ...prev,
-                                    [newMeCurrentDay]: {
-                                      ...(prev[newMeCurrentDay] || {}),
-                                      [habit.id.toString()]: !isChecked
-                                    }
-                                  }));
-                                }}
-                              >
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
                                 {isChecked ? (
                                   <Check className="w-6 h-6 text-purple-500" />
                                 ) : (
@@ -1442,7 +1439,15 @@ export default function GlowUpChallengeApp() {
                                   {habit.shortDescription}
                                 </p>
                               </div>
-                              <ChevronRight className="w-5 h-5 text-stone-400" />
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedHabit(habit);
+                                }}
+                                className="flex-shrink-0 p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors"
+                              >
+                                <ChevronRight className="w-5 h-5 text-stone-400" />
+                              </button>
                             </div>
                           </CardContent>
                         </Card>
@@ -1570,35 +1575,65 @@ export default function GlowUpChallengeApp() {
                           return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
                         }).length;
 
+                        // Calcul des jours avec habitude spécifique complétée
+                        const waterDays = Object.keys(newMeProgress).filter(day => {
+                          const dayProgress = newMeProgress[parseInt(day)];
+                          return dayProgress && dayProgress['1']; // ID 1 = Eau 2L
+                        }).length;
+
+                        const walkingDays = Object.keys(newMeProgress).filter(day => {
+                          const dayProgress = newMeProgress[parseInt(day)];
+                          return dayProgress && dayProgress['3']; // ID 3 = Marche 30 min
+                        }).length;
+
+                        const skincareDays = Object.keys(newMeProgress).filter(day => {
+                          const dayProgress = newMeProgress[parseInt(day)];
+                          return dayProgress && dayProgress['6']; // ID 6 = Skincare
+                        }).length;
+
+                        const anyDayStarted = Object.keys(newMeProgress).some(day => {
+                          const dayProgress = newMeProgress[parseInt(day)];
+                          return dayProgress && Object.values(dayProgress).some(Boolean);
+                        });
+
+                        const hasPerfectDay = Object.keys(newMeProgress).some(day => {
+                          const dayProgress = newMeProgress[parseInt(day)];
+                          return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                        });
+
                         const badges = [
-                          { threshold: 1, title: t.newMe.badge1Title, desc: t.newMe.badge1Desc },
-                          { threshold: 7, title: t.newMe.badge2Title, desc: t.newMe.badge2Desc },
-                          { threshold: 15, title: t.newMe.badge3Title, desc: t.newMe.badge3Desc },
-                          { threshold: 30, title: t.newMe.badge4Title, desc: t.newMe.badge4Desc },
+                          { condition: anyDayStarted, icon: '🌱', title: t.newMe.badgeFirstDay, desc: t.newMe.badgeFirstDayDesc },
+                          { condition: completedDays >= 7, icon: '🌿', title: t.newMe.badgeFirstWeek, desc: t.newMe.badgeFirstWeekDesc },
+                          { condition: hasPerfectDay, icon: '✨', title: t.newMe.badgePerfectDay, desc: t.newMe.badgePerfectDayDesc },
+                          { condition: waterDays >= 7, icon: '💧', title: t.newMe.badgeWaterMaster, desc: t.newMe.badgeWaterMasterDesc },
+                          { condition: walkingDays >= 7, icon: '🚶‍♀️', title: t.newMe.badgeWalkingStar, desc: t.newMe.badgeWalkingStarDesc },
+                          { condition: skincareDays >= 7, icon: '👑', title: t.newMe.badgeSkincareQueen, desc: t.newMe.badgeSkincareQueenDesc },
+                          { condition: completedDays >= 14, icon: '🌸', title: t.newMe.badgeTwoWeeks, desc: t.newMe.badgeTwoWeeksDesc },
+                          { condition: completedDays >= 30, icon: '🦋', title: t.newMe.badgeComplete, desc: t.newMe.badgeCompleteDesc },
                         ];
 
                         return badges.map((badge, index) => {
-                          const isUnlocked = completedDays >= badge.threshold;
+                          const isUnlocked = badge.condition;
                           return (
                             <div
                               key={index}
-                              className={`p-4 rounded-lg ${
+                              className={`p-4 rounded-lg transition-all ${
                                 isUnlocked
                                   ? theme === 'dark'
-                                    ? 'bg-purple-900/30 border border-purple-500'
-                                    : 'bg-purple-50 border border-purple-300'
+                                    ? 'bg-gradient-to-r from-purple-900/40 to-pink-900/40 border-2 border-purple-500 shadow-lg'
+                                    : 'bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 shadow-lg'
                                   : theme === 'dark'
-                                    ? 'bg-stone-800 opacity-50'
-                                    : 'bg-stone-100 opacity-50'
+                                    ? 'bg-stone-800/50 opacity-40'
+                                    : 'bg-stone-100 opacity-40'
                               }`}
                             >
                               <div className="flex items-start gap-3">
-                                <div className="text-3xl">{badge.title.split(' ')[0]}</div>
+                                <div className={`text-4xl ${!isUnlocked && 'grayscale'}`}>{badge.icon}</div>
                                 <div className="flex-1">
-                                  <h4 className="font-semibold text-sm">{badge.title}</h4>
+                                  <h4 className="font-semibold text-base">{badge.title}</h4>
                                   <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">{badge.desc}</p>
                                 </div>
-                                {isUnlocked && <Check className="w-5 h-5 text-purple-500" />}
+                                {isUnlocked && <Check className="w-6 h-6 text-purple-500" />}
                               </div>
                             </div>
                           );

@@ -280,14 +280,24 @@ export interface Translation {
     progressOn30Days: string;
     badges: string;
     daysCompleted: string;
-    badge1Title: string;
-    badge1Desc: string;
-    badge2Title: string;
-    badge2Desc: string;
-    badge3Title: string;
-    badge3Desc: string;
-    badge4Title: string;
-    badge4Desc: string;
+    // Badges
+    badgeFirstDay: string;
+    badgeFirstDayDesc: string;
+    badgeFirstWeek: string;
+    badgeFirstWeekDesc: string;
+    badgePerfectDay: string;
+    badgePerfectDayDesc: string;
+    badgeWaterMaster: string;
+    badgeWaterMasterDesc: string;
+    badgeWalkingStar: string;
+    badgeWalkingStarDesc: string;
+    badgeSkincareQueen: string;
+    badgeSkincareQueenDesc: string;
+    badgeTwoWeeks: string;
+    badgeTwoWeeksDesc: string;
+    badgeComplete: string;
+    badgeCompleteDesc: string;
+    // Encouragements
     encouragement1: string;
     encouragement2: string;
     encouragement3: string;
@@ -565,7 +575,7 @@ export const translations: Record<Language, Translation> = {
       title: 'New Me',
       subtitle: 'Deviens ta meilleure version en 30 jours',
       mascot: 'Glowee 🦋',
-      dailyTracking: 'Suivi journalier',
+      dailyTracking: 'Aujourd\'hui',
       progress: 'Progression',
       completed: 'complétées',
       todayFeeling: 'Comment te sens-tu aujourd\'hui ?',
@@ -576,17 +586,25 @@ export const translations: Record<Language, Translation> = {
       finalMessage: 'En 30 jours, tu ne changes pas qui tu es. Tu redeviens qui tu étais censée être. 🦋',
       day: 'Jour',
       today: 'Aujourd\'hui',
-      progressOn30Days: 'Progression sur 30 jours',
-      badges: 'Badges & Encouragements',
+      progressOn30Days: 'Progression',
+      badges: 'Badges',
       daysCompleted: 'jours complétés',
-      badge1Title: '🌟 Première étape',
-      badge1Desc: 'Tu as commencé ton voyage ! Glowee est fière de toi.',
-      badge2Title: '✨ Une semaine de glow',
-      badge2Desc: '7 jours ! Tu prends soin de toi, continue comme ça.',
-      badge3Title: '💎 Transformation visible',
-      badge3Desc: '15 jours ! Les changements commencent à se voir.',
-      badge4Title: '🦋 New Me accomplie',
-      badge4Desc: '30 jours ! Tu es devenue ta meilleure version.',
+      badgeFirstDay: '🌱 Premier jour',
+      badgeFirstDayDesc: 'Tu as commencé ton voyage New Me !',
+      badgeFirstWeek: '🌿 Première semaine',
+      badgeFirstWeekDesc: '7 jours de transformation !',
+      badgePerfectDay: '✨ Journée parfaite',
+      badgePerfectDayDesc: 'Toutes les habitudes complétées en un jour !',
+      badgeWaterMaster: '💧 Maîtresse de l\'eau',
+      badgeWaterMasterDesc: '7 jours d\'eau à 2L complétés',
+      badgeWalkingStar: '🚶‍♀️ Star de la marche',
+      badgeWalkingStarDesc: '7 jours de marche 30 min complétés',
+      badgeSkincareQueen: '👑 Reine du skincare',
+      badgeSkincareQueenDesc: '7 jours de skincare complétés',
+      badgeTwoWeeks: '🌸 Deux semaines',
+      badgeTwoWeeksDesc: '14 jours de transformation !',
+      badgeComplete: '🦋 Transformation complète',
+      badgeCompleteDesc: '30 jours terminés ! Tu as brillé !',
       encouragement1: 'Chaque petit pas compte. Tu es sur la bonne voie ! 🦋',
       encouragement2: 'Tu rayonnes de plus en plus chaque jour ! ✨',
       encouragement3: 'Regarde tout ce chemin parcouru, tu es incroyable ! 💜',
@@ -847,7 +865,7 @@ export const translations: Record<Language, Translation> = {
       title: 'New Me',
       subtitle: 'Become your best version in 30 days',
       mascot: 'Glowee 🦋',
-      dailyTracking: 'Daily Tracking',
+      dailyTracking: 'Today',
       progress: 'Progress',
       completed: 'completed',
       todayFeeling: 'How do you feel today?',
@@ -858,17 +876,25 @@ export const translations: Record<Language, Translation> = {
       finalMessage: 'In 30 days, you don\'t change who you are. You become who you were meant to be. 🦋',
       day: 'Day',
       today: 'Today',
-      progressOn30Days: 'Progress over 30 days',
-      badges: 'Badges & Encouragements',
+      progressOn30Days: 'Progress',
+      badges: 'Badges',
       daysCompleted: 'days completed',
-      badge1Title: '🌟 First step',
-      badge1Desc: 'You started your journey! Glowee is proud of you.',
-      badge2Title: '✨ One week of glow',
-      badge2Desc: '7 days! You\'re taking care of yourself, keep it up.',
-      badge3Title: '💎 Visible transformation',
-      badge3Desc: '15 days! The changes are starting to show.',
-      badge4Title: '🦋 New Me achieved',
-      badge4Desc: '30 days! You\'ve become your best version.',
+      badgeFirstDay: '🌱 First day',
+      badgeFirstDayDesc: 'You started your New Me journey!',
+      badgeFirstWeek: '🌿 First week',
+      badgeFirstWeekDesc: '7 days of transformation!',
+      badgePerfectDay: '✨ Perfect day',
+      badgePerfectDayDesc: 'All habits completed in one day!',
+      badgeWaterMaster: '💧 Water master',
+      badgeWaterMasterDesc: '7 days of 2L water completed',
+      badgeWalkingStar: '🚶‍♀️ Walking star',
+      badgeWalkingStarDesc: '7 days of 30 min walk completed',
+      badgeSkincareQueen: '👑 Skincare queen',
+      badgeSkincareQueenDesc: '7 days of skincare completed',
+      badgeTwoWeeks: '🌸 Two weeks',
+      badgeTwoWeeksDesc: '14 days of transformation!',
+      badgeComplete: '🦋 Complete transformation',
+      badgeCompleteDesc: '30 days completed! You shined!',
       encouragement1: 'Every small step counts. You\'re on the right path! 🦋',
       encouragement2: 'You\'re glowing more and more each day! ✨',
       encouragement3: 'Look at all this progress, you\'re amazing! 💜',
@@ -1129,7 +1155,7 @@ export const translations: Record<Language, Translation> = {
       title: 'New Me',
       subtitle: 'Conviértete en tu mejor versión en 30 días',
       mascot: 'Glowee 🦋',
-      dailyTracking: 'Seguimiento diario',
+      dailyTracking: 'Hoy',
       progress: 'Progreso',
       completed: 'completadas',
       todayFeeling: '¿Cómo te sientes hoy?',
@@ -1140,17 +1166,25 @@ export const translations: Record<Language, Translation> = {
       finalMessage: 'En 30 días, no cambias quién eres. Te conviertes en quien estabas destinada a ser. 🦋',
       day: 'Día',
       today: 'Hoy',
-      progressOn30Days: 'Progreso en 30 días',
-      badges: 'Insignias y Ánimos',
+      progressOn30Days: 'Progreso',
+      badges: 'Insignias',
       daysCompleted: 'días completados',
-      badge1Title: '🌟 Primer paso',
-      badge1Desc: '¡Comenzaste tu viaje! Glowee está orgullosa de ti.',
-      badge2Title: '✨ Una semana brillando',
-      badge2Desc: '¡7 días! Te estás cuidando, sigue así.',
-      badge3Title: '💎 Transformación visible',
-      badge3Desc: '¡15 días! Los cambios empiezan a notarse.',
-      badge4Title: '🦋 New Me lograda',
-      badge4Desc: '¡30 días! Te has convertido en tu mejor versión.',
+      badgeFirstDay: '🌱 Primer día',
+      badgeFirstDayDesc: '¡Comenzaste tu viaje New Me!',
+      badgeFirstWeek: '🌿 Primera semana',
+      badgeFirstWeekDesc: '¡7 días de transformación!',
+      badgePerfectDay: '✨ Día perfecto',
+      badgePerfectDayDesc: '¡Todos los hábitos completados en un día!',
+      badgeWaterMaster: '💧 Maestra del agua',
+      badgeWaterMasterDesc: '7 días de 2L de agua completados',
+      badgeWalkingStar: '🚶‍♀️ Estrella caminante',
+      badgeWalkingStarDesc: '7 días de 30 min de caminata completados',
+      badgeSkincareQueen: '👑 Reina del skincare',
+      badgeSkincareQueenDesc: '7 días de skincare completados',
+      badgeTwoWeeks: '🌸 Dos semanas',
+      badgeTwoWeeksDesc: '¡14 días de transformación!',
+      badgeComplete: '🦋 Transformación completa',
+      badgeCompleteDesc: '¡30 días completados! ¡Brillaste!',
       encouragement1: 'Cada pequeño paso cuenta. ¡Estás en el camino correcto! 🦋',
       encouragement2: '¡Brillas más y más cada día! ✨',
       encouragement3: '¡Mira todo este progreso, eres increíble! 💜',

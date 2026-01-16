@@ -118,12 +118,20 @@ export default function GlowUpChallengeApp() {
   const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
   const [newMeStartDate, setNewMeStartDate] = useState<string | null>(null);
 
+  // États pour Tracker
+  const [trackerCurrentDay, setTrackerCurrentDay] = useState(1);
+  const [trackerStartDate, setTrackerStartDate] = useState<string | null>(null);
+  const [customHabits, setCustomHabits] = useState<Array<{id: string, label: string, type: 'good' | 'bad'}>>([]);
+  const [showAddHabit, setShowAddHabit] = useState(false);
+  const [newHabitLabel, setNewHabitLabel] = useState('');
+  const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
+
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Initialiser la date de début et calculer le jour actuel
+  // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
     if (isHydrated) {
       const storedStartDate = localStorage.getItem('newMeStartDate');
@@ -144,6 +152,40 @@ export default function GlowUpChallengeApp() {
       }
     }
   }, [isHydrated]);
+
+  // Initialiser la date de début et calculer le jour actuel pour Tracker
+  useEffect(() => {
+    if (isHydrated) {
+      const storedStartDate = localStorage.getItem('trackerStartDate');
+      const storedHabits = localStorage.getItem('customHabits');
+
+      if (!storedStartDate) {
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem('trackerStartDate', today);
+        setTrackerStartDate(today);
+        setTrackerCurrentDay(1);
+      } else {
+        setTrackerStartDate(storedStartDate);
+        const start = new Date(storedStartDate);
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - start.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const calculatedDay = Math.min(diffDays, 30);
+        setTrackerCurrentDay(calculatedDay);
+      }
+
+      if (storedHabits) {
+        setCustomHabits(JSON.parse(storedHabits));
+      }
+    }
+  }, [isHydrated]);
+
+  // Sauvegarder les habitudes personnalisées
+  useEffect(() => {
+    if (isHydrated && customHabits.length > 0) {
+      localStorage.setItem('customHabits', JSON.stringify(customHabits));
+    }
+  }, [customHabits, isHydrated]);
 
   useEffect(() => {
     if (hasStarted && isHydrated) {
@@ -948,9 +990,9 @@ export default function GlowUpChallengeApp() {
 
         {/* Trackers View */}
         {currentView === 'trackers' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Header */}
-            <div className="flex items-center gap-4">
+          <div className="pb-20">
+            {/* Header avec bouton retour */}
+            <div className="flex items-center gap-4 p-6 pb-0 max-w-lg mx-auto">
               <Button
                 variant="ghost"
                 size="icon"
@@ -961,139 +1003,406 @@ export default function GlowUpChallengeApp() {
               <h1 className="text-2xl font-bold">{t.trackers.title} Glow Up</h1>
             </div>
 
-            {/* Today's Trackers */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.trackers.today}</CardTitle>
-                <CardDescription>{new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Hydration */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Droplet className="w-5 h-5 text-blue-400" />
-                    <h3 className="font-semibold">{t.trackers.hydration}</h3>
-                    <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().waterGlasses} / 8 {t.trackers.glasses}</span>
+            {/* Sélecteur de jours - Scrollable horizontal sans barre */}
+            <div className="overflow-x-auto scrollbar-hide px-6 py-4">
+              <div className="flex gap-2 min-w-max">
+                {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
+                  const dayData = trackers.find(t => {
+                    if (!trackerStartDate) return false;
+                    const trackerDate = new Date(trackerStartDate);
+                    trackerDate.setDate(trackerDate.getDate() + (day - 1));
+                    return t.date === trackerDate.toISOString().split('T')[0];
+                  });
+                  const isCompleted = dayData?.completed || false;
+                  const completionPercentage = dayData ? Math.round(
+                    ((dayData.waterGlasses > 0 ? 1 : 0) +
+                    (dayData.sleepHours > 0 ? 1 : 0) +
+                    (dayData.mood > 0 ? 1 : 0) +
+                    (dayData.activityMinutes > 0 ? 1 : 0) +
+                    (dayData.skincareCompleted ? 1 : 0) +
+                    Object.values(dayData.habits).filter(Boolean).length) /
+                    (5 + Object.keys(dayData.habits).length) * 100
+                  ) : 0;
+
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setTrackerCurrentDay(day)}
+                      className={`flex-shrink-0 w-14 h-14 rounded-xl font-semibold transition-all relative ${
+                        trackerCurrentDay === day
+                          ? 'bg-[#FDC700] text-stone-900 shadow-lg scale-110'
+                          : theme === 'dark'
+                            ? 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      }`}
+                    >
+                      {day}
+                      {isCompleted && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#FDC700] rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-stone-900" />
+                        </div>
+                      )}
+                      {!isCompleted && completionPercentage > 0 && (
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#FDC700]">
+                          {completionPercentage}%
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Barre de progression */}
+            <div className={`mx-6 p-6 rounded-2xl shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold">
+                  {language === 'fr' ? `Bonjour, prête pour ton jour ${trackerCurrentDay} !` :
+                   language === 'en' ? `Hello, ready for day ${trackerCurrentDay}!` :
+                   `¡Hola, lista para el día ${trackerCurrentDay}!`}
+                </h2>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold">
+                    {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {trackerCurrentDay} / 30
+                  </span>
+                  <span className="text-stone-500">
+                    {(() => {
+                      const dayData = trackers.find(t => {
+                        if (!trackerStartDate) return false;
+                        const trackerDate = new Date(trackerStartDate);
+                        trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
+                        return t.date === trackerDate.toISOString().split('T')[0];
+                      });
+                      const completed = dayData ?
+                        (dayData.waterGlasses > 0 ? 1 : 0) +
+                        (dayData.sleepHours > 0 ? 1 : 0) +
+                        (dayData.mood > 0 ? 1 : 0) +
+                        (dayData.activityMinutes > 0 ? 1 : 0) +
+                        (dayData.skincareCompleted ? 1 : 0) +
+                        Object.values(dayData.habits).filter(Boolean).length : 0;
+                      const total = 5 + (dayData ? Object.keys(dayData.habits).length : 6) + customHabits.length;
+                      return `${completed} / ${total} ${language === 'fr' ? 'habitudes' : language === 'en' ? 'habits' : 'hábitos'}`;
+                    })()}
+                  </span>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">
+                      {language === 'fr' ? 'Progression du jour' : language === 'en' ? 'Day progress' : 'Progreso del día'}
+                    </span>
+                    <span className="text-2xl font-bold text-[#FDC700]">
+                      {(() => {
+                        const dayData = trackers.find(t => {
+                          if (!trackerStartDate) return false;
+                          const trackerDate = new Date(trackerStartDate);
+                          trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
+                          return t.date === trackerDate.toISOString().split('T')[0];
+                        });
+                        if (!dayData) return '0%';
+                        const completed =
+                          (dayData.waterGlasses > 0 ? 1 : 0) +
+                          (dayData.sleepHours > 0 ? 1 : 0) +
+                          (dayData.mood > 0 ? 1 : 0) +
+                          (dayData.activityMinutes > 0 ? 1 : 0) +
+                          (dayData.skincareCompleted ? 1 : 0) +
+                          Object.values(dayData.habits).filter(Boolean).length;
+                        const total = 5 + Object.keys(dayData.habits).length;
+                        return Math.round((completed / total) * 100) + '%';
+                      })()}
+                    </span>
                   </div>
-                  <div className="flex gap-2 flex-wrap">
-                    {[...Array(8)].map((_, i) => (
-                      <Button
-                        key={i}
-                        variant={i < getTodayTracker().waterGlasses ? 'default' : 'outline'}
-                        size="icon"
-                        className={`w-10 h-10 ${i < getTodayTracker().waterGlasses ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
-                        onClick={() => updateTodayTracker({ waterGlasses: i < getTodayTracker().waterGlasses ? i : i + 1 })}
-                      >
-                        💧
-                      </Button>
-                    ))}
+                  <div className="h-3 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#FDC700] transition-all duration-500 rounded-full"
+                      style={{
+                        width: (() => {
+                          const dayData = trackers.find(t => {
+                            if (!trackerStartDate) return false;
+                            const trackerDate = new Date(trackerStartDate);
+                            trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
+                            return t.date === trackerDate.toISOString().split('T')[0];
+                          });
+                          if (!dayData) return '0%';
+                          const completed =
+                            (dayData.waterGlasses > 0 ? 1 : 0) +
+                            (dayData.sleepHours > 0 ? 1 : 0) +
+                            (dayData.mood > 0 ? 1 : 0) +
+                            (dayData.activityMinutes > 0 ? 1 : 0) +
+                            (dayData.skincareCompleted ? 1 : 0) +
+                            Object.values(dayData.habits).filter(Boolean).length;
+                          const total = 5 + Object.keys(dayData.habits).length;
+                          return Math.round((completed / total) * 100) + '%';
+                        })()
+                      }}
+                    />
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Sleep */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Moon className="w-5 h-5 text-purple-400" />
-                    <h3 className="font-semibold">{t.trackers.sleep}</h3>
-                    <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().sleepHours}{t.trackers.hours}</span>
-                  </div>
-                  <Input
-                    type="number"
-                    step="0.5"
-                    min="0"
-                    max="12"
-                    placeholder={t.trackers.hoursPlaceholder}
-                    value={getTodayTracker().sleepHours || ''}
-                    onChange={(e) => updateTodayTracker({ sleepHours: parseFloat(e.target.value) || 0 })}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
+            {/* Contenu des trackers */}
+            <div className="p-6 space-y-6 max-w-lg mx-auto">
+              {/* Hydration */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Droplet className="w-5 h-5 text-blue-400" />
+                  <h3 className="font-semibold">{t.trackers.hydration}</h3>
+                  <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().waterGlasses} / 8 {t.trackers.glasses}</span>
                 </div>
+                <div className="flex gap-2 flex-wrap">
+                  {[...Array(8)].map((_, i) => (
+                    <Button
+                      key={i}
+                      variant={i < getTodayTracker().waterGlasses ? 'default' : 'outline'}
+                      size="icon"
+                      className={`w-10 h-10 ${i < getTodayTracker().waterGlasses ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
+                      onClick={() => updateTodayTracker({ waterGlasses: i < getTodayTracker().waterGlasses ? i : i + 1 })}
+                    >
+                      💧
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
-                {/* Mood */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Smile className="w-5 h-5 text-yellow-400" />
-                    <h3 className="font-semibold">Humeur</h3>
+              {/* Sleep - Nouveau design avec - 8 + ✓ */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Moon className="w-5 h-5 text-purple-400" />
+                  <h3 className="font-semibold">{t.trackers.sleep}</h3>
+                </div>
+                <div className="flex items-center gap-4 justify-center">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-12 h-12 rounded-full"
+                    onClick={() => updateTodayTracker({ sleepHours: Math.max(0, (getTodayTracker().sleepHours || 0) - 0.5) })}
+                  >
+                    -
+                  </Button>
+                  <div className="text-4xl font-bold min-w-[80px] text-center">
+                    {getTodayTracker().sleepHours || 0}<span className="text-2xl">h</span>
                   </div>
-                  <div className="flex gap-2 justify-between">
-                    {['😢', '😕', '😐', '🙂', '😄'].map((emoji, i) => (
-                      <Button
-                        key={i}
-                        variant={getTodayTracker().mood === i + 1 ? 'default' : 'outline'}
-                        size="icon"
-                        className={`w-12 h-12 text-2xl ${getTodayTracker().mood === i + 1 ? 'bg-yellow-500 hover:bg-yellow-600' : ''}`}
-                        onClick={() => updateTodayTracker({ mood: i + 1 })}
-                      >
-                        {emoji}
-                      </Button>
-                    ))}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-12 h-12 rounded-full"
+                    onClick={() => updateTodayTracker({ sleepHours: Math.min(12, (getTodayTracker().sleepHours || 0) + 0.5) })}
+                  >
+                    +
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="icon"
+                    className="w-12 h-12 rounded-full bg-[#FDC700] hover:bg-[#FDC700]/90 text-stone-900"
+                  >
+                    ✓
+                  </Button>
+                </div>
+              </div>
+
+              {/* Mood - Avec traduction correcte */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Smile className="w-5 h-5 text-yellow-400" />
+                  <h3 className="font-semibold">{t.trackers.mood}</h3>
+                </div>
+                <div className="flex gap-2 justify-between">
+                  {['😢', '😕', '😐', '🙂', '😄'].map((emoji, i) => (
+                    <Button
+                      key={i}
+                      variant={getTodayTracker().mood === i + 1 ? 'default' : 'outline'}
+                      size="icon"
+                      className={`w-12 h-12 text-2xl ${getTodayTracker().mood === i + 1 ? 'bg-yellow-500 hover:bg-yellow-600' : ''}`}
+                      onClick={() => updateTodayTracker({ mood: i + 1 })}
+                    >
+                      {emoji}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Activity */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-orange-400" />
+                  <h3 className="font-semibold">{t.trackers.activityMovement}</h3>
+                  <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().activityMinutes} {t.trackers.minutes}</span>
+                </div>
+                <Input
+                  type="number"
+                  min="0"
+                  max="180"
+                  placeholder={t.trackers.minutesPlaceholder}
+                  value={getTodayTracker().activityMinutes || ''}
+                  onChange={(e) => updateTodayTracker({ activityMinutes: parseInt(e.target.value) || 0 })}
+                  className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                />
+              </div>
+
+              {/* Skincare */}
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30">
+                <div className="flex items-center gap-3">
+                  <Activity className="w-5 h-5 text-rose-500" />
+                  <div>
+                    <h3 className="font-semibold">{t.trackers.skincareCompleted}</h3>
+                    <p className="text-xs text-stone-600 dark:text-stone-400">{t.trackers.todaysRoutine}</p>
                   </div>
                 </div>
+                <Switch
+                  checked={getTodayTracker().skincareCompleted}
+                  onCheckedChange={(checked) => updateTodayTracker({ skincareCompleted: checked })}
+                />
+              </div>
 
-                {/* Activity */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-orange-400" />
-                    <h3 className="font-semibold">{t.trackers.activityMovement}</h3>
-                    <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().activityMinutes} {t.trackers.minutes}</span>
-                  </div>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="180"
-                    placeholder={t.trackers.minutesPlaceholder}
-                    value={getTodayTracker().activityMinutes || ''}
-                    onChange={(e) => updateTodayTracker({ activityMinutes: parseInt(e.target.value) || 0 })}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Skincare */}
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30">
-                  <div className="flex items-center gap-3">
-                    <Activity className="w-5 h-5 text-rose-500" />
-                    <div>
-                      <h3 className="font-semibold">{t.trackers.skincareCompleted}</h3>
-                      <p className="text-xs text-stone-600 dark:text-stone-400">{t.trackers.todaysRoutine}</p>
+              {/* Habits */}
+              <div className="space-y-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Lightbulb className="w-5 h-5 text-green-400" />
+                  {t.trackers.dailyHabits}
+                </h3>
+                <div className="space-y-2">
+                  {[
+                    { key: 'meditation', label: t.trackers.meditation5min },
+                    { key: 'journaling', label: t.trackers.journaling },
+                    { key: 'gratitude', label: t.trackers.gratitude },
+                    { key: 'exercise', label: t.trackers.exercise },
+                    { key: 'reading', label: t.trackers.reading },
+                    { key: 'noScroll', label: t.trackers.noScrollBeforeSleep }
+                  ].map((habit) => (
+                    <div key={habit.key} className="flex items-center justify-between p-3 rounded-lg bg-stone-50 dark:bg-stone-800">
+                      <span className="text-sm">{habit.label}</span>
+                      <Switch
+                        checked={getTodayTracker().habits[habit.key] || false}
+                        onCheckedChange={(checked) =>
+                          updateTodayTracker({
+                            habits: { ...getTodayTracker().habits, [habit.key]: checked }
+                          })
+                        }
+                      />
                     </div>
-                  </div>
-                  <Switch
-                    checked={getTodayTracker().skincareCompleted}
-                    onCheckedChange={(checked) => updateTodayTracker({ skincareCompleted: checked })}
-                  />
-                </div>
+                  ))}
 
-                {/* Habits */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Lightbulb className="w-5 h-5 text-green-400" />
-                    {t.trackers.dailyHabits}
-                  </h3>
-                  <div className="space-y-2">
-                    {[
-                      { key: 'meditation', label: t.trackers.meditation5min },
-                      { key: 'journaling', label: t.trackers.journaling },
-                      { key: 'gratitude', label: t.trackers.gratitude },
-                      { key: 'exercise', label: t.trackers.exercise },
-                      { key: 'reading', label: t.trackers.reading },
-                      { key: 'noScroll', label: t.trackers.noScrollBeforeSleep }
-                    ].map((habit) => (
-                      <div key={habit.key} className="flex items-center justify-between p-3 rounded-lg bg-stone-50 dark:bg-stone-800">
+                  {/* Habitudes personnalisées */}
+                  {customHabits.map((habit) => (
+                    <div key={habit.id} className={`flex items-center justify-between p-3 rounded-lg ${
+                      habit.type === 'good'
+                        ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+                        : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                    }`}>
+                      <div className="flex items-center gap-2">
                         <span className="text-sm">{habit.label}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-white dark:bg-stone-800">
+                          {habit.type === 'good' ? '✨' : '⚠️'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <Switch
-                          checked={getTodayTracker().habits[habit.key] || false}
+                          checked={getTodayTracker().habits[habit.id] || false}
                           onCheckedChange={(checked) =>
                             updateTodayTracker({
-                              habits: { ...getTodayTracker().habits, [habit.key]: checked }
+                              habits: { ...getTodayTracker().habits, [habit.id]: checked }
                             })
                           }
                         />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="w-8 h-8"
+                          onClick={() => setCustomHabits(customHabits.filter(h => h.id !== habit.id))}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
                       </div>
-                    ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bouton ajouter une habitude */}
+              {!showAddHabit ? (
+                <Button
+                  variant="outline"
+                  className="w-full border-dashed border-2"
+                  onClick={() => setShowAddHabit(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Ajouter une habitude' : language === 'en' ? 'Add a habit' : 'Agregar un hábito'}
+                </Button>
+              ) : (
+                <div className={`p-4 rounded-xl border-2 border-dashed ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-300'}`}>
+                  <div className="space-y-3">
+                    <Input
+                      placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
+                      value={newHabitLabel}
+                      onChange={(e) => setNewHabitLabel(e.target.value)}
+                      className={theme === 'dark' ? 'bg-stone-900 border-stone-700' : 'bg-white'}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        variant={newHabitType === 'good' ? 'default' : 'outline'}
+                        className={`flex-1 ${newHabitType === 'good' ? 'bg-green-500 hover:bg-green-600' : ''}`}
+                        onClick={() => setNewHabitType('good')}
+                      >
+                        ✨ {language === 'fr' ? 'Bonne' : language === 'en' ? 'Good' : 'Buena'}
+                      </Button>
+                      <Button
+                        variant={newHabitType === 'bad' ? 'default' : 'outline'}
+                        className={`flex-1 ${newHabitType === 'bad' ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                        onClick={() => setNewHabitType('bad')}
+                      >
+                        ⚠️ {language === 'fr' ? 'Mauvaise' : language === 'en' ? 'Bad' : 'Mala'}
+                      </Button>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="default"
+                        className="flex-1 bg-[#FDC700] hover:bg-[#FDC700]/90 text-stone-900"
+                        onClick={() => {
+                          if (newHabitLabel.trim()) {
+                            setCustomHabits([...customHabits, {
+                              id: `custom_${Date.now()}`,
+                              label: newHabitLabel,
+                              type: newHabitType
+                            }]);
+                            setNewHabitLabel('');
+                            setShowAddHabit(false);
+                          }
+                        }}
+                      >
+                        {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowAddHabit(false);
+                          setNewHabitLabel('');
+                        }}
+                      >
+                        {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
+
+            {/* Bouton sticky en bas - J'ai complété ce jour */}
+            <div className={`fixed bottom-20 left-0 right-0 p-4 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-amber-50/95'} backdrop-blur-sm`}>
+              <div className="max-w-lg mx-auto">
+                <Button
+                  className="w-full h-14 text-lg font-semibold bg-[#FDC700] hover:bg-[#FDC700]/90 text-stone-900 shadow-lg"
+                  onClick={() => {
+                    const currentDate = trackerStartDate ?
+                      new Date(new Date(trackerStartDate).getTime() + (trackerCurrentDay - 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0] :
+                      new Date().toISOString().split('T')[0];
+                    updateTodayTracker({ completed: true, date: currentDate });
+                  }}
+                >
+                  {getTodayTracker().completed ? '✓ ' : ''}
+                  {language === 'fr' ? 'J\'ai complété ce jour' : language === 'en' ? 'I completed this day' : 'Completé este día'}
+                </Button>
+              </div>
+            </div>
           </div>
         )}
 

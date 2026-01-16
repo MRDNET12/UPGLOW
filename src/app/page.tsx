@@ -1221,24 +1221,6 @@ export default function GlowUpChallengeApp() {
                 </div>
               </div>
 
-              {/* Activity */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-orange-400" />
-                  <h3 className="font-semibold">{t.trackers.activityMovement}</h3>
-                  <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().activityMinutes} {t.trackers.minutes}</span>
-                </div>
-                <Input
-                  type="number"
-                  min="0"
-                  max="180"
-                  placeholder={t.trackers.minutesPlaceholder}
-                  value={getTodayTracker().activityMinutes || ''}
-                  onChange={(e) => updateTodayTracker({ activityMinutes: parseInt(e.target.value) || 0 })}
-                  className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                />
-              </div>
-
               {/* Skincare */}
               <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30">
                 <div className="flex items-center gap-3">
@@ -1384,24 +1366,6 @@ export default function GlowUpChallengeApp() {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Bouton sticky en bas - J'ai complété ce jour */}
-            <div className={`fixed bottom-20 left-0 right-0 p-4 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-amber-50/95'} backdrop-blur-sm`}>
-              <div className="max-w-lg mx-auto">
-                <Button
-                  className="w-full h-14 text-lg font-semibold bg-[#FDC700] hover:bg-[#FDC700]/90 text-stone-900 shadow-lg"
-                  onClick={() => {
-                    const currentDate = trackerStartDate ?
-                      new Date(new Date(trackerStartDate).getTime() + (trackerCurrentDay - 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0] :
-                      new Date().toISOString().split('T')[0];
-                    updateTodayTracker({ completed: true, date: currentDate });
-                  }}
-                >
-                  {getTodayTracker().completed ? '✓ ' : ''}
-                  {language === 'fr' ? 'J\'ai complété ce jour' : language === 'en' ? 'I completed this day' : 'Completé este día'}
-                </Button>
-              </div>
             </div>
           </div>
         )}
@@ -1608,8 +1572,46 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
+            {/* Sélecteur de jours - Scrollable horizontal sans barre */}
+            <div className="overflow-x-auto scrollbar-hide px-6 py-4">
+              <div className="flex gap-2 min-w-max">
+                {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
+                  const isCompleted = newMeProgress[day] && Object.values(newMeProgress[day]).filter(Boolean).length === 13;
+                  const completionPercentage = newMeProgress[day]
+                    ? Math.round((Object.values(newMeProgress[day]).filter(Boolean).length / 13) * 100)
+                    : 0;
+
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setNewMeCurrentDay(day)}
+                      className={`flex-shrink-0 w-14 h-14 rounded-xl font-semibold transition-all relative ${
+                        newMeCurrentDay === day
+                          ? 'bg-[#FDC700] text-stone-900 shadow-lg scale-110'
+                          : theme === 'dark'
+                            ? 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      }`}
+                    >
+                      {day}
+                      {isCompleted && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#FDC700] rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-stone-900" />
+                        </div>
+                      )}
+                      {!isCompleted && completionPercentage > 0 && (
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#FDC700]">
+                          {completionPercentage}%
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Navigation Tabs - Scrollable Design with Yellow */}
-            <div className="p-6 pb-0">
+            <div className="p-6 pb-0 pt-0">
               <div className="flex gap-2 max-w-lg mx-auto">
                 <button
                   onClick={() => setNewMeActiveTab('daily')}

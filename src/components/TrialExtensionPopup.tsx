@@ -43,13 +43,13 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
       registerUser();
       markTrialPopupSeen();
 
-      // Afficher un message de succès
-      alert('🎉 Félicitations ! Tu as débloqué 3 jours supplémentaires gratuits !');
-      onClose();
+      // Rediriger vers Stripe avec 3 jours d'essai gratuit
+      // TODO: Remplacer par votre lien Stripe avec trial period de 3 jours
+      const stripeUrlWithTrial = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
+      window.location.href = stripeUrlWithTrial;
     } catch (error: any) {
       console.error('Registration error:', error);
       setError(error.message || 'Une erreur est survenue. Réessaie plus tard.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -97,13 +97,13 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
               Hey ! C'est Glowee 💫
             </h2>
             <p className={`text-base leading-relaxed ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}>
-              Je vois que tu apprécies ton parcours de transformation ! 🌟
+              Ton essai gratuit touche à sa fin... mais j'ai une super offre pour toi ! 🌟
             </p>
             <p className={`text-base leading-relaxed ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}>
-              Bonne nouvelle : <span className="font-bold text-rose-500">inscris-toi maintenant</span> et je t'offre <span className="font-bold text-rose-500">3 jours supplémentaires gratuits</span> pour continuer ton glow up ! ✨
+              <span className="font-bold text-rose-500">Inscris-toi maintenant</span> et profite de <span className="font-bold text-rose-500">3 jours supplémentaires gratuits</span> avant que ton abonnement ne démarre ! ✨
             </p>
             <p className={`text-sm ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-              C'est pour ton bien, je suis là pour toi ! 💖
+              Seulement 6,99€/mois après l'essai. Annule quand tu veux ! 💖
             </p>
           </div>
 
@@ -152,11 +152,11 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
               className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold py-6 text-lg"
             >
               {isLoading ? (
-                'Inscription en cours...'
+                'Redirection vers le paiement...'
               ) : (
                 <>
                   <Sparkles className="w-5 h-5 mr-2" />
-                  Débloquer 3 jours gratuits
+                  S'inscrire et obtenir 3 jours gratuits
                 </>
               )}
             </Button>

@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStore } from '@/lib/store';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function PaymentConfirmation() {
   const router = useRouter();
   const { user, userData, updateUserPaidStatus } = useAuth();
+  const { subscribe } = useStore();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState('');
 
@@ -25,6 +27,12 @@ export default function PaymentConfirmation() {
 
         // Mettre à jour hasPaid dans Firestore
         await updateUserPaidStatus();
+
+        // Activer l'abonnement dans le store local
+        // L'abonnement Stripe est actif (avec ou sans trial)
+        const endDate = new Date();
+        endDate.setFullYear(endDate.getFullYear() + 1); // 1 an dans le futur
+        subscribe(endDate.toISOString().split('T')[0]);
 
         // Attendre encore un peu pour montrer le succès
         await new Promise(resolve => setTimeout(resolve, 1500));

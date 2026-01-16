@@ -36,6 +36,7 @@ import { BoundariesTracker } from '@/components/BoundariesTracker';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
+import { MyGoals } from '@/components/goals/MyGoals';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -781,12 +782,16 @@ export default function GlowUpChallengeApp() {
 
               <Card
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
-                onClick={() => setCurrentView('vision-board')}
+                onClick={() => setCurrentView('my-goals')}
               >
                 <CardContent className="p-4 text-center">
-                  <ImageIcon className="w-8 h-8 mx-auto mb-2 text-pink-400" />
-                  <h3 className="font-semibold text-sm">{t.visionBoard.title}</h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-500">{visionBoardImages.length} {t.visionBoard.images}</p>
+                  <Target className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                  <h3 className="font-semibold text-sm">
+                    {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
+                  </h3>
+                  <p className="text-xs text-stone-500 dark:text-stone-500">
+                    {language === 'fr' ? 'Atteins tes rêves' : language === 'en' ? 'Achieve your dreams' : 'Alcanza tus sueños'}
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -1848,6 +1853,13 @@ export default function GlowUpChallengeApp() {
                 {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
               </Button>
             </div>
+          </div>
+        )}
+
+        {/* My Goals View */}
+        {currentView === 'my-goals' && (
+          <div className="p-6 space-y-6 max-w-lg mx-auto">
+            <MyGoals />
           </div>
         )}
 

@@ -767,6 +767,10 @@ export const useStore = create<AppState>()(
 
       canAccessApp: () => {
         const { subscription } = get();
+        // L'utilisateur peut accéder si :
+        // 1. Il est abonné (isSubscribed)
+        // 2. Il a des jours gratuits restants
+        // Note: Le statut hasPaid de Firebase sera vérifié par le composant ProtectedRoute
         return subscription.isSubscribed || get().getRemainingFreeDays() > 0;
       },
 

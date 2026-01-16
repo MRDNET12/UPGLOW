@@ -5,6 +5,8 @@ import { X, Sparkles, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useStore } from '@/lib/store';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TrialExtensionPopupProps {
   isOpen: boolean;
@@ -16,30 +18,38 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const { registerUser, markTrialPopupSeen } = useStore();
+  const { signUp } = useAuth();
 
   const handleRegister = async () => {
     if (!email || !password) {
-      alert('Veuillez remplir tous les champs');
+      setError('Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
     setIsLoading(true);
-    
+    setError('');
+
     try {
-      // TODO: Intégrer Firebase Authentication ici
-      // Pour l'instant, on simule l'inscription
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Créer le compte Firebase
+      await signUp(email, password);
+
+      // Mettre à jour le store local
       registerUser();
       markTrialPopupSeen();
-      
+
       // Afficher un message de succès
       alert('🎉 Félicitations ! Tu as débloqué 3 jours supplémentaires gratuits !');
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      alert('Une erreur est survenue. Réessaie plus tard.');
+      setError(error.message || 'Une erreur est survenue. Réessaie plus tard.');
     } finally {
       setIsLoading(false);
     }
@@ -100,6 +110,12 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
 
           {/* Registration Form */}
           <div className="space-y-4">
+            {error && (
+              <div className="p-3 rounded-lg bg-red-100 border border-red-300 text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-2">
               <div className="relative">
                 <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${theme === 'dark' ? 'text-stone-500' : 'text-stone-400'}`} />
@@ -109,8 +125,8 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={`pl-10 ${
-                    theme === 'dark' 
-                      ? 'bg-stone-800 border-stone-700 text-stone-100 placeholder:text-stone-500' 
+                    theme === 'dark'
+                      ? 'bg-stone-800 border-stone-700 text-stone-100 placeholder:text-stone-500'
                       : 'bg-stone-50 border-stone-200 text-stone-900 placeholder:text-stone-400'
                   }`}
                 />
@@ -119,12 +135,12 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
                 <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${theme === 'dark' ? 'text-stone-500' : 'text-stone-400'}`} />
                 <Input
                   type="password"
-                  placeholder="Mot de passe"
+                  placeholder="Mot de passe (min. 6 caractères)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className={`pl-10 ${
-                    theme === 'dark' 
-                      ? 'bg-stone-800 border-stone-700 text-stone-100 placeholder:text-stone-500' 
+                    theme === 'dark'
+                      ? 'bg-stone-800 border-stone-700 text-stone-100 placeholder:text-stone-500'
                       : 'bg-stone-50 border-stone-200 text-stone-900 placeholder:text-stone-400'
                   }`}
                 />

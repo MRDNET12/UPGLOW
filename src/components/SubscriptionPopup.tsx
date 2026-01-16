@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { X, Sparkles, Check, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/lib/store';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SubscriptionPopupProps {
   isOpen: boolean;
@@ -14,30 +15,19 @@ interface SubscriptionPopupProps {
 export function SubscriptionPopup({ isOpen, onClose, theme = 'light' }: SubscriptionPopupProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { subscribe } = useStore();
+  const { user } = useAuth();
 
-  const handleSubscribe = async () => {
-    setIsLoading(true);
-    
-    try {
-      // TODO: Intégrer Stripe ou autre système de paiement ici
-      // Pour l'instant, on simule l'abonnement
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Calculer la date de fin d'abonnement (1 mois)
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 1);
-      const endDateString = endDate.toISOString().split('T')[0];
-      
-      subscribe(endDateString);
-      
-      alert('🎉 Bienvenue dans la communauté UPGLOW Premium !');
-      onClose();
-    } catch (error) {
-      console.error('Subscription error:', error);
-      alert('Une erreur est survenue. Réessaie plus tard.');
-    } finally {
-      setIsLoading(false);
+  const handleSubscribe = () => {
+    if (!user || !user.email) {
+      alert('Vous devez être connecté pour vous abonner');
+      return;
     }
+
+    // Créer le lien Stripe avec l'email de l'utilisateur
+    const stripeUrl = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00?prefilled_email=${encodeURIComponent(user.email)}`;
+
+    // Rediriger vers Stripe
+    window.location.href = stripeUrl;
   };
 
   if (!isOpen) return null;

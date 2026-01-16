@@ -286,6 +286,14 @@ export interface Translation {
     progressOn30Days: string;
     badges: string;
     daysCompleted: string;
+    // Messages dynamiques
+    helloReady: string; // "Bonjour, prête pour ton jour X !"
+    dayProgress: string; // "Progression du jour"
+    the13Pillars: string; // "Les 13 piliers"
+    completedDay: string; // "Jour X complété !"
+    completeThisDay: string; // "J'ai complété ce jour"
+      trackingShort: string; // "Suivi" (version courte pour mobile)
+      progressShort: string; // "Progrès" (version courte pour mobile)
     // Badges
     badgeFirstDay: string;
     badgeFirstDayDesc: string;
@@ -600,6 +608,13 @@ export const translations: Record<Language, Translation> = {
       progressOn30Days: 'Progression',
       badges: 'Badges',
       daysCompleted: 'jours complétés',
+      helloReady: 'Bonjour, prête pour ton jour',
+      dayProgress: 'Progression du jour',
+      the13Pillars: 'Les 13 piliers',
+      completedDay: 'Jour {day} complété !',
+      completeThisDay: 'J\'ai complété ce jour',
+      trackingShort: 'Suivi',
+      progressShort: 'Progrès',
       badgeFirstDay: '🌱 Premier jour',
       badgeFirstDayDesc: 'Tu as commencé ton voyage New Me !',
       badgeFirstWeek: '🌿 Première semaine',
@@ -895,6 +910,13 @@ export const translations: Record<Language, Translation> = {
       progressOn30Days: 'Progress',
       badges: 'Badges',
       daysCompleted: 'days completed',
+      helloReady: 'Hello, ready for day',
+      dayProgress: 'Day progress',
+      the13Pillars: 'The 13 pillars',
+      completedDay: 'Day {day} completed!',
+      completeThisDay: 'I completed this day',
+      trackingShort: 'Track',
+      progressShort: 'Progress',
       badgeFirstDay: '🌱 First day',
       badgeFirstDayDesc: 'You started your New Me journey!',
       badgeFirstWeek: '🌿 First week',
@@ -1190,6 +1212,13 @@ export const translations: Record<Language, Translation> = {
       progressOn30Days: 'Progreso',
       badges: 'Insignias',
       daysCompleted: 'días completados',
+      helloReady: 'Hola, ¿lista para el día',
+      dayProgress: 'Progreso del día',
+      the13Pillars: 'Los 13 pilares',
+      completedDay: '¡Día {day} completado!',
+      completeThisDay: 'Completé este día',
+      trackingShort: 'Seguir',
+      progressShort: 'Progreso',
       badgeFirstDay: '🌱 Primer día',
       badgeFirstDayDesc: '¡Comenzaste tu viaje New Me!',
       badgeFirstWeek: '🌿 Primera semana',

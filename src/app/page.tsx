@@ -2090,7 +2090,7 @@ export default function GlowUpChallengeApp() {
                   <div className="flex items-center gap-1 justify-center">
                     <CheckSquare className="w-3 h-3" />
                     <span className="hidden sm:inline">{t.newMe.dailyTracking}</span>
-                    <span className="sm:hidden">Suivi</span>
+                    <span className="sm:hidden">{t.newMe.trackingShort}</span>
                   </div>
                 </button>
                 <button
@@ -2106,7 +2106,7 @@ export default function GlowUpChallengeApp() {
                   <div className="flex items-center gap-1 justify-center">
                     <TrendingUp className="w-3 h-3" />
                     <span className="hidden sm:inline">{t.newMe.progressOn30Days}</span>
-                    <span className="sm:hidden">Progrès</span>
+                    <span className="sm:hidden">{t.newMe.progressShort}</span>
                   </div>
                 </button>
                 <button
@@ -2137,7 +2137,7 @@ export default function GlowUpChallengeApp() {
                     <CardContent className="p-4 space-y-3">
                       {/* Message de bienvenue */}
                       <p className="text-base font-semibold text-rose-400">
-                        Bonjour, prête pour ton jour {newMeCurrentDay} !
+                        {t.newMe.helloReady} {newMeCurrentDay} !
                       </p>
 
                       {/* Stats */}
@@ -2153,7 +2153,7 @@ export default function GlowUpChallengeApp() {
                       {/* Progression */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Progression du jour</span>
+                          <span className="text-sm font-medium">{t.newMe.dayProgress}</span>
                           <span className="text-lg font-bold text-rose-400">
                             {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
                           </span>
@@ -2171,7 +2171,7 @@ export default function GlowUpChallengeApp() {
                   {/* Liste des 13 habitudes pour le jour sélectionné */}
                   <div className="space-y-3">
                     <h2 className="text-lg font-bold">
-                      Les 13 piliers
+                      {t.newMe.the13Pillars}
                     </h2>
                     {newMePillars.map((habit) => {
                       const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
@@ -2258,12 +2258,12 @@ export default function GlowUpChallengeApp() {
                       {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13 ? (
                         <>
                           <Check className="w-5 h-5 mr-2" />
-                          Jour {newMeCurrentDay} complété !
+                          {t.newMe.completedDay.replace('{day}', newMeCurrentDay.toString())}
                         </>
                       ) : (
                         <>
                           <Sparkles className="w-5 h-5 mr-2" />
-                          J'ai complété ce jour
+                          {t.newMe.completeThisDay}
                         </>
                       )}
                     </Button>

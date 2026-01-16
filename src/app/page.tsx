@@ -33,6 +33,9 @@ import AppLoader from '@/components/AppLoader';
 import { SmallWins } from '@/components/SmallWins';
 import { EveningQuestion } from '@/components/EveningQuestion';
 import { BoundariesTracker } from '@/components/BoundariesTracker';
+import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
+import { SubscriptionPopup } from '@/components/SubscriptionPopup';
+import { TrialBadge } from '@/components/TrialBadge';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -81,7 +84,13 @@ export default function GlowUpChallengeApp() {
     toggleChecklistCompleted,
     toggleMiniGuideStep,
     getWeeklyBonusProgress,
-    getSectionWeeklyCompletion
+    getSectionWeeklyCompletion,
+    // Subscription & Trial
+    subscription,
+    initializeFirstOpen,
+    getRemainingFreeDays,
+    isTrialExpired,
+    canAccessApp
   } = useStore();
 
   const { t } = useTranslation();
@@ -99,6 +108,10 @@ export default function GlowUpChallengeApp() {
 
   // État pour le popup Glowee Chat
   const [showGloweeChat, setShowGloweeChat] = useState(false);
+
+  // États pour les popups de paywall
+  const [showTrialExtension, setShowTrialExtension] = useState(false);
+  const [showSubscription, setShowSubscription] = useState(false);
 
   const [todayDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [newJournalEntry, setNewJournalEntry] = useState({
@@ -171,6 +184,29 @@ export default function GlowUpChallengeApp() {
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // Initialiser la première ouverture de l'app et gérer le paywall
+  useEffect(() => {
+    if (isHydrated) {
+      // Initialiser la date de première ouverture
+      initializeFirstOpen();
+
+      // Vérifier si on doit afficher le popup d'extension de trial (jour 4)
+      const remainingDays = getRemainingFreeDays();
+      const hasExpired = isTrialExpired();
+
+      // Si c'est le 4ème jour (remainingDays === 0 pour les 3 premiers jours)
+      // et que l'utilisateur n'est pas inscrit et n'a pas vu le popup
+      if (remainingDays === 0 && !subscription.hasRegistered && !subscription.hasSeenTrialPopup) {
+        setShowTrialExtension(true);
+      }
+
+      // Si la période d'essai est expirée et pas d'abonnement
+      if (hasExpired && !subscription.isSubscribed) {
+        setShowSubscription(true);
+      }
+    }
+  }, [isHydrated, initializeFirstOpen, getRemainingFreeDays, isTrialExpired, subscription]);
 
   // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
@@ -633,13 +669,17 @@ export default function GlowUpChallengeApp() {
         {currentView === 'dashboard' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
             {/* Header */}
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-3">
               <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
                 {t.dashboard.welcome} ✨
               </h1>
               <p className={`text-stone-600 dark:text-stone-400 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
                 {t.dashboard.continueYourChallenge}
               </p>
+              {/* Trial Badge */}
+              <div className="flex justify-center pt-2">
+                <TrialBadge theme={theme} />
+              </div>
             </div>
 
             {/* Progress Card */}
@@ -3518,6 +3558,20 @@ export default function GlowUpChallengeApp() {
       <GloweeChatPopup
         isOpen={showGloweeChat}
         onClose={() => setShowGloweeChat(false)}
+        theme={theme}
+      />
+
+      {/* Trial Extension Popup - 3 jours supplémentaires */}
+      <TrialExtensionPopup
+        isOpen={showTrialExtension}
+        onClose={() => setShowTrialExtension(false)}
+        theme={theme}
+      />
+
+      {/* Subscription Popup - Abonnement 6.99€/mois */}
+      <SubscriptionPopup
+        isOpen={showSubscription}
+        onClose={() => setShowSubscription(false)}
         theme={theme}
       />
     </div>

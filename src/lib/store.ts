@@ -89,6 +89,16 @@ interface BonusProgress {
   boundaryEntries: BoundaryEntry[]; // Entrées de limites
 }
 
+// Subscription & Trial
+interface SubscriptionState {
+  firstOpenDate: string | null; // Date de première ouverture de l'app (YYYY-MM-DD)
+  hasRegistered: boolean; // L'utilisateur s'est-il inscrit pour les 3 jours bonus ?
+  registrationDate: string | null; // Date d'inscription (YYYY-MM-DD)
+  isSubscribed: boolean; // L'utilisateur a-t-il un abonnement actif ?
+  subscriptionEndDate: string | null; // Date de fin d'abonnement (YYYY-MM-DD)
+  hasSeenTrialPopup: boolean; // L'utilisateur a-t-il vu le popup des 3 jours bonus ?
+}
+
 interface AppState {
   // Navigation
   currentView: View;
@@ -172,6 +182,17 @@ interface AppState {
 
   // Progress Calculation
   getProgressPercentage: () => number;
+
+  // Subscription & Trial
+  subscription: SubscriptionState;
+  initializeFirstOpen: () => void;
+  registerUser: () => void;
+  subscribe: (endDate: string) => void;
+  unsubscribe: () => void;
+  getRemainingFreeDays: () => number;
+  isTrialExpired: () => boolean;
+  canAccessApp: () => boolean;
+  markTrialPopupSeen: () => void;
 }
 
 // Helper function to get week number
@@ -646,11 +667,122 @@ export const useStore = create<AppState>()(
       getProgressPercentage: () => {
         const { completedDays } = get().challengeProgress;
         return Math.round((completedDays.length / 30) * 100);
+      },
+
+      // Subscription & Trial
+      subscription: {
+        firstOpenDate: null,
+        hasRegistered: false,
+        registrationDate: null,
+        isSubscribed: false,
+        subscriptionEndDate: null,
+        hasSeenTrialPopup: false
+      },
+
+      initializeFirstOpen: () => {
+        const { subscription } = get();
+        if (!subscription.firstOpenDate) {
+          const today = new Date().toISOString().split('T')[0];
+          set({
+            subscription: {
+              ...subscription,
+              firstOpenDate: today
+            }
+          });
+        }
+      },
+
+      registerUser: () => {
+        const { subscription } = get();
+        const today = new Date().toISOString().split('T')[0];
+        set({
+          subscription: {
+            ...subscription,
+            hasRegistered: true,
+            registrationDate: today
+          }
+        });
+      },
+
+      subscribe: (endDate: string) => {
+        const { subscription } = get();
+        set({
+          subscription: {
+            ...subscription,
+            isSubscribed: true,
+            subscriptionEndDate: endDate
+          }
+        });
+      },
+
+      unsubscribe: () => {
+        const { subscription } = get();
+        set({
+          subscription: {
+            ...subscription,
+            isSubscribed: false,
+            subscriptionEndDate: null
+          }
+        });
+      },
+
+      getRemainingFreeDays: () => {
+        const { subscription } = get();
+        const today = new Date();
+
+        if (subscription.isSubscribed) {
+          return Infinity; // Abonné = accès illimité
+        }
+
+        if (!subscription.firstOpenDate) {
+          return 3; // Pas encore ouvert l'app
+        }
+
+        const firstOpen = new Date(subscription.firstOpenDate);
+        const daysSinceFirstOpen = Math.floor((today.getTime() - firstOpen.getTime()) / (1000 * 60 * 60 * 24));
+
+        // 3 jours gratuits initiaux
+        let remainingDays = 3 - daysSinceFirstOpen;
+
+        // Si inscrit, ajouter 3 jours supplémentaires
+        if (subscription.hasRegistered && subscription.registrationDate) {
+          const registration = new Date(subscription.registrationDate);
+          const daysSinceRegistration = Math.floor((today.getTime() - registration.getTime()) / (1000 * 60 * 60 * 24));
+          remainingDays = Math.max(remainingDays, 3 - daysSinceRegistration);
+
+          // Si on est dans les 3 premiers jours ET inscrit, on a 6 jours au total
+          if (daysSinceFirstOpen < 3) {
+            remainingDays = 6 - daysSinceFirstOpen;
+          } else {
+            remainingDays = 3 - daysSinceRegistration;
+          }
+        }
+
+        return Math.max(0, remainingDays);
+      },
+
+      isTrialExpired: () => {
+        return get().getRemainingFreeDays() === 0;
+      },
+
+      canAccessApp: () => {
+        const { subscription } = get();
+        return subscription.isSubscribed || get().getRemainingFreeDays() > 0;
+      },
+
+      markTrialPopupSeen: () => {
+        const { subscription } = get();
+        set({
+          subscription: {
+            ...subscription,
+            hasSeenTrialPopup: true
+          }
+        });
       }
     }),
     {
       name: 'glow-up-storage',
-      version: 2,
+      version: 3,
       migrate: (persistedState: any, version: number) => {
         // Migration from version 1 to 2: add completedActions if missing
         if (version < 2) {
@@ -661,6 +793,19 @@ export const useStore = create<AppState>()(
             persistedState.bonusProgress.smallWins = [];
             persistedState.bonusProgress.eveningQuestions = [];
             persistedState.bonusProgress.boundaryEntries = [];
+          }
+        }
+        // Migration from version 2 to 3: add subscription state
+        if (version < 3) {
+          if (!persistedState.subscription) {
+            persistedState.subscription = {
+              firstOpenDate: null,
+              hasRegistered: false,
+              registrationDate: null,
+              isSubscribed: false,
+              subscriptionEndDate: null,
+              hasSeenTrialPopup: false
+            };
           }
         }
         return persistedState;

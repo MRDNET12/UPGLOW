@@ -559,7 +559,7 @@ export default function GlowUpChallengeApp() {
           {/* Glowee Image */}
           <div className="flex justify-center animate-in zoom-in duration-500">
             <img
-              src="/glowee/glowee-acceuillante.webp"
+              src="/Glowee/glowee-acceuillante.webp"
               alt="Glowee"
               className="w-64 h-64 object-contain"
             />
@@ -595,7 +595,7 @@ export default function GlowUpChallengeApp() {
           {/* Glowee Image */}
           <div className="flex justify-center animate-in zoom-in duration-500">
             <img
-              src="/glowee/glowee-acceuillante.webp"
+              src="/Glowee/glowee-acceuillante.webp"
               alt="Glowee"
               className="w-64 h-64 object-contain"
             />
@@ -2805,7 +2805,7 @@ export default function GlowUpChallengeApp() {
           >
             <div className="relative">
               <img
-                src="/glowee/glowee-acceuillante.webp"
+                src="/Glowee/glowee-acceuillante.webp"
                 alt="Glowee"
                 className="w-6 h-6 object-contain"
               />

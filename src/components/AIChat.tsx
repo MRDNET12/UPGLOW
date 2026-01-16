@@ -110,7 +110,7 @@ export function AIChat({
       }`}>
         <div className="flex items-center gap-3">
           <img
-            src="/glowee/glowee-acceuillante.webp"
+            src="/Glowee/glowee-acceuillante.webp"
             alt="Glowee"
             className="w-10 h-10 object-contain"
           />
@@ -156,7 +156,7 @@ export function AIChat({
               {message.role === 'assistant' && (
                 <div className="flex-shrink-0">
                   <img
-                    src="/glowee/glowee-repond.webp"
+                    src="/Glowee/glowee-repond.webp"
                     alt="Glowee"
                     className="w-8 h-8 object-contain"
                   />
@@ -181,7 +181,7 @@ export function AIChat({
             <div className="flex gap-3 justify-start">
               <div className="flex-shrink-0">
                 <img
-                  src="/glowee/glowee-reflechir.webp"
+                  src="/Glowee/glowee-reflechir.webp"
                   alt="Glowee"
                   className="w-8 h-8 object-contain"
                 />

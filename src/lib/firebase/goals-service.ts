@@ -12,7 +12,7 @@ import {
   limit,
   Timestamp 
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db } from '@/lib/firebase';
 import type { 
   Goal, 
   EnergyLog, 

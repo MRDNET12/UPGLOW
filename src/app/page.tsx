@@ -25,6 +25,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AIChat } from '@/components/AIChat';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import InstallPrompt from '@/components/InstallPrompt';
 import AppLoader from '@/components/AppLoader';
@@ -1089,6 +1090,19 @@ export default function GlowUpChallengeApp() {
                 ))
               )}
             </div>
+          </div>
+        )}
+
+        {/* Glowee Chat View */}
+        {currentView === 'glowee-chat' && (
+          <div className="h-screen flex flex-col pb-16">
+            <AIChat
+              theme={theme}
+              systemPrompt="Tu es Glowee, une assistante IA bienveillante et encourageante. Tu aides les utilisateurs dans leur parcours de développement personnel avec empathie et positivité. Tu réponds toujours dans la langue de l'utilisateur."
+              placeholder="Parle-moi de ce qui te préoccupe..."
+              maxHeight="calc(100vh - 200px)"
+              onClose={() => setCurrentView('dashboard')}
+            />
           </div>
         )}
 
@@ -2786,11 +2800,17 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'journal' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('journal')}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'glowee-chat' ? 'text-rose-500' : ''}`}
+            onClick={() => setCurrentView('glowee-chat')}
           >
-            <BookOpen className="w-6 h-6" />
-            <span className="text-xs">{t.nav.journal}</span>
+            <div className="relative">
+              <img
+                src="/glowee/Glowee acceuillante.webp"
+                alt="Glowee"
+                className="w-6 h-6 object-contain"
+              />
+            </div>
+            <span className="text-xs">{t.nav.glowee}</span>
           </Button>
           <Button
             variant="ghost"

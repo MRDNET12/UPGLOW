@@ -6,6 +6,7 @@ export interface Translation {
     home: string;
     challenge: string;
     journal: string;
+    glowee: string;
     trackers: string;
     routine: string;
     visionBoard: string;
@@ -331,6 +332,7 @@ export const translations: Record<Language, Translation> = {
       home: 'Accueil',
       challenge: 'Challenge',
       journal: 'Journal',
+      glowee: 'Glowee',
       trackers: 'Trackers',
       routine: 'Routine',
       visionBoard: 'Vision Board',
@@ -625,6 +627,7 @@ export const translations: Record<Language, Translation> = {
       home: 'Home',
       challenge: 'Challenge',
       journal: 'Journal',
+      glowee: 'Glowee',
       trackers: 'Trackers',
       routine: 'Routine',
       visionBoard: 'Vision Board',
@@ -919,6 +922,7 @@ export const translations: Record<Language, Translation> = {
       home: 'Inicio',
       challenge: 'Desafío',
       journal: 'Diario',
+      glowee: 'Glowee',
       trackers: 'Rastreadores',
       routine: 'Rutina',
       visionBoard: 'Tablero de Visión',

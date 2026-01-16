@@ -16,6 +16,7 @@ interface Goal {
   deadline: string;
   progress: number;
   createdAt: string;
+  tasks?: Task[];
 }
 
 interface EnergyLog {
@@ -23,7 +24,18 @@ interface EnergyLog {
   timestamp: string;
 }
 
-export function MyGoals() {
+interface Task {
+  day: string;
+  task: string;
+  priority: 'high' | 'medium' | 'low';
+  category: string;
+}
+
+interface MyGoalsProps {
+  onAddGloweeTasks?: (tasks: Task[]) => void;
+}
+
+export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [showCreateGoal, setShowCreateGoal] = useState(false);
@@ -288,6 +300,7 @@ export function MyGoals() {
         isOpen={showCreateGoal}
         onClose={() => setShowCreateGoal(false)}
         onSuccess={handleGoalCreated}
+        onAddGloweeTasks={onAddGloweeTasks}
       />
     </div>
   );
@@ -375,17 +388,21 @@ function EnergyCheckInModal({
 function CreateGoalModal({
   isOpen,
   onClose,
-  onSuccess
+  onSuccess,
+  onAddGloweeTasks
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (goal: Goal) => void;
+  onAddGloweeTasks?: (tasks: Task[]) => void;
 }) {
   const [step, setStep] = useState(1);
   const [goalType, setGoalType] = useState<'financial' | 'project' | 'personal'>('personal');
   const [goalName, setGoalName] = useState('');
   const [goalDescription, setGoalDescription] = useState('');
   const [goalDeadline, setGoalDeadline] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analyzedTasks, setAnalyzedTasks] = useState<Task[]>([]);
 
   const resetForm = () => {
     setStep(1);
@@ -393,11 +410,48 @@ function CreateGoalModal({
     setGoalName('');
     setGoalDescription('');
     setGoalDeadline('');
+    setIsAnalyzing(false);
+    setAnalyzedTasks([]);
   };
 
   const handleClose = () => {
     resetForm();
     onClose();
+  };
+
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true);
+    setStep(4); // Nouvelle étape pour l'analyse
+
+    try {
+      const response = await fetch('/api/goals/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          goal: {
+            name: goalName,
+            type: goalType,
+            description: goalDescription,
+            deadline: goalDeadline,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze goal');
+      }
+
+      const data = await response.json();
+      setAnalyzedTasks(data.tasks || []);
+    } catch (error) {
+      console.error('Error analyzing goal:', error);
+      alert('Erreur lors de l\'analyse. Réessaye plus tard.');
+      setStep(3);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -408,8 +462,14 @@ function CreateGoalModal({
       description: goalDescription,
       deadline: goalDeadline,
       progress: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      tasks: analyzedTasks,
     };
+
+    // Ajouter les tâches dans Glowee tâches du Planning
+    if (onAddGloweeTasks && analyzedTasks.length > 0) {
+      onAddGloweeTasks(analyzedTasks);
+    }
 
     onSuccess(newGoal);
     resetForm();
@@ -426,7 +486,7 @@ function CreateGoalModal({
             Créer un Objectif
           </DialogTitle>
           <DialogDescription>
-            Étape {step}/3 - Glowee Work va t'aider à l'atteindre ! 🎯
+            {step <= 3 ? `Étape ${step}/3` : 'Analyse Glowee Work'} - Glowee Work va t'aider à l'atteindre ! 🎯
           </DialogDescription>
         </DialogHeader>
 
@@ -553,6 +613,7 @@ function CreateGoalModal({
                   value={goalDeadline}
                   onChange={(e) => setGoalDeadline(e.target.value)}
                   className="w-full"
+                  min={new Date().toISOString().split('T')[0]}
                 />
               </div>
 
@@ -575,14 +636,93 @@ function CreateGoalModal({
                   Retour
                 </Button>
                 <Button
-                  onClick={handleSubmit}
+                  onClick={handleAnalyze}
                   disabled={!goalDeadline}
                   className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Créer l'objectif
+                  Analyser avec Glowee
                 </Button>
               </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-4">
+              {isAnalyzing ? (
+                <div className="text-center py-8">
+                  <div className="flex justify-center mb-4">
+                    <img
+                      src="/glowee/glowee-happy.webp"
+                      alt="Glowee"
+                      className="w-24 h-24 object-contain animate-pulse"
+                    />
+                  </div>
+                  <h3 className="font-semibold text-stone-900 mb-2">
+                    Glowee Work analyse ton objectif...
+                  </h3>
+                  <p className="text-sm text-stone-600">
+                    Elle crée un plan d'action personnalisé pour toi ! ✨
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-gradient-to-br from-rose-50 to-orange-50 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <Sparkles className="w-5 h-5 text-rose-400 mt-1" />
+                      <div className="text-sm text-stone-700">
+                        <p className="font-semibold mb-1">Plan d'action créé ! 🎉</p>
+                        <p>Glowee a généré {analyzedTasks.length} tâches pour t'aider à atteindre ton objectif.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="max-h-64 overflow-y-auto space-y-2">
+                    {analyzedTasks.map((task, index) => (
+                      <div
+                        key={index}
+                        className="bg-white rounded-lg p-3 border border-stone-200"
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className={`w-2 h-2 rounded-full mt-1.5 ${
+                            task.priority === 'high' ? 'bg-rose-400' :
+                            task.priority === 'medium' ? 'bg-orange-300' :
+                            'bg-stone-300'
+                          }`} />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-stone-900">{task.task}</div>
+                            <div className="text-xs text-stone-500 mt-1">
+                              {task.day === 'monday' ? 'Lundi' :
+                               task.day === 'tuesday' ? 'Mardi' :
+                               task.day === 'wednesday' ? 'Mercredi' :
+                               task.day === 'thursday' ? 'Jeudi' :
+                               task.day === 'friday' ? 'Vendredi' :
+                               task.day === 'saturday' ? 'Samedi' : 'Dimanche'} • {task.category}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setStep(3)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Retour
+                    </Button>
+                    <Button
+                      onClick={handleSubmit}
+                      className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Créer l'objectif
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

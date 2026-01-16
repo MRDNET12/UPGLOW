@@ -132,61 +132,58 @@ La section **Mes Objectifs** permet aux utilisateurs de créer et suivre jusqu'�
 - Interface avec slider visuel
 - Historique des 5 derniers logs
 
-✅ **Création d'objectif en 3 étapes**
+✅ **Création d'objectif en 4 étapes**
 - Sélection du type
 - Saisie des détails
 - Définition de la deadline
+- Analyse automatique avec Grok API
+
+✅ **Analyse et découpage automatique (Grok API)**
+- Analyse de l'objectif selon le type
+- Génération de 7-14 tâches concrètes
+- Répartition sur les 7 jours de la semaine
+- Priorisation et catégorisation
+
+✅ **Intégration avec Planning**
+- Ajout automatique dans "Glowee tâches"
+- Redirection vers Planning après création
+- Message de confirmation
 
 ✅ **Affichage des objectifs**
 - Liste des 3 objectifs actifs
 - Barre de progression
 - Icônes par type
+- Tâches associées
 
 ✅ **Stockage localStorage**
 - Persistance des objectifs
 - Persistance des logs d'énergie
+- Persistance des tâches générées
 
 ---
 
 ## 🔜 Fonctionnalités à implémenter
 
-### 1. Analyse et découpage automatique (Grok API)
-```typescript
-// Appel API pour analyser l'objectif
-const response = await fetch('/api/goals/analyze', {
-  method: 'POST',
-  body: JSON.stringify({
-    goal: {
-      name: goalName,
-      type: goalType,
-      description: goalDescription,
-      deadline: goalDeadline
-    }
-  })
-});
-
-const { tasks } = await response.json();
-// tasks = [
-//   { day: 'monday', task: 'Rechercher des opportunités', priority: 'high' },
-//   { day: 'tuesday', task: 'Créer un budget', priority: 'high' },
-//   ...
-// ]
-```
-
-### 2. Intégration avec Planning
-- Ajouter les tâches dans `weeklyTasks` du store
-- Afficher dans l'onglet "Glowee tâches"
-- Permettre la modification/suppression
-
-### 3. Suivi de progression
+### 1. Suivi de progression automatique
 - Calculer automatiquement le % de progression
-- Mettre à jour quand les tâches sont complétées
+- Mettre à jour quand les tâches sont complétées dans Planning
+- Synchroniser entre Mes Objectifs et Planning
 - Afficher des statistiques
 
-### 4. Détails de l'objectif
+### 2. Détails de l'objectif
 - Vue détaillée avec toutes les tâches
 - Timeline de progression
 - Historique des modifications
+- Bouton "Voir détails" fonctionnel
+
+### 3. Bouton Planning dans la carte objectif
+- Rediriger vers Planning avec filtre sur les tâches de cet objectif
+- Afficher uniquement les tâches liées à l'objectif
+
+### 4. Amélioration de l'analyse IA
+- Adapter les tâches selon le niveau d'énergie
+- Proposer des alternatives si énergie basse
+- Ajuster la charge de travail selon la deadline
 
 ---
 
@@ -195,13 +192,15 @@ const { tasks } = await response.json();
 1. ✅ Créer le composant MyGoals sans auth
 2. ✅ Implémenter le check-in d'énergie
 3. ✅ Créer le formulaire de création d'objectif
-4. ⏳ Implémenter l'analyse Grok API
-5. ⏳ Intégrer avec le Planning (Glowee tâches)
+4. ✅ Implémenter l'analyse Grok API
+5. ✅ Intégrer avec le Planning (Glowee tâches)
 6. ⏳ Ajouter le suivi de progression automatique
+7. ⏳ Créer la vue détaillée de l'objectif
+8. ⏳ Synchroniser progression avec Planning
 
 ---
 
-**Date** : 2026-01-16  
-**Version** : 1.0.0  
-**Status** : 🚧 En développement
+**Date** : 2026-01-16
+**Version** : 2.0.0
+**Status** : ✅ Fonctionnel (analyse IA + intégration Planning)
 

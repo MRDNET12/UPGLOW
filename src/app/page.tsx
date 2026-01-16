@@ -1861,7 +1861,41 @@ export default function GlowUpChallengeApp() {
         {/* My Goals View */}
         {currentView === 'my-goals' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
-            <MyGoals />
+            <MyGoals
+              onAddGloweeTasks={(tasks: Array<{day: string, task: string, priority: string, category: string}>) => {
+                // Convertir les tâches de l'API en format du Planning
+                const updatedTasks = { ...gloweeWeeklyTasks };
+
+                tasks.forEach(task => {
+                  const newTask = {
+                    id: `glowee_${Date.now()}_${Math.random()}`,
+                    text: task.task,
+                    completed: false
+                  };
+
+                  if (updatedTasks[task.day as keyof typeof updatedTasks]) {
+                    updatedTasks[task.day as keyof typeof updatedTasks] = [
+                      ...updatedTasks[task.day as keyof typeof updatedTasks],
+                      newTask
+                    ];
+                  }
+                });
+
+                setGloweeWeeklyTasks(updatedTasks);
+
+                // Afficher un message de confirmation
+                alert(language === 'fr'
+                  ? `${tasks.length} tâches ajoutées dans Glowee tâches ! 🎉`
+                  : language === 'en'
+                  ? `${tasks.length} tasks added to Glowee tasks! 🎉`
+                  : `¡${tasks.length} tareas añadidas a Tareas Glowee! 🎉`
+                );
+
+                // Rediriger vers Planning
+                setCurrentView('routine');
+                setPlanningTab('glowee-tasks');
+              }}
+            />
           </div>
         )}
 

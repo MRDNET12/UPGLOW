@@ -1314,29 +1314,25 @@ export default function GlowUpChallengeApp() {
               {/* Skincare */}
               <button
                 onClick={() => updateTodayTracker({ skincareCompleted: !getTodayTracker().skincareCompleted })}
-                className={`flex items-center justify-between p-4 rounded-xl transition-all ${
-                  getTodayTracker().skincareCompleted
-                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300'
-                    : 'bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30'
-                }`}
+                className={`flex items-center justify-between p-4 rounded-xl transition-all bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30`}
               >
                 <div className="flex items-center gap-3">
-                  <Activity className={`w-5 h-5 ${getTodayTracker().skincareCompleted ? 'text-white' : 'text-rose-500'}`} />
+                  <Activity className="w-5 h-5 text-rose-500" />
                   <div className="text-left">
-                    <h3 className={`font-semibold ${getTodayTracker().skincareCompleted ? 'text-white' : ''}`}>
+                    <h3 className={`font-semibold ${getTodayTracker().skincareCompleted ? 'line-through' : ''}`}>
                       {t.trackers.skincareCompleted}
                     </h3>
-                    <p className={`text-xs ${getTodayTracker().skincareCompleted ? 'text-white/90' : 'text-stone-600 dark:text-stone-400'}`}>
+                    <p className="text-xs text-stone-600 dark:text-stone-400">
                       {t.trackers.todaysRoutine}
                     </p>
                   </div>
                 </div>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                   getTodayTracker().skincareCompleted
-                    ? 'bg-white border-white'
+                    ? 'bg-rose-400 border-rose-400'
                     : 'border-rose-300 dark:border-rose-700'
                 }`}>
-                  {getTodayTracker().skincareCompleted && <Check className="w-4 h-4 text-rose-400" />}
+                  {getTodayTracker().skincareCompleted && <Check className="w-4 h-4 text-white" />}
                 </div>
               </button>
 
@@ -1364,19 +1360,15 @@ export default function GlowUpChallengeApp() {
                             habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
                           })
                         }
-                        className={`flex items-center justify-between p-3 rounded-lg w-full transition-all ${
-                          isCompleted
-                            ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300'
-                            : 'bg-stone-50 dark:bg-stone-800'
-                        }`}
+                        className="flex items-center justify-between p-3 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
                       >
-                        <span className={`text-sm ${isCompleted ? 'text-white font-semibold' : ''}`}>{habit.label}</span>
+                        <span className={`text-sm ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                           isCompleted
-                            ? 'bg-white border-white'
+                            ? 'bg-rose-400 border-rose-400'
                             : 'border-stone-300 dark:border-stone-600'
                         }`}>
-                          {isCompleted && <Check className="w-4 h-4 text-rose-400" />}
+                          {isCompleted && <Check className="w-4 h-4 text-white" />}
                         </div>
                       </button>
                     );
@@ -1712,16 +1704,18 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Bouton Ajouter une tâche - Non sticky, plus petit */}
-            <div className="px-6 pb-6 max-w-lg mx-auto">
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-                onClick={() => setShowAddTask(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
-              </Button>
+            {/* Bouton Ajouter une tâche - Sticky en bas et centré */}
+            <div className={`fixed bottom-20 left-0 right-0 p-4 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-stone-50/95'} backdrop-blur-sm`}>
+              <div className="max-w-lg mx-auto flex justify-center">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                  onClick={() => setShowAddTask(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -2004,11 +1998,7 @@ export default function GlowUpChallengeApp() {
                         <Card
                           key={habit.id}
                           className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
-                            isChecked
-                              ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300'
-                              : theme === 'dark'
-                                ? 'bg-stone-900'
-                                : 'bg-white'
+                            theme === 'dark' ? 'bg-stone-900' : 'bg-white'
                           }`}
                           onClick={() => {
                             // Clic sur la carte = valider l'habitude
@@ -2021,34 +2011,31 @@ export default function GlowUpChallengeApp() {
                             }));
                           }}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex items-start gap-3">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                          <CardContent className="p-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center">
                                 {isChecked ? (
-                                  <Check className="w-6 h-6 text-white" />
+                                  <div className="w-6 h-6 rounded-full bg-rose-400 flex items-center justify-center">
+                                    <Check className="w-4 h-4 text-white" />
+                                  </div>
                                 ) : (
                                   <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
                                 )}
                               </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-2xl">{habit.icon}</span>
-                                  <h3 className={`font-semibold text-sm ${isChecked ? 'text-white' : ''}`}>{habit.title}</h3>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xl">{habit.icon}</span>
+                                  <h3 className={`font-semibold text-sm ${isChecked ? 'line-through' : ''}`}>{habit.title}</h3>
                                 </div>
-                                <p className={`text-xs ${isChecked ? 'text-white/90' : 'text-stone-600 dark:text-stone-400'}`}>
-                                  {habit.shortDescription}
-                                </p>
                               </div>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setSelectedHabit(habit);
                                 }}
-                                className={`flex-shrink-0 p-2 rounded-full transition-colors ${
-                                  isChecked ? 'hover:bg-white/20' : 'hover:bg-stone-200 dark:hover:bg-stone-700'
-                                }`}
+                                className="flex-shrink-0 p-1.5 rounded-full transition-colors hover:bg-stone-200 dark:hover:bg-stone-700"
                               >
-                                <ChevronRight className={`w-5 h-5 ${isChecked ? 'text-white' : 'text-stone-400'}`} />
+                                <ChevronRight className="w-4 h-4 text-stone-400" />
                               </button>
                             </div>
                           </CardContent>
@@ -3139,8 +3126,8 @@ export default function GlowUpChallengeApp() {
 
       {/* Drawer Ajouter une tâche */}
       <Drawer open={showAddTask} onOpenChange={setShowAddTask}>
-        <DrawerContent className="max-w-lg mx-auto">
-          <DrawerHeader className="border-b">
+        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col">
+          <DrawerHeader className="border-b flex-shrink-0">
             <DrawerTitle className="text-xl">
               {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
             </DrawerTitle>
@@ -3148,7 +3135,7 @@ export default function GlowUpChallengeApp() {
               {language === 'fr' ? 'Planifiez votre semaine efficacement' : language === 'en' ? 'Plan your week efficiently' : 'Planifica tu semana eficientemente'}
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-6 space-y-6">
+          <div className="p-6 space-y-6 overflow-y-auto flex-1">
             {/* Champ de texte pour la tâche */}
             <div className="space-y-2">
               <label className="text-sm font-semibold">
@@ -3204,7 +3191,7 @@ export default function GlowUpChallengeApp() {
                 <p className="text-xs font-semibold text-stone-500 dark:text-stone-400">
                   {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Próximos días'}
                 </p>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {(() => {
                     const today = new Date();
                     const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
@@ -3228,7 +3215,7 @@ export default function GlowUpChallengeApp() {
                       <button
                         key={day.key}
                         onClick={() => setNewTaskDestination(day.key as any)}
-                        className={`p-3 rounded-xl text-sm font-semibold transition-all ${
+                        className={`p-2.5 rounded-xl text-xs font-semibold transition-all ${
                           newTaskDestination === day.key
                             ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                             : theme === 'dark'
@@ -3236,31 +3223,29 @@ export default function GlowUpChallengeApp() {
                               : 'bg-stone-100 hover:bg-stone-200'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                               newTaskDestination === day.key
                                 ? 'border-white bg-white'
                                 : 'border-stone-400'
                             }`}>
-                              {newTaskDestination === day.key && <Check className="w-2.5 h-2.5 text-rose-400" />}
+                              {newTaskDestination === day.key && <Check className="w-2 h-2 text-rose-400" />}
                             </div>
-                            <div className="text-left">
-                              <div className="flex items-center gap-2">
-                                <span className="capitalize">{day.dayLabel}</span>
-                                {day.isToday && (
-                                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${
-                                    newTaskDestination === day.key ? 'border-white text-white' : 'border-rose-400 text-rose-400'
-                                  }`}>
-                                    {language === 'fr' ? "Aujourd'hui" : language === 'en' ? 'Today' : 'Hoy'}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
+                            <span className="capitalize text-left flex-1">{day.dayLabel}</span>
                           </div>
-                          <span className={`text-xs ${newTaskDestination === day.key ? 'opacity-90' : 'opacity-70'}`}>
-                            {day.dateLabel}
-                          </span>
+                          <div className="flex items-center justify-between pl-5">
+                            <span className={`text-[10px] ${newTaskDestination === day.key ? 'opacity-90' : 'opacity-70'}`}>
+                              {day.dateLabel}
+                            </span>
+                            {day.isToday && (
+                              <Badge variant="outline" className={`text-[9px] px-1 py-0 ${
+                                newTaskDestination === day.key ? 'border-white text-white' : 'border-rose-400 text-rose-400'
+                              }`}>
+                                {language === 'fr' ? "Auj." : language === 'en' ? 'Today' : 'Hoy'}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                       </button>
                     ));

@@ -1299,9 +1299,9 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Navigation Tabs - Improved Design with Yellow */}
-            <div className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-white/95'} backdrop-blur-sm shadow-sm`}>
-              <div className="flex gap-2 p-2 max-w-lg mx-auto">
+            {/* Navigation Tabs - Scrollable Design with Yellow */}
+            <div className="p-6 pb-0">
+              <div className="flex gap-2 max-w-lg mx-auto">
                 <button
                   onClick={() => setNewMeActiveTab('daily')}
                   className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
@@ -1355,51 +1355,40 @@ export default function GlowUpChallengeApp() {
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Scroll horizontal des jours - Taille réduite */}
-                  <div className="overflow-x-auto scrollbar-hide -mx-6 px-6">
-                    <div className="flex gap-2 pb-2">
-                      {Array.from({ length: 30 }, (_, i) => {
-                        const day = i + 1;
-                        const isToday = day === newMeCurrentDay;
-                        const dayProgress = newMeProgress[day] || {};
-                        const completedCount = Object.values(dayProgress).filter(Boolean).length;
-                        const isFullyCompleted = completedCount === 13;
+                  {/* Barre de progression en haut */}
+                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                    <CardContent className="p-4 space-y-3">
+                      {/* Message de bienvenue */}
+                      <p className="text-base font-semibold text-[#FDC700]">
+                        Bonjour, prête pour ton jour {newMeCurrentDay} !
+                      </p>
 
-                        return (
-                          <button
-                            key={day}
-                            data-day={day}
-                            onClick={() => setNewMeCurrentDay(day)}
-                            className={`relative flex-shrink-0 w-12 h-14 rounded-lg flex flex-col items-center justify-center transition-all ${
-                              isToday
-                                ? theme === 'dark'
-                                  ? 'bg-[#FDC700] text-stone-900 ring-2 ring-[#FDC700]/50 shadow-lg shadow-[#FDC700]/30'
-                                  : 'bg-[#FDC700] text-stone-900 ring-2 ring-[#FDC700]/50 shadow-lg shadow-[#FDC700]/30'
-                                : isFullyCompleted
-                                  ? theme === 'dark'
-                                    ? 'bg-[#FDC700]/30 text-[#FDC700]'
-                                    : 'bg-[#FDC700]/20 text-[#FDC700]'
-                                  : completedCount > 0
-                                    ? theme === 'dark'
-                                      ? 'bg-stone-800 text-stone-300'
-                                      : 'bg-stone-200 text-stone-700'
-                                    : theme === 'dark'
-                                      ? 'bg-stone-900 text-stone-500'
-                                      : 'bg-white text-stone-600'
-                            }`}
-                          >
-                            <span className="text-[10px] font-medium">{t.newMe.day}</span>
-                            <span className="text-lg font-bold">{day}</span>
-                            {isFullyCompleted && (
-                              <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#FDC700] rounded-full flex items-center justify-center shadow-md">
-                                <Check className="w-3 h-3 text-stone-900" />
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                      {/* Stats */}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium">
+                          {t.newMe.day} {newMeCurrentDay} / 30
+                        </span>
+                        <span className="font-medium">
+                          {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length} / 13 {t.newMe.habits}
+                        </span>
+                      </div>
+
+                      {/* Progression */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Progression du jour</span>
+                          <span className="text-lg font-bold text-[#FDC700]">
+                            {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={(Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100}
+                          className="h-3 bg-stone-200 dark:bg-stone-800"
+                          indicatorColor="#FDC700"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   {/* Liste des 13 habitudes pour le jour sélectionné */}
                   <div className="space-y-3">

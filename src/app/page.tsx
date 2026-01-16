@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AIChat } from '@/components/AIChat';
+import { GloweeChatPopup } from '@/components/GloweeChatPopup';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import InstallPrompt from '@/components/InstallPrompt';
 import AppLoader from '@/components/AppLoader';
@@ -95,6 +96,9 @@ export default function GlowUpChallengeApp() {
 
   // État pour le dialog de félicitations
   const [showCongratulations, setShowCongratulations] = useState(false);
+
+  // État pour le popup Glowee Chat
+  const [showGloweeChat, setShowGloweeChat] = useState(false);
 
   const [todayDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [newJournalEntry, setNewJournalEntry] = useState({
@@ -2800,14 +2804,14 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'glowee-chat' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('glowee-chat')}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${showGloweeChat ? 'text-rose-500' : ''}`}
+            onClick={() => setShowGloweeChat(true)}
           >
             <div className="relative">
               <img
-                src="/Glowee/glowee-acceuillante.webp"
+                src="/Glowee/glowee-nav-bar.webp"
                 alt="Glowee"
-                className="w-6 h-6 object-contain"
+                className="w-8 h-8 object-contain"
               />
             </div>
             <span className="text-xs">{t.nav.glowee}</span>
@@ -3509,6 +3513,13 @@ export default function GlowUpChallengeApp() {
 
       {/* PWA Install Prompt */}
       <InstallPrompt />
+
+      {/* Glowee Chat Popup */}
+      <GloweeChatPopup
+        isOpen={showGloweeChat}
+        onClose={() => setShowGloweeChat(false)}
+        theme={theme}
+      />
     </div>
   );
 }

@@ -1232,6 +1232,16 @@ export default function GlowUpChallengeApp() {
 
             {/* Contenu des trackers */}
             <div className="p-6 space-y-6 max-w-lg mx-auto">
+              {/* Jour et Date */}
+              <div className="text-center pb-4 border-b border-stone-200 dark:border-stone-800">
+                <h2 className="text-2xl font-bold text-rose-400">
+                  {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long' })}
+                </h2>
+                <p className="text-sm text-stone-600 dark:text-stone-400 mt-1">
+                  {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+              </div>
+
               {/* Hydration */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -1343,14 +1353,9 @@ export default function GlowUpChallengeApp() {
                   {t.trackers.dailyHabits}
                 </h3>
                 <div className="space-y-2">
-                  {[
-                    { key: 'meditation', label: t.trackers.meditation5min },
-                    { key: 'journaling', label: t.trackers.journaling },
-                    { key: 'gratitude', label: t.trackers.gratitude },
-                    { key: 'exercise', label: t.trackers.exercise },
-                    { key: 'reading', label: t.trackers.reading },
-                    { key: 'noScroll', label: t.trackers.noScrollBeforeSleep }
-                  ].map((habit) => {
+                  {/* Médite sur dieu - pleine largeur */}
+                  {(() => {
+                    const habit = { key: 'meditation', label: t.trackers.meditation5min };
                     const isCompleted = getTodayTracker().habits[habit.key] || false;
                     return (
                       <button
@@ -1372,18 +1377,74 @@ export default function GlowUpChallengeApp() {
                         </div>
                       </button>
                     );
-                  })}
+                  })()}
+
+                  {/* Journaling, Gratitude, Exercice, Lecture - 2 par ligne */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { key: 'journaling', label: t.trackers.journaling },
+                      { key: 'gratitude', label: t.trackers.gratitude },
+                      { key: 'exercise', label: t.trackers.exercise },
+                      { key: 'reading', label: t.trackers.reading }
+                    ].map((habit) => {
+                      const isCompleted = getTodayTracker().habits[habit.key] || false;
+                      return (
+                        <button
+                          key={habit.key}
+                          onClick={() =>
+                            updateTodayTracker({
+                              habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
+                            })
+                          }
+                          className="flex flex-col items-center justify-center p-2.5 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
+                        >
+                          <span className={`text-xs text-center ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-1.5 ${
+                            isCompleted
+                              ? 'bg-rose-400 border-rose-400'
+                              : 'border-stone-300 dark:border-stone-600'
+                          }`}>
+                            {isCompleted && <Check className="w-3 h-3 text-white" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Pas de scroll - pleine largeur */}
+                  {(() => {
+                    const habit = { key: 'noScroll', label: t.trackers.noScrollBeforeSleep };
+                    const isCompleted = getTodayTracker().habits[habit.key] || false;
+                    return (
+                      <button
+                        key={habit.key}
+                        onClick={() =>
+                          updateTodayTracker({
+                            habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
+                          })
+                        }
+                        className="flex items-center justify-between p-3 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
+                      >
+                        <span className={`text-sm ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                          isCompleted
+                            ? 'bg-rose-400 border-rose-400'
+                            : 'border-stone-300 dark:border-stone-600'
+                        }`}>
+                          {isCompleted && <Check className="w-4 h-4 text-white" />}
+                        </div>
+                      </button>
+                    );
+                  })()}
 
                   {/* Habitudes personnalisées */}
                   {customHabits.map((habit) => {
                     const isCompleted = getTodayTracker().habits[habit.id] || false;
                     return (
                       <div key={habit.id} className={`flex items-center justify-between p-3 rounded-lg ${
-                        isCompleted
-                          ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300'
-                          : habit.type === 'good'
-                            ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                            : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                        habit.type === 'good'
+                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+                          : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
                       }`}>
                         <button
                           onClick={() =>
@@ -1393,8 +1454,8 @@ export default function GlowUpChallengeApp() {
                           }
                           className="flex items-center gap-2 flex-1"
                         >
-                          <span className={`text-sm ${isCompleted ? 'text-white font-semibold' : ''}`}>{habit.label}</span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${isCompleted ? 'bg-white/20' : 'bg-white dark:bg-stone-800'}`}>
+                          <span className={`text-sm ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-white dark:bg-stone-800">
                             {habit.type === 'good' ? '✨' : '⚠️'}
                           </span>
                         </button>
@@ -1407,11 +1468,11 @@ export default function GlowUpChallengeApp() {
                             }
                             className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                               isCompleted
-                                ? 'bg-white border-white'
+                                ? 'bg-green-500 border-green-500'
                                 : 'border-stone-300 dark:border-stone-600'
                             }`}
                           >
-                            {isCompleted && <Check className="w-4 h-4 text-rose-400" />}
+                            {isCompleted && <Check className="w-4 h-4 text-white" />}
                           </button>
                           <Button
                             variant="ghost"
@@ -1704,18 +1765,16 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Bouton Ajouter une tâche - Sticky en bas et centré */}
-            <div className={`fixed bottom-20 left-0 right-0 p-4 ${theme === 'dark' ? 'bg-stone-950/95' : 'bg-stone-50/95'} backdrop-blur-sm`}>
-              <div className="max-w-lg mx-auto flex justify-center">
-                <Button
-                  size="sm"
-                  className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-                  onClick={() => setShowAddTask(true)}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
-                </Button>
-              </div>
+            {/* Bouton Ajouter une tâche */}
+            <div className="px-6 pb-6 max-w-lg mx-auto">
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                onClick={() => setShowAddTask(true)}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
+              </Button>
             </div>
           </div>
         )}
@@ -1835,21 +1894,22 @@ export default function GlowUpChallengeApp() {
         {currentView === 'new-me' && (
           <div className="pb-24">
             {/* Header */}
-            <div className="p-6 pb-0">
-              <div className="flex items-center gap-4 mb-6">
+            <div className="p-4 pb-0">
+              <div className="flex items-center gap-3 mb-3">
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="w-8 h-8"
                   onClick={() => setCurrentView('dashboard')}
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </Button>
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold flex items-center gap-2">
-                    <span className="text-3xl">🦋</span>
+                  <h1 className="text-lg font-bold flex items-center gap-2">
+                    <span className="text-xl">🦋</span>
                     {t.newMe.title}
                   </h1>
-                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                  <p className="text-xs text-stone-600 dark:text-stone-400">
                     {t.newMe.subtitle}
                   </p>
                 </div>
@@ -1857,8 +1917,8 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Sélecteur de jours - Scrollable horizontal sans barre */}
-            <div className="overflow-x-auto scrollbar-hide px-6 py-4">
-              <div className="flex gap-2 min-w-max">
+            <div className="overflow-x-auto scrollbar-hide px-4 py-2">
+              <div className="flex gap-1.5 min-w-max">
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
                   const isCompleted = newMeProgress[day] && Object.values(newMeProgress[day]).filter(Boolean).length === 13;
                   const completionPercentage = newMeProgress[day]
@@ -1869,9 +1929,9 @@ export default function GlowUpChallengeApp() {
                     <button
                       key={day}
                       onClick={() => setNewMeCurrentDay(day)}
-                      className={`flex-shrink-0 w-14 h-14 rounded-xl font-semibold transition-all relative ${
+                      className={`flex-shrink-0 w-11 h-11 rounded-lg text-sm font-semibold transition-all relative ${
                         newMeCurrentDay === day
-                          ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg scale-110'
+                          ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg scale-105'
                           : theme === 'dark'
                             ? 'bg-stone-800 text-stone-300 hover:bg-stone-700'
                             : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
@@ -1879,12 +1939,12 @@ export default function GlowUpChallengeApp() {
                     >
                       {day}
                       {isCompleted && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-full flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" />
+                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-full flex items-center justify-center">
+                          <Check className="w-2.5 h-2.5 text-white" />
                         </div>
                       )}
                       {!isCompleted && completionPercentage > 0 && (
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-rose-400">
+                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[9px] font-bold text-rose-400">
                           {completionPercentage}%
                         </div>
                       )}
@@ -1895,11 +1955,11 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Navigation Tabs - Scrollable Design with Yellow */}
-            <div className="p-6 pb-0 pt-0">
-              <div className="flex gap-2 max-w-lg mx-auto">
+            <div className="p-4 pb-0 pt-2">
+              <div className="flex gap-1.5 max-w-lg mx-auto">
                 <button
                   onClick={() => setNewMeActiveTab('daily')}
-                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
                     newMeActiveTab === 'daily'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                       : theme === 'dark'
@@ -1907,14 +1967,15 @@ export default function GlowUpChallengeApp() {
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
-                  <div className="flex items-center gap-2 justify-center">
-                    <CheckSquare className="w-4 h-4" />
-                    {t.newMe.dailyTracking}
+                  <div className="flex items-center gap-1 justify-center">
+                    <CheckSquare className="w-3 h-3" />
+                    <span className="hidden sm:inline">{t.newMe.dailyTracking}</span>
+                    <span className="sm:hidden">Suivi</span>
                   </div>
                 </button>
                 <button
                   onClick={() => setNewMeActiveTab('progress')}
-                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
                     newMeActiveTab === 'progress'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                       : theme === 'dark'
@@ -1922,14 +1983,15 @@ export default function GlowUpChallengeApp() {
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
-                  <div className="flex items-center gap-2 justify-center">
-                    <TrendingUp className="w-4 h-4" />
-                    {t.newMe.progressOn30Days}
+                  <div className="flex items-center gap-1 justify-center">
+                    <TrendingUp className="w-3 h-3" />
+                    <span className="hidden sm:inline">{t.newMe.progressOn30Days}</span>
+                    <span className="sm:hidden">Progrès</span>
                   </div>
                 </button>
                 <button
                   onClick={() => setNewMeActiveTab('badges')}
-                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
                     newMeActiveTab === 'badges'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                       : theme === 'dark'
@@ -1937,8 +1999,8 @@ export default function GlowUpChallengeApp() {
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
-                  <div className="flex items-center gap-2 justify-center">
-                    <Award className="w-4 h-4" />
+                  <div className="flex items-center gap-1 justify-center">
+                    <Award className="w-3 h-3" />
                     {t.newMe.badges}
                   </div>
                 </button>
@@ -2045,7 +2107,7 @@ export default function GlowUpChallengeApp() {
                   </div>
 
                   {/* Bouton "J'ai complété ce jour" */}
-                  <div className="sticky bottom-0 pt-4 pb-6 -mx-6 px-6 bg-gradient-to-t from-stone-50 dark:from-stone-950 via-stone-50 dark:via-stone-950 to-transparent">
+                  <div className="pt-4 pb-6">
                     <Button
                       className={`w-full font-semibold py-6 text-base shadow-lg ${
                         Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13

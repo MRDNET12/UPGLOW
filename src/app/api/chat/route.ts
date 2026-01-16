@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
     // Get completion
     const completion = await zai.chat.completions.create({
       messages: history,
+      model: 'GLM-4.6V-Flash',
       thinking: { type: 'disabled' }
     });
 

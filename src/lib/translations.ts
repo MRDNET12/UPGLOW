@@ -24,6 +24,11 @@ export interface Translation {
     advancedTracking: string;
     selfReflection: string;
     habits: string;
+    // Glowee introduction
+    gloweeGreeting: string;
+    gloweeIntro: string;
+    gloweeMessage: string;
+    gloweeButton: string;
   };
   
   // Language Selection
@@ -342,6 +347,10 @@ export const translations: Record<Language, Translation> = {
       advancedTracking: 'Suivi avancé',
       selfReflection: 'Introspection',
       habits: 'Habitudes',
+      gloweeGreeting: 'Bonjour!',
+      gloweeIntro: 'Je m\'appelle Glowee\nTon reflet bienveillant.',
+      gloweeMessage: 'Je ne te change pas.\nJe t\'aide à voir tout ce qui brille déjà en toi ✨',
+      gloweeButton: 'Avançons ensemble',
     },
     languageSelection: {
       title: 'Bienvenue',
@@ -632,6 +641,10 @@ export const translations: Record<Language, Translation> = {
       advancedTracking: 'Advanced tracking',
       selfReflection: 'Self-reflection',
       habits: 'Habits',
+      gloweeGreeting: 'Hello!',
+      gloweeIntro: 'I\'m Glowee\nYour kind reflection.',
+      gloweeMessage: 'I don\'t change you.\nI help you see everything that already shines in you ✨',
+      gloweeButton: 'Let\'s move forward together',
     },
     languageSelection: {
       title: 'Welcome',
@@ -922,6 +935,10 @@ export const translations: Record<Language, Translation> = {
       advancedTracking: 'Seguimiento avanzado',
       selfReflection: 'Introspección',
       habits: 'Hábitos',
+      gloweeGreeting: '¡Hola!',
+      gloweeIntro: 'Me llamo Glowee\nTu reflejo amable.',
+      gloweeMessage: 'No te cambio.\nTe ayudo a ver todo lo que ya brilla en ti ✨',
+      gloweeButton: 'Avancemos juntas',
     },
     languageSelection: {
       title: 'Bienvenida',

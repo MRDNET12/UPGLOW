@@ -180,6 +180,8 @@ export default function GlowUpChallengeApp() {
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDestination, setNewTaskDestination] = useState<'priority' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'>('priority');
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
@@ -683,27 +685,7 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Progress Card */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-rose-400" />
-                  {t.dashboard.yourProgress}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{t.dashboard.week} {Math.ceil(currentDay / 7)} / 4</span>
-                  <span className="text-2xl font-bold text-rose-500">{progressPercentage}%</span>
-                </div>
-                <Progress value={progressPercentage} className="h-3" />
-                <p className="text-xs text-stone-500 dark:text-stone-500 text-center">
-                  {challengeProgress.completedDays.length} / 30 {t.dashboard.daysCompleted}
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Today's Challenge */}
+            {/* Today's Challenge with Progress */}
             <Card
               className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}
               onClick={() => {
@@ -712,12 +694,22 @@ export default function GlowUpChallengeApp() {
               }}
             >
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <Badge className="bg-rose-500 hover:bg-rose-600">{t.challenge.day} {challengeProgress.currentDay}</Badge>
-                  <ChevronRight className="w-5 h-5 text-rose-400" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-rose-500">{progressPercentage}%</span>
+                    <ChevronRight className="w-5 h-5 text-rose-400" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{getCurrentDayData()?.title}</h3>
-                <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">{getCurrentDayData()?.content}</p>
+                <h3 className="text-lg font-semibold mb-2">{getCurrentDayData()?.title}</h3>
+                <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">{getCurrentDayData()?.content}</p>
+                <div className="space-y-1">
+                  <Progress value={progressPercentage} className="h-2" />
+                  <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
+                    <span>{t.dashboard.week} {Math.ceil(currentDay / 7)}/4</span>
+                    <span>{challengeProgress.completedDays.length}/30 {t.dashboard.daysCompleted}</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -1638,7 +1630,7 @@ export default function GlowUpChallengeApp() {
 
         {/* Planning View - Mon Planning */}
         {currentView === 'routine' && (
-          <div className="pb-24">
+          <div className="pb-24 relative z-0">
             {/* Header */}
             <div className="p-6 pb-0">
               <div className="flex items-center gap-4 mb-6">
@@ -1753,9 +1745,10 @@ export default function GlowUpChallengeApp() {
                         </span>
                         <button
                           onClick={() => {
-                            setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
+                            setTaskToDelete({id: priority.id, day: 'priority', type: 'priority'});
+                            setShowDeleteTaskConfirm(true);
                           }}
-                          className="text-stone-400 hover:text-red-500"
+                          className="text-stone-400 hover:text-red-500 transition-colors"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -1830,6 +1823,15 @@ export default function GlowUpChallengeApp() {
                             <span className={`flex-1 ${task.completed ? 'line-through text-stone-500' : ''}`}>
                               {task.text}
                             </span>
+                            <button
+                              onClick={() => {
+                                setTaskToDelete({id: task.id, day: day.key, type: 'task'});
+                                setShowDeleteTaskConfirm(true);
+                              }}
+                              className="flex-shrink-0 text-stone-400 hover:text-red-500 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
                           </div>
                         ))
                       )}
@@ -1843,7 +1845,7 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Bouton Ajouter une tâche */}
-            <div className="px-6 pb-6 max-w-lg mx-auto">
+            <div className="px-6 pb-6 pt-5 max-w-lg mx-auto">
               <Button
                 size="sm"
                 className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
@@ -2848,11 +2850,13 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'challenge' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('challenge')}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'routine' ? 'text-rose-500' : ''}`}
+            onClick={() => setCurrentView('routine')}
           >
-            <Sparkles className="w-6 h-6" />
-            <span className="text-xs">{t.nav.challenge}</span>
+            <Layers className="w-6 h-6" />
+            <span className="text-xs">
+              {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Planificación'}
+            </span>
           </Button>
           <Button
             variant="ghost"
@@ -2863,7 +2867,7 @@ export default function GlowUpChallengeApp() {
               <img
                 src="/Glowee/glowee-nav-bar.webp"
                 alt="Glowee"
-                className="w-8 h-8 object-contain"
+                className="w-12 h-12 object-contain"
               />
             </div>
             <span className="text-xs">{t.nav.glowee}</span>
@@ -3523,7 +3527,7 @@ export default function GlowUpChallengeApp() {
               {language === 'fr' ? 'Sélectionner une date' : language === 'en' ? 'Select a date' : 'Seleccionar una fecha'}
             </DialogTitle>
             <DialogDescription className="text-center">
-              {language === 'fr' ? 'Les jours avec une croix ont des tâches planifiées' : language === 'en' ? 'Days with a cross have scheduled tasks' : 'Los días con una cruz tienen tareas programadas'}
+              {language === 'fr' ? 'Les jours avec une croix verte ont des tâches planifiées' : language === 'en' ? 'Days with a green check have scheduled tasks' : 'Los días con un check verde tienen tareas programadas'}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -3543,16 +3547,66 @@ export default function GlowUpChallengeApp() {
                   const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
                   const dayIndex = date.getDay();
                   const dayOfWeek = dayKeys[dayIndex];
-                  return (
-                    weeklyTasks[dayOfWeek]?.length > 0 ||
-                    weekPriorities.length > 0
-                  );
+                  return weeklyTasks[dayOfWeek]?.length > 0;
                 }
               }}
               modifiersClassNames={{
-                hasTask: 'relative after:content-["✕"] after:absolute after:top-1 after:right-1 after:text-[8px] after:text-rose-400'
+                hasTask: 'relative after:content-["✓"] after:absolute after:top-1 after:right-1 after:text-[10px] after:text-green-500 after:font-bold'
               }}
             />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Popup de confirmation de suppression de tâche */}
+      <Dialog open={showDeleteTaskConfirm} onOpenChange={setShowDeleteTaskConfirm}>
+        <DialogContent className={`max-w-md ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <img
+              src="/Glowee/glowee-happy.webp"
+              alt="Glowee"
+              className="w-32 h-32 object-contain"
+            />
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-xl">
+                {language === 'fr' ? 'Supprimer cette tâche ?' : language === 'en' ? 'Delete this task?' : '¿Eliminar esta tarea?'}
+              </DialogTitle>
+              <DialogDescription className="text-center pt-2">
+                {language === 'fr'
+                  ? 'Es-tu sûr(e) de vouloir supprimer cette tâche ? Cette action est irréversible.'
+                  : language === 'en'
+                    ? 'Are you sure you want to delete this task? This action is irreversible.'
+                    : '¿Estás seguro de que quieres eliminar esta tarea? Esta acción es irreversible.'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 w-full pt-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowDeleteTaskConfirm(false)}
+              >
+                {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
+              </Button>
+              <Button
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                onClick={() => {
+                  if (taskToDelete) {
+                    if (taskToDelete.type === 'priority') {
+                      setWeekPriorities(weekPriorities.filter(p => p.id !== taskToDelete.id));
+                    } else {
+                      setWeeklyTasks({
+                        ...weeklyTasks,
+                        [taskToDelete.day]: weeklyTasks[taskToDelete.day as keyof typeof weeklyTasks].filter(t => t.id !== taskToDelete.id)
+                      });
+                    }
+                  }
+                  setShowDeleteTaskConfirm(false);
+                  setTaskToDelete(null);
+                }}
+              >
+                {language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -143,21 +143,26 @@ export interface GoalQuestions {
 
 // Réponse de l'IA pour le découpage
 export interface AIBreakdownResponse {
-  goalId: string;
-  breakdown: {
-    year: GoalBreakdown;
-    quarters: GoalBreakdown[];
-    months: GoalBreakdown[];
-    weeks: GoalBreakdown[];
-    days: GoalBreakdown[];
-  };
-  explanation: string;
-  phases: {
+  phases?: {
     learning?: { duration: string; focus: string[] };
     launch?: { duration: string; focus: string[] };
     optimization?: { duration: string; focus: string[] };
     scale?: { duration: string; focus: string[] };
   };
-  dailyTasksLimit: number; // Max tâches par jour recommandé
+  quarters?: Array<{
+    period: string;
+    title: string;
+    description: string;
+    milestones?: string[];
+    tasks?: string[];
+  }>;
+  months?: Array<{
+    period: string;
+    title: string;
+    description: string;
+    tasks?: string[];
+  }>;
+  dailyTasksLimit?: number;
+  explanation?: string;
 }
 

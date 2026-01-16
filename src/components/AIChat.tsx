@@ -109,9 +109,9 @@ export function AIChat({
         theme === 'dark' ? 'border-stone-800' : 'border-stone-200'
       }`}>
         <div className="flex items-center gap-3">
-          <img 
-            src="/glowee/Glowee acceuillante.webp" 
-            alt="Glowee" 
+          <img
+            src="/glowee/glowee-acceuillante.webp"
+            alt="Glowee"
             className="w-10 h-10 object-contain"
           />
           <div>
@@ -156,7 +156,7 @@ export function AIChat({
               {message.role === 'assistant' && (
                 <div className="flex-shrink-0">
                   <img
-                    src="/glowee/Glowee repond.webp"
+                    src="/glowee/glowee-repond.webp"
                     alt="Glowee"
                     className="w-8 h-8 object-contain"
                   />
@@ -181,7 +181,7 @@ export function AIChat({
             <div className="flex gap-3 justify-start">
               <div className="flex-shrink-0">
                 <img
-                  src="/glowee/Glowee reflechir.webp"
+                  src="/glowee/glowee-reflechir.webp"
                   alt="Glowee"
                   className="w-8 h-8 object-contain"
                 />

@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
 
 // Store conversations in memory (use database in production)
 const conversations = new Map<string, Array<{ role: string; content: string }>>();
 
-let zaiInstance: any = null;
-
-async function initZAI() {
-  if (!zaiInstance) {
-    zaiInstance = await ZAI.create();
-  }
-  return zaiInstance;
-}
+// Grok API configuration
+const GROK_API_KEY = process.env.XAI_API_KEY || '';
+const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,8 +18,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Initialize ZAI
-    const zai = await initZAI();
+    if (!GROK_API_KEY) {
+      return NextResponse.json(
+        { success: false, error: 'XAI_API_KEY not configured' },
+        { status: 500 }
+      );
+    }
 
     // Get or create conversation history
     let history = conversations.get(sessionId);
@@ -34,8 +32,8 @@ export async function POST(req: NextRequest) {
       // Create new conversation with system prompt
       history = [
         {
-          role: 'assistant',
-          content: systemPrompt || 'Tu es Glowee, une assistante IA bienveillante et encourageante. Tu aides les utilisateurs dans leur parcours de développement personnel avec empathie et positivité. Tu réponds toujours dans la langue de l\'utilisateur.'
+          role: 'system',
+          content: systemPrompt || 'Tu es Glowee, une assistante IA bienveillante et encourageante. Tu aides les utilisateurs dans leur parcours de développement personnel avec empathie et positivité. Tu réponds toujours dans la langue de l\'utilisateur. Tu es chaleureuse, motivante et tu utilises des emojis pour rendre la conversation plus agréable. 💫'
         }
       ];
     }
@@ -46,17 +44,31 @@ export async function POST(req: NextRequest) {
       content: message
     });
 
-    // Get completion
-    const completion = await zai.chat.completions.create({
-      messages: history,
-      model: 'GLM-4.6V-Flash',
-      thinking: { type: 'disabled' }
+    // Call Grok API
+    const response = await fetch(GROK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'grok-beta',
+        messages: history,
+        temperature: 0.7,
+        max_tokens: 1000
+      })
     });
 
-    const aiResponse = completion.choices[0]?.message?.content;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `Grok API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const aiResponse = data.choices?.[0]?.message?.content;
 
     if (!aiResponse) {
-      throw new Error('Empty response from AI');
+      throw new Error('Empty response from Grok AI');
     }
 
     // Add AI response to history

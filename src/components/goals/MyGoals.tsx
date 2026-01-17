@@ -22,6 +22,9 @@ interface Goal {
 interface EnergyLog {
   level: number;
   timestamp: string;
+  mentalState?: string;
+  physicalState?: string;
+  skipped?: boolean;
 }
 
 interface Task {
@@ -160,32 +163,88 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
       {/* Energy History (collapsible) */}
       {showEnergyHistory && energyLogs.length > 0 && (
         <Card className="bg-gradient-to-br from-rose-50 to-orange-50">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-stone-900 mb-3">Historique d'énergie</h3>
-            <div className="space-y-2">
-              {energyLogs.slice(-5).reverse().map((log, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <span className="text-stone-600">
-                    {new Date(log.timestamp).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {[...Array(10)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-2 h-4 rounded ${
-                            i < log.level ? 'bg-gradient-to-t from-rose-400 to-orange-300' : 'bg-stone-200'
-                          }`}
-                        />
-                      ))}
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-stone-900">Historique d'énergie</h3>
+              <span className="text-sm text-stone-600">
+                {energyLogs.length} check-in{energyLogs.length > 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {/* Graphique */}
+            <div className="mb-6">
+              <div className="h-32 flex items-end gap-2 mb-2">
+                {energyLogs.slice(-7).map((log, index) => {
+                  const height = (log.level * 10);
+                  return (
+                    <div key={index} className="flex-1 flex flex-col items-center gap-1">
+                      <div
+                        className="w-full bg-gradient-to-t from-rose-400 to-orange-300 rounded-t-lg transition-all hover:opacity-80 cursor-pointer relative group"
+                        style={{ height: `${height}%` }}
+                        title={`${log.level * 10}%`}
+                      >
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-stone-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          {log.level * 10}%
+                        </div>
+                      </div>
+                      <div className="text-xs text-stone-400">
+                        {new Date(log.timestamp).toLocaleDateString('fr-FR', { weekday: 'short' })}
+                      </div>
                     </div>
-                    <span className="font-semibold text-rose-500">{log.level}/10</span>
+                  );
+                })}
+              </div>
+
+              {/* Moyenne */}
+              {energyLogs.length > 0 && (
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <TrendingUp className="w-4 h-4 text-rose-400" />
+                  <span className="text-stone-600">
+                    Moyenne : <span className="font-semibold text-rose-500">
+                      {Math.round((energyLogs.reduce((sum, log) => sum + log.level, 0) / energyLogs.length) * 10)}%
+                    </span>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Liste détaillée */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium text-stone-700">Derniers check-ins</h4>
+              {energyLogs.slice(-5).reverse().map((log, index) => (
+                <div key={index} className="bg-white rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-stone-500">
+                      {new Date(log.timestamp).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                    <span className="text-sm font-semibold text-rose-500">
+                      {log.level * 10}%
+                    </span>
                   </div>
+
+                  {log.mentalState && log.physicalState && !log.skipped && (
+                    <div className="flex gap-2 text-xs">
+                      <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
+                        🧠 {log.mentalState === 'calm' ? 'Calme' :
+                            log.mentalState === 'stressed' ? 'Stressée' :
+                            log.mentalState === 'motivated' ? 'Motivée' : 'Fatiguée'}
+                      </span>
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                        💪 {log.physicalState === 'energetic' ? 'Énergique' :
+                            log.physicalState === 'fit' ? 'En forme' :
+                            log.physicalState === 'tired' ? 'Fatiguée' : 'Malade'}
+                      </span>
+                    </div>
+                  )}
+
+                  {log.skipped && (
+                    <span className="text-xs text-stone-400 italic">Check-in passé</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -320,6 +379,64 @@ function EnergyCheckInModal({
   setEnergyLevel: (level: number) => void;
   onComplete: () => void;
 }) {
+  const [mentalState, setMentalState] = useState<string>('');
+  const [physicalState, setPhysicalState] = useState<string>('');
+  const [step, setStep] = useState(1); // 1: énergie, 2: mental, 3: physique
+
+  const mentalStates = [
+    { value: 'calm', label: 'Calme', emoji: '😌' },
+    { value: 'stressed', label: 'Stressée', emoji: '😰' },
+    { value: 'motivated', label: 'Motivée', emoji: '🔥' },
+    { value: 'tired', label: 'Fatiguée', emoji: '😴' },
+  ];
+
+  const physicalStates = [
+    { value: 'energetic', label: 'Énergique', emoji: '⚡' },
+    { value: 'fit', label: 'En forme', emoji: '💪' },
+    { value: 'tired', label: 'Fatiguée', emoji: '😴' },
+    { value: 'sick', label: 'Malade', emoji: '🤒' },
+  ];
+
+  const handleSkip = () => {
+    const newLog: EnergyLog = {
+      level: 50,
+      timestamp: new Date().toISOString(),
+      mentalState: 'calm',
+      physicalState: 'fit',
+      skipped: true
+    };
+
+    const savedLogs = localStorage.getItem('energyLogs');
+    const logs: EnergyLog[] = savedLogs ? JSON.parse(savedLogs) : [];
+    const updatedLogs = [...logs, newLog];
+    localStorage.setItem('energyLogs', JSON.stringify(updatedLogs));
+
+    setStep(1);
+    setMentalState('');
+    setPhysicalState('');
+    onComplete();
+  };
+
+  const handleComplete = () => {
+    const newLog: EnergyLog = {
+      level: energyLevel,
+      timestamp: new Date().toISOString(),
+      mentalState,
+      physicalState,
+      skipped: false
+    };
+
+    const savedLogs = localStorage.getItem('energyLogs');
+    const logs: EnergyLog[] = savedLogs ? JSON.parse(savedLogs) : [];
+    const updatedLogs = [...logs, newLog];
+    localStorage.setItem('energyLogs', JSON.stringify(updatedLogs));
+
+    setStep(1);
+    setMentalState('');
+    setPhysicalState('');
+    onComplete();
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -331,7 +448,9 @@ function EnergyCheckInModal({
             Check-in Énergie
           </DialogTitle>
           <DialogDescription>
-            Comment te sens-tu en ce moment ? 💫
+            {step === 1 && "Comment te sens-tu en ce moment ? 💫"}
+            {step === 2 && "Comment est ton état mental ? 🧠"}
+            {step === 3 && "Comment est ton état physique ? 💪"}
           </DialogDescription>
         </DialogHeader>
 
@@ -341,43 +460,129 @@ function EnergyCheckInModal({
             <img
               src="/glowee/glowee-happy.webp"
               alt="Glowee"
-              className="w-32 h-32 object-contain"
+              className="w-24 h-24 object-contain"
             />
           </div>
 
-          {/* Energy Level Slider */}
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm text-stone-600">
-              <span>Épuisée 😴</span>
-              <span>Énergique 🔥</span>
-            </div>
-
-            <div className="flex gap-1 justify-center">
-              {[...Array(10)].map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setEnergyLevel(i + 1)}
-                  className={`w-8 h-12 rounded transition-all ${
-                    i < energyLevel
-                      ? 'bg-gradient-to-t from-rose-400 to-orange-300 scale-105'
-                      : 'bg-stone-200 hover:bg-stone-300'
-                  }`}
+          {/* Step 1: Energy Level */}
+          {step === 1 && (
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-stone-700">
+                  Niveau d'énergie (0-100)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={energyLevel * 10}
+                  onChange={(e) => setEnergyLevel(Math.round(parseInt(e.target.value) / 10))}
+                  className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-rose-400"
                 />
-              ))}
-            </div>
+                <div className="flex justify-between text-xs text-stone-500">
+                  <span>0</span>
+                  <span className="text-2xl font-bold text-rose-500">{energyLevel * 10}</span>
+                  <span>100</span>
+                </div>
+              </div>
 
-            <div className="text-center">
-              <span className="text-3xl font-bold text-rose-500">{energyLevel}/10</span>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSkip}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Passer
+                </Button>
+                <Button
+                  onClick={() => setStep(2)}
+                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                >
+                  Suivant
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
 
-          <Button
-            onClick={onComplete}
-            className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Valider
-          </Button>
+          {/* Step 2: Mental State */}
+          {step === 2 && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                {mentalStates.map((state) => (
+                  <button
+                    key={state.value}
+                    onClick={() => setMentalState(state.value)}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      mentalState === state.value
+                        ? 'border-rose-400 bg-rose-50'
+                        : 'border-stone-200 hover:border-stone-300'
+                    }`}
+                  >
+                    <div className="text-3xl mb-2">{state.emoji}</div>
+                    <div className="text-sm font-medium text-stone-900">{state.label}</div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSkip}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Passer
+                </Button>
+                <Button
+                  onClick={() => setStep(3)}
+                  disabled={!mentalState}
+                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                >
+                  Suivant
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Physical State */}
+          {step === 3 && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                {physicalStates.map((state) => (
+                  <button
+                    key={state.value}
+                    onClick={() => setPhysicalState(state.value)}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      physicalState === state.value
+                        ? 'border-rose-400 bg-rose-50'
+                        : 'border-stone-200 hover:border-stone-300'
+                    }`}
+                  >
+                    <div className="text-3xl mb-2">{state.emoji}</div>
+                    <div className="text-sm font-medium text-stone-900">{state.label}</div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSkip}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Passer
+                </Button>
+                <Button
+                  onClick={handleComplete}
+                  disabled={!physicalState}
+                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Valider
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -401,6 +606,14 @@ function CreateGoalModal({
   const [goalName, setGoalName] = useState('');
   const [goalDescription, setGoalDescription] = useState('');
   const [goalDeadline, setGoalDeadline] = useState('');
+
+  // Questions spécifiques par type
+  const [targetAmount, setTargetAmount] = useState(''); // Pour financier
+  const [timeframe, setTimeframe] = useState(''); // Pour financier (en mois)
+  const [competency, setCompetency] = useState(''); // Pour financier/projet
+  const [why, setWhy] = useState(''); // Pourquoi cet objectif
+  const [desiredFeeling, setDesiredFeeling] = useState(''); // Ressenti recherché
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzedTasks, setAnalyzedTasks] = useState<Task[]>([]);
 
@@ -410,6 +623,11 @@ function CreateGoalModal({
     setGoalName('');
     setGoalDescription('');
     setGoalDeadline('');
+    setTargetAmount('');
+    setTimeframe('');
+    setCompetency('');
+    setWhy('');
+    setDesiredFeeling('');
     setIsAnalyzing(false);
     setAnalyzedTasks([]);
   };
@@ -421,7 +639,7 @@ function CreateGoalModal({
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
-    setStep(4); // Nouvelle étape pour l'analyse
+    setStep(5); // Nouvelle étape pour l'analyse
 
     try {
       const response = await fetch('/api/goals/analyze', {
@@ -486,7 +704,7 @@ function CreateGoalModal({
             Créer un Objectif
           </DialogTitle>
           <DialogDescription>
-            {step <= 3 ? `Étape ${step}/3` : 'Analyse Glowee Work'} - Glowee Work va t'aider à l'atteindre ! 🎯
+            {step <= 4 ? `Étape ${step}/4` : 'Analyse Glowee Work'} - Glowee Work va t'aider à l'atteindre ! 🎯
           </DialogDescription>
         </DialogHeader>
 
@@ -565,23 +783,115 @@ function CreateGoalModal({
                 <Input
                   value={goalName}
                   onChange={(e) => setGoalName(e.target.value)}
-                  placeholder="Ex: Économiser 5000€"
+                  placeholder={
+                    goalType === 'financial' ? "Ex: Atteindre 10 000€ de CA" :
+                    goalType === 'project' ? "Ex: Lancer mon e-commerce" :
+                    "Ex: Retrouver confiance en moi"
+                  }
                   className="w-full"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-stone-900 mb-2">
-                  Description détaillée
-                </label>
-                <Textarea
-                  value={goalDescription}
-                  onChange={(e) => setGoalDescription(e.target.value)}
-                  placeholder="Décris ton objectif en détail..."
-                  rows={4}
-                  className="w-full"
-                />
-              </div>
+              {/* Questions spécifiques pour Financier */}
+              {goalType === 'financial' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-stone-900 mb-2">
+                      Chiffre d'affaires attendu (€)
+                    </label>
+                    <Input
+                      type="number"
+                      value={targetAmount}
+                      onChange={(e) => setTargetAmount(e.target.value)}
+                      placeholder="Ex: 10000"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-stone-900 mb-2">
+                      En combien de temps ?
+                    </label>
+                    <select
+                      value={timeframe}
+                      onChange={(e) => setTimeframe(e.target.value)}
+                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
+                    >
+                      <option value="">Sélectionne...</option>
+                      <option value="3">3 mois</option>
+                      <option value="6">6 mois</option>
+                      <option value="12">1 an</option>
+                      <option value="24">2 ans</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-stone-900 mb-2">
+                      Ton niveau de compétence dans ce domaine
+                    </label>
+                    <select
+                      value={competency}
+                      onChange={(e) => setCompetency(e.target.value)}
+                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
+                    >
+                      <option value="">Sélectionne...</option>
+                      <option value="beginner">Débutante 🌱</option>
+                      <option value="intermediate">Intermédiaire 🌿</option>
+                      <option value="advanced">Avancée 🌳</option>
+                    </select>
+                  </div>
+                </>
+              )}
+
+              {/* Questions spécifiques pour Projet */}
+              {goalType === 'project' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-stone-900 mb-2">
+                      Description du projet
+                    </label>
+                    <Textarea
+                      value={goalDescription}
+                      onChange={(e) => setGoalDescription(e.target.value)}
+                      placeholder="Décris ton projet en détail..."
+                      rows={3}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-stone-900 mb-2">
+                      Ton niveau de compétence dans ce domaine
+                    </label>
+                    <select
+                      value={competency}
+                      onChange={(e) => setCompetency(e.target.value)}
+                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
+                    >
+                      <option value="">Sélectionne...</option>
+                      <option value="beginner">Débutante 🌱</option>
+                      <option value="intermediate">Intermédiaire 🌿</option>
+                      <option value="advanced">Avancée 🌳</option>
+                    </select>
+                  </div>
+                </>
+              )}
+
+              {/* Questions spécifiques pour Personnel */}
+              {goalType === 'personal' && (
+                <div>
+                  <label className="block text-sm font-medium text-stone-900 mb-2">
+                    Description de ton objectif
+                  </label>
+                  <Textarea
+                    value={goalDescription}
+                    onChange={(e) => setGoalDescription(e.target.value)}
+                    placeholder="Décris ce que tu veux accomplir..."
+                    rows={3}
+                    className="w-full"
+                  />
+                </div>
+              )}
 
               <div className="flex gap-2">
                 <Button
@@ -593,7 +903,12 @@ function CreateGoalModal({
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
-                  disabled={!goalName || !goalDescription}
+                  disabled={
+                    !goalName ||
+                    (goalType === 'financial' && (!targetAmount || !timeframe || !competency)) ||
+                    (goalType === 'project' && (!goalDescription || !competency)) ||
+                    (goalType === 'personal' && !goalDescription)
+                  }
                   className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
                 >
                   Suivant
@@ -606,7 +921,60 @@ function CreateGoalModal({
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-stone-900 mb-2">
-                  Date limite
+                  Pourquoi cet objectif est important pour toi ? 💭
+                </label>
+                <Textarea
+                  value={why}
+                  onChange={(e) => setWhy(e.target.value)}
+                  placeholder="Ex: Je veux être indépendante financièrement et pouvoir voyager..."
+                  rows={3}
+                  className="w-full"
+                />
+                <p className="text-xs text-stone-500 mt-1">
+                  Prends le temps de réfléchir à ta vraie motivation 💫
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-900 mb-2">
+                  Quel ressenti recherches-tu en atteignant cet objectif ? ✨
+                </label>
+                <Textarea
+                  value={desiredFeeling}
+                  onChange={(e) => setDesiredFeeling(e.target.value)}
+                  placeholder="Ex: Je me sentirai fière, libre, confiante..."
+                  rows={3}
+                  className="w-full"
+                />
+                <p className="text-xs text-stone-500 mt-1">
+                  Visualise comment tu te sentiras quand tu l'auras atteint 🌟
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setStep(2)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Retour
+                </Button>
+                <Button
+                  onClick={() => setStep(4)}
+                  disabled={!why || !desiredFeeling}
+                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                >
+                  Suivant
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-stone-900 mb-2">
+                  Date limite (objectif annuel)
                 </label>
                 <Input
                   type="date"
@@ -615,6 +983,9 @@ function CreateGoalModal({
                   className="w-full"
                   min={new Date().toISOString().split('T')[0]}
                 />
+                <p className="text-xs text-stone-500 mt-1">
+                  Choisis une date dans les 12 prochains mois 📅
+                </p>
               </div>
 
               <div className="bg-gradient-to-br from-rose-50 to-orange-50 rounded-xl p-4">
@@ -629,7 +1000,7 @@ function CreateGoalModal({
 
               <div className="flex gap-2">
                 <Button
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(3)}
                   variant="outline"
                   className="flex-1"
                 >
@@ -647,7 +1018,7 @@ function CreateGoalModal({
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div className="space-y-4">
               {isAnalyzing ? (
                 <div className="text-center py-8">

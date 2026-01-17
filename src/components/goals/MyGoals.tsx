@@ -7,6 +7,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import GloweePopup from '@/components/shared/GloweePopup';
+import { isFirstVisit, trackVisit } from '@/utils/visitTracker';
+import { gloweeMessages } from '@/data/gloweeMessages';
 
 interface Goal {
   id: string;
@@ -47,6 +50,10 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
   const [energyLevel, setEnergyLevel] = useState(5);
   const [energyLogs, setEnergyLogs] = useState<EnergyLog[]>([]);
 
+  // États pour les popups Glowee
+  const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
+  const [showGloweeCheckInWelcome, setShowGloweeCheckInWelcome] = useState(false);
+
   // Load data from localStorage
   useEffect(() => {
     const loadData = () => {
@@ -65,6 +72,11 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
 
         // Check if we need to show energy check-in
         checkEnergyCheckIn();
+
+        // Vérifier si c'est la 1ère visite de la section Objectifs
+        if (isFirstVisit('goals')) {
+          setTimeout(() => setShowGloweeWelcome(true), 1000);
+        }
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
@@ -79,12 +91,20 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
     const savedLogs = localStorage.getItem('energyLogs');
     if (!savedLogs) {
       setShowCheckIn(true);
+      // Vérifier si c'est la 1ère visite du check-in
+      if (isFirstVisit('energy')) {
+        setTimeout(() => setShowGloweeCheckInWelcome(true), 1500);
+      }
       return;
     }
 
     const logs: EnergyLog[] = JSON.parse(savedLogs);
     if (logs.length === 0) {
       setShowCheckIn(true);
+      // Vérifier si c'est la 1ère visite du check-in
+      if (isFirstVisit('energy')) {
+        setTimeout(() => setShowGloweeCheckInWelcome(true), 1500);
+      }
       return;
     }
 
@@ -139,6 +159,7 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
   }
 
   return (
+    <>
     <div className="p-6 space-y-6 pb-24">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -361,7 +382,36 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
         onSuccess={handleGoalCreated}
         onAddGloweeTasks={onAddGloweeTasks}
       />
+
+      {/* Glowee Welcome Popup - 1ère visite Objectifs */}
+      <GloweePopup
+        isOpen={showGloweeWelcome}
+        onClose={() => {
+          setShowGloweeWelcome(false);
+          trackVisit('goals');
+        }}
+        gloweeImage={gloweeMessages.goals.firstVisit.image}
+        userName={gloweeMessages.goals.firstVisit.userName}
+        title={gloweeMessages.goals.firstVisit.title}
+        message={gloweeMessages.goals.firstVisit.message}
+        position="top"
+      />
+
+      {/* Glowee Check-in Welcome Popup - 1ère visite Check-in */}
+      <GloweePopup
+        isOpen={showGloweeCheckInWelcome}
+        onClose={() => {
+          setShowGloweeCheckInWelcome(false);
+          trackVisit('energy');
+        }}
+        gloweeImage={gloweeMessages.energy.firstVisit.image}
+        userName={gloweeMessages.energy.firstVisit.userName}
+        title={gloweeMessages.energy.firstVisit.title}
+        message={gloweeMessages.energy.firstVisit.message}
+        position="top"
+      />
     </div>
+    </>
   );
 }
 
@@ -458,7 +508,7 @@ function EnergyCheckInModal({
           {/* Glowee Image */}
           <div className="flex justify-center">
             <img
-              src="/glowee/glowee-happy.webp"
+              src="/Glowee/glowee-felicite.webp"
               alt="Glowee"
               className="w-24 h-24 object-contain"
             />
@@ -1073,7 +1123,7 @@ function CreateGoalModal({
                 <div className="text-center py-8">
                   <div className="flex justify-center mb-4">
                     <img
-                      src="/glowee/glowee-happy.webp"
+                      src="/Glowee/Glowee-travaille.webp"
                       alt="Glowee"
                       className="w-24 h-24 object-contain animate-pulse"
                     />

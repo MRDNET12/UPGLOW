@@ -37,6 +37,9 @@ import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
+import GloweePopup from '@/components/shared/GloweePopup';
+import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit } from '@/utils/visitTracker';
+import { gloweeMessages } from '@/data/gloweeMessages';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -113,6 +116,12 @@ export default function GlowUpChallengeApp() {
   // États pour les popups de paywall
   const [showTrialExtension, setShowTrialExtension] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
+
+  // États pour les popups Glowee
+  const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
+  const [showGloweeFifthVisit, setShowGloweeFifthVisit] = useState(false);
+  const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
+  const [showGloweeJournalWelcome, setShowGloweeJournalWelcome] = useState(false);
 
   const [todayDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [newJournalEntry, setNewJournalEntry] = useState({
@@ -210,6 +219,34 @@ export default function GlowUpChallengeApp() {
       }
     }
   }, [isHydrated, initializeFirstOpen, getRemainingFreeDays, isTrialExpired, subscription]);
+
+  // Tracker les visites et afficher les popups Glowee
+  useEffect(() => {
+    if (isHydrated && hasStarted) {
+      // Tracker la visite de l'app
+      trackVisit('app');
+
+      // Vérifier si c'est la 1ère visite du dashboard
+      if (currentView === 'dashboard' && isFirstVisit('home')) {
+        setTimeout(() => setShowGloweeWelcome(true), 1000);
+      }
+
+      // Vérifier si c'est la 5ème visite de l'app
+      if (isFifthAppVisit()) {
+        setTimeout(() => setShowGloweeFifthVisit(true), 1500);
+      }
+
+      // Vérifier si c'est la 1ère visite du planning
+      if (currentView === 'routine' && isFirstVisit('planning')) {
+        setTimeout(() => setShowGloweePlanningWelcome(true), 1000);
+      }
+
+      // Vérifier si c'est la 1ère visite du journal
+      if (currentView === 'journal' && isFirstVisit('journal')) {
+        setTimeout(() => setShowGloweeJournalWelcome(true), 1000);
+      }
+    }
+  }, [isHydrated, hasStarted, currentView]);
 
   // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
@@ -3673,6 +3710,59 @@ export default function GlowUpChallengeApp() {
         isOpen={showSubscription}
         onClose={() => setShowSubscription(false)}
         theme={theme}
+      />
+
+      {/* Glowee Welcome Popup - 1ère visite Dashboard */}
+      <GloweePopup
+        isOpen={showGloweeWelcome}
+        onClose={() => {
+          setShowGloweeWelcome(false);
+          trackVisit('home');
+        }}
+        gloweeImage={gloweeMessages.home.firstVisit.image}
+        userName={gloweeMessages.home.firstVisit.userName}
+        title={gloweeMessages.home.firstVisit.title}
+        message={gloweeMessages.home.firstVisit.message}
+        position="top"
+      />
+
+      {/* Glowee 5th Visit Popup */}
+      <GloweePopup
+        isOpen={showGloweeFifthVisit}
+        onClose={() => setShowGloweeFifthVisit(false)}
+        gloweeImage={gloweeMessages.home.fifthVisit.image}
+        userName={gloweeMessages.home.fifthVisit.userName}
+        title={gloweeMessages.home.fifthVisit.title}
+        message={gloweeMessages.home.fifthVisit.message}
+        position="top"
+      />
+
+      {/* Glowee Planning Welcome Popup */}
+      <GloweePopup
+        isOpen={showGloweePlanningWelcome}
+        onClose={() => {
+          setShowGloweePlanningWelcome(false);
+          trackVisit('planning');
+        }}
+        gloweeImage={gloweeMessages.planning.firstVisit.image}
+        userName={gloweeMessages.planning.firstVisit.userName}
+        title={gloweeMessages.planning.firstVisit.title}
+        message={gloweeMessages.planning.firstVisit.message}
+        position="top"
+      />
+
+      {/* Glowee Journal Welcome Popup */}
+      <GloweePopup
+        isOpen={showGloweeJournalWelcome}
+        onClose={() => {
+          setShowGloweeJournalWelcome(false);
+          trackVisit('journal');
+        }}
+        gloweeImage={gloweeMessages.journal.firstVisit.image}
+        userName={gloweeMessages.journal.firstVisit.userName}
+        title={gloweeMessages.journal.firstVisit.title}
+        message={gloweeMessages.journal.firstVisit.message}
+        position="top"
       />
     </div>
   );

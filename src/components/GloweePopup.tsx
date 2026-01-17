@@ -12,9 +12,9 @@ interface GloweePopupProps {
   theme?: 'light' | 'dark';
 }
 
-export function GloweePopup({ 
-  message, 
-  gloweeImage = '/glowee/Glowee acceuillante.webp',
+export function GloweePopup({
+  message,
+  gloweeImage = '/Glowee/glowee-acceuillante.webp',
   onClose,
   autoClose,
   theme = 'light'

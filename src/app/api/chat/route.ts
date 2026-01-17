@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 // Store conversations in memory (use database in production)
 const conversations = new Map<string, Array<{ role: string; content: string }>>();
 
-// Grok API configuration
-const GROK_API_KEY = process.env.XAI_API_KEY || '';
-const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
+// OpenRouter API configuration
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,15 +20,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!GROK_API_KEY) {
-      console.error('[Chat API] XAI_API_KEY not configured');
+    if (!OPENROUTER_API_KEY) {
+      console.error('[Chat API] OPENROUTER_API_KEY not configured');
       return NextResponse.json(
-        { success: false, error: 'XAI_API_KEY not configured' },
+        { success: false, error: 'OPENROUTER_API_KEY not configured' },
         { status: 500 }
       );
     }
 
-    console.log('[Chat API] API Key present:', GROK_API_KEY.substring(0, 10) + '...');
+    console.log('[Chat API] API Key present:', OPENROUTER_API_KEY.substring(0, 10) + '...');
 
     // Get or create conversation history
     let history = conversations.get(sessionId);
@@ -49,29 +49,31 @@ export async function POST(req: NextRequest) {
       content: message
     });
 
-    // Call Grok API
-    console.log('[Chat API] Calling Grok API with', history.length, 'messages');
+    // Call OpenRouter API
+    console.log('[Chat API] Calling OpenRouter API with', history.length, 'messages');
 
-    const response = await fetch(GROK_API_URL, {
+    const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROK_API_KEY}`
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'https://upglow.app', // Optionnel : ton site
+        'X-Title': 'Glowee - UPGLOW' // Optionnel : nom de ton app
       },
       body: JSON.stringify({
-        model: 'grok-beta',
+        model: 'google/gemini-2.0-flash-exp:free', // Modèle gratuit et performant !
         messages: history,
         temperature: 0.7,
         max_tokens: 1000
       })
     });
 
-    console.log('[Chat API] Grok API response status:', response.status);
+    console.log('[Chat API] OpenRouter API response status:', response.status);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('[Chat API] Grok API error:', errorData);
-      throw new Error(errorData.error?.message || `Grok API error: ${response.status}`);
+      console.error('[Chat API] OpenRouter API error:', errorData);
+      throw new Error(errorData.error?.message || `OpenRouter API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -80,8 +82,8 @@ export async function POST(req: NextRequest) {
     console.log('[Chat API] AI response received:', aiResponse?.substring(0, 100) + '...');
 
     if (!aiResponse) {
-      console.error('[Chat API] Empty response from Grok AI');
-      throw new Error('Empty response from Grok AI');
+      console.error('[Chat API] Empty response from OpenRouter AI');
+      throw new Error('Empty response from OpenRouter AI');
     }
 
     // Add AI response to history

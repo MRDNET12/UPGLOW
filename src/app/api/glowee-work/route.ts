@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getGoalById, getAverageEnergy, createBreakdown, createAILog } from '@/lib/firebase/goals-service';
 
-// Grok API configuration
-const GROK_API_KEY = process.env.XAI_API_KEY || '';
-const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
+// OpenRouter API configuration
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 // Prompt système pour Glowee Work
 const GLOWEE_WORK_SYSTEM_PROMPT = `
@@ -74,9 +74,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!GROK_API_KEY) {
+    if (!OPENROUTER_API_KEY) {
       return NextResponse.json(
-        { success: false, error: 'XAI_API_KEY not configured' },
+        { success: false, error: 'OPENROUTER_API_KEY not configured' },
         { status: 500 }
       );
     }
@@ -113,15 +113,17 @@ Crée un découpage intelligent en phases, trimestres et mois.
 Adapte la charge de travail selon l'énergie (${averageEnergy < 50 ? 'basse' : averageEnergy < 70 ? 'moyenne' : 'haute'}).
 `;
 
-    // Appeler Grok API
-    const response = await fetch(GROK_API_URL, {
+    // Appeler OpenRouter API
+    const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROK_API_KEY}`
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'https://upglow.app',
+        'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'grok-beta',
+        model: 'google/gemini-2.0-flash-exp:free', // Modèle gratuit et performant !
         messages: [
           {
             role: 'system',
@@ -139,14 +141,14 @@ Adapte la charge de travail selon l'énergie (${averageEnergy < 50 ? 'basse' : a
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error?.message || `Grok API error: ${response.status}`);
+      throw new Error(errorData.error?.message || `OpenRouter API error: ${response.status}`);
     }
 
     const data = await response.json();
     const aiResponse = data.choices?.[0]?.message?.content;
 
     if (!aiResponse) {
-      throw new Error('Empty response from Grok AI');
+      throw new Error('Empty response from OpenRouter AI');
     }
 
     // Parser la réponse JSON

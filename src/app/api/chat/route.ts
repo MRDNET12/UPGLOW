@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         'X-Title': 'Glowee - UPGLOW' // Optionnel : nom de ton app
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-exp:free', // Modèle gratuit et performant !
+        model: 'meta-llama/llama-3.2-3b-instruct:free', // Modèle gratuit et stable
         messages: history,
         temperature: 0.7,
         max_tokens: 1000

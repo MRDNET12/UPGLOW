@@ -1796,13 +1796,13 @@ export default function GlowUpChallengeApp() {
                     return (
                       <div
                         key={day.key}
-                        className={`rounded-2xl shadow-lg relative ${
-                          isToday
-                            ? 'bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 p-[2px]'
-                            : ''
-                        }`}
+                        className={`rounded-2xl shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative`}
                       >
-                        <div className={`p-4 rounded-2xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative z-10`}>
+                        {/* Bordure grise en haut pour le jour actuel */}
+                        {isToday && (
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-stone-400 rounded-t-2xl" />
+                        )}
+                        <div className="p-4">
                           <h3 className="font-bold text-sm mb-3">{day.label}</h3>
                           <div className="space-y-2">
                       {weeklyTasks[day.key as keyof typeof weeklyTasks]?.length === 0 ? (
@@ -1814,11 +1814,7 @@ export default function GlowUpChallengeApp() {
                           <div
                             key={task.id}
                             className={`flex items-start gap-2 p-2 rounded-lg text-xs ${
-                              task.completed
-                                ? 'bg-green-50 dark:bg-green-900/20'
-                                : theme === 'dark'
-                                  ? 'bg-stone-800'
-                                  : 'bg-stone-50'
+                              theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                             }`}
                           >
                             <button
@@ -1832,7 +1828,7 @@ export default function GlowUpChallengeApp() {
                               }}
                               className={`flex-shrink-0 w-4 h-4 rounded border flex items-center justify-center mt-0.5 transition-all ${
                                 task.completed
-                                  ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 border-transparent'
+                                  ? 'bg-black border-transparent'
                                   : 'border-stone-300 dark:border-stone-600'
                               }`}
                             >
@@ -2903,16 +2899,14 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none relative ${showGloweeChat ? 'text-rose-500' : ''}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${showGloweeChat ? 'text-rose-500' : ''}`}
             onClick={() => setShowGloweeChat(true)}
           >
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-50">
-              <img
-                src="/Glowee/glowee-nav-bar.webp"
-                alt="Glowee"
-                className="w-16 h-16 object-contain"
-              />
-            </div>
+            <img
+              src="/Glowee/glowee-nav-bar.webp"
+              alt="Glowee"
+              className="w-8 h-8 object-contain"
+            />
             <span className="text-xs">{t.nav.glowee}</span>
           </Button>
           <Button

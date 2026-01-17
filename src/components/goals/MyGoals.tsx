@@ -609,7 +609,6 @@ function CreateGoalModal({
 
   // Questions spécifiques par type
   const [targetAmount, setTargetAmount] = useState(''); // Pour financier
-  const [timeframe, setTimeframe] = useState(''); // Pour financier (en mois)
   const [competency, setCompetency] = useState(''); // Pour financier/projet
   const [why, setWhy] = useState(''); // Pourquoi cet objectif
   const [desiredFeeling, setDesiredFeeling] = useState(''); // Ressenti recherché
@@ -624,7 +623,6 @@ function CreateGoalModal({
     setGoalDescription('');
     setGoalDeadline('');
     setTargetAmount('');
-    setTimeframe('');
     setCompetency('');
     setWhy('');
     setDesiredFeeling('');
@@ -810,23 +808,6 @@ function CreateGoalModal({
 
                   <div>
                     <label className="block text-sm font-medium text-stone-900 mb-2">
-                      En combien de temps ?
-                    </label>
-                    <select
-                      value={timeframe}
-                      onChange={(e) => setTimeframe(e.target.value)}
-                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
-                    >
-                      <option value="">Sélectionne...</option>
-                      <option value="3">3 mois</option>
-                      <option value="6">6 mois</option>
-                      <option value="12">1 an</option>
-                      <option value="24">2 ans</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-stone-900 mb-2">
                       Ton niveau de compétence dans ce domaine
                     </label>
                     <select
@@ -905,7 +886,7 @@ function CreateGoalModal({
                   onClick={() => setStep(3)}
                   disabled={
                     !goalName ||
-                    (goalType === 'financial' && (!targetAmount || !timeframe || !competency)) ||
+                    (goalType === 'financial' && (!targetAmount || !competency)) ||
                     (goalType === 'project' && (!goalDescription || !competency)) ||
                     (goalType === 'personal' && !goalDescription)
                   }
@@ -974,18 +955,86 @@ function CreateGoalModal({
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-stone-900 mb-2">
-                  Date limite (objectif annuel)
+                  En combien de temps veux-tu atteindre cet objectif ?
                 </label>
-                <Input
-                  type="date"
-                  value={goalDeadline}
-                  onChange={(e) => setGoalDeadline(e.target.value)}
-                  className="w-full"
-                  min={new Date().toISOString().split('T')[0]}
-                />
-                <p className="text-xs text-stone-500 mt-1">
-                  Choisis une date dans les 12 prochains mois 📅
-                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const deadline = new Date();
+                      deadline.setMonth(deadline.getMonth() + 1);
+                      setGoalDeadline(deadline.toISOString().split('T')[0]);
+                    }}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      goalDeadline && new Date(goalDeadline) <= new Date(Date.now() + 31 * 24 * 60 * 60 * 1000)
+                        ? 'border-rose-400 bg-rose-50'
+                        : 'border-stone-200 hover:border-rose-300'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">⚡</div>
+                    <div className="font-semibold text-stone-900">1 mois</div>
+                    <div className="text-xs text-stone-500 mt-1">Objectif sprint</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const deadline = new Date();
+                      deadline.setMonth(deadline.getMonth() + 3);
+                      setGoalDeadline(deadline.toISOString().split('T')[0]);
+                    }}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      goalDeadline && new Date(goalDeadline) > new Date(Date.now() + 31 * 24 * 60 * 60 * 1000) && new Date(goalDeadline) <= new Date(Date.now() + 93 * 24 * 60 * 60 * 1000)
+                        ? 'border-rose-400 bg-rose-50'
+                        : 'border-stone-200 hover:border-rose-300'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">🎯</div>
+                    <div className="font-semibold text-stone-900">3 mois</div>
+                    <div className="text-xs text-stone-500 mt-1">Court terme</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const deadline = new Date();
+                      deadline.setMonth(deadline.getMonth() + 6);
+                      setGoalDeadline(deadline.toISOString().split('T')[0]);
+                    }}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      goalDeadline && new Date(goalDeadline) > new Date(Date.now() + 93 * 24 * 60 * 60 * 1000) && new Date(goalDeadline) <= new Date(Date.now() + 186 * 24 * 60 * 60 * 1000)
+                        ? 'border-rose-400 bg-rose-50'
+                        : 'border-stone-200 hover:border-rose-300'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">🌟</div>
+                    <div className="font-semibold text-stone-900">6 mois</div>
+                    <div className="text-xs text-stone-500 mt-1">Moyen terme</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const deadline = new Date();
+                      deadline.setFullYear(deadline.getFullYear() + 1);
+                      setGoalDeadline(deadline.toISOString().split('T')[0]);
+                    }}
+                    className={`p-4 rounded-xl border-2 transition-all ${
+                      goalDeadline && new Date(goalDeadline) > new Date(Date.now() + 186 * 24 * 60 * 60 * 1000)
+                        ? 'border-rose-400 bg-rose-50'
+                        : 'border-stone-200 hover:border-rose-300'
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">🚀</div>
+                    <div className="font-semibold text-stone-900">1 an</div>
+                    <div className="text-xs text-stone-500 mt-1">Long terme</div>
+                  </button>
+                </div>
+                {goalDeadline && (
+                  <p className="text-xs text-stone-500 mt-2 text-center">
+                    📅 Date limite : {new Date(goalDeadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                )}
               </div>
 
               <div className="bg-gradient-to-br from-rose-50 to-orange-50 rounded-xl p-4">

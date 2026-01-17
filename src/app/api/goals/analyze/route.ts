@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const deadline = new Date(goal.deadline);
     const daysUntilDeadline = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
-    // Créer le prompt pour Grok
+    // Créer le prompt pour Google Gemini
     const prompt = `Tu es Glowee Work, une IA spécialisée dans la planification d'objectifs pour les femmes.
 
 Objectif à analyser :
@@ -69,41 +69,42 @@ Catégories possibles : recherche, planification, action, apprentissage, créati
 
 Réponds UNIQUEMENT avec le JSON, sans aucun texte avant ou après.`;
 
-    // Appeler Grok API
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    // Appeler Google Gemini API
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.XAI_API_KEY}`,
       },
       body: JSON.stringify({
-        messages: [
+        contents: [
           {
-            role: 'system',
-            content: 'Tu es Glowee Work, une IA experte en planification d\'objectifs. Tu réponds UNIQUEMENT en JSON valide, sans texte supplémentaire.'
-          },
-          {
-            role: 'user',
-            content: prompt
+            parts: [
+              {
+                text: prompt
+              }
+            ]
           }
         ],
-        model: 'grok-beta',
-        stream: false,
-        temperature: 0.7,
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2048,
+        }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Grok API error:', errorText);
+      console.error('Google Gemini API error:', errorText);
       return NextResponse.json(
-        { error: 'Failed to analyze goal' },
+        { error: 'Failed to analyze goal with Gemini' },
         { status: 500 }
       );
     }
 
     const data = await response.json();
-    const content = data.choices[0]?.message?.content;
+    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!content) {
       return NextResponse.json(

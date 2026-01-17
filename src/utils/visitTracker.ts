@@ -74,10 +74,11 @@ export function isFirstVisit(section: SectionName): boolean {
   return data[section]?.count === 0 || !data[section]?.hasSeenWelcome;
 }
 
-// Vérifier si c'est la 5ème visite de l'app
+// Vérifier si c'est la 5ème visite de l'app (et qu'on n'a pas encore vu le popup)
 export function isFifthAppVisit(): boolean {
   const data = getVisitData();
-  return data.app?.count === 5;
+  // Afficher seulement si c'est exactement la 5ème visite ET qu'on n'a pas encore vu le popup
+  return data.app?.count === 5 && !data.app?.hasSeenWelcome;
 }
 
 // Obtenir le nombre de visites

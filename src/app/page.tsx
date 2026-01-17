@@ -38,7 +38,7 @@ import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
 import GloweePopup from '@/components/shared/GloweePopup';
-import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit } from '@/utils/visitTracker';
+import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 
 export default function GlowUpChallengeApp() {
@@ -3717,7 +3717,7 @@ export default function GlowUpChallengeApp() {
         isOpen={showGloweeWelcome}
         onClose={() => {
           setShowGloweeWelcome(false);
-          trackVisit('home');
+          markWelcomeSeen('home');
         }}
         gloweeImage={gloweeMessages.home.firstVisit.image}
         userName={gloweeMessages.home.firstVisit.userName}
@@ -3729,7 +3729,10 @@ export default function GlowUpChallengeApp() {
       {/* Glowee 5th Visit Popup */}
       <GloweePopup
         isOpen={showGloweeFifthVisit}
-        onClose={() => setShowGloweeFifthVisit(false)}
+        onClose={() => {
+          setShowGloweeFifthVisit(false);
+          markWelcomeSeen('app');
+        }}
         gloweeImage={gloweeMessages.home.fifthVisit.image}
         userName={gloweeMessages.home.fifthVisit.userName}
         title={gloweeMessages.home.fifthVisit.title}
@@ -3742,7 +3745,7 @@ export default function GlowUpChallengeApp() {
         isOpen={showGloweePlanningWelcome}
         onClose={() => {
           setShowGloweePlanningWelcome(false);
-          trackVisit('planning');
+          markWelcomeSeen('planning');
         }}
         gloweeImage={gloweeMessages.planning.firstVisit.image}
         userName={gloweeMessages.planning.firstVisit.userName}
@@ -3756,7 +3759,7 @@ export default function GlowUpChallengeApp() {
         isOpen={showGloweeJournalWelcome}
         onClose={() => {
           setShowGloweeJournalWelcome(false);
-          trackVisit('journal');
+          markWelcomeSeen('journal');
         }}
         gloweeImage={gloweeMessages.journal.firstVisit.image}
         userName={gloweeMessages.journal.firstVisit.userName}

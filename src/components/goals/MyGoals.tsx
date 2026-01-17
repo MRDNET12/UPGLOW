@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import GloweePopup from '@/components/shared/GloweePopup';
-import { isFirstVisit, trackVisit } from '@/utils/visitTracker';
+import { isFirstVisit, trackVisit, markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 
 interface Goal {
@@ -388,7 +388,7 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
         isOpen={showGloweeWelcome}
         onClose={() => {
           setShowGloweeWelcome(false);
-          trackVisit('goals');
+          markWelcomeSeen('goals');
         }}
         gloweeImage={gloweeMessages.goals.firstVisit.image}
         userName={gloweeMessages.goals.firstVisit.userName}
@@ -402,7 +402,7 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
         isOpen={showGloweeCheckInWelcome}
         onClose={() => {
           setShowGloweeCheckInWelcome(false);
-          trackVisit('energy');
+          markWelcomeSeen('energy');
         }}
         gloweeImage={gloweeMessages.energy.firstVisit.image}
         userName={gloweeMessages.energy.firstVisit.userName}

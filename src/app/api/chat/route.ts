@@ -11,6 +11,8 @@ export async function POST(req: NextRequest) {
   try {
     const { message, sessionId, systemPrompt } = await req.json();
 
+    console.log('[Chat API] Received message:', { sessionId, messageLength: message?.length });
+
     if (!message) {
       return NextResponse.json(
         { success: false, error: 'Message is required' },
@@ -19,11 +21,14 @@ export async function POST(req: NextRequest) {
     }
 
     if (!GROK_API_KEY) {
+      console.error('[Chat API] XAI_API_KEY not configured');
       return NextResponse.json(
         { success: false, error: 'XAI_API_KEY not configured' },
         { status: 500 }
       );
     }
+
+    console.log('[Chat API] API Key present:', GROK_API_KEY.substring(0, 10) + '...');
 
     // Get or create conversation history
     let history = conversations.get(sessionId);
@@ -45,6 +50,8 @@ export async function POST(req: NextRequest) {
     });
 
     // Call Grok API
+    console.log('[Chat API] Calling Grok API with', history.length, 'messages');
+
     const response = await fetch(GROK_API_URL, {
       method: 'POST',
       headers: {
@@ -59,15 +66,21 @@ export async function POST(req: NextRequest) {
       })
     });
 
+    console.log('[Chat API] Grok API response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error('[Chat API] Grok API error:', errorData);
       throw new Error(errorData.error?.message || `Grok API error: ${response.status}`);
     }
 
     const data = await response.json();
     const aiResponse = data.choices?.[0]?.message?.content;
 
+    console.log('[Chat API] AI response received:', aiResponse?.substring(0, 100) + '...');
+
     if (!aiResponse) {
+      console.error('[Chat API] Empty response from Grok AI');
       throw new Error('Empty response from Grok AI');
     }
 

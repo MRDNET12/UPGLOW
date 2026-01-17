@@ -3595,6 +3595,30 @@ export default function GlowUpChallengeApp() {
               className="mx-auto"
               modifiers={{
                 hasTask: (date) => {
+                  // Obtenir la semaine actuelle (du lundi au dimanche)
+                  const today = new Date();
+                  const currentDayOfWeek = today.getDay(); // 0 = dimanche, 1 = lundi, etc.
+
+                  // Calculer le lundi de la semaine actuelle
+                  const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+                  const monday = new Date(today);
+                  monday.setDate(today.getDate() + mondayOffset);
+                  monday.setHours(0, 0, 0, 0);
+
+                  // Calculer le dimanche de la semaine actuelle
+                  const sunday = new Date(monday);
+                  sunday.setDate(monday.getDate() + 6);
+                  sunday.setHours(23, 59, 59, 999);
+
+                  // Vérifier si la date est dans la semaine actuelle
+                  const dateToCheck = new Date(date);
+                  dateToCheck.setHours(0, 0, 0, 0);
+                  const isInCurrentWeek = dateToCheck >= monday && dateToCheck <= sunday;
+
+                  // Si la date n'est pas dans la semaine actuelle, ne pas afficher de croix
+                  if (!isInCurrentWeek) return false;
+
+                  // Sinon, vérifier si ce jour de la semaine a des tâches
                   const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
                   const dayIndex = date.getDay();
                   const dayOfWeek = dayKeys[dayIndex];

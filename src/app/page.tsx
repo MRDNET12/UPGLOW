@@ -191,6 +191,8 @@ export default function GlowUpChallengeApp() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
+  const [showSwipeHintPopup, setShowSwipeHintPopup] = useState(false);
+  const [hasSeenSwipeHint, setHasSeenSwipeHint] = useState(false);
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
@@ -1485,7 +1487,7 @@ export default function GlowUpChallengeApp() {
                     );
                   })()}
 
-                  {/* Journaling, Gratitude, Exercice, Lecture - 2 par ligne */}
+                  {/* Journaling, Gratitude, Exercice, Lecture - Cases à cocher sur la même ligne */}
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { key: 'journaling', label: t.trackers.journaling },
@@ -1502,12 +1504,12 @@ export default function GlowUpChallengeApp() {
                               habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
                             })
                           }
-                          className="flex flex-col items-center justify-center p-2.5 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
+                          className="flex items-center justify-between p-2.5 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
                         >
-                          <span className={`text-xs text-center ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-1.5 ${
+                          <span className={`text-xs flex-1 text-left ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                             isCompleted
-                              ? 'bg-rose-400 border-rose-400'
+                              ? 'bg-green-500 border-green-500'
                               : 'border-stone-300 dark:border-stone-600'
                           }`}>
                             {isCompleted && <Check className="w-3 h-3 text-white" />}
@@ -1616,15 +1618,15 @@ export default function GlowUpChallengeApp() {
                     />
                     <div className="flex gap-2">
                       <Button
-                        variant={newHabitType === 'good' ? 'default' : 'outline'}
-                        className={`flex-1 ${newHabitType === 'good' ? 'bg-green-500 hover:bg-green-600' : ''}`}
+                        variant="outline"
+                        className={`flex-1 ${newHabitType === 'good' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
                         onClick={() => setNewHabitType('good')}
                       >
                         ✨ {language === 'fr' ? 'Bonne' : language === 'en' ? 'Good' : 'Buena'}
                       </Button>
                       <Button
-                        variant={newHabitType === 'bad' ? 'default' : 'outline'}
-                        className={`flex-1 ${newHabitType === 'bad' ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                        variant="outline"
+                        className={`flex-1 ${newHabitType === 'bad' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
                         onClick={() => setNewHabitType('bad')}
                       >
                         ⚠️ {language === 'fr' ? 'Mauvaise' : language === 'en' ? 'Bad' : 'Mala'}
@@ -1780,15 +1782,6 @@ export default function GlowUpChallengeApp() {
                         <span className={`flex-1 ${priority.completed ? 'line-through text-stone-500' : ''}`}>
                           {priority.text}
                         </span>
-                        <button
-                          onClick={() => {
-                            setTaskToDelete({id: priority.id, day: 'priority', type: 'priority'});
-                            setShowDeleteTaskConfirm(true);
-                          }}
-                          className="text-stone-400 hover:text-red-500 transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
                       </div>
                     ))
                   )}
@@ -1860,15 +1853,6 @@ export default function GlowUpChallengeApp() {
                             <span className={`flex-1 ${task.completed ? 'line-through text-stone-500' : ''}`}>
                               {task.text}
                             </span>
-                            <button
-                              onClick={() => {
-                                setTaskToDelete({id: task.id, day: day.key, type: 'task'});
-                                setShowDeleteTaskConfirm(true);
-                              }}
-                              className="flex-shrink-0 text-stone-400 hover:text-red-500 transition-colors"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
                           </div>
                         ))
                       )}
@@ -2931,17 +2915,17 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${showGloweeChat ? 'text-rose-500' : ''}`}
+            className={`flex-1 h-16 flex-col gap-0 rounded-none relative ${showGloweeChat ? 'text-rose-500' : ''}`}
             onClick={() => setShowGloweeChat(true)}
           >
-            <div className="relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
               <img
                 src="/Glowee/glowee-nav-bar.webp"
                 alt="Glowee"
-                className="w-12 h-12 object-contain"
+                className="w-14 h-14 object-contain"
               />
             </div>
-            <span className="text-xs">{t.nav.glowee}</span>
+            <span className="text-xs mt-auto mb-1">{t.nav.glowee}</span>
           </Button>
           <Button
             variant="ghost"
@@ -3527,6 +3511,12 @@ export default function GlowUpChallengeApp() {
                   setNewTaskText('');
                   setNewTaskDestination('priority');
                   setShowAddTask(false);
+
+                  // Afficher le popup de hint swipe si c'est la première fois
+                  if (!hasSeenSwipeHint) {
+                    setTimeout(() => setShowSwipeHintPopup(true), 500);
+                    setHasSeenSwipeHint(true);
+                  }
                 }
               }}
             >
@@ -3545,11 +3535,13 @@ export default function GlowUpChallengeApp() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
-            {/* Animation de célébration */}
+            {/* Glowee félicitations */}
             <div className="flex justify-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 flex items-center justify-center animate-pulse">
-                <Sparkles className="w-12 h-12 text-white" />
-              </div>
+              <img
+                src="/Glowee/glowee-felicite.webp"
+                alt="Glowee félicitations"
+                className="w-32 h-32 object-contain"
+              />
             </div>
 
             {/* Message */}
@@ -3765,6 +3757,21 @@ export default function GlowUpChallengeApp() {
         userName={gloweeMessages.journal.firstVisit.userName}
         title={gloweeMessages.journal.firstVisit.title}
         message={gloweeMessages.journal.firstVisit.message}
+        position="top"
+      />
+
+      {/* Glowee Swipe Hint Popup - Planning */}
+      <GloweePopup
+        isOpen={showSwipeHintPopup}
+        onClose={() => setShowSwipeHintPopup(false)}
+        gloweeImage="glowee-acceuillante.webp"
+        userName={language === 'fr' ? 'Ma belle' : language === 'en' ? 'My dear' : 'Mi bella'}
+        title={language === 'fr' ? 'Astuce pour supprimer une tâche 💡' : language === 'en' ? 'Tip to delete a task 💡' : 'Consejo para eliminar una tarea 💡'}
+        message={language === 'fr'
+          ? 'Pour supprimer une tâche, il te suffit de la balayer vers la gauche ! Une croix de suppression apparaîtra. Simple et rapide ! ✨'
+          : language === 'en'
+            ? 'To delete a task, just swipe it to the left! A delete cross will appear. Simple and fast! ✨'
+            : '¡Para eliminar una tarea, simplemente deslízala hacia la izquierda! Aparecerá una cruz de eliminación. ¡Simple y rápido! ✨'}
         position="top"
       />
     </div>

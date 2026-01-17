@@ -10,6 +10,7 @@ interface VisitData {
 }
 
 const STORAGE_KEY = 'glowee_visits';
+const PRESENTATION_SEEN_KEY = 'glowee_presentation_seen';
 
 // Récupérer les données de visite
 export function getVisitData(): Record<SectionName, VisitData> {
@@ -90,16 +91,28 @@ export function getVisitCount(section: SectionName): number {
 // Hook React pour tracker automatiquement les visites
 export function useVisitTracker(section: SectionName) {
   if (typeof window === 'undefined') return { isFirst: false, count: 0, isFifth: false };
-  
+
   const visitData = trackVisit(section);
   const isFirst = !visitData.hasSeenWelcome;
   const isFifth = section === 'app' && visitData.count === 5;
-  
+
   return {
     isFirst,
     count: visitData.count,
     isFifth,
     markSeen: () => markWelcomeSeen(section),
   };
+}
+
+// Marquer la présentation comme vue
+export function markPresentationSeen(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(PRESENTATION_SEEN_KEY, 'true');
+}
+
+// Vérifier si la présentation a été vue
+export function hasPresentationBeenSeen(): boolean {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem(PRESENTATION_SEEN_KEY) === 'true';
 }
 

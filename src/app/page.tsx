@@ -38,7 +38,7 @@ import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
 import GloweePopup from '@/components/shared/GloweePopup';
-import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen } from '@/utils/visitTracker';
+import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 
 export default function GlowUpChallengeApp() {
@@ -504,114 +504,99 @@ export default function GlowUpChallengeApp() {
     );
   }
 
-  // Presentation Screen
+  // Presentation Screen - Ne s'affiche qu'une seule fois
   if (currentView === 'presentation') {
+    // Si la présentation a déjà été vue, passer directement à l'onboarding
+    if (hasPresentationBeenSeen()) {
+      setCurrentView('onboarding');
+      return null;
+    }
+
     return (
       <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50 text-stone-900'}`}>
         <div className="flex-1 overflow-y-auto p-6 pb-24">
-          <div className="max-w-2xl mx-auto space-y-8">
+          <div className="max-w-2xl mx-auto space-y-6">
             {/* Header */}
-            <div className="text-center space-y-4 pt-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 shadow-xl">
-                <Sparkles className="w-10 h-10 text-white" />
+            <div className="text-center space-y-3 pt-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 shadow-xl">
+                <Sparkles className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
                 {t.presentation.title}
               </h1>
-              <p className="text-lg md:text-xl text-stone-600 dark:text-stone-400 italic">
+              <p className="text-base md:text-lg text-stone-600 dark:text-stone-400 italic">
                 "{t.presentation.quote}"
               </p>
             </div>
 
             {/* Subtitle */}
             <Card className={`border-none shadow-xl ${theme === 'dark' ? 'bg-gradient-to-br from-stone-900 to-stone-800' : 'bg-white'}`}>
-              <CardContent className="p-6 text-center space-y-3">
-                <p className="text-lg leading-relaxed">
-                  {t.presentation.subtitle}
-                </p>
-                <p className="text-2xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              <CardContent className="p-4 text-center">
+                <p className="text-xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
                   {t.presentation.description}
                 </p>
               </CardContent>
             </Card>
 
-            {/* Triangle de transformation */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
-                <Target className="w-6 h-6 text-rose-500" />
+            {/* Triangle de transformation - Version condensée */}
+            <div className="space-y-3">
+              <h2 className="text-xl font-bold text-center flex items-center justify-center gap-2">
+                <Target className="w-5 h-5 text-rose-500" />
                 {t.presentation.triangleTitle}
               </h2>
 
               {/* Pilier 1 */}
               <Card className={`border-l-4 border-rose-500 shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-rose-500">
-                    <Sparkles className="w-5 h-5" />
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-rose-500 text-base">
+                    <Sparkles className="w-4 h-4" />
                     {t.presentation.pillar1Title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
-                    {t.presentation.pillar1Desc}
-                  </p>
-                </CardContent>
               </Card>
 
               {/* Pilier 2 */}
               <Card className={`border-l-4 border-pink-500 shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-pink-500">
-                    <Heart className="w-5 h-5" />
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-pink-500 text-base">
+                    <Heart className="w-4 h-4" />
                     {t.presentation.pillar2Title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
-                    {t.presentation.pillar2Desc}
-                  </p>
-                </CardContent>
               </Card>
 
               {/* Pilier 3 */}
               <Card className={`border-l-4 border-orange-500 shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-orange-500">
-                    <TrendingUp className="w-5 h-5" />
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-orange-500 text-base">
+                    <TrendingUp className="w-4 h-4" />
                     {t.presentation.pillar3Title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
-                    {t.presentation.pillar3Desc}
-                  </p>
-                </CardContent>
               </Card>
             </div>
 
-            {/* Règles du Challenge */}
+            {/* Règles du Challenge - Version condensée */}
             <Card className={`border-none shadow-xl ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-orange-900/30' : 'bg-gradient-to-br from-rose-50 to-orange-50'}`}>
-              <CardHeader>
-                <CardTitle className="text-center text-2xl flex items-center justify-center gap-2">
-                  <Award className="w-6 h-6 text-rose-500" />
+              <CardHeader className="pb-2">
+                <CardTitle className="text-center text-lg flex items-center justify-center gap-2">
+                  <Award className="w-5 h-5 text-rose-500" />
                   {t.presentation.rulesTitle}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2">
                 {[
                   t.presentation.rule1,
-                  t.presentation.rule2,
-                  t.presentation.rule3,
-                  t.presentation.rule4,
                   t.presentation.rule5
                 ].map((rule, index) => (
                   <div
                     key={index}
-                    className={`flex items-start gap-3 p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-white/80'}`}
+                    className={`flex items-start gap-3 p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-white/80'}`}
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-orange-400 flex items-center justify-center text-white font-bold text-sm">
-                      {index + 1}
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-rose-400 to-orange-400 flex items-center justify-center text-white font-bold text-xs">
+                      {index === 0 ? '1' : '5'}
                     </div>
-                    <p className={`flex-1 leading-relaxed ${index === 4 ? 'font-bold text-rose-500' : ''}`}>
+                    <p className={`flex-1 leading-relaxed text-sm ${index === 1 ? 'font-bold text-rose-500' : ''}`}>
                       {rule}
                     </p>
                   </div>
@@ -621,11 +606,14 @@ export default function GlowUpChallengeApp() {
 
             {/* CTA Button */}
             <Button
-              onClick={() => setCurrentView('onboarding')}
-              className="w-full h-16 text-xl bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-bold rounded-full shadow-2xl shadow-rose-300 dark:shadow-rose-900/50"
+              onClick={() => {
+                markPresentationSeen();
+                setCurrentView('onboarding');
+              }}
+              className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-bold rounded-full shadow-2xl shadow-rose-300 dark:shadow-rose-900/50"
             >
               {t.presentation.startChallenge}
-              <ChevronRight className="ml-2 w-6 h-6" />
+              <ChevronRight className="ml-2 w-5 h-5" />
             </Button>
           </div>
         </div>
@@ -2228,7 +2216,7 @@ export default function GlowUpChallengeApp() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                   <span className="text-xl">{habit.icon}</span>
-                                  <h3 className={`font-semibold text-sm ${isChecked ? 'line-through' : ''}`}>{habit.title}</h3>
+                                  <h3 className={`font-semibold text-sm ${isChecked ? 'line-through' : ''}`}>{habit.title[language]}</h3>
                                 </div>
                               </div>
                               <button
@@ -2915,17 +2903,17 @@ export default function GlowUpChallengeApp() {
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-16 flex-col gap-0 rounded-none relative ${showGloweeChat ? 'text-rose-500' : ''}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none relative ${showGloweeChat ? 'text-rose-500' : ''}`}
             onClick={() => setShowGloweeChat(true)}
           >
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-50">
               <img
                 src="/Glowee/glowee-nav-bar.webp"
                 alt="Glowee"
-                className="w-14 h-14 object-contain"
+                className="w-16 h-16 object-contain"
               />
             </div>
-            <span className="text-xs mt-auto mb-1">{t.nav.glowee}</span>
+            <span className="text-xs">{t.nav.glowee}</span>
           </Button>
           <Button
             variant="ghost"
@@ -2991,8 +2979,8 @@ export default function GlowUpChallengeApp() {
             <div className="flex items-center gap-3">
               <div className="text-4xl">{selectedHabit?.icon}</div>
               <div className="flex-1 text-left">
-                <DrawerTitle className="text-lg">{selectedHabit?.title}</DrawerTitle>
-                <DrawerDescription className="text-xs">{selectedHabit?.shortDescription}</DrawerDescription>
+                <DrawerTitle className="text-lg">{selectedHabit?.title[language]}</DrawerTitle>
+                <DrawerDescription className="text-xs">{selectedHabit?.shortDescription[language]}</DrawerDescription>
               </div>
               <DrawerClose asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
@@ -3007,10 +2995,10 @@ export default function GlowUpChallengeApp() {
             <div>
               <h3 className="font-semibold mb-2 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-rose-400" />
-                Pourquoi c'est important
+                {language === 'fr' ? 'Pourquoi c\'est important' : language === 'en' ? 'Why it\'s important' : 'Por qué es importante'}
               </h3>
               <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-                {selectedHabit?.detailedExplanation}
+                {selectedHabit?.detailedExplanation[language]}
               </p>
             </div>
 
@@ -3018,10 +3006,10 @@ export default function GlowUpChallengeApp() {
             <div>
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <Star className="w-4 h-4 text-rose-400" />
-                Les bénéfices
+                {language === 'fr' ? 'Les bénéfices' : language === 'en' ? 'The benefits' : 'Los beneficios'}
               </h3>
               <div className="space-y-2">
-                {selectedHabit?.benefits.map((benefit, index) => (
+                {selectedHabit?.benefits[language].map((benefit, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-rose-400 mt-0.5 flex-shrink-0" />
                     <span className="text-sm text-stone-600 dark:text-stone-400">{benefit}</span>
@@ -3038,10 +3026,10 @@ export default function GlowUpChallengeApp() {
                     <div className="text-2xl">🦋</div>
                     <div>
                       <p className="text-xs font-semibold text-rose-400 mb-1">
-                        Message de Glowee
+                        {language === 'fr' ? 'Message de Glowee' : language === 'en' ? 'Message from Glowee' : 'Mensaje de Glowee'}
                       </p>
                       <p className="text-sm italic text-stone-700 dark:text-stone-300">
-                        {selectedHabit.gloweeMessage}
+                        {selectedHabit.gloweeMessage[language]}
                       </p>
                     </div>
                   </div>
@@ -3716,6 +3704,7 @@ export default function GlowUpChallengeApp() {
         title={gloweeMessages.home.firstVisit.title}
         message={gloweeMessages.home.firstVisit.message}
         position="top"
+        language={language}
       />
 
       {/* Glowee 5th Visit Popup */}
@@ -3730,6 +3719,7 @@ export default function GlowUpChallengeApp() {
         title={gloweeMessages.home.fifthVisit.title}
         message={gloweeMessages.home.fifthVisit.message}
         position="top"
+        language={language}
       />
 
       {/* Glowee Planning Welcome Popup */}
@@ -3744,6 +3734,7 @@ export default function GlowUpChallengeApp() {
         title={gloweeMessages.planning.firstVisit.title}
         message={gloweeMessages.planning.firstVisit.message}
         position="top"
+        language={language}
       />
 
       {/* Glowee Journal Welcome Popup */}
@@ -3758,6 +3749,7 @@ export default function GlowUpChallengeApp() {
         title={gloweeMessages.journal.firstVisit.title}
         message={gloweeMessages.journal.firstVisit.message}
         position="top"
+        language={language}
       />
 
       {/* Glowee Swipe Hint Popup - Planning */}
@@ -3773,6 +3765,7 @@ export default function GlowUpChallengeApp() {
             ? 'To delete a task, just swipe it to the left! A delete cross will appear. Simple and fast! ✨'
             : '¡Para eliminar una tarea, simplemente deslízala hacia la izquierda! Aparecerá una cruz de eliminación. ¡Simple y rápido! ✨'}
         position="top"
+        language={language}
       />
     </div>
   );

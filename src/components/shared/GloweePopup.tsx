@@ -1,16 +1,18 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { Language } from '@/lib/translations';
 
 interface GloweePopupProps {
   isOpen: boolean;
   onClose: () => void;
   gloweeImage: string; // Nom de l'image (ex: "glowee-felicite.webp")
-  title: string;
-  message: string;
-  userName?: string; // "Ma star", "Ma belle", etc.
+  title: string | { fr: string; en: string; es: string };
+  message: string | { fr: string; en: string; es: string };
+  userName?: string | { fr: string; en: string; es: string }; // "Ma star", "Ma belle", etc.
   position?: 'top' | 'center'; // Position du popup
   showCloseButton?: boolean;
+  language?: Language;
 }
 
 export default function GloweePopup({
@@ -22,12 +24,21 @@ export default function GloweePopup({
   userName = "Ma belle",
   position = 'top',
   showCloseButton = true,
+  language = 'fr',
 }: GloweePopupProps) {
   if (!isOpen) return null;
+
+  // Helper pour obtenir le texte dans la bonne langue
+  const getText = (text: string | { fr: string; en: string; es: string }): string => {
+    if (typeof text === 'string') return text;
+    return text[language];
+  };
 
   const positionClasses = position === 'top'
     ? 'top-8 sm:top-12 left-1/2 -translate-x-1/2'
     : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+
+  const closeButtonText = language === 'fr' ? 'Merci Glowee ! ✨' : language === 'en' ? 'Thank you Glowee! ✨' : '¡Gracias Glowee! ✨';
 
   return (
     <>
@@ -73,16 +84,16 @@ export default function GloweePopup({
               {/* Titre avec nom flatteur */}
               <div className="mb-3 sm:mb-4">
                 <h3 className="text-lg sm:text-xl font-bold text-stone-900 mb-1">
-                  {userName} ! 💖
+                  {getText(userName)} ! 💖
                 </h3>
                 <h4 className="text-base sm:text-lg font-semibold text-rose-500">
-                  {title}
+                  {getText(title)}
                 </h4>
               </div>
 
               {/* Message */}
               <p className="text-sm sm:text-base text-stone-700 leading-relaxed mb-4 sm:mb-5">
-                {message}
+                {getText(message)}
               </p>
 
               {/* Bouton de fermeture */}
@@ -91,7 +102,7 @@ export default function GloweePopup({
                   onClick={onClose}
                   className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg text-sm sm:text-base"
                 >
-                  Merci Glowee ! ✨
+                  {closeButtonText}
                 </button>
               )}
             </div>

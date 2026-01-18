@@ -372,7 +372,7 @@ export const translations: Record<Language, Translation> = {
       habits: 'Habitudes',
       gloweeGreeting: 'Bonjour!',
       gloweeIntro: 'Je m\'appelle Glowee\nTon reflet bienveillant.',
-      gloweeMessage: 'Je ne te change pas.\nJe t\'aide à voir tout ce qui brille déjà en toi ✨',
+      gloweeMessage: 'Je t\'aide à voir tout ce qui brille déjà en toi ✨',
       gloweeButton: 'Avançons ensemble',
     },
     languageSelection: {
@@ -685,7 +685,7 @@ export const translations: Record<Language, Translation> = {
       habits: 'Habits',
       gloweeGreeting: 'Hello!',
       gloweeIntro: 'I\'m Glowee\nYour kind reflection.',
-      gloweeMessage: 'I don\'t change you.\nI help you see everything that already shines in you ✨',
+      gloweeMessage: 'I help you see everything that already shines in you ✨',
       gloweeButton: 'Let\'s move forward together',
     },
     languageSelection: {
@@ -998,7 +998,7 @@ export const translations: Record<Language, Translation> = {
       habits: 'Hábitos',
       gloweeGreeting: '¡Hola!',
       gloweeIntro: 'Me llamo Glowee\nTu reflejo amable.',
-      gloweeMessage: 'No te cambio.\nTe ayudo a ver todo lo que ya brilla en ti ✨',
+      gloweeMessage: 'Te ayudo a ver todo lo que ya brilla en ti ✨',
       gloweeButton: 'Avancemos juntas',
     },
     languageSelection: {

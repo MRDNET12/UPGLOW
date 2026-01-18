@@ -626,76 +626,6 @@ export default function GlowUpChallengeApp() {
     );
   }
 
-  // Onboarding Screen - Page 1: Glowee se présente
-  if (!hasStarted && onboardingPage === 1) {
-    return (
-      <div className={`min-h-screen flex flex-col items-center justify-center p-6 ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
-        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-700">
-          {/* Glowee Image */}
-          <div className="flex justify-center animate-in zoom-in duration-500">
-            <img
-              src="/Glowee/glowee-acceuillante.webp"
-              alt="Glowee"
-              className="w-64 h-64 object-contain"
-            />
-          </div>
-
-          {/* Greeting */}
-          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-300">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
-              {t.onboarding.gloweeGreeting}
-            </h1>
-            <p className="text-xl text-stone-700 dark:text-stone-300 font-light whitespace-pre-line leading-relaxed">
-              {t.onboarding.gloweeIntro}
-            </p>
-          </div>
-
-          {/* Next Button */}
-          <Button
-            onClick={() => setOnboardingPage(2)}
-            className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30 animate-in slide-in-from-bottom duration-700 delay-500"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Onboarding Screen - Page 2: Message de Glowee
-  if (!hasStarted && onboardingPage === 2) {
-    return (
-      <div className={`min-h-screen flex flex-col items-center justify-center p-6 ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
-        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-700">
-          {/* Glowee Image */}
-          <div className="flex justify-center animate-in zoom-in duration-500">
-            <img
-              src="/Glowee/glowee-acceuillante.webp"
-              alt="Glowee"
-              className="w-64 h-64 object-contain"
-            />
-          </div>
-
-          {/* Message */}
-          <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
-            <p className="text-2xl text-stone-700 dark:text-stone-300 font-light whitespace-pre-line leading-relaxed">
-              {t.onboarding.gloweeMessage}
-            </p>
-          </div>
-
-          {/* Start Button */}
-          <Button
-            onClick={() => setCurrentView('challenge-selection')}
-            className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30 animate-in slide-in-from-bottom duration-700 delay-500"
-          >
-            {t.onboarding.gloweeButton}
-            <Sparkles className="ml-2 w-5 h-5" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   // Challenge Selection Screen
   if (currentView === 'challenge-selection') {
     return (
@@ -772,6 +702,76 @@ export default function GlowUpChallengeApp() {
               </div>
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Onboarding Screen - Page 1: Glowee se présente
+  if (!hasStarted && onboardingPage === 1) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center p-6 ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
+        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-700">
+          {/* Glowee Image */}
+          <div className="flex justify-center animate-in zoom-in duration-500">
+            <img
+              src="/Glowee/glowee-acceuillante.webp"
+              alt="Glowee"
+              className="w-64 h-64 object-contain"
+            />
+          </div>
+
+          {/* Greeting */}
+          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-300">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              {t.onboarding.gloweeGreeting}
+            </h1>
+            <p className="text-xl text-stone-700 dark:text-stone-300 font-light whitespace-pre-line leading-relaxed">
+              {t.onboarding.gloweeIntro}
+            </p>
+          </div>
+
+          {/* Next Button */}
+          <Button
+            onClick={() => setOnboardingPage(2)}
+            className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30 animate-in slide-in-from-bottom duration-700 delay-500"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Onboarding Screen - Page 2: Message de Glowee
+  if (!hasStarted && onboardingPage === 2) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center p-6 ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
+        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-700">
+          {/* Glowee Image */}
+          <div className="flex justify-center animate-in zoom-in duration-500">
+            <img
+              src="/Glowee/glowee-acceuillante.webp"
+              alt="Glowee"
+              className="w-64 h-64 object-contain"
+            />
+          </div>
+
+          {/* Message */}
+          <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
+            <p className="text-2xl text-stone-700 dark:text-stone-300 font-light whitespace-pre-line leading-relaxed">
+              {t.onboarding.gloweeMessage}
+            </p>
+          </div>
+
+          {/* Start Button */}
+          <Button
+            onClick={() => setCurrentView('challenge-selection')}
+            className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30 animate-in slide-in-from-bottom duration-700 delay-500"
+          >
+            {t.onboarding.gloweeButton}
+            <Sparkles className="ml-2 w-5 h-5" />
+          </Button>
         </div>
       </div>
     );

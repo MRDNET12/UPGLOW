@@ -857,13 +857,13 @@ export default function GlowUpChallengeApp() {
             )}
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <Card
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('journal')}
               >
-                <CardContent className="p-4 text-center">
-                  <BookOpen className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                <CardContent className="p-3 text-center">
+                  <BookOpen className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">{t.journal.title}</h3>
                   <p className="text-xs text-stone-500 dark:text-stone-500">{journalEntries.length} {t.journal.entries}</p>
                 </CardContent>
@@ -873,8 +873,8 @@ export default function GlowUpChallengeApp() {
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('trackers')}
               >
-                <CardContent className="p-4 text-center">
-                  <Activity className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                <CardContent className="p-3 text-center">
+                  <Activity className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">{t.trackers.title}</h3>
                   <p className="text-xs text-stone-500 dark:text-stone-500">{t.trackers.today}</p>
                 </CardContent>
@@ -884,8 +884,8 @@ export default function GlowUpChallengeApp() {
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-4 text-center">
-                  <Calendar className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                <CardContent className="p-3 text-center">
+                  <Calendar className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">
                     {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
                   </h3>
@@ -899,8 +899,8 @@ export default function GlowUpChallengeApp() {
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('my-goals')}
               >
-                <CardContent className="p-4 text-center">
-                  <Target className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                <CardContent className="p-3 text-center">
+                  <Target className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">
                     {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
                   </h3>

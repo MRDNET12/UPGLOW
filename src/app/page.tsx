@@ -3012,7 +3012,7 @@ export default function GlowUpChallengeApp() {
           <Button
             variant="ghost"
             className={`flex-1 h-16 flex-col gap-1 rounded-none ${showGloweeChat ? 'text-rose-500' : ''}`}
-            onClick={() => setShowGloweeChat(true)}
+            onClick={() => setShowGloweeChat(!showGloweeChat)}
           >
             <img
               src="/Glowee/glowee-nav-bar.webp"

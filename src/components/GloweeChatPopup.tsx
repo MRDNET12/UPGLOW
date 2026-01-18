@@ -30,6 +30,19 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
     }
   }, [messages]);
 
+  // Fonction pour formater le texte de Glowee (enlever le markdown)
+  const formatGloweeText = (text: string) => {
+    return text
+      // Enlever les doubles astérisques (gras)
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      // Enlever les simples astérisques (italique)
+      .replace(/\*(.+?)\*/g, '$1')
+      // Enlever les tirets de liste au début des lignes
+      .replace(/^- /gm, '• ')
+      // Enlever les numéros de liste
+      .replace(/^\d+\.\s/gm, '• ');
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -161,7 +174,9 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
                     }
                   `}
                 >
-                  <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                  <p className="text-sm whitespace-pre-wrap break-words">
+                    {msg.role === 'assistant' ? formatGloweeText(msg.content) : msg.content}
+                  </p>
                 </div>
               </div>
             ))}

@@ -1302,6 +1302,42 @@ export default function GlowUpChallengeApp() {
                   />
                 </div>
 
+                {/* Question 5: Qu'est-ce qui m'a apporté du glow ? */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t.journal.whatBroughtGlow}</label>
+                  <Textarea
+                    placeholder={t.journal.momentsOfJoy}
+                    value={newJournalEntry.glow}
+                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
+                    rows={2}
+                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                  />
+                </div>
+
+                {/* Question 6: Qu'est-ce que j'ai appris ? */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t.journal.whatLearned}</label>
+                  <Textarea
+                    placeholder={t.journal.discoveriesLearnings}
+                    value={newJournalEntry.learned}
+                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, learned: e.target.value })}
+                    rows={2}
+                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                  />
+                </div>
+
+                {/* Question 7: Journal libre */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t.journal.freeContent}</label>
+                  <Textarea
+                    placeholder="Écris librement ce qui te passe par la tête..."
+                    value={newJournalEntry.freeContent}
+                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, freeContent: e.target.value })}
+                    rows={3}
+                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                  />
+                </div>
+
                 {/* Bouton de fermeture avec dégradé violet */}
                 <Button
                   onClick={handleSaveJournalEntry}

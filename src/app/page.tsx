@@ -38,6 +38,7 @@ import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
 import GloweePopup from '@/components/shared/GloweePopup';
+import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 
@@ -784,24 +785,18 @@ export default function GlowUpChallengeApp() {
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Header */}
-            <div className="text-center space-y-3">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
-                {t.dashboard.welcome} ✨
-              </h1>
-              <p className={`text-stone-600 dark:text-stone-400 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-                {t.dashboard.continueYourChallenge}
-              </p>
-              {/* Trial Badge and Challenge Switch Button */}
-              <div className="flex items-center justify-center gap-3 pt-2">
-                <TrialBadge theme={theme} />
-                <button
-                  onClick={() => setShowChallengeDrawer(true)}
-                  className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-200 hover:bg-stone-300'}`}
-                >
-                  <ChevronRight className="w-5 h-5 rotate-180" />
-                </button>
-              </div>
+            {/* Glowee Hourly Message */}
+            <GloweeHourlyMessage theme={theme} />
+
+            {/* Trial Badge and Challenge Switch Button */}
+            <div className="flex items-center justify-center gap-3">
+              <TrialBadge theme={theme} />
+              <button
+                onClick={() => setShowChallengeDrawer(true)}
+                className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-200 hover:bg-stone-300'}`}
+              >
+                <ChevronRight className="w-5 h-5 rotate-180" />
+              </button>
             </div>
 
             {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}

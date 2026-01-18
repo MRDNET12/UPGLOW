@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       history = [
         {
           role: 'system',
-          content: systemPrompt || 'Tu es Glowee, une assistante IA bienveillante et encourageante. Tu aides les utilisateurs dans leur parcours de développement personnel avec empathie et positivité. Tu réponds toujours dans la langue de l\'utilisateur. Tu es chaleureuse, motivante et tu utilises des emojis pour rendre la conversation plus agréable. 💫'
+          content: systemPrompt || 'Tu es Glowee, le reflet bienveillant de l\'utilisatrice. Tu l\'aides dans son parcours de développement personnel avec empathie et positivité. Tu la tutoies toujours et tu réponds dans sa langue. Tu es chaleureuse, motivante et tu utilises des emojis pour rendre la conversation plus agréable. 💫'
         }
       ];
     }
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         'X-Title': 'Glowee - UPGLOW' // Optionnel : nom de ton app
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.2-3b-instruct:free', // Modèle gratuit et stable
+        model: 'deepseek/deepseek-r1-0528:free', // Modèle DeepSeek gratuit
         messages: history,
         temperature: 0.7,
         max_tokens: 1000

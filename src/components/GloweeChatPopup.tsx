@@ -21,7 +21,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Coucou ! 🌟 Je suis Glowee, ton assistante personnelle pour ton Glow Up ! Comment puis-je t'aider aujourd'hui ?"
+      content: "Hey ma belle vas-y dis moi tout"
     }
   ]);
   const [input, setInput] = useState('');
@@ -74,13 +74,13 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div 
+    <div className="fixed bottom-20 right-4 z-50 w-[380px] animate-in slide-in-from-bottom duration-300">
+      <div
         className={`
-          relative w-full max-w-2xl h-[600px] rounded-2xl shadow-2xl overflow-hidden
+          relative h-[500px] rounded-2xl shadow-2xl overflow-hidden
           flex flex-col
           ${theme === 'dark' ? 'bg-stone-900 text-stone-100' : 'bg-white text-stone-900'}
-          animate-in zoom-in-95 duration-200
+          border ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}
         `}
       >
         {/* Header */}
@@ -99,7 +99,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
                 Glowee
               </h2>
               <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-                Ton assistante Glow Up
+                Ton reflet bienveillant
               </p>
             </div>
           </div>
@@ -114,23 +114,23 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+        <div className="flex-1 overflow-y-auto p-4" ref={scrollRef}>
           <div className="space-y-4">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : idx === 0 ? 'justify-center' : 'justify-start'}`}
               >
-                {msg.role === 'assistant' && (
-                  <img 
-                    src="/Glowee/glowee-repond.webp" 
-                    alt="Glowee" 
+                {msg.role === 'assistant' && idx !== 0 && (
+                  <img
+                    src="/Glowee/glowee-repond.webp"
+                    alt="Glowee"
                     className="w-8 h-8 object-contain flex-shrink-0"
                   />
                 )}
                 <div
                   className={`
-                    max-w-[75%] rounded-2xl px-4 py-2
+                    ${idx === 0 ? 'text-center' : 'max-w-[75%]'} rounded-2xl px-4 py-2
                     ${msg.role === 'user'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white'
                       : theme === 'dark'
@@ -159,7 +159,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         {/* Input */}
         <div className={`

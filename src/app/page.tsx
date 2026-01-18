@@ -30,8 +30,6 @@ import { GloweeChatPopup } from '@/components/GloweeChatPopup';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import InstallPrompt from '@/components/InstallPrompt';
 import AppLoader from '@/components/AppLoader';
-import { SmallWins } from '@/components/SmallWins';
-import { EveningQuestion } from '@/components/EveningQuestion';
 import { BoundariesTracker } from '@/components/BoundariesTracker';
 import { SmallWinsQuickAdd } from '@/components/SmallWinsQuickAdd';
 import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
@@ -954,7 +952,7 @@ export default function GlowUpChallengeApp() {
             <div className="space-y-3">
               <div
                 ref={quickAddScrollRef}
-                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6"
+                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6"
                 onScroll={(e) => {
                   const scrollLeft = e.currentTarget.scrollLeft;
                   const cardWidth = e.currentTarget.scrollWidth / 2;
@@ -966,10 +964,10 @@ export default function GlowUpChallengeApp() {
                   msOverflowStyle: 'none',
                 }}
               >
-                <div className="snap-start flex-shrink-0" style={{ width: '90vw', maxWidth: '450px' }}>
+                <div className="snap-start flex-shrink-0 pl-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
                   <SmallWinsQuickAdd theme={theme} />
                 </div>
-                <div className="snap-start flex-shrink-0" style={{ width: '90vw', maxWidth: '450px' }}>
+                <div className="snap-start flex-shrink-0 pr-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
                   <EveningQuestionQuickAdd theme={theme} />
                 </div>
               </div>
@@ -3403,13 +3401,11 @@ export default function GlowUpChallengeApp() {
                 )}
 
                 {/* Séparateur avant le suivi */}
-                {(selectedBonusSection.id === 'petits-succes' || selectedBonusSection.id === 'question-soir' || selectedBonusSection.id === 'limites-paix') && (
+                {selectedBonusSection.id === 'limites-paix' && (
                   <div className="border-t-2 border-dashed border-stone-300 dark:border-stone-700 my-6"></div>
                 )}
 
-                {/* Composants de suivi pour les 3 sections spécifiques */}
-                {selectedBonusSection.id === 'petits-succes' && <SmallWins />}
-                {selectedBonusSection.id === 'question-soir' && <EveningQuestion />}
+                {/* Composant de suivi pour la section limites */}
                 {selectedBonusSection.id === 'limites-paix' && <BoundariesTracker />}
               </div>
             )}

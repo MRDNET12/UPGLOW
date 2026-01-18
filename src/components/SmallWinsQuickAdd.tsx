@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Trophy, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trophy, Plus, ChevronDown, ChevronUp, History } from 'lucide-react';
 
 interface SmallWinsQuickAddProps {
   theme?: 'light' | 'dark';
@@ -11,11 +11,14 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
   const { t } = useTranslation();
   const [newWin, setNewWin] = useState('');
   const [showFaq, setShowFaq] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const addSmallWin = useStore((state) => state.addSmallWin);
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
+  const getSmallWinsHistory = useStore((state) => state.getSmallWinsHistory);
 
   const winsThisWeek = getSmallWinsThisWeek();
+  const history = getSmallWinsHistory();
 
   const handleAddWin = () => {
     if (newWin.trim()) {
@@ -95,7 +98,7 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
       </div>
 
       {/* Input */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 mb-3">
         <input
           type="text"
           value={newWin}
@@ -112,6 +115,57 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
           <Plus className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Dernier ajouté */}
+      {winsThisWeek.length > 0 && (
+        <div className="mb-3">
+          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Dernier ajouté :</p>
+          <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+            <p className="text-sm text-gray-900 dark:text-white">{winsThisWeek[winsThisWeek.length - 1].text}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {new Date(winsThisWeek[winsThisWeek.length - 1].date).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Historique */}
+      {history.length > 0 && (
+        <div>
+          <button
+            onClick={() => setShowHistory(!showHistory)}
+            className="w-full flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <History className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              <span className="font-semibold text-gray-900 dark:text-white text-xs">
+                Historique ({history.length})
+              </span>
+            </div>
+            {showHistory ? (
+              <ChevronUp className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+            )}
+          </button>
+
+          {showHistory && (
+            <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+              {history.map((win) => (
+                <div
+                  key={win.id}
+                  className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                >
+                  <p className="text-sm text-gray-900 dark:text-white">{win.text}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {new Date(win.date).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

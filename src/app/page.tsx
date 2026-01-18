@@ -857,19 +857,18 @@ export default function GlowUpChallengeApp() {
             )}
 
             {/* Quick Actions */}
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
               <Card
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('journal')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-3">
-                    <BookOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm">{t.journal.title}</h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500">{journalEntries.length} {t.journal.entries}</p>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{t.journal.title}</h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">{journalEntries.length} {t.journal.entries}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
                   </div>
                 </CardContent>
               </Card>
@@ -879,13 +878,12 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('trackers')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-3">
-                    <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm">{t.trackers.title}</h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500">{t.trackers.today}</p>
+                  <div className="flex items-center gap-2">
+                    <Activity className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{t.trackers.title}</h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">{t.trackers.today}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
                   </div>
                 </CardContent>
               </Card>
@@ -895,17 +893,16 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('routine')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-3">
-                    <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm">
+                  <div className="flex items-center gap-2">
+                    <Calendar className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">
                         {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
                       </h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500">
+                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">
                         {language === 'fr' ? 'Organisez votre semaine' : language === 'en' ? 'Organize your week' : 'Organiza tu semana'}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
                   </div>
                 </CardContent>
               </Card>
@@ -915,17 +912,16 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('my-goals')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-3">
-                    <Target className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm">
+                  <div className="flex items-center gap-2">
+                    <Target className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">
                         {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
                       </h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500">
+                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">
                         {language === 'fr' ? 'Atteins tes rêves' : language === 'en' ? 'Achieve your dreams' : 'Alcanza tus sueños'}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
                   </div>
                 </CardContent>
               </Card>

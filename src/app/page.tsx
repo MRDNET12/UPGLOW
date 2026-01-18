@@ -3806,6 +3806,7 @@ export default function GlowUpChallengeApp() {
         isOpen={showGloweeChat}
         onClose={() => setShowGloweeChat(false)}
         theme={theme}
+        language={language}
       />
 
       {/* Trial Extension Popup - 3 jours supplémentaires */}

@@ -15,9 +15,10 @@ interface GloweeChatPopupProps {
   isOpen: boolean;
   onClose: () => void;
   theme?: 'light' | 'dark';
+  language?: 'fr' | 'en' | 'es';
 }
 
-export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChatPopupProps) {
+export function GloweeChatPopup({ isOpen, onClose, theme = 'light', language = 'fr' }: GloweeChatPopupProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,38 +26,95 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false);
 
-  // Messages d'accueil aléatoires
+  // Messages d'accueil aléatoires multilingues
   const [welcomeMessage] = useState(() => {
-    const nicknames = [
-      'ma jolie',
-      'mon trésor',
-      'ma queen',
-      'ma précieuse',
-      'ma courageuse',
-      'ma merveille',
-      'mon rayon',
-      'glow queen',
-      'mon étoile',
-      'ma best',
-      'ma fidèle',
-      'ma copine',
-      'ma confidente',
-      'ma bestie ✨',
-      'ma glow friend'
-    ];
+    const nicknamesData = {
+      fr: [
+        'ma jolie',
+        'mon trésor',
+        'ma queen',
+        'ma précieuse',
+        'ma courageuse',
+        'ma merveille',
+        'mon rayon',
+        'glow queen',
+        'mon étoile',
+        'ma best',
+        'ma fidèle',
+        'ma copine',
+        'ma confidente',
+        'ma bestie ✨',
+        'ma glow friend'
+      ],
+      en: [
+        'my pretty',
+        'my treasure',
+        'my queen',
+        'my precious',
+        'my brave',
+        'my wonder',
+        'my sunshine',
+        'glow queen',
+        'my star',
+        'my best',
+        'my loyal',
+        'my friend',
+        'my confidant',
+        'my bestie ✨',
+        'my glow friend'
+      ],
+      es: [
+        'mi linda',
+        'mi tesoro',
+        'mi reina',
+        'mi preciosa',
+        'mi valiente',
+        'mi maravilla',
+        'mi rayo',
+        'glow queen',
+        'mi estrella',
+        'mi mejor',
+        'mi fiel',
+        'mi amiga',
+        'mi confidente',
+        'mi bestie ✨',
+        'mi glow friend'
+      ]
+    };
 
-    const phrases = [
-      'vas-y, dis-moi tout 💕',
-      'je t\'écoute ✨',
-      'raconte-moi 🌸',
-      'je suis là 💖',
-      'vas-y, je t\'écoute ☀️'
-    ];
+    const phrasesData = {
+      fr: [
+        'vas-y, dis-moi tout 💕',
+        'je t\'écoute ✨',
+        'raconte-moi 🌸',
+        'je suis là 💖',
+        'vas-y, je t\'écoute ☀️'
+      ],
+      en: [
+        'go ahead, tell me everything 💕',
+        'I\'m listening ✨',
+        'tell me about it 🌸',
+        'I\'m here 💖',
+        'go ahead, I\'m listening ☀️'
+      ],
+      es: [
+        'adelante, cuéntamelo todo 💕',
+        'te escucho ✨',
+        'cuéntame 🌸',
+        'estoy aquí 💖',
+        'adelante, te escucho ☀️'
+      ]
+    };
+
+    const nicknames = nicknamesData[language] || nicknamesData.fr;
+    const phrases = phrasesData[language] || phrasesData.fr;
 
     const randomNickname = nicknames[Math.floor(Math.random() * nicknames.length)];
     const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
 
-    return `Hey ${randomNickname}, ${randomPhrase}`;
+    const heyWord = language === 'es' ? 'Hola' : 'Hey';
+
+    return `${heyWord} ${randomNickname}, ${randomPhrase}`;
   });
 
   useEffect(() => {
@@ -64,6 +122,27 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Traductions
+  const translations = {
+    fr: {
+      subtitle: 'Ton reflet bienveillant',
+      placeholder: 'Écris ton message...',
+      errorMessage: "Oups ! J'ai eu un petit souci. Peux-tu réessayer ? 💫"
+    },
+    en: {
+      subtitle: 'Your caring reflection',
+      placeholder: 'Write your message...',
+      errorMessage: "Oops! I had a little issue. Can you try again? 💫"
+    },
+    es: {
+      subtitle: 'Tu reflejo cariñoso',
+      placeholder: 'Escribe tu mensaje...',
+      errorMessage: "¡Ups! Tuve un pequeño problema. ¿Puedes intentarlo de nuevo? 💫"
+    }
+  };
+
+  const t = translations[language] || translations.fr;
 
   // Fonction pour formater le texte de Glowee (enlever le markdown)
   const formatGloweeText = (text: string) => {
@@ -117,7 +196,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
       console.error('Chat error:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "Oups ! J'ai eu un petit souci. Peux-tu réessayer ? 💫"
+        content: t.errorMessage
       }]);
     } finally {
       setIsLoading(false);
@@ -158,7 +237,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
                 Glowee
               </h2>
               <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-                Ton reflet bienveillant
+                {t.subtitle}
               </p>
             </div>
           </div>
@@ -263,7 +342,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Écris ton message..."
+              placeholder={t.placeholder}
               disabled={isLoading}
               className={`
                 flex-1 text-sm

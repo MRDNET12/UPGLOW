@@ -181,6 +181,7 @@ interface AppState {
 
   // Boundaries
   addBoundaryEntry: (boundaryType: string) => void;
+  removeBoundaryEntry: (id: string) => void;
   getBoundaryEntriesThisWeek: () => BoundaryEntry[];
   getBoundaryCountThisWeek: (boundaryType: string) => number;
   getBoundaryHistory: () => BoundaryEntry[];
@@ -653,6 +654,16 @@ export const useStore = create<AppState>()(
           bonusProgress: {
             ...get().bonusProgress,
             boundaryEntries: [newEntry, ...get().bonusProgress.boundaryEntries]
+          }
+        });
+      },
+      removeBoundaryEntry: (id) => {
+        set({
+          bonusProgress: {
+            ...get().bonusProgress,
+            boundaryEntries: get().bonusProgress.boundaryEntries.filter(
+              (entry) => entry.id !== id
+            )
           }
         });
       },

@@ -2582,74 +2582,7 @@ export default function GlowUpChallengeApp() {
               <h1 className="text-2xl font-bold">{t.bonus.title}</h1>
             </div>
 
-            {/* Indicateur de progression global */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardContent className="p-5">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <Award className="w-4 h-4 text-purple-500" />
-                      {t.bonus.globalProgress}
-                    </h3>
-                    <Badge variant="outline" className="text-xs">
-                      {(() => {
-                        const totalWeeks = bonusSections.length * 4; // 3 sections × 4 semaines
-                        const completedWeeks = bonusSections.reduce((acc, section) =>
-                          acc + getSectionWeeklyCompletion(section.id), 0
-                        );
-                        const checklistsTotal = checklistsData.length;
-                        const checklistsCompleted = bonusProgress.checklistsCompleted.length;
-                        const guideTotal = softLifeGuide.steps.length;
-                        const guideCompleted = bonusProgress.miniGuideStepsCompleted.length;
-                        const total = totalWeeks + checklistsTotal + guideTotal;
-                        const completed = completedWeeks + checklistsCompleted + guideCompleted;
-                        return `${completed} / ${total}`;
-                      })()}
-                    </Badge>
-                  </div>
-                  <Progress
-                    value={(() => {
-                      const totalWeeks = bonusSections.length * 4;
-                      const completedWeeks = bonusSections.reduce((acc, section) =>
-                        acc + getSectionWeeklyCompletion(section.id), 0
-                      );
-                      const checklistsTotal = checklistsData.length;
-                      const checklistsCompleted = bonusProgress.checklistsCompleted.length;
-                      const guideTotal = softLifeGuide.steps.length;
-                      const guideCompleted = bonusProgress.miniGuideStepsCompleted.length;
-                      const total = totalWeeks + checklistsTotal + guideTotal;
-                      const completed = completedWeeks + checklistsCompleted + guideCompleted;
-                      return (completed / total) * 100;
-                    })()}
-                    className="h-3"
-                  />
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    <div className={`p-2 rounded-lg text-center ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
-                      <p className="font-semibold text-green-500">
-                        {bonusSections.reduce((acc, section) => acc + getSectionWeeklyCompletion(section.id), 0)} / {bonusSections.length * 4}
-                      </p>
-                      <p className="text-stone-500 dark:text-stone-400">
-                        {t.bonus.weeks}
-                      </p>
-                    </div>
-                    <div className={`p-2 rounded-lg text-center ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
-                      <p className="font-semibold text-blue-500">
-                        {bonusProgress.checklistsCompleted.length} / {checklistsData.length}
-                      </p>
-                      <p className="text-stone-500 dark:text-stone-400">{t.bonus.checklists}</p>
-                    </div>
-                    <div className={`p-2 rounded-lg text-center ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
-                      <p className="font-semibold text-amber-500">
-                        {bonusProgress.miniGuideStepsCompleted.length} / {softLifeGuide.steps.length}
-                      </p>
-                      <p className="text-stone-500 dark:text-stone-400">
-                        {t.bonus.guide}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+
 
             {/* Sections Bonus Principales */}
             <div className="space-y-3">

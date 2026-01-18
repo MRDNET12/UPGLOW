@@ -58,7 +58,8 @@ const messages = [
 export function GloweeHourlyMessage({ theme = 'light' }: GloweeHourlyMessageProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentMessage, setCurrentMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasTyped, setHasTyped] = useState(false);
 
   // Sélectionner le message basé sur l'heure actuelle
   useEffect(() => {
@@ -68,21 +69,27 @@ export function GloweeHourlyMessage({ theme = 'light' }: GloweeHourlyMessageProp
       return messages[messageIndex];
     };
 
-    setCurrentMessage(selectMessage());
+    const initialMessage = selectMessage();
+    setCurrentMessage(initialMessage);
+    setDisplayedText('');
+    setIsTyping(true);
+    setHasTyped(false);
 
     // Mettre à jour le message toutes les heures
     const interval = setInterval(() => {
+      const newMessage = selectMessage();
+      setCurrentMessage(newMessage);
       setDisplayedText('');
       setIsTyping(true);
-      setCurrentMessage(selectMessage());
+      setHasTyped(false);
     }, 60 * 60 * 1000); // 1 heure
 
     return () => clearInterval(interval);
   }, []);
 
-  // Effet d'écriture
+  // Effet d'écriture - ne se déclenche qu'une fois par message
   useEffect(() => {
-    if (!currentMessage) return;
+    if (!currentMessage || hasTyped) return;
 
     setDisplayedText('');
     setIsTyping(true);
@@ -94,12 +101,13 @@ export function GloweeHourlyMessage({ theme = 'light' }: GloweeHourlyMessageProp
         currentIndex++;
       } else {
         setIsTyping(false);
+        setHasTyped(true);
         clearInterval(typingInterval);
       }
     }, 50); // 50ms par caractère
 
     return () => clearInterval(typingInterval);
-  }, [currentMessage]);
+  }, [currentMessage, hasTyped]);
 
   return (
     <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-rose-50/50 via-pink-50/50 to-orange-50/50 dark:from-rose-900/10 dark:via-pink-900/10 dark:to-orange-900/10">

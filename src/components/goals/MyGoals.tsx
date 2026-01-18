@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import GloweePopup from '@/components/shared/GloweePopup';
+import { GoalDetailsDialog } from '@/components/goals/GoalDetailsDialog';
 import { isFirstVisit, trackVisit, markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 
@@ -39,9 +40,11 @@ interface Task {
 
 interface MyGoalsProps {
   onAddGloweeTasks?: (tasks: Task[]) => void;
+  onNavigateToPlanning?: (goalId: string) => void;
+  onShowGoalDetails?: (goalId: string) => void;
 }
 
-export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
+export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDetails }: MyGoalsProps = {}) {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [showCreateGoal, setShowCreateGoal] = useState(false);
@@ -53,6 +56,10 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
   // États pour les popups Glowee
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
   const [showGloweeCheckInWelcome, setShowGloweeCheckInWelcome] = useState(false);
+
+  // État pour le dialogue de détails
+  const [selectedGoalForDetails, setSelectedGoalForDetails] = useState<Goal | null>(null);
+  const [showGoalDetailsDialog, setShowGoalDetailsDialog] = useState(false);
 
   // Load data from localStorage
   useEffect(() => {
@@ -169,7 +176,7 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
 
   return (
     <>
-    <div className="p-6 space-y-6 pb-24">
+      <div className="p-6 space-y-6 pb-24">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -354,7 +361,10 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => alert('Fonctionnalité à venir !')}
+                    onClick={() => {
+                      setSelectedGoalForDetails(goal);
+                      setShowGoalDetailsDialog(true);
+                    }}
                   >
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Voir détails
@@ -363,7 +373,13 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => alert('Fonctionnalité à venir !')}
+                    onClick={() => {
+                      if (onNavigateToPlanning) {
+                        onNavigateToPlanning(goal.id);
+                      } else {
+                        alert('Fonctionnalité à venir !');
+                      }
+                    }}
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     Planning
@@ -418,6 +434,16 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
         title={gloweeMessages.energy.firstVisit.title}
         message={gloweeMessages.energy.firstVisit.message}
         position="top"
+      />
+
+      {/* Dialogue de détails de l'objectif */}
+      <GoalDetailsDialog
+        goal={selectedGoalForDetails}
+        isOpen={showGoalDetailsDialog}
+        onClose={() => {
+          setShowGoalDetailsDialog(false);
+          setSelectedGoalForDetails(null);
+        }}
       />
     </div>
     </>
@@ -674,6 +700,15 @@ function CreateGoalModal({
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzedTasks, setAnalyzedTasks] = useState<Task[]>([]);
+  const [gloweeAnalysis, setGloweeAnalysis] = useState<{
+    opinion: string;
+    feasibility: string;
+    feasibilityScore: number;
+    reasoning: string;
+    keySuccessFactors: string[];
+    potentialChallenges: string[];
+    recommendations: string[];
+  } | null>(null);
 
   const resetForm = () => {
     setStep(1);
@@ -687,6 +722,7 @@ function CreateGoalModal({
     setDesiredFeeling('');
     setIsAnalyzing(false);
     setAnalyzedTasks([]);
+    setGloweeAnalysis(null);
   };
 
   const handleClose = () => {
@@ -720,6 +756,11 @@ function CreateGoalModal({
 
       const data = await response.json();
       setAnalyzedTasks(data.tasks || []);
+
+      // Stocker l'analyse de Glowee Work si disponible
+      if (data.analysis) {
+        setGloweeAnalysis(data.analysis);
+      }
     } catch (error) {
       console.error('Error analyzing goal:', error);
       alert('Erreur lors de l\'analyse. Réessaye plus tard.');
@@ -1116,7 +1157,76 @@ function CreateGoalModal({
                     </div>
                   </div>
 
+                  {/* Analyse de Glowee Work */}
+                  {gloweeAnalysis && (
+                    <div className="space-y-3">
+                      {/* Avis de Glowee */}
+                      <div className="bg-white rounded-xl p-4 border-2 border-rose-200">
+                        <h4 className="font-semibold text-sm text-rose-500 mb-2">💭 Mon avis sur ton objectif</h4>
+                        <p className="text-sm text-stone-700">{gloweeAnalysis.opinion}</p>
+                      </div>
+
+                      {/* Faisabilité */}
+                      <div className="bg-white rounded-xl p-4 border-2 border-orange-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-sm text-orange-500">🎯 Faisabilité</h4>
+                          <span className="text-xs font-medium px-2 py-1 rounded-full bg-orange-100 text-orange-700">
+                            {gloweeAnalysis.feasibilityScore}%
+                          </span>
+                        </div>
+                        <p className="text-sm text-stone-700 mb-2">{gloweeAnalysis.feasibility}</p>
+                        <p className="text-xs text-stone-600">{gloweeAnalysis.reasoning}</p>
+                      </div>
+
+                      {/* Facteurs clés de succès */}
+                      {gloweeAnalysis.keySuccessFactors && gloweeAnalysis.keySuccessFactors.length > 0 && (
+                        <div className="bg-white rounded-xl p-4 border-2 border-green-200">
+                          <h4 className="font-semibold text-sm text-green-600 mb-2">✨ Facteurs clés de succès</h4>
+                          <ul className="space-y-1">
+                            {gloweeAnalysis.keySuccessFactors.map((factor, index) => (
+                              <li key={index} className="text-xs text-stone-700 flex items-start gap-2">
+                                <span className="text-green-500 mt-0.5">•</span>
+                                <span>{factor}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Défis potentiels */}
+                      {gloweeAnalysis.potentialChallenges && gloweeAnalysis.potentialChallenges.length > 0 && (
+                        <div className="bg-white rounded-xl p-4 border-2 border-amber-200">
+                          <h4 className="font-semibold text-sm text-amber-600 mb-2">⚠️ Défis à anticiper</h4>
+                          <ul className="space-y-1">
+                            {gloweeAnalysis.potentialChallenges.map((challenge, index) => (
+                              <li key={index} className="text-xs text-stone-700 flex items-start gap-2">
+                                <span className="text-amber-500 mt-0.5">•</span>
+                                <span>{challenge}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Recommandations */}
+                      {gloweeAnalysis.recommendations && gloweeAnalysis.recommendations.length > 0 && (
+                        <div className="bg-white rounded-xl p-4 border-2 border-purple-200">
+                          <h4 className="font-semibold text-sm text-purple-600 mb-2">💡 Mes recommandations</h4>
+                          <ul className="space-y-1">
+                            {gloweeAnalysis.recommendations.map((rec, index) => (
+                              <li key={index} className="text-xs text-stone-700 flex items-start gap-2">
+                                <span className="text-purple-500 mt-0.5">•</span>
+                                <span>{rec}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="max-h-64 overflow-y-auto space-y-2">
+                    <h4 className="font-semibold text-sm text-stone-700 mb-2">📋 Tâches générées</h4>
                     {analyzedTasks.map((task, index) => (
                       <div
                         key={index}

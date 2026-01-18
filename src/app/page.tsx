@@ -11,9 +11,10 @@ import {
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage } from '@/lib/new-me-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -44,6 +45,7 @@ import { gloweeMessages } from '@/data/gloweeMessages';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
+  const { user, userData, signOut } = useAuth();
 
   const {
     currentView,
@@ -2021,6 +2023,24 @@ export default function GlowUpChallengeApp() {
                   const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
                   const currentDayKey = dayKeys[today.getDay()];
 
+                  // Calculer le lundi de la semaine actuelle
+                  const getMondayOfWeek = (date: Date) => {
+                    const d = new Date(date);
+                    const day = d.getDay();
+                    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajuster pour que lundi soit le premier jour
+                    return new Date(d.setDate(diff));
+                  };
+
+                  const monday = getMondayOfWeek(today);
+
+                  // Fonction pour obtenir la date d'un jour spécifique de la semaine
+                  const getDateForDay = (dayKey: string) => {
+                    const dayIndex = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(dayKey);
+                    const date = new Date(monday);
+                    date.setDate(monday.getDate() + dayIndex);
+                    return date;
+                  };
+
                   return [
                     { key: 'monday', label: language === 'fr' ? 'Lundi' : language === 'en' ? 'Monday' : 'Lunes' },
                     { key: 'tuesday', label: language === 'fr' ? 'Mardi' : language === 'en' ? 'Tuesday' : 'Martes' },
@@ -2031,6 +2051,9 @@ export default function GlowUpChallengeApp() {
                     { key: 'sunday', label: language === 'fr' ? 'Dimanche' : language === 'en' ? 'Sunday' : 'Domingo' }
                   ].map((day) => {
                     const isToday = day.key === currentDayKey;
+                    const dayDate = getDateForDay(day.key);
+                    const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
+
                     return (
                       <div
                         key={day.key}
@@ -2041,7 +2064,10 @@ export default function GlowUpChallengeApp() {
                           <div className="absolute top-0 left-[20%] right-[20%] h-1.5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
                         )}
                         <div className="p-4">
-                          <h3 className="font-bold text-sm mb-3">{day.label}</h3>
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="font-bold text-sm">{day.label}</h3>
+                            <span className="text-xs text-stone-400">{formattedDate}</span>
+                          </div>
                           <div className="space-y-2">
                       {weeklyTasks[day.key as keyof typeof weeklyTasks]?.length === 0 ? (
                         <p className="text-xs text-stone-400 text-center py-2">
@@ -2141,6 +2167,15 @@ export default function GlowUpChallengeApp() {
                 // Rediriger vers Planning
                 setCurrentView('routine');
                 setPlanningTab('glowee-tasks');
+              }}
+              onNavigateToPlanning={(goalId: string) => {
+                // Rediriger vers la page Planning avec l'onglet Glowee tâches
+                setCurrentView('routine');
+                setPlanningTab('glowee-tasks');
+              }}
+              onShowGoalDetails={(goalId: string) => {
+                // TODO: Implémenter l'affichage des détails de l'objectif
+                alert('Fonctionnalité Voir détails à venir !');
               }}
             />
           </div>
@@ -3047,6 +3082,65 @@ export default function GlowUpChallengeApp() {
                   <Download className="mr-2 w-4 h-4" />
                   Exporter toutes les données
                 </Button>
+              </CardContent>
+            </Card>
+
+            {/* Account / Connexion */}
+            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+              <CardHeader>
+                <CardTitle>
+                  {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
+                </CardTitle>
+                <CardDescription>
+                  {user
+                    ? (language === 'fr' ? 'Gérer votre compte' : language === 'en' ? 'Manage your account' : 'Gestionar tu cuenta')
+                    : (language === 'fr' ? 'Connectez-vous pour sauvegarder vos données' : language === 'en' ? 'Sign in to save your data' : 'Inicia sesión para guardar tus datos')
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {user ? (
+                  <>
+                    <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-400 to-orange-300 flex items-center justify-center">
+                          <User className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">{user.email}</p>
+                          <p className="text-xs text-stone-500 dark:text-stone-400">
+                            {language === 'fr' ? 'Connecté' : language === 'en' ? 'Connected' : 'Conectado'}
+                          </p>
+                        </div>
+                      </div>
+                      {userData && (
+                        <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs">
+                          ✨ Premium
+                        </Badge>
+                      )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      onClick={async () => {
+                        if (confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir vous déconnecter ?' : language === 'en' ? 'Are you sure you want to sign out?' : '¿Estás seguro de que quieres cerrar sesión?')) {
+                          await signOut();
+                        }
+                      }}
+                    >
+                      <LogOut className="mr-2 w-4 h-4" />
+                      {language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                    onClick={() => window.location.href = '/'}
+                  >
+                    <LogIn className="mr-2 w-4 h-4" />
+                    {language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </div>

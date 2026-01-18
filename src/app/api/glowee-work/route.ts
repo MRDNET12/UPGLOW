@@ -33,6 +33,15 @@ Méthodologie de découpage :
 Format de réponse :
 Tu dois répondre UNIQUEMENT en JSON valide avec cette structure :
 {
+  "analysis": {
+    "opinion": "Ton avis détaillé sur cet objectif (2-3 phrases bienveillantes et motivantes)",
+    "feasibility": "Évaluation de la faisabilité : 'Très réalisable', 'Réalisable avec effort', 'Ambitieux mais possible', ou 'Nécessite ajustement'",
+    "feasibilityScore": 85,
+    "reasoning": "Explication détaillée de pourquoi tu as choisi ce découpage et cette approche (3-4 phrases)",
+    "keySuccessFactors": ["facteur clé 1", "facteur clé 2", "facteur clé 3"],
+    "potentialChallenges": ["défi 1", "défi 2"],
+    "recommendations": ["conseil 1", "conseil 2"]
+  },
   "phases": {
     "learning": { "duration": "X mois", "focus": ["compétence 1", "compétence 2"] },
     "launch": { "duration": "X mois", "focus": ["action 1", "action 2"] },

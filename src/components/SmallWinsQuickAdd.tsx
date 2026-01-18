@@ -80,7 +80,7 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
         {showFaq && (
           <div className="mt-2 p-3 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-xl space-y-2 text-xs">
             <div>
-              <p className="font-semibold text-gray-900 dark:text-white mb-1">Durée : 2 à 4 minutes</p>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">Célèbre tes victoires quotidiennes !</p>
               <ol className="list-decimal list-inside space-y-1 text-gray-700 dark:text-gray-300">
                 <li>Note trois petits accomplissements réalisés cette semaine (même les plus minimes).</li>
                 <li>Décris pourquoi ces accomplissements sont importants pour toi.</li>

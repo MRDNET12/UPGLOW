@@ -132,7 +132,10 @@ export default function GlowUpChallengeApp() {
     feelings: '',
     glow: '',
     learned: '',
-    freeContent: ''
+    freeContent: '',
+    needToday: '',
+    proudOf: '',
+    letGo: ''
   });
 
   // États pour les modals
@@ -429,7 +432,7 @@ export default function GlowUpChallengeApp() {
         date: new Date(),
         ...newJournalEntry
       });
-      setNewJournalEntry({ mood: '', feelings: '', glow: '', learned: '', freeContent: '' });
+      setNewJournalEntry({ mood: '', feelings: '', glow: '', learned: '', freeContent: '', needToday: '', proudOf: '', letGo: '' });
     }
   };
 
@@ -1228,53 +1231,66 @@ export default function GlowUpChallengeApp() {
                 <CardDescription>{t.journal.expressYourself}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Question 1: Comment te sens-tu aujourd'hui ? */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.howFeelToday}</label>
+                  <label className="text-sm font-medium">Comment te sens-tu aujourd'hui ?</label>
+                  <div className="flex gap-3 justify-center py-2">
+                    {['😔', '😐', '🙂', '😄', '😌'].map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => setNewJournalEntry({ ...newJournalEntry, mood: emoji })}
+                        className={`text-4xl transition-transform hover:scale-110 ${
+                          newJournalEntry.mood === emoji ? 'scale-125' : 'opacity-50'
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Question 2: De quoi j'ai le plus besoin aujourd'hui ? */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">De quoi j'ai le plus besoin aujourd'hui ?</label>
                   <Textarea
-                    placeholder={t.journal.yourMood}
-                    value={newJournalEntry.mood}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, mood: e.target.value })}
+                    placeholder="Repos, connexion, créativité..."
+                    value={newJournalEntry.needToday}
+                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, needToday: e.target.value })}
                     rows={2}
                     className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
                   />
                 </div>
 
+                {/* Question 3: Qu'est-ce que je suis fière d'avoir fait récemment ? */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.whatBroughtGlow}</label>
+                  <label className="text-sm font-medium">Qu'est-ce que je suis fière d'avoir fait récemment ?</label>
                   <Textarea
-                    placeholder={t.journal.momentsOfJoy}
-                    value={newJournalEntry.glow}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
+                    placeholder="Mes petites victoires..."
+                    value={newJournalEntry.proudOf}
+                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, proudOf: e.target.value })}
                     rows={2}
                     className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
                   />
                 </div>
 
+                {/* Question 4: Qu'est-ce que je suis prête à laisser partir ? */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.whatLearned}</label>
+                  <label className="text-sm font-medium">Qu'est-ce que je suis prête à laisser partir ?</label>
                   <Textarea
-                    placeholder={t.journal.discoveriesLearnings}
-                    value={newJournalEntry.learned}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, learned: e.target.value })}
+                    placeholder="Peurs, doutes, habitudes..."
+                    value={newJournalEntry.letGo}
+                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, letGo: e.target.value })}
                     rows={2}
                     className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.freeContent}</label>
-                  <Textarea
-                    placeholder={t.challenge.notesPlaceholder}
-                    value={newJournalEntry.freeContent}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, freeContent: e.target.value })}
-                    rows={3}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                <Button onClick={handleSaveJournalEntry} className="w-full bg-rose-500 hover:bg-rose-600 text-white">
-                  <Plus className="mr-2 w-4 h-4" />
-                  {t.journal.addToJournal}
+                {/* Bouton de fermeture avec dégradé violet */}
+                <Button
+                  onClick={handleSaveJournalEntry}
+                  className="w-full bg-gradient-to-r from-purple-500 via-violet-500 to-purple-600 hover:from-purple-600 hover:via-violet-600 hover:to-purple-700 text-white"
+                >
+                  Fermer pour aujourd'hui ✨
                 </Button>
               </CardContent>
             </Card>
@@ -2658,7 +2674,9 @@ export default function GlowUpChallengeApp() {
 
             {/* Sections Bonus Principales */}
             <div className="space-y-3">
-              {bonusSections.map((section) => {
+              {bonusSections
+                .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir')
+                .map((section) => {
                 const weeklyCompletion = getSectionWeeklyCompletion(section.id);
                 return (
                   <Card

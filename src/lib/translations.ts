@@ -545,7 +545,7 @@ export const translations: Record<Language, Translation> = {
       images: 'images',
     },
     bonus: {
-      title: 'Mes Bonus',
+      title: 'Glow Up',
       affirmations: 'Affirmations',
       checklists: 'Checklists',
       miniGuide: 'Mini-Guide',
@@ -858,7 +858,7 @@ export const translations: Record<Language, Translation> = {
       images: 'images',
     },
     bonus: {
-      title: 'My Bonuses',
+      title: 'Glow Up',
       affirmations: 'Affirmations',
       checklists: 'Checklists',
       miniGuide: 'Mini-Guide',
@@ -1171,7 +1171,7 @@ export const translations: Record<Language, Translation> = {
       images: 'imágenes',
     },
     bonus: {
-      title: 'Mis Bonus',
+      title: 'Glow Up',
       affirmations: 'Afirmaciones',
       checklists: 'Listas de verificación',
       miniGuide: 'Mini-Guía',

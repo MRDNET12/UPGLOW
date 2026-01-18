@@ -1,41 +1,18 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Trophy, Plus, History, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trophy, History, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function SmallWins() {
   const { t } = useTranslation();
-  const [newWin, setNewWin] = useState('');
   const [showHistory, setShowHistory] = useState(false);
-  const [showCongrats, setShowCongrats] = useState(false);
   const [showFaq, setShowFaq] = useState(false);
 
-  const addSmallWin = useStore((state) => state.addSmallWin);
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
   const getSmallWinsHistory = useStore((state) => state.getSmallWinsHistory);
 
   const winsThisWeek = getSmallWinsThisWeek();
   const history = getSmallWinsHistory();
-
-  const handleAddWin = () => {
-    if (newWin.trim()) {
-      addSmallWin(newWin.trim());
-      setNewWin('');
-      
-      // Show congrats popup at 3 wins
-      if (winsThisWeek.length + 1 === 3) {
-        setShowCongrats(true);
-        setTimeout(() => setShowCongrats(false), 4000);
-      }
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleAddWin();
-    }
-  };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm">
@@ -108,29 +85,6 @@ export function SmallWins() {
         )}
       </div>
 
-      {/* Input */}
-      <div className="mb-4">
-        <div className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            value={newWin}
-            onChange={(e) => setNewWin(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={t.bonus.smallWinPlaceholder}
-            className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:text-white"
-          />
-          <button
-            onClick={handleAddWin}
-            disabled={!newWin.trim()}
-            className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed whitespace-nowrap"
-          >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="hidden sm:inline">{t.bonus.addSmallWin}</span>
-            <span className="sm:hidden">Ajouter</span>
-          </button>
-        </div>
-      </div>
-
       {/* This Week's Wins */}
       {winsThisWeek.length > 0 && (
         <div className="space-y-2 mb-4">
@@ -171,21 +125,6 @@ export function SmallWins() {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Congratulations Popup */}
-      {showCongrats && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full text-center animate-bounce-in">
-            <div className="text-6xl mb-4">🥂</div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {t.bonus.congratulations}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              {t.bonus.keepGoing}
-            </p>
           </div>
         </div>
       )}

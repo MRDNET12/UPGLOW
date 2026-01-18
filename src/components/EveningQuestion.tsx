@@ -1,29 +1,18 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Moon, Plus, History, ChevronDown, ChevronUp } from 'lucide-react';
+import { Moon, History, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function EveningQuestion() {
   const { t } = useTranslation();
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
   const [showHistory, setShowHistory] = useState(false);
   const [showFaq, setShowFaq] = useState(false);
 
-  const addEveningQuestion = useStore((state) => state.addEveningQuestion);
   const getEveningQuestionsThisMonth = useStore((state) => state.getEveningQuestionsThisMonth);
   const getEveningQuestionsHistory = useStore((state) => state.getEveningQuestionsHistory);
 
   const questionsThisMonth = getEveningQuestionsThisMonth();
   const history = getEveningQuestionsHistory();
-
-  const handleAdd = () => {
-    if (question.trim() && answer.trim()) {
-      addEveningQuestion(question.trim(), answer.trim());
-      setQuestion('');
-      setAnswer('');
-    }
-  };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm">
@@ -108,32 +97,6 @@ export function EveningQuestion() {
             </div>
           </div>
         )}
-      </div>
-
-      {/* Input Form */}
-      <div className="space-y-3 mb-4">
-        <input
-          type="text"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder={t.bonus.questionPlaceholder}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-        />
-        <textarea
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder={t.bonus.answerPlaceholder}
-          rows={3}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white resize-none"
-        />
-        <button
-          onClick={handleAdd}
-          disabled={!question.trim() || !answer.trim()}
-          className="w-full px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
-        >
-          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-          {t.bonus.addEveningQuestion}
-        </button>
       </div>
 
       {/* This Month's Questions */}

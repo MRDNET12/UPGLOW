@@ -1915,11 +1915,11 @@ export default function GlowUpChallengeApp() {
                         weeklyTasks[day.key as keyof typeof weeklyTasks]?.map((task) => (
                           <div
                             key={task.id}
-                            className={`flex items-start gap-2 p-2 rounded-lg text-xs ${
+                            className={`flex items-center gap-2 p-2 rounded-lg text-xs ${
                               theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                             }`}
                           >
-                            <button
+                            <span
                               onClick={() => {
                                 setWeeklyTasks({
                                   ...weeklyTasks,
@@ -1928,15 +1928,8 @@ export default function GlowUpChallengeApp() {
                                   )
                                 });
                               }}
-                              className={`flex-shrink-0 w-4 h-4 rounded border flex items-center justify-center mt-0.5 transition-all ${
-                                task.completed
-                                  ? 'bg-black border-transparent'
-                                  : 'border-stone-300 dark:border-stone-600'
-                              }`}
+                              className={`flex-1 cursor-pointer ${task.completed ? 'line-through text-stone-500' : ''}`}
                             >
-                              {task.completed && <Check className="w-3 h-3 text-white" />}
-                            </button>
-                            <span className={`flex-1 ${task.completed ? 'line-through text-stone-500' : ''}`}>
                               {task.text}
                             </span>
                             <button

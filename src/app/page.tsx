@@ -807,7 +807,7 @@ export default function GlowUpChallengeApp() {
             {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}
+                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
@@ -818,7 +818,7 @@ export default function GlowUpChallengeApp() {
                     <Badge className="bg-rose-500 hover:bg-rose-600">{t.challenge.day} {challengeProgress.currentDay}</Badge>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-rose-500">{progressPercentage}%</span>
-                      <ChevronRight className="w-5 h-5 text-rose-400" />
+                      <ChevronRight className="w-5 h-5 text-rose-500" />
                     </div>
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{getCurrentDayData()?.title}</h3>
@@ -837,20 +837,20 @@ export default function GlowUpChallengeApp() {
             {/* New Me Card - Only show if Beauty & Body is selected */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}
+                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('new-me')}
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl">🦋</span>
+                      <Sparkles className="w-6 h-6 text-purple-500" />
                       <Badge className="bg-purple-500 hover:bg-purple-600">{t.newMe.title}</Badge>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-purple-400" />
+                    <ChevronRight className="w-5 h-5 text-purple-500" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{t.newMe.subtitle}</h3>
                   <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">
-                    13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee 🦋
+                    13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee
                   </p>
                 </CardContent>
               </Card>
@@ -863,7 +863,7 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('journal')}
               >
                 <CardContent className="p-4 text-center">
-                  <BookOpen className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                  <BookOpen className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">{t.journal.title}</h3>
                   <p className="text-xs text-stone-500 dark:text-stone-500">{journalEntries.length} {t.journal.entries}</p>
                 </CardContent>
@@ -874,7 +874,7 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('trackers')}
               >
                 <CardContent className="p-4 text-center">
-                  <Target className="w-8 h-8 mx-auto mb-2 text-orange-400" />
+                  <Activity className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">{t.trackers.title}</h3>
                   <p className="text-xs text-stone-500 dark:text-stone-500">{t.trackers.today}</p>
                 </CardContent>
@@ -885,7 +885,7 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('routine')}
               >
                 <CardContent className="p-4 text-center">
-                  <Layers className="w-8 h-8 mx-auto mb-2 text-rose-400" />
+                  <Calendar className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">
                     {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
                   </h3>
@@ -900,7 +900,7 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('my-goals')}
               >
                 <CardContent className="p-4 text-center">
-                  <Target className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                  <Target className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
                   <h3 className="font-semibold text-sm">
                     {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
                   </h3>

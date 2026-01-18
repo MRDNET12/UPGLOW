@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { X, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import Image from 'next/image';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -18,12 +18,7 @@ interface GloweeChatPopupProps {
 }
 
 export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChatPopupProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: "Hey ma belle vas-y dis moi tout"
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId] = useState(() => `session-${Date.now()}`);
@@ -74,28 +69,32 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-20 right-4 z-50 w-[380px] animate-in slide-in-from-bottom duration-300">
+    <div className="fixed bottom-20 right-2 left-2 sm:left-auto sm:right-4 z-50 sm:w-[400px] max-w-[calc(100vw-16px)] animate-in slide-in-from-bottom duration-300">
       <div
         className={`
-          relative h-[500px] rounded-2xl shadow-2xl overflow-hidden
+          relative rounded-2xl shadow-2xl overflow-hidden
           flex flex-col
           ${theme === 'dark' ? 'bg-stone-900 text-stone-100' : 'bg-white text-stone-900'}
           border ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}
+          max-h-[calc(100vh-100px)]
         `}
       >
-        {/* Header */}
+        {/* Header avec bouton fermer */}
         <div className={`
-          flex items-center justify-between p-4 border-b
+          flex items-center justify-between px-4 py-3 border-b
           ${theme === 'dark' ? 'border-stone-800 bg-stone-900/95' : 'border-stone-200 bg-white/95'}
         `}>
-          <div className="flex items-center gap-3">
-            <img 
-              src="/Glowee/glowee-nav-bar.webp" 
-              alt="Glowee" 
-              className="w-12 h-12 object-contain"
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative w-10 h-10">
+              <Image
+                src="/Glowee/glowee-nav-bar.webp"
+                alt="Glowee"
+                fill
+                className="object-contain"
+              />
+            </div>
             <div>
-              <h2 className="text-lg font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              <h2 className="text-base font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
                 Glowee
               </h2>
               <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
@@ -107,30 +106,53 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="rounded-full"
+            className="rounded-full h-8 w-8"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </Button>
         </div>
 
+        {/* Message d'accueil avec image de Glowee au centre */}
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-8 px-4">
+            <div className="relative w-32 h-32 mb-4">
+              <Image
+                src="/Glowee/glowee-acceuillante.webp"
+                alt="Glowee"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <p className="text-center text-base font-medium bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              Hey ma belle vas-y dis moi tout
+            </p>
+          </div>
+        )}
+
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4" ref={scrollRef}>
-          <div className="space-y-4">
+        <div
+          className="flex-1 overflow-y-auto p-4 min-h-[200px] max-h-[400px]"
+          ref={scrollRef}
+        >
+          <div className="space-y-3">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : idx === 0 ? 'justify-center' : 'justify-start'}`}
+                className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.role === 'assistant' && idx !== 0 && (
-                  <img
-                    src="/Glowee/glowee-repond.webp"
-                    alt="Glowee"
-                    className="w-8 h-8 object-contain flex-shrink-0"
-                  />
+                {msg.role === 'assistant' && (
+                  <div className="relative w-7 h-7 flex-shrink-0">
+                    <Image
+                      src="/Glowee/glowee-repond.webp"
+                      alt="Glowee"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                 )}
                 <div
                   className={`
-                    ${idx === 0 ? 'text-center' : 'max-w-[75%]'} rounded-2xl px-4 py-2
+                    max-w-[75%] rounded-2xl px-3 py-2
                     ${msg.role === 'user'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white'
                       : theme === 'dark'
@@ -139,19 +161,22 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
                     }
                   `}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
                 </div>
               </div>
             ))}
             {isLoading && (
-              <div className="flex gap-3 justify-start">
-                <img
-                  src="/Glowee/glowee-reflechir.webp"
-                  alt="Glowee"
-                  className="w-8 h-8 object-contain flex-shrink-0"
-                />
+              <div className="flex gap-2 justify-start">
+                <div className="relative w-7 h-7 flex-shrink-0">
+                  <Image
+                    src="/Glowee/glowee-reflechir.webp"
+                    alt="Glowee"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
                 <div className={`
-                  rounded-2xl px-4 py-2
+                  rounded-2xl px-3 py-2
                   ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-100'}
                 `}>
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -163,7 +188,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
 
         {/* Input */}
         <div className={`
-          p-4 border-t
+          p-3 border-t
           ${theme === 'dark' ? 'border-stone-800 bg-stone-900/95' : 'border-stone-200 bg-white/95'}
         `}>
           <form
@@ -176,10 +201,10 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Écris ton message à Glowee..."
+              placeholder="Écris ton message..."
               disabled={isLoading}
               className={`
-                flex-1
+                flex-1 text-sm
                 ${theme === 'dark'
                   ? 'bg-stone-800 border-stone-700 text-stone-100 placeholder:text-stone-500'
                   : 'bg-stone-50 border-stone-200 text-stone-900 placeholder:text-stone-400'
@@ -189,7 +214,8 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
             <Button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+              size="icon"
+              className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white h-10 w-10"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

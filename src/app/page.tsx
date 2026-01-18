@@ -857,56 +857,76 @@ export default function GlowUpChallengeApp() {
             )}
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
               <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('journal')}
               >
-                <CardContent className="p-3 text-center">
-                  <BookOpen className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                  <h3 className="font-semibold text-sm">{t.journal.title}</h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-500">{journalEntries.length} {t.journal.entries}</p>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <BookOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm">{t.journal.title}</h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-500">{journalEntries.length} {t.journal.entries}</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-stone-400" />
+                  </div>
                 </CardContent>
               </Card>
 
               <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('trackers')}
               >
-                <CardContent className="p-3 text-center">
-                  <Activity className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                  <h3 className="font-semibold text-sm">{t.trackers.title}</h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-500">{t.trackers.today}</p>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm">{t.trackers.title}</h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-500">{t.trackers.today}</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-stone-400" />
+                  </div>
                 </CardContent>
               </Card>
 
               <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-3 text-center">
-                  <Calendar className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                  <h3 className="font-semibold text-sm">
-                    {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-500">
-                    {language === 'fr' ? 'Organisez votre semaine' : language === 'en' ? 'Organize your week' : 'Organiza tu semana'}
-                  </p>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm">
+                        {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
+                      </h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-500">
+                        {language === 'fr' ? 'Organisez votre semaine' : language === 'en' ? 'Organize your week' : 'Organiza tu semana'}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-stone-400" />
+                  </div>
                 </CardContent>
               </Card>
 
               <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('my-goals')}
               >
-                <CardContent className="p-3 text-center">
-                  <Target className={`w-6 h-6 mx-auto mb-1.5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                  <h3 className="font-semibold text-sm">
-                    {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-500">
-                    {language === 'fr' ? 'Atteins tes rêves' : language === 'en' ? 'Achieve your dreams' : 'Alcanza tus sueños'}
-                  </p>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <Target className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm">
+                        {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
+                      </h3>
+                      <p className="text-xs text-stone-500 dark:text-stone-500">
+                        {language === 'fr' ? 'Atteins tes rêves' : language === 'en' ? 'Achieve your dreams' : 'Alcanza tus sueños'}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-stone-400" />
+                  </div>
                 </CardContent>
               </Card>
             </div>

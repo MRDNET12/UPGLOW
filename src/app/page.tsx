@@ -1061,7 +1061,7 @@ export default function GlowUpChallengeApp() {
 
             {/* Day Content */}
             {getCurrentDayData() && (
-              <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+              <Card className={`border-none shadow-lg bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20`}>
                 {!canAccessDay(currentDay) ? (
                   // Jour verrouillé
                   <CardContent className="p-12 text-center space-y-4">
@@ -1084,23 +1084,31 @@ export default function GlowUpChallengeApp() {
                   <>
                     <CardHeader>
                       <div className="flex items-start justify-between">
-                        <div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Challenge New Me</p>
+                            <div
+                              className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                                challengeProgress.completedDays.includes(currentDay)
+                                  ? 'bg-green-100 dark:bg-green-900'
+                                  : 'bg-white/80 dark:bg-stone-800'
+                              }`}
+                            >
+                              {challengeProgress.completedDays.includes(currentDay) ? (
+                                <Check className="w-6 h-6 text-green-600 dark:text-green-400" />
+                              ) : (
+                                <span className="text-2xl">{currentDay}</span>
+                              )}
+                            </div>
+                          </div>
                           <Badge className="bg-gradient-to-r from-rose-400 to-pink-400 mb-2">{t.challenge.week} {getCurrentDayData()?.week}</Badge>
-                          <CardTitle className="text-2xl mb-2">{getCurrentDayData()?.title}</CardTitle>
+                          <div className="flex items-center gap-2 mb-2">
+                            <CardTitle className="text-2xl">{getCurrentDayData()?.title}</CardTitle>
+                            <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs px-2 py-0.5">
+                              New me
+                            </Badge>
+                          </div>
                           <CardDescription className="text-sm">{getCurrentDayData()?.weekObjective}</CardDescription>
-                        </div>
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            challengeProgress.completedDays.includes(currentDay)
-                              ? 'bg-green-100 dark:bg-green-900'
-                              : 'bg-stone-100 dark:bg-stone-800'
-                          }`}
-                        >
-                          {challengeProgress.completedDays.includes(currentDay) ? (
-                            <Check className="w-6 h-6 text-green-600 dark:text-green-400" />
-                          ) : (
-                            <span className="text-2xl">{currentDay}</span>
-                          )}
                         </div>
                       </div>
                     </CardHeader>

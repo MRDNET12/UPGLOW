@@ -427,13 +427,11 @@ export default function GlowUpChallengeApp() {
   };
 
   const handleSaveJournalEntry = () => {
-    if (newJournalEntry.mood || newJournalEntry.feelings) {
-      addJournalEntry({
-        date: new Date(),
-        ...newJournalEntry
-      });
-      setNewJournalEntry({ mood: '', feelings: '', glow: '', learned: '', freeContent: '', needToday: '', proudOf: '', letGo: '' });
-    }
+    addJournalEntry({
+      date: new Date(),
+      ...newJournalEntry
+    });
+    setNewJournalEntry({ mood: '', feelings: '', glow: '', learned: '', freeContent: '', needToday: '', proudOf: '', letGo: '' });
   };
 
   const handleAddVisionImage = (url: string, caption: string) => {
@@ -812,7 +810,7 @@ export default function GlowUpChallengeApp() {
             {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20"
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
@@ -820,13 +818,19 @@ export default function GlowUpChallengeApp() {
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <Badge className="bg-rose-500 hover:bg-rose-600">{t.challenge.day} {challengeProgress.currentDay}</Badge>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-rose-500">{progressPercentage}%</span>
-                      <ChevronRight className="w-5 h-5 text-rose-500" />
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Challenge Mind & Life</p>
+                    </div>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
+                      <span className="text-xl font-bold">{challengeProgress.currentDay}</span>
                     </div>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{getCurrentDayData()?.title}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-semibold">{getCurrentDayData()?.title}</h3>
+                    <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs px-2 py-0.5">
+                      New me
+                    </Badge>
+                  </div>
                   <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">{getCurrentDayData()?.content}</p>
                   <div className="space-y-1">
                     <Progress value={progressPercentage} className="h-2" />
@@ -842,21 +846,34 @@ export default function GlowUpChallengeApp() {
             {/* New Me Card - Only show if Beauty & Body is selected */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
+                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20"
                 onClick={() => setCurrentView('new-me')}
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-6 h-6 text-purple-500" />
-                      <Badge className="bg-purple-500 hover:bg-purple-600">{t.newMe.title}</Badge>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Challenge Beauty & Body</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-purple-500" />
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
+                      <span className="text-xl font-bold">{newMeCurrentDay}</span>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{t.newMe.subtitle}</h3>
-                  <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-semibold">{t.newMe.subtitle}</h3>
+                    <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs px-2 py-0.5">
+                      New me
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">
                     13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee
                   </p>
+                  <div className="space-y-1">
+                    <Progress value={(newMeCurrentDay / 30) * 100} className="h-2" />
+                    <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
+                      <span>{t.dashboard.week} {Math.ceil(newMeCurrentDay / 7)}/4</span>
+                      <span>{Object.keys(newMeProgress).length}/30 {t.dashboard.daysCompleted}</span>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}

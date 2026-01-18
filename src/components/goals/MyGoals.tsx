@@ -73,10 +73,13 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
         // Check if we need to show energy check-in
         checkEnergyCheckIn();
 
+        // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
+        /*
         // Vérifier si c'est la 1ère visite de la section Objectifs
         if (isFirstVisit('goals')) {
           setTimeout(() => setShowGloweeWelcome(true), 1000);
         }
+        */
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
@@ -91,20 +94,26 @@ export function MyGoals({ onAddGloweeTasks }: MyGoalsProps = {}) {
     const savedLogs = localStorage.getItem('energyLogs');
     if (!savedLogs) {
       setShowCheckIn(true);
+      // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
+      /*
       // Vérifier si c'est la 1ère visite du check-in
       if (isFirstVisit('energy')) {
         setTimeout(() => setShowGloweeCheckInWelcome(true), 1500);
       }
+      */
       return;
     }
 
     const logs: EnergyLog[] = JSON.parse(savedLogs);
     if (logs.length === 0) {
       setShowCheckIn(true);
+      // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
+      /*
       // Vérifier si c'est la 1ère visite du check-in
       if (isFirstVisit('energy')) {
         setTimeout(() => setShowGloweeCheckInWelcome(true), 1500);
       }
+      */
       return;
     }
 

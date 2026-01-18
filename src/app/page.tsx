@@ -235,6 +235,8 @@ export default function GlowUpChallengeApp() {
   }, [isHydrated, initializeFirstOpen, getRemainingFreeDays, isTrialExpired, subscription]);
 
   // Tracker les visites et afficher les popups Glowee
+  // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
+  /*
   useEffect(() => {
     if (isHydrated && hasStarted) {
       // Tracker la visite de l'app
@@ -261,6 +263,7 @@ export default function GlowUpChallengeApp() {
       }
     }
   }, [isHydrated, hasStarted, currentView]);
+  */
 
   // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {

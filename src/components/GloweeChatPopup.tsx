@@ -36,7 +36,6 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light', language = '
         'ma précieuse',
         'ma courageuse',
         'ma merveille',
-        'mon rayon',
         'glow queen',
         'mon étoile',
         'ma best',
@@ -53,7 +52,6 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light', language = '
         'my precious',
         'my brave',
         'my wonder',
-        'my sunshine',
         'glow queen',
         'my star',
         'my best',
@@ -70,7 +68,6 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light', language = '
         'mi preciosa',
         'mi valiente',
         'mi maravilla',
-        'mi rayo',
         'glow queen',
         'mi estrella',
         'mi mejor',
@@ -85,36 +82,39 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light', language = '
     const phrasesData = {
       fr: [
         'vas-y, dis-moi tout 💕',
-        'je t\'écoute ✨',
         'raconte-moi 🌸',
-        'je suis là 💖',
-        'vas-y, je t\'écoute ☀️'
+        'je suis là 💖'
       ],
       en: [
         'go ahead, tell me everything 💕',
-        'I\'m listening ✨',
         'tell me about it 🌸',
-        'I\'m here 💖',
-        'go ahead, I\'m listening ☀️'
+        'I\'m here 💖'
       ],
       es: [
         'adelante, cuéntamelo todo 💕',
-        'te escucho ✨',
         'cuéntame 🌸',
-        'estoy aquí 💖',
-        'adelante, te escucho ☀️'
+        'estoy aquí 💖'
       ]
+    };
+
+    const greetingsData = {
+      fr: ['Hey', 'Coucou', 'Salut', 'Hello', 'Cc', ''],
+      en: ['Hey', 'Hi', 'Hello', 'Hi there', 'Heya', ''],
+      es: ['Hola', 'Hey', 'Holi', 'Buenas', 'Ey', '']
     };
 
     const nicknames = nicknamesData[language] || nicknamesData.fr;
     const phrases = phrasesData[language] || phrasesData.fr;
+    const greetings = greetingsData[language] || greetingsData.fr;
 
     const randomNickname = nicknames[Math.floor(Math.random() * nicknames.length)];
     const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
 
-    const heyWord = language === 'es' ? 'Hola' : 'Hey';
-
-    return `${heyWord} ${randomNickname}, ${randomPhrase}`;
+    // Si le greeting est vide, on ne met pas d'espace
+    return randomGreeting
+      ? `${randomGreeting} ${randomNickname}, ${randomPhrase}`
+      : `${randomNickname}, ${randomPhrase}`;
   });
 
   useEffect(() => {

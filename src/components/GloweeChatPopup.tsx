@@ -23,6 +23,41 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId] = useState(() => `session-${Date.now()}`);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  // Messages d'accueil aléatoires
+  const [welcomeMessage] = useState(() => {
+    const nicknames = [
+      'ma jolie',
+      'mon trésor',
+      'ma queen',
+      'ma précieuse',
+      'ma courageuse',
+      'ma merveille',
+      'mon rayon',
+      'glow queen',
+      'mon étoile',
+      'ma best',
+      'ma fidèle',
+      'ma copine',
+      'ma confidente',
+      'ma bestie ✨',
+      'ma glow friend'
+    ];
+
+    const phrases = [
+      'vas-y, dis-moi tout 💕',
+      'je t\'écoute ✨',
+      'raconte-moi 🌸',
+      'je suis là 💖',
+      'vas-y, je t\'écoute ☀️'
+    ];
+
+    const randomNickname = nicknames[Math.floor(Math.random() * nicknames.length)];
+    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+    return `Hey ${randomNickname}, ${randomPhrase}`;
+  });
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -43,6 +78,15 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
       .replace(/^\d+\.\s/gm, '• ');
   };
 
+  // Fonction pour fermer avec animation
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 300);
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -57,7 +101,8 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userMessage,
-          sessionId
+          sessionId,
+          shortResponse: true // Demander des réponses courtes
         })
       });
 
@@ -79,10 +124,12 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
   return (
-    <div className="fixed bottom-20 right-2 left-2 sm:left-auto sm:right-4 z-50 sm:w-[400px] max-w-[calc(100vw-16px)] animate-in slide-in-from-bottom duration-300">
+    <div className={`fixed bottom-20 right-2 left-2 sm:left-auto sm:right-4 z-50 sm:w-[400px] max-w-[calc(100vw-16px)] transition-all duration-300 ${
+      isClosing ? 'animate-out slide-out-to-bottom' : 'animate-in slide-in-from-bottom'
+    }`}>
       <div
         className={`
           relative rounded-2xl shadow-2xl overflow-hidden
@@ -118,7 +165,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
           <Button
             variant="ghost"
             size="icon"
-            onClick={onClose}
+            onClick={handleClose}
             className="rounded-full h-8 w-8"
           >
             <X className="w-4 h-4" />
@@ -137,7 +184,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light' }: GloweeChat
               />
             </div>
             <p className="text-center text-base font-medium bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
-              Hey ma belle vas-y dis moi tout
+              {welcomeMessage}
             </p>
           </div>
         )}

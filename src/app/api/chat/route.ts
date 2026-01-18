@@ -9,9 +9,9 @@ const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, sessionId, systemPrompt } = await req.json();
+    const { message, sessionId, systemPrompt, shortResponse } = await req.json();
 
-    console.log('[Chat API] Received message:', { sessionId, messageLength: message?.length });
+    console.log('[Chat API] Received message:', { sessionId, messageLength: message?.length, shortResponse });
 
     if (!message) {
       return NextResponse.json(
@@ -35,10 +35,13 @@ export async function POST(req: NextRequest) {
 
     if (!history) {
       // Create new conversation with system prompt
+      const basePrompt = systemPrompt || 'Tu es Glowee, le reflet bienveillant de l\'utilisatrice. Tu l\'aides dans son parcours de développement personnel avec empathie et positivité. Tu la tutoies toujours et tu réponds dans sa langue. Tu es chaleureuse, motivante et tu utilises des emojis pour rendre la conversation plus agréable. 💫';
+      const shortPromptAddition = shortResponse ? ' IMPORTANT: Réponds de manière CONCISE et DIRECTE en 2-3 phrases maximum. Va droit au but sans listes longues ni explications détaillées. Sois brève mais chaleureuse.' : '';
+
       history = [
         {
           role: 'system',
-          content: systemPrompt || 'Tu es Glowee, le reflet bienveillant de l\'utilisatrice. Tu l\'aides dans son parcours de développement personnel avec empathie et positivité. Tu la tutoies toujours et tu réponds dans sa langue. Tu es chaleureuse, motivante et tu utilises des emojis pour rendre la conversation plus agréable. 💫'
+          content: basePrompt + shortPromptAddition
         }
       ];
     }
@@ -64,7 +67,7 @@ export async function POST(req: NextRequest) {
         model: 'deepseek/deepseek-r1-0528:free', // Modèle DeepSeek gratuit
         messages: history,
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: shortResponse ? 300 : 1000 // Réponses plus courtes et rapides
       })
     });
 

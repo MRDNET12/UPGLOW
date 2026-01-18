@@ -49,6 +49,8 @@ export default function GlowUpChallengeApp() {
     setCurrentView,
     currentDay,
     setCurrentDay,
+    selectedChallenge,
+    setSelectedChallenge,
     hasStarted,
     startChallenge,
     challengeProgress,
@@ -149,6 +151,9 @@ export default function GlowUpChallengeApp() {
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
+
+  // État pour le drawer de switch de challenge
+  const [showChallengeDrawer, setShowChallengeDrawer] = useState(false);
 
   // États pour Tracker
   const [trackerCurrentDay, setTrackerCurrentDay] = useState(1);
@@ -680,12 +685,93 @@ export default function GlowUpChallengeApp() {
 
           {/* Start Button */}
           <Button
-            onClick={startChallenge}
+            onClick={() => setCurrentView('challenge-selection')}
             className="w-full h-14 text-lg bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-900/30 animate-in slide-in-from-bottom duration-700 delay-500"
           >
             {t.onboarding.gloweeButton}
             <Sparkles className="ml-2 w-5 h-5" />
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Challenge Selection Screen
+  if (currentView === 'challenge-selection') {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center p-6 ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
+        <div className="max-w-md w-full space-y-8">
+          {/* Glowee Image */}
+          <div className="flex justify-center animate-in zoom-in duration-500">
+            <img
+              src="/Glowee/glowee-acceuillante.webp"
+              alt="Glowee"
+              className="w-48 h-48 object-contain"
+            />
+          </div>
+
+          {/* Title */}
+          <div className="text-center space-y-3 animate-in slide-in-from-bottom duration-700">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              {t.challengeSelection.title}
+            </h1>
+            <p className="text-xl text-stone-700 dark:text-stone-300 font-light">
+              {t.challengeSelection.subtitle}
+            </p>
+          </div>
+
+          {/* Challenge Options */}
+          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-200">
+            {/* Option 1: Mind & Life */}
+            <button
+              onClick={() => {
+                setSelectedChallenge('mind-life');
+                startChallenge();
+              }}
+              className={`w-full p-6 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+                theme === 'dark'
+                  ? 'border-stone-800 bg-gradient-to-br from-green-900/20 to-emerald-900/20 hover:border-green-700'
+                  : 'border-stone-200 bg-gradient-to-br from-green-50 to-emerald-50 hover:border-green-400'
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-5xl">{t.challengeSelection.mindLifeEmoji}</span>
+                <div className="flex-1 text-left">
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    {t.challengeSelection.mindLifeTitle}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.challengeSelection.mindLifeDesc}
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* Option 2: Beauty & Body */}
+            <button
+              onClick={() => {
+                setSelectedChallenge('beauty-body');
+                startChallenge();
+              }}
+              className={`w-full p-6 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+                theme === 'dark'
+                  ? 'border-stone-800 bg-gradient-to-br from-pink-900/20 to-purple-900/20 hover:border-pink-700'
+                  : 'border-stone-200 bg-gradient-to-br from-pink-50 to-purple-50 hover:border-pink-400'
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-5xl">{t.challengeSelection.beautyBodyEmoji}</span>
+                <div className="flex-1 text-left">
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    {t.challengeSelection.beautyBodyTitle}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.challengeSelection.beautyBodyDesc}
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -699,7 +785,15 @@ export default function GlowUpChallengeApp() {
         {currentView === 'dashboard' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
             {/* Header */}
-            <div className="text-center space-y-3">
+            <div className="relative text-center space-y-3">
+              {/* Challenge Switch Button */}
+              <button
+                onClick={() => setShowChallengeDrawer(true)}
+                className={`absolute left-0 top-0 p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-stone-800' : 'hover:bg-stone-200'}`}
+              >
+                <ChevronRight className="w-6 h-6 rotate-180" />
+              </button>
+
               <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
                 {t.dashboard.welcome} ✨
               </h1>
@@ -712,53 +806,57 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Today's Challenge with Progress */}
-            <Card
-              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}
-              onClick={() => {
-                setCurrentDay(challengeProgress.currentDay);
-                setCurrentView('challenge');
-              }}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <Badge className="bg-rose-500 hover:bg-rose-600">{t.challenge.day} {challengeProgress.currentDay}</Badge>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-rose-500">{progressPercentage}%</span>
-                    <ChevronRight className="w-5 h-5 text-rose-400" />
+            {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}
+            {selectedChallenge === 'mind-life' && (
+              <Card
+                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}
+                onClick={() => {
+                  setCurrentDay(challengeProgress.currentDay);
+                  setCurrentView('challenge');
+                }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge className="bg-rose-500 hover:bg-rose-600">{t.challenge.day} {challengeProgress.currentDay}</Badge>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-rose-500">{progressPercentage}%</span>
+                      <ChevronRight className="w-5 h-5 text-rose-400" />
+                    </div>
                   </div>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{getCurrentDayData()?.title}</h3>
-                <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">{getCurrentDayData()?.content}</p>
-                <div className="space-y-1">
-                  <Progress value={progressPercentage} className="h-2" />
-                  <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
-                    <span>{t.dashboard.week} {Math.ceil(currentDay / 7)}/4</span>
-                    <span>{challengeProgress.completedDays.length}/30 {t.dashboard.daysCompleted}</span>
+                  <h3 className="text-lg font-semibold mb-2">{getCurrentDayData()?.title}</h3>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">{getCurrentDayData()?.content}</p>
+                  <div className="space-y-1">
+                    <Progress value={progressPercentage} className="h-2" />
+                    <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
+                      <span>{t.dashboard.week} {Math.ceil(currentDay / 7)}/4</span>
+                      <span>{challengeProgress.completedDays.length}/30 {t.dashboard.daysCompleted}</span>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
-            {/* New Me Card */}
-            <Card
-              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}
-              onClick={() => setCurrentView('new-me')}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">🦋</span>
-                    <Badge className="bg-purple-500 hover:bg-purple-600">{t.newMe.title}</Badge>
+            {/* New Me Card - Only show if Beauty & Body is selected */}
+            {selectedChallenge === 'beauty-body' && (
+              <Card
+                className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}
+                onClick={() => setCurrentView('new-me')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">🦋</span>
+                      <Badge className="bg-purple-500 hover:bg-purple-600">{t.newMe.title}</Badge>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-purple-400" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-purple-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{t.newMe.subtitle}</h3>
-                <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">
-                  13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee 🦋
-                </p>
-              </CardContent>
-            </Card>
+                  <h3 className="text-xl font-semibold mb-2">{t.newMe.subtitle}</h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">
+                    13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee 🦋
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-4">
@@ -3785,6 +3883,96 @@ export default function GlowUpChallengeApp() {
         position="top"
         language={language}
       />
+
+      {/* Challenge Switch Drawer */}
+      <Drawer open={showChallengeDrawer} onOpenChange={setShowChallengeDrawer}>
+        <DrawerContent className={`max-w-lg mx-auto ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
+          <DrawerHeader className="border-b">
+            <DrawerTitle className="text-center text-xl">
+              {language === 'fr' ? 'Choisir un challenge' : language === 'en' ? 'Choose a challenge' : 'Elegir un desafío'}
+            </DrawerTitle>
+            <DrawerDescription className="text-center">
+              {language === 'fr' ? 'Sélectionne le challenge que tu veux suivre' : language === 'en' ? 'Select the challenge you want to follow' : 'Selecciona el desafío que quieres seguir'}
+            </DrawerDescription>
+          </DrawerHeader>
+
+          <div className="p-6 space-y-4">
+            {/* Mind & Life Option */}
+            <button
+              onClick={() => {
+                setSelectedChallenge('mind-life');
+                setShowChallengeDrawer(false);
+              }}
+              className={`w-full p-6 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+                selectedChallenge === 'mind-life'
+                  ? theme === 'dark'
+                    ? 'border-green-700 bg-gradient-to-br from-green-900/30 to-emerald-900/30'
+                    : 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50'
+                  : theme === 'dark'
+                    ? 'border-stone-800 bg-gradient-to-br from-green-900/10 to-emerald-900/10 hover:border-green-700'
+                    : 'border-stone-200 bg-gradient-to-br from-green-50/50 to-emerald-50/50 hover:border-green-400'
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-5xl">🌱</span>
+                <div className="flex-1 text-left">
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    {t.challengeSelection.mindLifeTitle}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.challengeSelection.mindLifeDesc}
+                  </p>
+                  {selectedChallenge === 'mind-life' && (
+                    <div className="mt-3 flex items-center gap-2 text-green-600 dark:text-green-400">
+                      <Check className="w-5 h-5" />
+                      <span className="text-sm font-semibold">
+                        {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desafío activo'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Beauty & Body Option */}
+            <button
+              onClick={() => {
+                setSelectedChallenge('beauty-body');
+                setShowChallengeDrawer(false);
+              }}
+              className={`w-full p-6 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+                selectedChallenge === 'beauty-body'
+                  ? theme === 'dark'
+                    ? 'border-pink-700 bg-gradient-to-br from-pink-900/30 to-purple-900/30'
+                    : 'border-pink-400 bg-gradient-to-br from-pink-50 to-purple-50'
+                  : theme === 'dark'
+                    ? 'border-stone-800 bg-gradient-to-br from-pink-900/10 to-purple-900/10 hover:border-pink-700'
+                    : 'border-stone-200 bg-gradient-to-br from-pink-50/50 to-purple-50/50 hover:border-pink-400'
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-5xl">💄</span>
+                <div className="flex-1 text-left">
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    {t.challengeSelection.beautyBodyTitle}
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {t.challengeSelection.beautyBodyDesc}
+                  </p>
+                  {selectedChallenge === 'beauty-body' && (
+                    <div className="mt-3 flex items-center gap-2 text-pink-600 dark:text-pink-400">
+                      <Check className="w-5 h-5" />
+                      <span className="text-sm font-semibold">
+                        {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desafío activo'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

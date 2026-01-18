@@ -40,6 +40,19 @@ export interface Translation {
     continue: string;
   };
 
+  // Challenge Selection
+  challengeSelection: {
+    title: string;
+    subtitle: string;
+    mindLifeTitle: string;
+    mindLifeEmoji: string;
+    mindLifeDesc: string;
+    beautyBodyTitle: string;
+    beautyBodyEmoji: string;
+    beautyBodyDesc: string;
+    selectButton: string;
+  };
+
   // Presentation
   presentation: {
     title: string;
@@ -368,6 +381,17 @@ export const translations: Record<Language, Translation> = {
       selectLanguage: 'Sélectionner la langue',
       continue: 'Continuer',
     },
+    challengeSelection: {
+      title: 'Je suis là pour t\'aider à forger la nouvelle toi.',
+      subtitle: 'Sur quoi veux-tu glow up en priorité ?',
+      mindLifeTitle: 'Esprit & Vie',
+      mindLifeEmoji: '🌱',
+      mindLifeDesc: 'Confiance, objectifs, relations, clarté, moi profond',
+      beautyBodyTitle: 'Beauté & Corps',
+      beautyBodyEmoji: '💄',
+      beautyBodyDesc: 'Soins, corps, énergie, discipline douce, glow naturel',
+      selectButton: 'Choisir ce challenge',
+    },
     presentation: {
       title: 'Révèle ta meilleure version',
       subtitle: 'Un programme de 30 jours pour transformer ton corps, ton mental et ton style de vie avec douceur.',
@@ -404,7 +428,7 @@ export const translations: Record<Language, Translation> = {
       continueYourChallenge: 'Continue ton Glow Up Challenge',
     },
     challenge: {
-      title: 'Challenge 30 Jours',
+      title: 'Esprit & Vie',
       day: 'Jour',
       completed: 'Complété',
       notCompleted: 'Non complété',
@@ -591,8 +615,8 @@ export const translations: Record<Language, Translation> = {
       success: 'Succès',
     },
     newMe: {
-      title: 'New Me',
-      subtitle: 'Deviens ta meilleure version en 30 jours',
+      title: 'Beauté & Corps',
+      subtitle: 'Challenge Glow Up Beauté & Corps – 30 jours',
       mascot: 'Glowee 🦋',
       dailyTracking: 'Aujourd\'hui',
       progress: 'Progression',
@@ -670,6 +694,17 @@ export const translations: Record<Language, Translation> = {
       selectLanguage: 'Select language',
       continue: 'Continue',
     },
+    challengeSelection: {
+      title: 'I\'m here to help you forge the new you.',
+      subtitle: 'What do you want to glow up first?',
+      mindLifeTitle: 'Mind & Life',
+      mindLifeEmoji: '🌱',
+      mindLifeDesc: 'Confidence, goals, relationships, clarity, deep self',
+      beautyBodyTitle: 'Beauty & Body',
+      beautyBodyEmoji: '💄',
+      beautyBodyDesc: 'Care, body, energy, gentle discipline, natural glow',
+      selectButton: 'Choose this challenge',
+    },
     presentation: {
       title: 'Reveal Your Best Version',
       subtitle: 'A 30-day program to transform your body, mind and lifestyle with gentleness.',
@@ -706,7 +741,7 @@ export const translations: Record<Language, Translation> = {
       continueYourChallenge: 'Continue your Glow Up Challenge',
     },
     challenge: {
-      title: '30-Day Challenge',
+      title: 'Mind & Life',
       day: 'Day',
       completed: 'Completed',
       notCompleted: 'Not completed',
@@ -893,8 +928,8 @@ export const translations: Record<Language, Translation> = {
       success: 'Success',
     },
     newMe: {
-      title: 'New Me',
-      subtitle: 'Become your best version in 30 days',
+      title: 'Beauty & Body',
+      subtitle: 'Beauty & Body Glow Up Challenge – 30 days',
       mascot: 'Glowee 🦋',
       dailyTracking: 'Today',
       progress: 'Progress',
@@ -972,6 +1007,17 @@ export const translations: Record<Language, Translation> = {
       selectLanguage: 'Seleccionar idioma',
       continue: 'Continuar',
     },
+    challengeSelection: {
+      title: 'Estoy aquí para ayudarte a forjar la nueva tú.',
+      subtitle: '¿En qué quieres brillar primero?',
+      mindLifeTitle: 'Mente & Vida',
+      mindLifeEmoji: '🌱',
+      mindLifeDesc: 'Confianza, objetivos, relaciones, claridad, yo profundo',
+      beautyBodyTitle: 'Belleza & Cuerpo',
+      beautyBodyEmoji: '💄',
+      beautyBodyDesc: 'Cuidados, cuerpo, energía, disciplina suave, brillo natural',
+      selectButton: 'Elegir este desafío',
+    },
     presentation: {
       title: 'Revela tu mejor versión',
       subtitle: 'Un programa de 30 días para transformar tu cuerpo, mente y estilo de vida con suavidad.',
@@ -1008,7 +1054,7 @@ export const translations: Record<Language, Translation> = {
       continueYourChallenge: 'Continúa tu Desafío Glow Up',
     },
     challenge: {
-      title: 'Desafío de 30 Días',
+      title: 'Mente & Vida',
       day: 'Día',
       completed: 'Completado',
       notCompleted: 'No completado',
@@ -1195,8 +1241,8 @@ export const translations: Record<Language, Translation> = {
       success: 'Éxito',
     },
     newMe: {
-      title: 'New Me',
-      subtitle: 'Conviértete en tu mejor versión en 30 días',
+      title: 'Belleza & Cuerpo',
+      subtitle: 'Desafío Glow Up Belleza & Cuerpo – 30 días',
       mascot: 'Glowee 🦋',
       dailyTracking: 'Hoy',
       progress: 'Progreso',

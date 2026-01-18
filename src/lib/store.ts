@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from './translations';
 
-export type View = 'language-selection' | 'presentation' | 'onboarding' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'bonus' | 'new-me' | 'glowee-chat' | 'settings';
+export type View = 'language-selection' | 'presentation' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'bonus' | 'new-me' | 'glowee-chat' | 'settings';
+export type ChallengeType = 'mind-life' | 'beauty-body';
 
 interface ChallengeProgress {
   completedDays: number[];
@@ -105,6 +106,10 @@ interface AppState {
   setCurrentView: (view: View) => void;
   currentDay: number;
   setCurrentDay: (day: number) => void;
+
+  // Challenge Selection
+  selectedChallenge: ChallengeType | null;
+  setSelectedChallenge: (challenge: ChallengeType) => void;
 
   // Onboarding
   hasStarted: boolean;
@@ -221,6 +226,10 @@ export const useStore = create<AppState>()(
       setCurrentView: (view) => set({ currentView: view }),
       currentDay: 1,
       setCurrentDay: (day) => set({ currentDay: day }),
+
+      // Challenge Selection
+      selectedChallenge: null,
+      setSelectedChallenge: (challenge) => set({ selectedChallenge: challenge }),
 
       // Onboarding
       hasStarted: false,

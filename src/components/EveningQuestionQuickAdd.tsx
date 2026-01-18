@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Moon, Plus } from 'lucide-react';
+import { Moon, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface EveningQuestionQuickAddProps {
   theme?: 'light' | 'dark';
@@ -11,6 +11,7 @@ export function EveningQuestionQuickAdd({ theme = 'light' }: EveningQuestionQuic
   const { t } = useTranslation();
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [showFaq, setShowFaq] = useState(false);
 
   const addEveningQuestion = useStore((state) => state.addEveningQuestion);
   const getEveningQuestionsThisMonth = useStore((state) => state.getEveningQuestionsThisMonth);
@@ -40,6 +41,66 @@ export function EveningQuestionQuickAdd({ theme = 'light' }: EveningQuestionQuic
             {questionsThisMonth.length} ce mois
           </p>
         </div>
+      </div>
+
+      {/* FAQ Pourquoi ? */}
+      <div className="mb-3">
+        <button
+          onClick={() => setShowFaq(!showFaq)}
+          className="w-full flex items-center justify-between p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+        >
+          <span className="font-semibold text-gray-900 dark:text-white text-xs">
+            Pourquoi ?
+          </span>
+          {showFaq ? (
+            <ChevronUp className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          )}
+        </button>
+
+        {showFaq && (
+          <div className="mt-2 p-3 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-xl space-y-2 text-xs">
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                Le soir avant de dormir, pose toi cette question :
+              </p>
+              <p className="text-indigo-700 dark:text-indigo-300 font-medium mb-2 italic">
+                « Si mon cœur savait déjà, quelle serait sa réponse ? »
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">Rituel (30 secondes) :</p>
+              <ol className="list-decimal list-inside space-y-1 text-gray-700 dark:text-gray-300">
+                <li>Pense à ton blocage.</li>
+                <li>Pose la question.</li>
+                <li>Note le premier mot qui vient.</li>
+              </ol>
+            </div>
+
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">Exemples</p>
+              <div className="space-y-1 text-gray-700 dark:text-gray-300">
+                <div>
+                  <p className="font-medium">« Dois-je quitter ce travail ? »</p>
+                  <p className="text-indigo-600 dark:text-indigo-400">→ Liberté</p>
+                </div>
+                <div>
+                  <p className="font-medium">« Est-ce que cette amitié me convient ? »</p>
+                  <p className="text-indigo-600 dark:text-indigo-400">→ Épuisée</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-indigo-200 dark:border-indigo-800">
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">Résultat</p>
+              <p className="text-gray-700 dark:text-gray-300">
+                Au réveil, on est plus claire, le cœur sait déjà.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input Form */}

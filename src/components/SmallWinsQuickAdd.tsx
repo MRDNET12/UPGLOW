@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Trophy, Plus } from 'lucide-react';
+import { Trophy, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SmallWinsQuickAddProps {
   theme?: 'light' | 'dark';
@@ -10,6 +10,7 @@ interface SmallWinsQuickAddProps {
 export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
   const { t } = useTranslation();
   const [newWin, setNewWin] = useState('');
+  const [showFaq, setShowFaq] = useState(false);
 
   const addSmallWin = useStore((state) => state.addSmallWin);
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
@@ -55,6 +56,42 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
             style={{ width: `${Math.min((winsThisWeek.length / 3) * 100, 100)}%` }}
           />
         </div>
+      </div>
+
+      {/* FAQ Pourquoi ? */}
+      <div className="mb-3">
+        <button
+          onClick={() => setShowFaq(!showFaq)}
+          className="w-full flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
+        >
+          <span className="font-semibold text-gray-900 dark:text-white text-xs">
+            Pourquoi ?
+          </span>
+          {showFaq ? (
+            <ChevronUp className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+          )}
+        </button>
+
+        {showFaq && (
+          <div className="mt-2 p-3 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-xl space-y-2 text-xs">
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">Durée : 2 à 4 minutes</p>
+              <ol className="list-decimal list-inside space-y-1 text-gray-700 dark:text-gray-300">
+                <li>Note trois petits accomplissements réalisés cette semaine (même les plus minimes).</li>
+                <li>Décris pourquoi ces accomplissements sont importants pour toi.</li>
+                <li>Relis cette liste chaque matin pour te rappeler que tu es capable.</li>
+              </ol>
+            </div>
+            <div className="pt-2 border-t border-yellow-200 dark:border-yellow-800">
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">Pourquoi ça marche ?</p>
+              <p className="text-gray-700 dark:text-gray-300">
+                L'auto-valorisation aide à renforcer la confiance et réduire le sentiment d'échec.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input */}

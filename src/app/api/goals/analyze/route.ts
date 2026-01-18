@@ -4,7 +4,7 @@ export const runtime = 'edge';
 
 interface Goal {
   name: string;
-  type: 'financial' | 'project' | 'personal';
+  type: 'financial' | 'personal';
   description: string;
   deadline: string;
 }
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     const prompt = `Tu es Glowee Work, une IA spécialisée dans la planification d'objectifs pour les femmes.
 
 Objectif à analyser :
-- Type : ${goal.type === 'financial' ? 'Financier' : goal.type === 'project' ? 'Projet' : 'Personnel'}
+- Type : ${goal.type === 'financial' ? 'Financier' : 'Personnel'}
 - Nom : ${goal.name}
 - Description : ${goal.description}
 - Deadline : ${goal.deadline} (dans ${daysUntilDeadline} jours)

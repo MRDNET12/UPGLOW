@@ -14,7 +14,7 @@ import { gloweeMessages } from '@/data/gloweeMessages';
 interface Goal {
   id: string;
   name: string;
-  type: 'financial' | 'project' | 'personal';
+  type: 'financial' | 'personal';
   description: string;
   deadline: string;
   progress: number;
@@ -652,7 +652,7 @@ function CreateGoalModal({
   onAddGloweeTasks?: (tasks: Task[]) => void;
 }) {
   const [step, setStep] = useState(1);
-  const [goalType, setGoalType] = useState<'financial' | 'project' | 'personal'>('personal');
+  const [goalType, setGoalType] = useState<'financial' | 'personal'>('personal');
   const [goalName, setGoalName] = useState('');
   const [goalDescription, setGoalDescription] = useState('');
   const [goalDeadline, setGoalDeadline] = useState('');
@@ -779,23 +779,6 @@ function CreateGoalModal({
                 </button>
 
                 <button
-                  onClick={() => setGoalType('project')}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${
-                    goalType === 'project'
-                      ? 'border-rose-400 bg-rose-50'
-                      : 'border-stone-200 hover:border-stone-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">📚</span>
-                    <div>
-                      <div className="font-semibold">Projet</div>
-                      <div className="text-sm text-stone-600">Créer, construire, réaliser</div>
-                    </div>
-                  </div>
-                </button>
-
-                <button
                   onClick={() => setGoalType('personal')}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     goalType === 'personal'
@@ -833,7 +816,6 @@ function CreateGoalModal({
                   onChange={(e) => setGoalName(e.target.value)}
                   placeholder={
                     goalType === 'financial' ? "Ex: Atteindre 10 000€ de CA" :
-                    goalType === 'project' ? "Ex: Lancer mon e-commerce" :
                     "Ex: Retrouver confiance en moi"
                   }
                   className="w-full"
@@ -856,27 +838,6 @@ function CreateGoalModal({
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-stone-900 mb-2">
-                      Ton niveau de compétence dans ce domaine
-                    </label>
-                    <select
-                      value={competency}
-                      onChange={(e) => setCompetency(e.target.value)}
-                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
-                    >
-                      <option value="">Sélectionne...</option>
-                      <option value="beginner">Débutante 🌱</option>
-                      <option value="intermediate">Intermédiaire 🌿</option>
-                      <option value="advanced">Avancée 🌳</option>
-                    </select>
-                  </div>
-                </>
-              )}
-
-              {/* Questions spécifiques pour Projet */}
-              {goalType === 'project' && (
-                <>
                   <div>
                     <label className="block text-sm font-medium text-stone-900 mb-2">
                       Description du projet
@@ -936,8 +897,7 @@ function CreateGoalModal({
                   onClick={() => setStep(3)}
                   disabled={
                     !goalName ||
-                    (goalType === 'financial' && (!targetAmount || !competency)) ||
-                    (goalType === 'project' && (!goalDescription || !competency)) ||
+                    (goalType === 'financial' && (!targetAmount || !goalDescription || !competency)) ||
                     (goalType === 'personal' && !goalDescription)
                   }
                   className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"

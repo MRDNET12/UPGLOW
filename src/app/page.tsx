@@ -1858,30 +1858,20 @@ export default function GlowUpChallengeApp() {
                       <div
                         key={priority.id}
                         className={`flex items-center gap-3 p-3 rounded-xl ${
-                          priority.completed
-                            ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                            : theme === 'dark'
-                              ? 'bg-stone-800'
-                              : 'bg-stone-50'
+                          theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                         }`}
                       >
-                        <button
-                          onClick={() => {
-                            setWeekPriorities(weekPriorities.map(p =>
-                              p.id === priority.id ? { ...p, completed: !p.completed } : p
-                            ));
-                          }}
-                          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                            priority.completed
-                              ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 border-transparent'
-                              : 'border-stone-300 dark:border-stone-600'
-                          }`}
-                        >
-                          {priority.completed && <Check className="w-4 h-4 text-white" />}
-                        </button>
                         <span className={`flex-1 ${priority.completed ? 'line-through text-stone-500' : ''}`}>
                           {priority.text}
                         </span>
+                        <button
+                          onClick={() => {
+                            setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
+                          }}
+                          className="text-stone-400 hover:text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
                     ))
                   )}
@@ -1908,11 +1898,11 @@ export default function GlowUpChallengeApp() {
                     return (
                       <div
                         key={day.key}
-                        className={`rounded-2xl shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative`}
+                        className={`rounded-2xl shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden`}
                       >
                         {/* Bordure grise en haut pour le jour actuel */}
                         {isToday && (
-                          <div className="absolute top-0 left-0 right-0 h-1 bg-stone-400 rounded-t-2xl" />
+                          <div className="absolute top-0 left-[20%] right-[20%] h-1.5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
                         )}
                         <div className="p-4">
                           <h3 className="font-bold text-sm mb-3">{day.label}</h3>
@@ -1949,6 +1939,17 @@ export default function GlowUpChallengeApp() {
                             <span className={`flex-1 ${task.completed ? 'line-through text-stone-500' : ''}`}>
                               {task.text}
                             </span>
+                            <button
+                              onClick={() => {
+                                setWeeklyTasks({
+                                  ...weeklyTasks,
+                                  [day.key]: weeklyTasks[day.key as keyof typeof weeklyTasks].filter(t => t.id !== task.id)
+                                });
+                              }}
+                              className="text-stone-400 hover:text-red-500 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
                           </div>
                         ))
                       )}

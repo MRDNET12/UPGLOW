@@ -23,6 +23,12 @@ interface Goal {
   progress: number;
   createdAt: string;
   tasks?: Task[];
+  weeklyPriorities?: Array<{
+    id: string;
+    text: string;
+    completed: boolean;
+  }>;
+  goalColor?: string;
 }
 
 interface EnergyLog {
@@ -45,7 +51,15 @@ interface Task {
 }
 
 interface MyGoalsProps {
-  onAddGloweeTasks?: (tasks: Task[]) => void;
+  onAddGloweeTasks?: (
+    tasks: Task[],
+    goalData: {
+      id: string;
+      name: string;
+      color: string;
+      weeklyPriorities: Array<{id: string, text: string, completed: boolean}>;
+    }
+  ) => void;
   onNavigateToPlanning?: (goalId: string) => void;
   onShowGoalDetails?: (goalId: string) => void;
 }
@@ -710,6 +724,11 @@ function CreateGoalModal({
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzedTasks, setAnalyzedTasks] = useState<Task[]>([]);
+  const [analyzedPriorities, setAnalyzedPriorities] = useState<Array<{
+    id: string;
+    text: string;
+    completed: boolean;
+  }>>([]);
   const [gloweeAnalysis, setGloweeAnalysis] = useState<{
     opinion: string;
     feasibility: string;
@@ -736,6 +755,7 @@ function CreateGoalModal({
     setDesiredFeeling('');
     setIsAnalyzing(false);
     setAnalyzedTasks([]);
+    setAnalyzedPriorities([]);
     setGloweeAnalysis(null);
   };
 
@@ -771,6 +791,29 @@ function CreateGoalModal({
       const data = await response.json();
       setAnalyzedTasks(data.tasks || []);
 
+      // Générer les 3 priorités de la semaine à partir des tâches
+      if (data.tasks && data.tasks.length > 0) {
+        // Prendre les 3 premières tâches de haute priorité de cette semaine
+        const thisWeekTasks = data.tasks.filter((task: Task) => {
+          const taskDate = new Date(task.date || getNextDateForDay(task.day));
+          const today = new Date();
+          const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+          return taskDate >= today && taskDate <= weekFromNow;
+        });
+
+        const highPriorityTasks = thisWeekTasks
+          .filter((task: Task) => task.priority === 'high')
+          .slice(0, 3);
+
+        const priorities = highPriorityTasks.map((task: Task, index: number) => ({
+          id: `priority_${Date.now()}_${index}`,
+          text: task.task,
+          completed: false
+        }));
+
+        setAnalyzedPriorities(priorities);
+      }
+
       // Stocker l'analyse de Glowee Work si disponible
       if (data.analysis) {
         setGloweeAnalysis(data.analysis);
@@ -785,9 +828,12 @@ function CreateGoalModal({
   };
 
   const handleSubmit = () => {
+    const goalId = Date.now().toString();
+    const goalColor = getGoalColor(goalId);
+
     // Préparer les données de l'objectif
     const goalData = {
-      id: Date.now().toString(),
+      id: goalId,
       name: goalName,
       type: goalType,
       description: goalDescription,
@@ -795,6 +841,8 @@ function CreateGoalModal({
       progress: 0,
       createdAt: new Date().toISOString(),
       tasks: analyzedTasks,
+      weeklyPriorities: analyzedPriorities,
+      goalColor: goalColor,
     };
 
     // Stocker les données et afficher le dialogue de confirmation
@@ -823,7 +871,7 @@ function CreateGoalModal({
 
     // Ajouter les tâches dans Glowee tâches du Planning avec dates spécifiques
     if (onAddGloweeTasks && analyzedTasks.length > 0) {
-      const goalColor = getGoalColor(pendingGoalData.id);
+      const goalColor = pendingGoalData.goalColor || getGoalColor(pendingGoalData.id);
 
       // Ajouter les dates et les infos de l'objectif aux tâches
       const tasksWithDates = analyzedTasks.map(task => ({
@@ -833,7 +881,16 @@ function CreateGoalModal({
         goalName: pendingGoalData.name,
         goalColor: goalColor
       }));
-      onAddGloweeTasks(tasksWithDates);
+
+      // Préparer les données de l'objectif avec ses priorités
+      const goalDataForPlanning = {
+        id: pendingGoalData.id,
+        name: pendingGoalData.name,
+        color: goalColor,
+        weeklyPriorities: pendingGoalData.weeklyPriorities || []
+      };
+
+      onAddGloweeTasks(tasksWithDates, goalDataForPlanning);
     }
 
     onSuccess(pendingGoalData);

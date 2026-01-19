@@ -264,6 +264,15 @@ export default function GlowUpChallengeApp() {
   // Navigation par semaine
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = semaine actuelle, 1 = semaine prochaine, etc.
 
+  // Objectifs avec leurs priorités
+  const [goalsWithPriorities, setGoalsWithPriorities] = useState<Array<{
+    id: string;
+    name: string;
+    color: string;
+    weeklyPriorities: Array<{id: string, text: string, completed: boolean}>;
+  }>>([]);
+  const [selectedGoalForPriorities, setSelectedGoalForPriorities] = useState<string | null>(null);
+
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDestination, setNewTaskDestination] = useState<'priority' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'>('priority');
@@ -459,6 +468,32 @@ export default function GlowUpChallengeApp() {
       localStorage.setItem('tasksWithDates', JSON.stringify(tasksWithDates));
     }
   }, [tasksWithDates, isHydrated]);
+
+  // Charger et sauvegarder les objectifs avec priorités
+  useEffect(() => {
+    if (isHydrated) {
+      const savedGoalsWithPriorities = localStorage.getItem('goalsWithPriorities');
+      if (savedGoalsWithPriorities) {
+        setGoalsWithPriorities(JSON.parse(savedGoalsWithPriorities));
+      }
+      const savedSelectedGoal = localStorage.getItem('selectedGoalForPriorities');
+      if (savedSelectedGoal) {
+        setSelectedGoalForPriorities(savedSelectedGoal);
+      }
+    }
+  }, [isHydrated]);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem('goalsWithPriorities', JSON.stringify(goalsWithPriorities));
+    }
+  }, [goalsWithPriorities, isHydrated]);
+
+  useEffect(() => {
+    if (isHydrated && selectedGoalForPriorities) {
+      localStorage.setItem('selectedGoalForPriorities', selectedGoalForPriorities);
+    }
+  }, [selectedGoalForPriorities, isHydrated]);
 
   useEffect(() => {
     if (hasStarted && isHydrated) {
@@ -2195,33 +2230,97 @@ export default function GlowUpChallengeApp() {
                   <Star className="w-5 h-5 text-rose-400" />
                   {language === 'fr' ? 'Mes 3 priorités de la semaine' : language === 'en' ? 'My 3 weekly priorities' : 'Mis 3 prioridades semanales'}
                 </h2>
-                <div className="space-y-3">
-                  {weekPriorities.length === 0 ? (
-                    <p className="text-sm text-stone-500 dark:text-stone-400 text-center py-4">
-                      {language === 'fr' ? 'Aucune priorité définie' : language === 'en' ? 'No priorities set' : 'Sin prioridades definidas'}
+
+                {/* Sélecteur d'objectif (seulement pour Glowee tâches) */}
+                {planningTab === 'glowee-tasks' && goalsWithPriorities.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mb-2">
+                      {language === 'fr' ? 'Afficher les priorités de :' : language === 'en' ? 'Show priorities for:' : 'Mostrar prioridades de:'}
                     </p>
-                  ) : (
-                    weekPriorities.map((priority) => (
+                    <div className="flex flex-wrap gap-2">
+                      {goalsWithPriorities.map((goal) => (
+                        <button
+                          key={goal.id}
+                          onClick={() => setSelectedGoalForPriorities(goal.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                            selectedGoalForPriorities === goal.id
+                              ? theme === 'dark' ? 'bg-stone-700 ring-2 ring-offset-2 ring-offset-stone-900' : 'bg-stone-200 ring-2 ring-offset-2 ring-offset-white'
+                              : theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'
+                          }`}
+                          style={selectedGoalForPriorities === goal.id ? { ringColor: goal.color } : {}}
+                        >
+                          <div
+                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: goal.color }}
+                          />
+                          <span className="truncate max-w-[120px]">{goal.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {(() => {
+                    // Déterminer quelles priorités afficher
+                    let prioritiesToShow = weekPriorities;
+
+                    if (planningTab === 'glowee-tasks' && selectedGoalForPriorities) {
+                      const selectedGoal = goalsWithPriorities.find(g => g.id === selectedGoalForPriorities);
+                      if (selectedGoal) {
+                        prioritiesToShow = selectedGoal.weeklyPriorities;
+                      }
+                    }
+
+                    if (prioritiesToShow.length === 0) {
+                      return (
+                        <p className="text-sm text-stone-500 dark:text-stone-400 text-center py-4">
+                          {language === 'fr' ? 'Aucune priorité définie' : language === 'en' ? 'No priorities set' : 'Sin prioridades definidas'}
+                        </p>
+                      );
+                    }
+
+                    return prioritiesToShow.map((priority) => (
                       <div
                         key={priority.id}
                         className={`flex items-center gap-3 p-3 rounded-xl ${
                           theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                         }`}
                       >
+                        {/* Indicateur de couleur pour les priorités Glowee */}
+                        {planningTab === 'glowee-tasks' && selectedGoalForPriorities && (() => {
+                          const selectedGoal = goalsWithPriorities.find(g => g.id === selectedGoalForPriorities);
+                          return selectedGoal ? (
+                            <div
+                              className="w-2 h-2 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: selectedGoal.color }}
+                            />
+                          ) : null;
+                        })()}
                         <span className={`flex-1 ${priority.completed ? 'line-through text-stone-500' : ''}`}>
                           {priority.text}
                         </span>
                         <button
                           onClick={() => {
-                            setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
+                            if (planningTab === 'glowee-tasks' && selectedGoalForPriorities) {
+                              // Supprimer de l'objectif sélectionné
+                              setGoalsWithPriorities(prev => prev.map(g =>
+                                g.id === selectedGoalForPriorities
+                                  ? { ...g, weeklyPriorities: g.weeklyPriorities.filter(p => p.id !== priority.id) }
+                                  : g
+                              ));
+                            } else {
+                              // Supprimer des priorités manuelles
+                              setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
+                            }
                           }}
                           className="text-stone-400 hover:text-red-500"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                    ))
-                  )}
+                    ));
+                  })()}
                 </div>
               </div>
 
@@ -2334,7 +2433,10 @@ export default function GlowUpChallengeApp() {
         {currentView === 'my-goals' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
             <MyGoals
-              onAddGloweeTasks={(tasks: Array<{day: string, date?: string, task: string, priority: string, category: string, goalId?: string, goalName?: string, goalColor?: string}>) => {
+              onAddGloweeTasks={(
+                tasks: Array<{day: string, date?: string, task: string, priority: string, category: string, goalId?: string, goalName?: string, goalColor?: string}>,
+                goalData: {id: string, name: string, color: string, weeklyPriorities: Array<{id: string, text: string, completed: boolean}>}
+              ) => {
                 // Convertir les tâches de l'API en format du Planning avec dates
                 const newTasksWithDates = tasks.map(task => ({
                   id: `glowee_${Date.now()}_${Math.random()}`,
@@ -2350,6 +2452,24 @@ export default function GlowUpChallengeApp() {
                 }));
 
                 setTasksWithDates(prev => [...prev, ...newTasksWithDates]);
+
+                // Ajouter l'objectif avec ses priorités
+                setGoalsWithPriorities(prev => {
+                  // Vérifier si l'objectif existe déjà
+                  const existingIndex = prev.findIndex(g => g.id === goalData.id);
+                  if (existingIndex >= 0) {
+                    // Mettre à jour l'objectif existant
+                    const updated = [...prev];
+                    updated[existingIndex] = goalData;
+                    return updated;
+                  } else {
+                    // Ajouter le nouvel objectif
+                    return [...prev, goalData];
+                  }
+                });
+
+                // Sélectionner automatiquement ce nouvel objectif pour les priorités
+                setSelectedGoalForPriorities(goalData.id);
 
                 // Rediriger vers Planning
                 setCurrentView('routine');

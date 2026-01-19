@@ -1290,7 +1290,7 @@ function CreateGoalModal({
                       <Sparkles className="w-5 h-5 text-rose-400 mt-1" />
                       <div className="text-sm text-stone-700">
                         <p className="font-semibold mb-1">Plan d'action créé ! 🎉</p>
-                        <p>Glowee a généré {analyzedTasks.length} tâches pour t'aider à atteindre ton objectif.</p>
+                        <p>Glowee a généré {analyzedTasks.length} tâches cette semaine pour t'aider à atteindre ton objectif.</p>
                       </div>
                     </div>
                   </div>
@@ -1298,7 +1298,13 @@ function CreateGoalModal({
                   {/* Explication de l'analyse */}
                   <GoalAnalysisExplanation
                     goalType={goalType}
+                    goalName={goalName}
+                    goalDescription={goalDescription}
                     deadline={goalDeadline}
+                    targetAmount={targetAmount ? parseFloat(targetAmount) : undefined}
+                    competency={competency}
+                    why={why}
+                    desiredFeeling={desiredFeeling}
                   />
 
                   {/* Analyse de Glowee Work */}

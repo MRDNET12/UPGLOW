@@ -6,10 +6,26 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 interface GoalAnalysisExplanationProps {
   theme?: 'light' | 'dark';
   goalType: string;
+  goalName: string;
+  goalDescription: string;
   deadline: string;
+  targetAmount?: number;
+  competency?: string;
+  why?: string;
+  desiredFeeling?: string;
 }
 
-export function GoalAnalysisExplanation({ theme = 'light', goalType, deadline }: GoalAnalysisExplanationProps) {
+export function GoalAnalysisExplanation({
+  theme = 'light',
+  goalType,
+  goalName,
+  goalDescription,
+  deadline,
+  targetAmount,
+  competency,
+  why,
+  desiredFeeling
+}: GoalAnalysisExplanationProps) {
   const getTimeframeExplanation = () => {
     const deadlineDate = new Date(deadline);
     const today = new Date();
@@ -17,30 +33,65 @@ export function GoalAnalysisExplanation({ theme = 'light', goalType, deadline }:
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const diffMonths = Math.floor(diffDays / 30);
 
+    let breakdown = '';
+    let explanation = '';
+
+    // Déterminer le découpage selon la durée
     if (diffMonths >= 12) {
-      return {
-        breakdown: 'Année → Trimestre → Mois → Semaine → Jour',
-        explanation: 'Ton objectif est à long terme (plus d\'un an). Je vais le découper en trimestres pour une vision claire, puis en mois, semaines et jours pour des actions concrètes.'
-      };
+      breakdown = 'Année → Trimestre → Mois → Semaine → Jour';
+      explanation = `Ton objectif "${goalName}" est à long terme (${diffMonths} mois). `;
     } else if (diffMonths >= 3) {
-      return {
-        breakdown: 'Trimestre → Mois → Semaine → Jour',
-        explanation: 'Ton objectif est à moyen terme (3-12 mois). Je vais le découper en mois pour suivre ta progression, puis en semaines et jours pour rester focus.'
-      };
+      breakdown = 'Trimestre → Mois → Semaine → Jour';
+      explanation = `Ton objectif "${goalName}" est à moyen terme (${diffMonths} mois). `;
     } else {
-      return {
-        breakdown: 'Mois → Semaine → Jour',
-        explanation: 'Ton objectif est à court terme (moins de 3 mois). Je vais le découper en semaines pour un suivi rapproché, puis en jours pour des actions quotidiennes.'
-      };
+      breakdown = 'Mois → Semaine → Jour';
+      explanation = `Ton objectif "${goalName}" est à court terme (${diffMonths} mois). `;
     }
+
+    // Ajouter une analyse personnalisée selon le type et les données
+    if (goalType === 'financial' && targetAmount) {
+      const dailyTarget = targetAmount / diffDays;
+      explanation += `Pour atteindre ${targetAmount.toLocaleString()}€ en ${diffDays} jours, tu dois générer environ ${dailyTarget.toFixed(2)}€ par jour. `;
+
+      if (competency && competency.toLowerCase().includes('débutant')) {
+        explanation += `Comme tu débutes, j'ai prévu une phase d'apprentissage initiale pour acquérir les compétences nécessaires. `;
+      }
+
+      explanation += `Je vais découper ton objectif en étapes progressives pour que tu puisses suivre ton chiffre d'affaires et ajuster ta stratégie.`;
+    } else if (goalType === 'personal') {
+      if (competency) {
+        explanation += `Avec ton niveau actuel (${competency}), j'ai adapté le rythme des tâches. `;
+      }
+      explanation += `Je vais créer un plan progressif qui respecte ton énergie et tes contraintes.`;
+    }
+
+    return { breakdown, explanation };
   };
 
   const timeframe = getTimeframeExplanation();
 
+  // Calculer l'objectif journalier pour les objectifs financiers
+  const getDailyFinancialTarget = () => {
+    if (goalType !== 'financial' || !targetAmount) return null;
+
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const diffTime = Math.abs(deadlineDate.getTime() - today.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return {
+      dailyRevenue: targetAmount / diffDays,
+      totalDays: diffDays,
+      totalAmount: targetAmount
+    };
+  };
+
+  const financialTarget = getDailyFinancialTarget();
+
   return (
     <Accordion type="single" collapsible className="w-full">
-      <AccordionItem 
-        value="analysis" 
+      <AccordionItem
+        value="analysis"
         className={`rounded-xl overflow-hidden border-2 ${theme === 'dark' ? 'bg-stone-900 border-violet-900' : 'bg-gradient-to-br from-violet-50 to-purple-50 border-violet-200'}`}
       >
         <AccordionTrigger className="px-4 py-3 hover:no-underline">
@@ -49,9 +100,9 @@ export function GoalAnalysisExplanation({ theme = 'light', goalType, deadline }:
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h4 className="font-semibold text-sm">Comment Glowee analyse ton objectif</h4>
+              <h4 className="font-semibold text-sm">Analyse personnalisée de ton objectif</h4>
               <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-                Découvre ma méthode de découpage
+                Plan d'action adapté à ton projet
               </p>
             </div>
           </div>
@@ -71,6 +122,30 @@ export function GoalAnalysisExplanation({ theme = 'light', goalType, deadline }:
                 {timeframe.explanation}
               </p>
             </div>
+
+            {/* Objectif financier journalier */}
+            {financialTarget && (
+              <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-green-900/20' : 'bg-green-50'}`}>
+                <div className="flex items-start gap-2 mb-2">
+                  <Target className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5" />
+                  <h5 className="font-semibold text-xs text-green-600 dark:text-green-400">Objectif journalier</h5>
+                </div>
+                <div className="space-y-2">
+                  <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                    {financialTarget.dailyRevenue.toFixed(2)}€ / jour
+                  </div>
+                  <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
+                    Pour atteindre {financialTarget.totalAmount.toLocaleString()}€ en {financialTarget.totalDays} jours,
+                    tu dois générer environ {financialTarget.dailyRevenue.toFixed(2)}€ par jour.
+                  </p>
+                  {competency && (
+                    <p className={`text-xs italic ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
+                      💡 Niveau actuel : {competency}. J'ai adapté le plan en conséquence.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Les 3 phases */}
             <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-stone-800' : 'bg-white'}`}>

@@ -140,7 +140,6 @@ export default function GlowUpChallengeApp() {
 
   // État pour les objectifs
   const [goals, setGoals] = useState<any[]>([]);
-  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
 
   // Charger les objectifs depuis localStorage
   useEffect(() => {

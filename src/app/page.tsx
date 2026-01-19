@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useStore, View } from '@/lib/store';
@@ -44,6 +44,7 @@ import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 import { AuthDialog } from '@/components/auth/AuthDialog';
+import { FAQSection } from '@/components/settings/FAQSection';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -3081,100 +3082,7 @@ export default function GlowUpChallengeApp() {
             </Card>
 
 					{/* FAQ */}
-					<Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-					  <CardHeader>
-					    <CardTitle className="flex items-center gap-2">
-					      <Sparkles className="w-5 h-5 text-purple-500" />
-					      FAQ
-					    </CardTitle>
-					    <CardDescription>Questions fréquentes</CardDescription>
-					  </CardHeader>
-					  <CardContent>
-					    <Accordion type="single" collapsible className="space-y-3">
-					      <AccordionItem
-					        value="install-pwa"
-					        className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-purple-800/30 bg-purple-900/10' : 'border-purple-200 bg-purple-50/50'}`}
-					      >
-					        <AccordionTrigger className="hover:no-underline">
-					          <div className="flex items-center gap-3">
-					            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-purple-900/30' : 'bg-purple-100'}`}>
-					              <Download className="w-5 h-5 text-purple-500" />
-					            </div>
-					            <span className="font-semibold text-left">Comment installer l’application (PWA)</span>
-					          </div>
-					        </AccordionTrigger>
-					        <AccordionContent>
-					          <div className="space-y-4 text-sm text-stone-700 dark:text-stone-300">
-					            <p>
-					              L’application fonctionne comme une application classique, mais elle s’installe directement depuis votre navigateur (sans App Store ni Play Store).
-					            </p>
-
-					            <div className="space-y-2">
-					              <p className="font-semibold">✅ Sur iPhone (iOS – Safari uniquement)</p>
-					              <ol className="list-decimal list-inside space-y-1">
-					                <li>Ouvrez le lien de l’application dans Safari</li>
-					                <li>Appuyez sur l’icône Partager (le carré avec une flèche vers le haut)</li>
-					                <li>Défiler vers le bas</li>
-					                <li>Sélectionnez « Ajouter à l’écran d’accueil »</li>
-					                <li>Confirmez</li>
-					              </ol>
-					              <p className="text-xs text-stone-500 dark:text-stone-500">
-					                ➡️ L’application apparaîtra ensuite sur votre écran d’accueil comme une app normale.
-					              </p>
-					            </div>
-
-					            <div className="space-y-2">
-					              <p className="font-semibold">✅ Sur Android (Chrome recommandé)</p>
-					              <ol className="list-decimal list-inside space-y-1">
-					                <li>Ouvrez le lien de l’application dans Chrome</li>
-					                <li>
-					                  Un message s’affichera : « Installer l’application »
-					                  <ul className="list-disc list-inside mt-1 ml-4 space-y-1">
-					                    <li>Sinon, appuyez sur les 3 points en haut à droite</li>
-					                  </ul>
-					                </li>
-					                <li>Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil »</li>
-					                <li>Confirmez</li>
-					              </ol>
-					              <p className="text-xs text-stone-500 dark:text-stone-500">
-					                ➡️ L’application sera installée et accessible comme une application classique.
-					              </p>
-					            </div>
-					          </div>
-					        </AccordionContent>
-					      </AccordionItem>
-
-					      <AccordionItem
-					        value="notifications"
-					        className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-amber-800/30 bg-amber-900/10' : 'border-amber-200 bg-amber-50/50'}`}
-					      >
-					        <AccordionTrigger className="hover:no-underline">
-					          <div className="flex items-center gap-3">
-					            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-amber-900/30' : 'bg-amber-100'}`}>
-					              <Bell className="w-5 h-5 text-amber-500" />
-					            </div>
-					            <span className="font-semibold text-left">Notifications</span>
-					          </div>
-					        </AccordionTrigger>
-					        <AccordionContent>
-					          <div className="pt-4 pb-2">
-					            <div className={`p-5 rounded-xl border-2 ${theme === 'dark' ? 'border-amber-800/30 bg-amber-900/10' : 'border-amber-200 bg-amber-50'}`}>
-					              <div className="flex items-start gap-3">
-					                <Zap className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-					                <div>
-					                  <p className="font-semibold text-amber-600 dark:text-amber-400 mb-1">Fonctionnalité à venir</p>
-					                  <p className="text-sm text-stone-600 dark:text-stone-400">
-					                    Les notifications push arriveront bientôt pour vous rappeler vos objectifs quotidiens et vous motiver ! 🚀
-					                  </p>
-					                </div>
-					              </div>
-					            </div>
-					          </div>
-					        </AccordionContent>
-					      </AccordionItem>
-					    </Accordion>
-					  </CardContent>
-					</Card>
+					<FAQSection theme={theme} />
 
             {/* Export Data */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>

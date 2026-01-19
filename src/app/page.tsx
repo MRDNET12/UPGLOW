@@ -812,28 +812,27 @@ export default function GlowUpChallengeApp() {
             {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20"
+                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-purple-800/20"
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
                 }}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-3">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Challenge Mind & Life</p>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Esprit & Vie</p>
                     </div>
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
-                      <span className="text-xl font-bold">{challengeProgress.currentDay}</span>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
+                      <span className="text-lg font-bold">{challengeProgress.currentDay}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold">{getCurrentDayData()?.title}</h3>
-                    <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs px-2 py-0.5">
+                    <h3 className="text-base font-semibold line-clamp-1">{getCurrentDayData()?.title}</h3>
+                    <Badge className="bg-gradient-to-r from-purple-400 to-violet-400 text-white text-xs px-2 py-0.5 shrink-0">
                       New me
                     </Badge>
                   </div>
-                  <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">{getCurrentDayData()?.content}</p>
                   <div className="space-y-1">
                     <Progress value={progressPercentage} className="h-2" />
                     <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
@@ -848,27 +847,24 @@ export default function GlowUpChallengeApp() {
             {/* New Me Card - Only show if Beauty & Body is selected */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20"
+                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-purple-800/20"
                 onClick={() => setCurrentView('new-me')}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-3">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Challenge Beauty & Body</p>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Beauté & Corps</p>
                     </div>
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
-                      <span className="text-xl font-bold">{newMeCurrentDay}</span>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
+                      <span className="text-lg font-bold">{newMeCurrentDay}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold">{t.newMe.subtitle}</h3>
-                    <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs px-2 py-0.5">
+                    <h3 className="text-base font-semibold line-clamp-1">{t.newMe.subtitle}</h3>
+                    <Badge className="bg-gradient-to-r from-purple-400 to-violet-400 text-white text-xs px-2 py-0.5 shrink-0">
                       New me
                     </Badge>
                   </div>
-                  <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-3">
-                    13 {t.newMe.habits} pour te transformer en 30 jours avec Glowee
-                  </p>
                   <div className="space-y-1">
                     <Progress value={(newMeCurrentDay / 30) * 100} className="h-2" />
                     <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">

@@ -1,6 +1,6 @@
 {
-  "name": "UPGLOW - 30 Day Glow Up Challenge",
-  "short_name": "UPGLOW",
+  "name": "Glow Up - 30 Day Challenge",
+  "short_name": "Glow Up",
   "description": "Transform your life in 30 days with daily challenges, journaling, and wellness tools",
   "start_url": "/",
   "display": "standalone",

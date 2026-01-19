@@ -11,7 +11,7 @@ import {
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage } from '@/lib/new-me-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';

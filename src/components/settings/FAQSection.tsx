@@ -29,7 +29,7 @@ export function FAQSection({ theme }: FAQSectionProps) {
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-purple-900/30' : 'bg-purple-100'}`}>
                   <Download className="w-5 h-5 text-purple-500" />
                 </div>
-                <span className="font-semibold text-left">Comment installer l'application (PWA)</span>
+                <span className="font-semibold text-left">Comment installer l'application</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -120,7 +120,7 @@ export function FAQSection({ theme }: FAQSectionProps) {
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem 
+          <AccordionItem
             value="notifications"
             className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-amber-800/30 bg-amber-900/10' : 'border-amber-200 bg-amber-50/50'}`}
           >

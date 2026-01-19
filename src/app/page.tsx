@@ -33,8 +33,9 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import InstallPrompt from '@/components/InstallPrompt';
 import AppLoader from '@/components/AppLoader';
 import { BoundariesTracker } from '@/components/BoundariesTracker';
-import { SmallWinsQuickAdd } from '@/components/SmallWinsQuickAdd';
-import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
+import { CompactSmallWins } from '@/components/dashboard/CompactSmallWins';
+import { CompactEveningQuestion } from '@/components/dashboard/CompactEveningQuestion';
+import { CompactBoundaries } from '@/components/dashboard/CompactBoundaries';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
@@ -1149,61 +1150,11 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Quick Add Section - Scroll Horizontal */}
-            <div className="space-y-3">
-              <div
-                ref={quickAddScrollRef}
-                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6"
-                onScroll={(e) => {
-                  const scrollLeft = e.currentTarget.scrollLeft;
-                  const cardWidth = e.currentTarget.scrollWidth / 2;
-                  const index = Math.round(scrollLeft / cardWidth);
-                  setQuickAddScrollIndex(index);
-                }}
-                style={{
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                }}
-              >
-                <div className="snap-start flex-shrink-0 pl-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
-                  <SmallWinsQuickAdd theme={theme} />
-                </div>
-                <div className="snap-start flex-shrink-0 pr-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
-                  <EveningQuestionQuickAdd theme={theme} />
-                </div>
-              </div>
-
-              {/* Indicateurs de pagination */}
-              <div className="flex justify-center gap-2">
-                <button
-                  onClick={() => {
-                    quickAddScrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
-                    setQuickAddScrollIndex(0);
-                  }}
-                  className={`h-2 rounded-full transition-all ${
-                    quickAddScrollIndex === 0
-                      ? 'w-6 bg-yellow-500'
-                      : 'w-2 bg-gray-300 dark:bg-gray-600'
-                  }`}
-                  aria-label="Petits Succès"
-                />
-                <button
-                  onClick={() => {
-                    const container = quickAddScrollRef.current;
-                    if (container) {
-                      const cardWidth = container.scrollWidth / 2;
-                      container.scrollTo({ left: cardWidth, behavior: 'smooth' });
-                    }
-                    setQuickAddScrollIndex(1);
-                  }}
-                  className={`h-2 rounded-full transition-all ${
-                    quickAddScrollIndex === 1
-                      ? 'w-6 bg-indigo-500'
-                      : 'w-2 bg-gray-300 dark:bg-gray-600'
-                  }`}
-                  aria-label="Question du Soir"
-                />
-              </div>
+            {/* Compact Sections - Ordre: Petits succès, 8 limites, Question du soir */}
+            <div className="space-y-4 px-6">
+              <CompactSmallWins theme={theme} />
+              <CompactBoundaries theme={theme} />
+              <CompactEveningQuestion theme={theme} />
             </div>
           </div>
         )}
@@ -3273,33 +3224,27 @@ export default function GlowUpChallengeApp() {
 
             {/* Progress Overview */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-2 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-rose-400" />
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm">
+                  <TrendingUp className="w-4 h-4 text-rose-400" />
                   {t.dashboard.progress}
                 </h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-stone-600 dark:text-stone-400">{t.dashboard.daysCompleted}</span>
-                    <span className="font-semibold">{challengeProgress.completedDays.length} / 30</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center">
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.dashboard.daysCompleted}</p>
+                    <p className="font-bold text-lg">{challengeProgress.completedDays.length}/30</p>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-stone-600 dark:text-stone-400">
-                      {t.settings.percentage}
-                    </span>
-                    <span className="font-semibold text-rose-500">{progressPercentage}%</span>
+                  <div className="text-center">
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.settings.percentage}</p>
+                    <p className="font-bold text-lg text-rose-500">{progressPercentage}%</p>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-stone-600 dark:text-stone-400">{t.journal.title}</span>
-                    <span className="font-semibold">
-                      {journalEntries.length} {t.journal.entries}
-                    </span>
+                  <div className="text-center">
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.journal.title}</p>
+                    <p className="font-bold text-lg">{journalEntries.length}</p>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-stone-600 dark:text-stone-400">{t.visionBoard.title}</span>
-                    <span className="font-semibold">
-                      {visionBoardImages.length} {t.visionBoard.images}
-                    </span>
+                  <div className="text-center">
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.visionBoard.title}</p>
+                    <p className="font-bold text-lg">{visionBoardImages.length}</p>
                   </div>
                 </div>
               </CardContent>
@@ -3307,23 +3252,20 @@ export default function GlowUpChallengeApp() {
 
             {/* Theme Toggle */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.settings.theme}</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t.settings.theme}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-stone-50 dark:bg-stone-800">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 dark:bg-stone-800">
                   <div className="flex items-center gap-3">
                     {theme === 'light' ? (
-                      <Sun className="w-6 h-6 text-amber-400" />
+                      <Sun className="w-5 h-5 text-amber-400" />
                     ) : (
-                      <Moon className="w-6 h-6 text-purple-400" />
+                      <Moon className="w-5 h-5 text-purple-400" />
                     )}
                     <div>
-                      <p className="font-semibold">
+                      <p className="font-semibold text-sm">
                         {theme === 'light' ? t.settings.light : t.settings.dark}
-                      </p>
-                      <p className="text-xs text-stone-500 dark:text-stone-500">
-                        {t.settings.changeAppearance}
                       </p>
                     </div>
                   </div>
@@ -3335,40 +3277,12 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Notifications */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.settings.notifications}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-stone-50 dark:bg-stone-800">
-                  <div className="flex items-center gap-3">
-                    {notificationsEnabled ? (
-                      <Bell className="w-6 h-6 text-rose-400" />
-                    ) : (
-                      <BellOff className="w-6 h-6 text-stone-400" />
-                    )}
-                    <div>
-                      <p className="font-semibold">{t.settings.notifications}</p>
-                      <p className="text-xs text-stone-500 dark:text-stone-500">
-                        {notificationsEnabled ? t.settings.enabled : t.settings.disabled}
-                      </p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={notificationsEnabled}
-                    onCheckedChange={setNotificationsEnabled}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Language Selection */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.settings.language}</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t.settings.language}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2">
                 {[
                   { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
                   { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
@@ -3377,7 +3291,7 @@ export default function GlowUpChallengeApp() {
                   <button
                     key={lang.code}
                     onClick={() => setLanguage(lang.code)}
-                    className={`w-full p-4 rounded-xl border-2 transition-all ${
+                    className={`w-full p-3 rounded-xl border-2 transition-all ${
                       language === lang.code
                         ? 'border-rose-400 bg-rose-50 dark:bg-rose-900/20'
                         : theme === 'dark'
@@ -3386,12 +3300,12 @@ export default function GlowUpChallengeApp() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{lang.flag}</span>
-                        <span className="font-semibold">{lang.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{lang.flag}</span>
+                        <span className="font-semibold text-sm">{lang.name}</span>
                       </div>
                       {language === lang.code && (
-                        <Check className="w-5 h-5 text-rose-500" />
+                        <Check className="w-4 h-4 text-rose-500" />
                       )}
                     </div>
                   </button>
@@ -3404,13 +3318,13 @@ export default function GlowUpChallengeApp() {
 
             {/* Export Data */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.settings.export}</CardTitle>
-                <CardDescription>{t.settings.downloadData}</CardDescription>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">{t.settings.export}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent>
                 <Button
                   variant="outline"
+                  size="sm"
                   className="w-full justify-start"
                   onClick={() => {
                     const data = {
@@ -3429,47 +3343,39 @@ export default function GlowUpChallengeApp() {
                   }}
                 >
                   <Download className="mr-2 w-4 h-4" />
-                  Exporter toutes les données
+                  <span className="text-sm">Exporter toutes les données</span>
                 </Button>
               </CardContent>
             </Card>
 
             {/* Account / Connexion */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
                   {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
                 </CardTitle>
-                <CardDescription>
-                  {user
-                    ? (language === 'fr' ? 'Gérer votre compte' : language === 'en' ? 'Manage your account' : 'Gestionar tu cuenta')
-                    : (language === 'fr' ? 'Connectez-vous pour sauvegarder vos données' : language === 'en' ? 'Sign in to save your data' : 'Inicia sesión para guardar tus datos')
-                  }
-                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent>
                 {user ? (
-                  <>
-                    <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-400 to-orange-300 flex items-center justify-center">
-                          <User className="w-5 h-5 text-white" />
+                  <div className="space-y-2">
+                    <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-300 flex items-center justify-center">
+                          <User className="w-4 h-4 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-sm">{user.email}</p>
-                          <p className="text-xs text-stone-500 dark:text-stone-400">
-                            {language === 'fr' ? 'Connecté' : language === 'en' ? 'Connected' : 'Conectado'}
-                          </p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-xs truncate">{user.email}</p>
+                          {userData && (
+                            <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs mt-1">
+                              ✨ Premium
+                            </Badge>
+                          )}
                         </div>
                       </div>
-                      {userData && (
-                        <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs">
-                          ✨ Premium
-                        </Badge>
-                      )}
                     </div>
                     <Button
                       variant="outline"
+                      size="sm"
                       className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                       onClick={async () => {
                         if (confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir vous déconnecter ?' : language === 'en' ? 'Are you sure you want to sign out?' : '¿Estás seguro de que quieres cerrar sesión?')) {
@@ -3478,16 +3384,17 @@ export default function GlowUpChallengeApp() {
                       }}
                     >
                       <LogOut className="mr-2 w-4 h-4" />
-                      {language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}
+                      <span className="text-sm">{language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}</span>
                     </Button>
-                  </>
+                  </div>
                 ) : (
                   <Button
+                    size="sm"
                     className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
                     onClick={() => setShowAuthDialog(true)}
                   >
                     <LogIn className="mr-2 w-4 h-4" />
-                    {language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}
+                    <span className="text-sm">{language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}</span>
                   </Button>
                 )}
               </CardContent>

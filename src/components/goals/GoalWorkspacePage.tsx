@@ -45,6 +45,20 @@ interface Plan {
   timestamp: Date;
 }
 
+interface Task {
+  id: string;
+  day: string;
+  date?: string;
+  task: string;
+  text?: string;
+  priority: 'high' | 'medium' | 'low';
+  category: string;
+  goalId?: string;
+  goalName?: string;
+  goalColor?: string;
+  completed?: boolean;
+}
+
 interface GoalWorkspacePageProps {
   goal: Goal | null;
   onBack: () => void;
@@ -68,7 +82,7 @@ const translations = {
     competency: 'Niveau de compétence',
     targetAmount: 'Montant cible',
     deadline: 'Échéance',
-    analyzing: 'Glowee analyse ton objectif...',
+    analyzing: 'Glowee Work analyse...',
     planBreakdown: 'Découpage du plan',
     dailyTarget: 'Objectif journalier',
     salesPerDay: 'ventes/jour',
@@ -78,6 +92,17 @@ const translations = {
     rejectPlan: 'Proposer un autre délai',
     noNotes: 'Aucune note pour le moment',
     noPlan: 'Aucun plan généré',
+    taskTracking: 'Suivi des tâches',
+    thisWeek: 'Cette semaine',
+    tasksCompleted: 'tâches complétées',
+    tasksTotal: 'tâches au total',
+    completionRate: 'Taux de complétion',
+    highPriority: 'Haute priorité',
+    mediumPriority: 'Moyenne priorité',
+    lowPriority: 'Basse priorité',
+    completed: 'Complétée',
+    pending: 'En attente',
+    noTasksThisWeek: 'Aucune tâche cette semaine',
   },
   en: {
     back: 'Back',
@@ -94,7 +119,7 @@ const translations = {
     competency: 'Competency level',
     targetAmount: 'Target amount',
     deadline: 'Deadline',
-    analyzing: 'Glowee is analyzing your goal...',
+    analyzing: 'Glowee Work is analyzing...',
     planBreakdown: 'Plan Breakdown',
     dailyTarget: 'Daily Target',
     salesPerDay: 'sales/day',
@@ -104,6 +129,17 @@ const translations = {
     rejectPlan: 'Propose another deadline',
     noNotes: 'No notes yet',
     noPlan: 'No plan generated',
+    taskTracking: 'Task Tracking',
+    thisWeek: 'This week',
+    tasksCompleted: 'tasks completed',
+    tasksTotal: 'tasks total',
+    completionRate: 'Completion rate',
+    highPriority: 'High priority',
+    mediumPriority: 'Medium priority',
+    lowPriority: 'Low priority',
+    completed: 'Completed',
+    pending: 'Pending',
+    noTasksThisWeek: 'No tasks this week',
   },
   es: {
     back: 'Volver',
@@ -120,7 +156,7 @@ const translations = {
     competency: 'Nivel de competencia',
     targetAmount: 'Monto objetivo',
     deadline: 'Fecha límite',
-    analyzing: 'Glowee está analizando tu objetivo...',
+    analyzing: 'Glowee Work está analizando...',
     planBreakdown: 'Desglose del Plan',
     dailyTarget: 'Objetivo Diario',
     salesPerDay: 'ventas/día',
@@ -130,6 +166,17 @@ const translations = {
     rejectPlan: 'Proponer otra fecha',
     noNotes: 'Sin notas aún',
     noPlan: 'Sin plan generado',
+    taskTracking: 'Seguimiento de tareas',
+    thisWeek: 'Esta semana',
+    tasksCompleted: 'tareas completadas',
+    tasksTotal: 'tareas en total',
+    completionRate: 'Tasa de finalización',
+    highPriority: 'Alta prioridad',
+    mediumPriority: 'Prioridad media',
+    lowPriority: 'Baja prioridad',
+    completed: 'Completada',
+    pending: 'Pendiente',
+    noTasksThisWeek: 'Sin tareas esta semana',
   }
 };
 
@@ -141,15 +188,107 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
+  const [goalTasks, setGoalTasks] = useState<Task[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   if (!goal) return null;
 
+  // Récupérer les tâches Glowee liées à cet objectif
+  useEffect(() => {
+    const loadGoalTasks = () => {
+      try {
+        const storedTasks = localStorage.getItem('gloweeWeeklyTasks');
+        if (storedTasks) {
+          const allTasks = JSON.parse(storedTasks);
+          // Récupérer toutes les tâches de tous les jours
+          const tasksArray: Task[] = [];
+          Object.keys(allTasks).forEach((day) => {
+            const dayTasks = allTasks[day] || [];
+            dayTasks.forEach((task: Task) => {
+              if (task.goalId === goal.id) {
+                tasksArray.push({ ...task, day });
+              }
+            });
+          });
+          setGoalTasks(tasksArray);
+        }
+      } catch (error) {
+        console.error('Error loading goal tasks:', error);
+      }
+    };
+
+    loadGoalTasks();
+
+    // Écouter les changements dans localStorage
+    const handleStorageChange = () => {
+      loadGoalTasks();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [goal.id]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Message initial de Glowee Work avec suivi des tâches
+  useEffect(() => {
+    if (messages.length === 0 && thisWeekTasks.length > 0) {
+      const completedCount = completedTasks.length;
+      const totalCount = thisWeekTasks.length;
+      const rate = completionRate;
+
+      let initialMessage = '';
+      if (language === 'fr') {
+        if (rate === 100) {
+          initialMessage = `🎉 Bravo ! Tu as complété toutes tes tâches cette semaine (${totalCount}/${totalCount}) ! Continue comme ça, tu es sur la bonne voie pour atteindre "${goal.name}".`;
+        } else if (rate >= 70) {
+          initialMessage = `👏 Excellent travail ! Tu as complété ${completedCount} tâches sur ${totalCount} cette semaine (${rate}%). Tu es bien engagée dans ton objectif "${goal.name}". Comment puis-je t'aider à aller encore plus loin ?`;
+        } else if (rate >= 40) {
+          initialMessage = `💪 Tu as complété ${completedCount} tâches sur ${totalCount} cette semaine (${rate}%). C'est un bon début ! Parlons ensemble de ce qui pourrait t'aider à progresser davantage vers "${goal.name}".`;
+        } else if (rate > 0) {
+          initialMessage = `Je vois que tu as complété ${completedCount} tâche${completedCount > 1 ? 's' : ''} sur ${totalCount} cette semaine. Pas de panique ! Discutons ensemble pour comprendre ce qui te bloque et ajuster ton plan pour "${goal.name}".`;
+        } else {
+          initialMessage = `Je remarque que tu n'as pas encore commencé les tâches de cette semaine (0/${totalCount}). C'est normal d'avoir des moments difficiles. Parlons-en ensemble pour trouver ce qui te conviendrait mieux pour avancer vers "${goal.name}".`;
+        }
+      } else if (language === 'en') {
+        if (rate === 100) {
+          initialMessage = `🎉 Congrats! You completed all your tasks this week (${totalCount}/${totalCount})! Keep it up, you're on track to achieve "${goal.name}".`;
+        } else if (rate >= 70) {
+          initialMessage = `👏 Excellent work! You completed ${completedCount} out of ${totalCount} tasks this week (${rate}%). You're well engaged in your goal "${goal.name}". How can I help you go even further?`;
+        } else if (rate >= 40) {
+          initialMessage = `💪 You completed ${completedCount} out of ${totalCount} tasks this week (${rate}%). That's a good start! Let's talk about what could help you progress more towards "${goal.name}".`;
+        } else if (rate > 0) {
+          initialMessage = `I see you completed ${completedCount} task${completedCount > 1 ? 's' : ''} out of ${totalCount} this week. No worries! Let's discuss together to understand what's blocking you and adjust your plan for "${goal.name}".`;
+        } else {
+          initialMessage = `I notice you haven't started this week's tasks yet (0/${totalCount}). It's normal to have difficult moments. Let's talk about it to find what would work better for you to move forward with "${goal.name}".`;
+        }
+      } else {
+        if (rate === 100) {
+          initialMessage = `🎉 ¡Felicidades! Completaste todas tus tareas esta semana (${totalCount}/${totalCount}). Sigue así, estás en camino de lograr "${goal.name}".`;
+        } else if (rate >= 70) {
+          initialMessage = `👏 ¡Excelente trabajo! Completaste ${completedCount} de ${totalCount} tareas esta semana (${rate}%). Estás bien comprometida con tu objetivo "${goal.name}". ¿Cómo puedo ayudarte a ir aún más lejos?`;
+        } else if (rate >= 40) {
+          initialMessage = `💪 Completaste ${completedCount} de ${totalCount} tareas esta semana (${rate}%). ¡Es un buen comienzo! Hablemos sobre qué podría ayudarte a progresar más hacia "${goal.name}".`;
+        } else if (rate > 0) {
+          initialMessage = `Veo que completaste ${completedCount} tarea${completedCount > 1 ? 's' : ''} de ${totalCount} esta semana. ¡No te preocupes! Hablemos juntas para entender qué te bloquea y ajustar tu plan para "${goal.name}".`;
+        } else {
+          initialMessage = `Noto que aún no has comenzado las tareas de esta semana (0/${totalCount}). Es normal tener momentos difíciles. Hablemos para encontrar qué funcionaría mejor para ti para avanzar hacia "${goal.name}".`;
+        }
+      }
+
+      const gloweeInitialMessage: Message = {
+        id: `msg_initial_${Date.now()}`,
+        role: 'glowee',
+        content: initialMessage,
+        timestamp: new Date()
+      };
+      setMessages([gloweeInitialMessage]);
+    }
+  }, [thisWeekTasks.length, completedTasks.length, completionRate, goal.name, language, messages.length]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -180,7 +319,27 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
 
   // Calculate duration in days
   const durationInDays = goal.duration || Math.ceil((new Date(goal.deadline).getTime() - new Date(goal.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-  const isLongTerm = durationInDays > 365;
+
+  // Calculer les statistiques des tâches de cette semaine
+  const getThisWeekTasks = () => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Lundi
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche
+
+    return goalTasks.filter(task => {
+      if (!task.date) return false;
+      const taskDate = new Date(task.date);
+      return taskDate >= startOfWeek && taskDate <= endOfWeek;
+    });
+  };
+
+  const thisWeekTasks = getThisWeekTasks();
+  const completedTasks = thisWeekTasks.filter(t => t.completed);
+  const completionRate = thisWeekTasks.length > 0
+    ? Math.round((completedTasks.length / thisWeekTasks.length) * 100)
+    : 0;
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
@@ -384,6 +543,80 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
                 </div>
               ) : (
                 <p className="text-sm text-stone-500 dark:text-stone-400 italic">{t.noPlan}</p>
+              )}
+            </div>
+
+            {/* Task Tracking Section */}
+            <div className={`rounded-2xl p-4 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} border ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Calendar className="w-5 h-5 text-indigo-500" />
+                <h3 className="font-bold">{t.taskTracking}</h3>
+              </div>
+
+              {thisWeekTasks.length > 0 ? (
+                <div className="space-y-3">
+                  {/* Stats */}
+                  <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-indigo-900/20' : 'bg-indigo-50'}`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-stone-600 dark:text-stone-400">{t.thisWeek}</span>
+                      <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                        {completionRate}% {t.completionRate}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-bold text-indigo-600 dark:text-indigo-400">{completedTasks.length}</span>
+                      <span className="text-stone-600 dark:text-stone-400">/</span>
+                      <span className="text-stone-600 dark:text-stone-400">{thisWeekTasks.length} {t.tasksTotal}</span>
+                    </div>
+                  </div>
+
+                  {/* Task List */}
+                  <div className="space-y-2">
+                    {thisWeekTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className={`p-3 rounded-xl border ${
+                          task.completed
+                            ? theme === 'dark' ? 'bg-green-900/20 border-green-800' : 'bg-green-50 border-green-200'
+                            : theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-200'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
+                            task.completed
+                              ? 'bg-green-500 border-green-500'
+                              : theme === 'dark' ? 'border-stone-600' : 'border-stone-300'
+                          }`}>
+                            {task.completed && <span className="text-white text-xs">✓</span>}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm ${task.completed ? 'line-through text-stone-500' : ''}`}>
+                              {task.task || task.text}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className={`text-xs px-2 py-0.5 rounded ${
+                                task.priority === 'high'
+                                  ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                                  : task.priority === 'medium'
+                                    ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                                    : 'bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-400'
+                              }`}>
+                                {task.priority === 'high' ? t.highPriority : task.priority === 'medium' ? t.mediumPriority : t.lowPriority}
+                              </span>
+                              {task.date && (
+                                <span className="text-xs text-stone-500 dark:text-stone-400">
+                                  {new Date(task.date).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-stone-500 dark:text-stone-400 italic">{t.noTasksThisWeek}</p>
               )}
             </div>
 

@@ -40,7 +40,7 @@ import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
-import { GoalDetailsPage } from '@/components/goals/GoalDetailsPage';
+import { GoalWorkspacePage } from '@/components/goals/GoalWorkspacePage';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
@@ -2439,9 +2439,9 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Goal Details View */}
+        {/* Goal Workspace View */}
         {currentView === 'goal-details' && selectedGoalId && (
-          <GoalDetailsPage
+          <GoalWorkspacePage
             goal={goals.find(g => g.id === selectedGoalId) || null}
             onBack={() => {
               setCurrentView('my-goals');
@@ -3403,8 +3403,9 @@ export default function GlowUpChallengeApp() {
         )}
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className={`fixed bottom-0 left-0 right-0 ${theme === 'dark' ? 'bg-stone-900/95 border-t border-stone-800' : 'bg-white/95 border-t border-stone-200'} backdrop-blur-sm safe-area-pb`}>
+      {/* Bottom Navigation - Hidden in goal-details view */}
+      {currentView !== 'goal-details' && (
+        <nav className={`fixed bottom-0 left-0 right-0 ${theme === 'dark' ? 'bg-stone-900/95 border-t border-stone-800' : 'bg-white/95 border-t border-stone-200'} backdrop-blur-sm safe-area-pb`}>
         <div className="flex items-center justify-around max-w-lg mx-auto">
           <Button
             variant="ghost"
@@ -3454,6 +3455,7 @@ export default function GlowUpChallengeApp() {
           </Button>
         </div>
       </nav>
+      )}
 
       {/* Drawer Checklist - Animation coulissante du bas */}
       <Drawer open={!!selectedChecklist} onOpenChange={(open) => !open && setSelectedChecklist(null)}>

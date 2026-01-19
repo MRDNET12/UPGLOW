@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from './translations';
 
-export type View = 'language-selection' | 'presentation' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'bonus' | 'new-me' | 'glowee-chat' | 'settings';
+export type View = 'language-selection' | 'presentation' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'settings';
 export type ChallengeType = 'mind-life' | 'beauty-body';
 
 interface ChallengeProgress {
@@ -106,6 +106,8 @@ interface AppState {
   setCurrentView: (view: View) => void;
   currentDay: number;
   setCurrentDay: (day: number) => void;
+  selectedGoalId: string | null;
+  setSelectedGoalId: (goalId: string | null) => void;
 
   // Challenge Selection
   selectedChallenge: ChallengeType | null;
@@ -226,6 +228,8 @@ export const useStore = create<AppState>()(
       setCurrentView: (view) => set({ currentView: view }),
       currentDay: 1,
       setCurrentDay: (day) => set({ currentDay: day }),
+      selectedGoalId: null,
+      setSelectedGoalId: (goalId) => set({ selectedGoalId: goalId }),
 
       // Challenge Selection
       selectedChallenge: null,

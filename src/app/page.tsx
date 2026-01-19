@@ -39,6 +39,7 @@ import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
+import { GoalDetailsPage } from '@/components/goals/GoalDetailsPage';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
@@ -55,6 +56,8 @@ export default function GlowUpChallengeApp() {
     setCurrentView,
     currentDay,
     setCurrentDay,
+    selectedGoalId,
+    setSelectedGoalId,
     selectedChallenge,
     setSelectedChallenge,
     hasStarted,
@@ -134,6 +137,42 @@ export default function GlowUpChallengeApp() {
 
   // État pour le dialogue d'authentification
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+
+  // État pour les objectifs
+  const [goals, setGoals] = useState<any[]>([]);
+
+  // Charger les objectifs depuis localStorage
+  useEffect(() => {
+    if (isHydrated) {
+      const savedGoals = localStorage.getItem('myGoals');
+      if (savedGoals) {
+        setGoals(JSON.parse(savedGoals));
+      }
+    }
+  }, [isHydrated]);
+
+  // Écouter les changements dans localStorage pour mettre à jour les objectifs
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const handleStorageChange = () => {
+      const savedGoals = localStorage.getItem('myGoals');
+      if (savedGoals) {
+        setGoals(JSON.parse(savedGoals));
+      }
+    };
+
+    // Écouter les changements de localStorage
+    window.addEventListener('storage', handleStorageChange);
+
+    // Vérifier périodiquement les changements (pour les changements dans le même onglet)
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [isHydrated]);
 
   const [todayDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [newJournalEntry, setNewJournalEntry] = useState({
@@ -812,7 +851,7 @@ export default function GlowUpChallengeApp() {
         {currentView === 'dashboard' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
             {/* Glowee Hourly Message */}
-            <GloweeHourlyMessage theme={theme} />
+            <GloweeHourlyMessage theme={theme} language={language} />
 
             {/* Trial Badge, Plan Pro Button and Challenge Switch Button */}
             <div className="flex items-center justify-center gap-2">
@@ -2193,11 +2232,24 @@ export default function GlowUpChallengeApp() {
                 setPlanningTab('glowee-tasks');
               }}
               onShowGoalDetails={(goalId: string) => {
-                // TODO: Implémenter l'affichage des détails de l'objectif
-                alert('Fonctionnalité Voir détails à venir !');
+                setSelectedGoalId(goalId);
+                setCurrentView('goal-details');
               }}
             />
           </div>
+        )}
+
+        {/* Goal Details View */}
+        {currentView === 'goal-details' && selectedGoalId && (
+          <GoalDetailsPage
+            goal={goals.find(g => g.id === selectedGoalId) || null}
+            onBack={() => {
+              setCurrentView('my-goals');
+              setSelectedGoalId(null);
+            }}
+            theme={theme}
+            language={language}
+          />
         )}
 
         {/* Vision Board View */}

@@ -42,6 +42,7 @@ import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
+import { AuthDialog } from '@/components/auth/AuthDialog';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -127,6 +128,9 @@ export default function GlowUpChallengeApp() {
   const [showGloweeFifthVisit, setShowGloweeFifthVisit] = useState(false);
   const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
   const [showGloweeJournalWelcome, setShowGloweeJournalWelcome] = useState(false);
+
+  // État pour le dialogue d'authentification
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   const [todayDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [newJournalEntry, setNewJournalEntry] = useState({
@@ -2910,15 +2914,41 @@ export default function GlowUpChallengeApp() {
         {currentView === 'settings' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
             {/* Header */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+                <h1 className="text-2xl font-bold">{t.settings.title}</h1>
+              </div>
+
+              {/* Auth Button */}
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setCurrentView('dashboard')}
+                className="rounded-full"
+                onClick={() => {
+                  if (user) {
+                    // Si connecté, demander confirmation avant de se déconnecter
+                    if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                      signOut();
+                    }
+                  } else {
+                    // Si non connecté, ouvrir le dialogue d'authentification
+                    setShowAuthDialog(true);
+                  }
+                }}
               >
-                <X className="w-5 h-5" />
+                {user ? (
+                  <LogOut className="w-5 h-5 text-purple-500" />
+                ) : (
+                  <LogIn className="w-5 h-5 text-purple-500" />
+                )}
               </Button>
-              <h1 className="text-2xl font-bold">{t.settings.title}</h1>
             </div>
 
             {/* Progress Overview */}
@@ -4141,6 +4171,13 @@ export default function GlowUpChallengeApp() {
           </div>
         </DrawerContent>
       </Drawer>
+
+      {/* Auth Dialog */}
+      <AuthDialog
+        isOpen={showAuthDialog}
+        onClose={() => setShowAuthDialog(false)}
+        defaultMode={user ? 'signin' : 'signup'}
+      />
     </div>
   );
 }

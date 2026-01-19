@@ -11,7 +11,7 @@ import {
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage } from '@/lib/new-me-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -246,6 +246,24 @@ export default function GlowUpChallengeApp() {
     saturday: [],
     sunday: []
   });
+
+  // Tâches avec dates spécifiques (nouvelle structure)
+  const [tasksWithDates, setTasksWithDates] = useState<Array<{
+    id: string;
+    text: string;
+    date: string; // Format YYYY-MM-DD
+    completed: boolean;
+    type: 'glowee' | 'user';
+    priority?: string;
+    category?: string;
+    goalId?: string; // ID de l'objectif associé
+    goalName?: string; // Nom de l'objectif
+    goalColor?: string; // Couleur de l'objectif
+  }>>([]);
+
+  // Navigation par semaine
+  const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = semaine actuelle, 1 = semaine prochaine, etc.
+
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDestination, setNewTaskDestination] = useState<'priority' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'>('priority');
@@ -426,11 +444,79 @@ export default function GlowUpChallengeApp() {
     }
   }, [gloweeWeeklyTasks, isHydrated]);
 
+  // Charger et sauvegarder les tâches avec dates
+  useEffect(() => {
+    if (isHydrated) {
+      const savedTasksWithDates = localStorage.getItem('tasksWithDates');
+      if (savedTasksWithDates) {
+        setTasksWithDates(JSON.parse(savedTasksWithDates));
+      }
+    }
+  }, [isHydrated]);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem('tasksWithDates', JSON.stringify(tasksWithDates));
+    }
+  }, [tasksWithDates, isHydrated]);
+
   useEffect(() => {
     if (hasStarted && isHydrated) {
       setCurrentView('dashboard');
     }
   }, [hasStarted, setCurrentView, isHydrated]);
+
+  // Fonctions utilitaires pour les dates
+  const getWeekDates = (offset: number = 0): string[] => {
+    const today = new Date();
+    const currentDay = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1) + (offset * 7));
+
+    const dates: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      dates.push(date.toISOString().split('T')[0]);
+    }
+    return dates;
+  };
+
+  const getTasksForDate = (date: string, type: 'glowee' | 'user') => {
+    return tasksWithDates.filter(task => task.date === date && task.type === type);
+  };
+
+  const formatWeekRange = (offset: number = 0) => {
+    const dates = getWeekDates(offset);
+    const startDate = new Date(dates[0]);
+    const endDate = new Date(dates[6]);
+
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
+    const start = startDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', options);
+    const end = endDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', options);
+
+    return `${start} - ${end}`;
+  };
+
+  // Obtenir les objectifs actifs (avec tâches) pour la semaine actuelle
+  const getActiveGoals = () => {
+    const weekDates = getWeekDates(currentWeekOffset);
+    const goalsMap = new Map<string, { id: string; name: string; color: string }>();
+
+    tasksWithDates.forEach(task => {
+      if (task.type === 'glowee' && task.goalId && task.goalName && task.goalColor && weekDates.includes(task.date)) {
+        if (!goalsMap.has(task.goalId)) {
+          goalsMap.set(task.goalId, {
+            id: task.goalId,
+            name: task.goalName,
+            color: task.goalColor
+          });
+        }
+      }
+    });
+
+    return Array.from(goalsMap.values());
+  };
 
   // Variables dynamiques basées sur l'onglet actif
   const weekPriorities = planningTab === 'my-tasks' ? myWeekPriorities : gloweeWeekPriorities;
@@ -2012,32 +2098,97 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Date actuelle - Cliquable pour ouvrir le calendrier */}
+            {/* Navigation par semaine */}
             <div className="px-6 pb-4">
-              <button
-                onClick={() => setShowCalendar(true)}
-                className={`w-full p-4 rounded-xl text-center transition-all ${
-                  theme === 'dark'
-                    ? 'bg-stone-900 hover:bg-stone-800'
-                    : 'bg-white hover:bg-stone-50'
-                } shadow-sm`}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Calendar className="w-4 h-4 text-rose-400" />
-                  <p className="text-sm font-medium">
-                    {new Date(selectedDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                      weekday: 'long',
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </p>
+              <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
+                <div className="flex items-center justify-between gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentWeekOffset(prev => prev - 1)}
+                    className="flex-shrink-0"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+
+                  <div className="flex-1 text-center">
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <Calendar className="w-4 h-4 text-rose-400" />
+                      <p className="text-sm font-semibold">
+                        {currentWeekOffset === 0
+                          ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
+                          : currentWeekOffset === 1
+                          ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
+                          : currentWeekOffset === -1
+                          ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
+                          : formatWeekRange(currentWeekOffset)
+                        }
+                      </p>
+                    </div>
+                    <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
+                      {formatWeekRange(currentWeekOffset)}
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                    className="flex-shrink-0"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
                 </div>
-              </button>
+
+                {currentWeekOffset !== 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentWeekOffset(0)}
+                    className="w-full mt-3 text-xs"
+                  >
+                    {language === 'fr' ? 'Retour à cette semaine' : language === 'en' ? 'Back to this week' : 'Volver a esta semana'}
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Contenu du planning */}
             <div className="px-6 space-y-4 max-w-lg mx-auto">
+              {/* Légende des objectifs (seulement pour Glowee tâches et s'il y a 2+ objectifs) */}
+              {planningTab === 'glowee-tasks' && (() => {
+                const activeGoals = getActiveGoals();
+                if (activeGoals.length >= 2) {
+                  return (
+                    <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
+                      <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                        <Target className="w-4 h-4 text-rose-400" />
+                        {language === 'fr' ? 'Objectifs en cours' : language === 'en' ? 'Active goals' : 'Objetivos activos'}
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {activeGoals.map((goal) => (
+                          <div
+                            key={goal.id}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                              theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
+                            }`}
+                          >
+                            <div
+                              className="w-3 h-3 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: goal.color }}
+                            />
+                            <span className="text-xs font-medium truncate max-w-[150px]">
+                              {goal.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {/* Mes 3 priorités de la semaine */}
               <div className={`p-6 rounded-2xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -2078,39 +2229,27 @@ export default function GlowUpChallengeApp() {
               <div className="grid grid-cols-2 gap-3 items-start">
                 {(() => {
                   const today = new Date();
-                  const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                  const currentDayKey = dayKeys[today.getDay()];
-
-                  // Calculer le lundi de la semaine actuelle
-                  const getMondayOfWeek = (date: Date) => {
-                    const d = new Date(date);
-                    const day = d.getDay();
-                    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajuster pour que lundi soit le premier jour
-                    return new Date(d.setDate(diff));
-                  };
-
-                  const monday = getMondayOfWeek(today);
-
-                  // Fonction pour obtenir la date d'un jour spécifique de la semaine
-                  const getDateForDay = (dayKey: string) => {
-                    const dayIndex = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(dayKey);
-                    const date = new Date(monday);
-                    date.setDate(monday.getDate() + dayIndex);
-                    return date;
-                  };
+                  const todayStr = today.toISOString().split('T')[0];
+                  const weekDates = getWeekDates(currentWeekOffset);
 
                   return [
-                    { key: 'monday', label: language === 'fr' ? 'Lundi' : language === 'en' ? 'Monday' : 'Lunes' },
-                    { key: 'tuesday', label: language === 'fr' ? 'Mardi' : language === 'en' ? 'Tuesday' : 'Martes' },
-                    { key: 'wednesday', label: language === 'fr' ? 'Mercredi' : language === 'en' ? 'Wednesday' : 'Miércoles' },
-                    { key: 'thursday', label: language === 'fr' ? 'Jeudi' : language === 'en' ? 'Thursday' : 'Jueves' },
-                    { key: 'friday', label: language === 'fr' ? 'Vendredi' : language === 'en' ? 'Friday' : 'Viernes' },
-                    { key: 'saturday', label: language === 'fr' ? 'Samedi' : language === 'en' ? 'Saturday' : 'Sábado' },
-                    { key: 'sunday', label: language === 'fr' ? 'Dimanche' : language === 'en' ? 'Sunday' : 'Domingo' }
+                    { key: 'monday', label: language === 'fr' ? 'Lundi' : language === 'en' ? 'Monday' : 'Lunes', index: 0 },
+                    { key: 'tuesday', label: language === 'fr' ? 'Mardi' : language === 'en' ? 'Tuesday' : 'Martes', index: 1 },
+                    { key: 'wednesday', label: language === 'fr' ? 'Mercredi' : language === 'en' ? 'Wednesday' : 'Miércoles', index: 2 },
+                    { key: 'thursday', label: language === 'fr' ? 'Jeudi' : language === 'en' ? 'Thursday' : 'Jueves', index: 3 },
+                    { key: 'friday', label: language === 'fr' ? 'Vendredi' : language === 'en' ? 'Friday' : 'Viernes', index: 4 },
+                    { key: 'saturday', label: language === 'fr' ? 'Samedi' : language === 'en' ? 'Saturday' : 'Sábado', index: 5 },
+                    { key: 'sunday', label: language === 'fr' ? 'Dimanche' : language === 'en' ? 'Sunday' : 'Domingo', index: 6 }
                   ].map((day) => {
-                    const isToday = day.key === currentDayKey;
-                    const dayDate = getDateForDay(day.key);
+                    const dateStr = weekDates[day.index];
+                    const isToday = dateStr === todayStr;
+                    const dayDate = new Date(dateStr);
                     const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
+
+                    // Récupérer les tâches pour cette date
+                    const dayTasks = planningTab === 'glowee-tasks'
+                      ? getTasksForDate(dateStr, 'glowee')
+                      : getTasksForDate(dateStr, 'user');
 
                     return (
                       <div
@@ -2127,26 +2266,31 @@ export default function GlowUpChallengeApp() {
                             <span className="text-xs text-stone-400">{formattedDate}</span>
                           </div>
                           <div className="space-y-2">
-                      {weeklyTasks[day.key as keyof typeof weeklyTasks]?.length === 0 ? (
+                      {dayTasks.length === 0 ? (
                         <p className="text-xs text-stone-400 text-center py-2">
                           {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
                         </p>
                       ) : (
-                        weeklyTasks[day.key as keyof typeof weeklyTasks]?.map((task) => (
+                        dayTasks.map((task) => (
                           <div
                             key={task.id}
                             className={`flex items-center gap-2 p-2 rounded-lg text-xs ${
                               theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                             }`}
                           >
+                            {/* Indicateur de couleur pour les tâches Glowee avec objectif */}
+                            {task.type === 'glowee' && task.goalColor && getActiveGoals().length >= 2 && (
+                              <div
+                                className="w-2 h-2 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: task.goalColor }}
+                                title={task.goalName}
+                              />
+                            )}
                             <span
                               onClick={() => {
-                                setWeeklyTasks({
-                                  ...weeklyTasks,
-                                  [day.key]: weeklyTasks[day.key as keyof typeof weeklyTasks].map(t =>
-                                    t.id === task.id ? { ...t, completed: !t.completed } : t
-                                  )
-                                });
+                                setTasksWithDates(prev => prev.map(t =>
+                                  t.id === task.id ? { ...t, completed: !t.completed } : t
+                                ));
                               }}
                               className={`flex-1 cursor-pointer ${task.completed ? 'line-through text-stone-500' : ''}`}
                             >
@@ -2154,10 +2298,7 @@ export default function GlowUpChallengeApp() {
                             </span>
                             <button
                               onClick={() => {
-                                setWeeklyTasks({
-                                  ...weeklyTasks,
-                                  [day.key]: weeklyTasks[day.key as keyof typeof weeklyTasks].filter(t => t.id !== task.id)
-                                });
+                                setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
                               }}
                               className="text-stone-400 hover:text-red-500 transition-colors"
                             >
@@ -2193,34 +2334,22 @@ export default function GlowUpChallengeApp() {
         {currentView === 'my-goals' && (
           <div className="p-6 space-y-6 max-w-lg mx-auto">
             <MyGoals
-              onAddGloweeTasks={(tasks: Array<{day: string, task: string, priority: string, category: string}>) => {
-                // Convertir les tâches de l'API en format du Planning
-                const updatedTasks = { ...gloweeWeeklyTasks };
+              onAddGloweeTasks={(tasks: Array<{day: string, date?: string, task: string, priority: string, category: string, goalId?: string, goalName?: string, goalColor?: string}>) => {
+                // Convertir les tâches de l'API en format du Planning avec dates
+                const newTasksWithDates = tasks.map(task => ({
+                  id: `glowee_${Date.now()}_${Math.random()}`,
+                  text: task.task,
+                  date: task.date || '', // La date est déjà fournie par MyGoals
+                  completed: false,
+                  type: 'glowee' as const,
+                  priority: task.priority,
+                  category: task.category,
+                  goalId: task.goalId,
+                  goalName: task.goalName,
+                  goalColor: task.goalColor
+                }));
 
-                tasks.forEach(task => {
-                  const newTask = {
-                    id: `glowee_${Date.now()}_${Math.random()}`,
-                    text: task.task,
-                    completed: false
-                  };
-
-                  if (updatedTasks[task.day as keyof typeof updatedTasks]) {
-                    updatedTasks[task.day as keyof typeof updatedTasks] = [
-                      ...updatedTasks[task.day as keyof typeof updatedTasks],
-                      newTask
-                    ];
-                  }
-                });
-
-                setGloweeWeeklyTasks(updatedTasks);
-
-                // Afficher un message de confirmation
-                alert(language === 'fr'
-                  ? `${tasks.length} tâches ajoutées dans Glowee tâches ! 🎉`
-                  : language === 'en'
-                  ? `${tasks.length} tasks added to Glowee tasks! 🎉`
-                  : `¡${tasks.length} tareas añadidas a Tareas Glowee! 🎉`
-                );
+                setTasksWithDates(prev => [...prev, ...newTasksWithDates]);
 
                 // Rediriger vers Planning
                 setCurrentView('routine');

@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GoalDetailsDialog } from '@/components/goals/GoalDetailsDialog';
+import { GoalAnalysisExplanation } from '@/components/goals/GoalAnalysisExplanation';
+import { GoalConfirmationDialog } from '@/components/goals/GoalConfirmationDialog';
 import { isFirstVisit, trackVisit, markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 
@@ -33,9 +35,13 @@ interface EnergyLog {
 
 interface Task {
   day: string;
+  date?: string; // Date spécifique au format YYYY-MM-DD
   task: string;
   priority: 'high' | 'medium' | 'low';
   category: string;
+  goalId?: string;
+  goalName?: string;
+  goalColor?: string;
 }
 
 interface MyGoalsProps {
@@ -60,6 +66,10 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
   // État pour le dialogue de détails
   const [selectedGoalForDetails, setSelectedGoalForDetails] = useState<Goal | null>(null);
   const [showGoalDetailsDialog, setShowGoalDetailsDialog] = useState(false);
+
+  // État pour le dialogue de confirmation
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingGoalData, setPendingGoalData] = useState<any>(null);
 
   // Load data from localStorage
   useEffect(() => {
@@ -710,6 +720,10 @@ function CreateGoalModal({
     recommendations: string[];
   } | null>(null);
 
+  // États pour le dialogue de confirmation
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingGoalData, setPendingGoalData] = useState<Goal | null>(null);
+
   const resetForm = () => {
     setStep(1);
     setGoalType('personal');
@@ -771,7 +785,8 @@ function CreateGoalModal({
   };
 
   const handleSubmit = () => {
-    const newGoal: Goal = {
+    // Préparer les données de l'objectif
+    const goalData = {
       id: Date.now().toString(),
       name: goalName,
       type: goalType,
@@ -782,13 +797,75 @@ function CreateGoalModal({
       tasks: analyzedTasks,
     };
 
-    // Ajouter les tâches dans Glowee tâches du Planning
+    // Stocker les données et afficher le dialogue de confirmation
+    setPendingGoalData(goalData);
+    setShowConfirmation(true);
+  };
+
+  // Palette de couleurs pour les objectifs
+  const getGoalColor = (goalId: string): string => {
+    const colors = [
+      '#8B5CF6', // violet
+      '#EC4899', // rose
+      '#F59E0B', // orange
+      '#10B981', // vert
+      '#3B82F6', // bleu
+      '#EF4444', // rouge
+    ];
+
+    // Utiliser l'ID pour générer un index cohérent
+    const hash = goalId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
+  const confirmGoalCreation = () => {
+    if (!pendingGoalData) return;
+
+    // Ajouter les tâches dans Glowee tâches du Planning avec dates spécifiques
     if (onAddGloweeTasks && analyzedTasks.length > 0) {
-      onAddGloweeTasks(analyzedTasks);
+      const goalColor = getGoalColor(pendingGoalData.id);
+
+      // Ajouter les dates et les infos de l'objectif aux tâches
+      const tasksWithDates = analyzedTasks.map(task => ({
+        ...task,
+        date: task.date || getNextDateForDay(task.day),
+        goalId: pendingGoalData.id,
+        goalName: pendingGoalData.name,
+        goalColor: goalColor
+      }));
+      onAddGloweeTasks(tasksWithDates);
     }
 
-    onSuccess(newGoal);
+    onSuccess(pendingGoalData);
     resetForm();
+    setPendingGoalData(null);
+  };
+
+  // Fonction pour obtenir la prochaine date pour un jour donné
+  const getNextDateForDay = (dayName: string): string => {
+    const daysMap: Record<string, number> = {
+      'monday': 1,
+      'tuesday': 2,
+      'wednesday': 3,
+      'thursday': 4,
+      'friday': 5,
+      'saturday': 6,
+      'sunday': 0
+    };
+
+    const today = new Date();
+    const targetDay = daysMap[dayName.toLowerCase()];
+    const currentDay = today.getDay();
+
+    let daysUntilTarget = targetDay - currentDay;
+    if (daysUntilTarget <= 0) {
+      daysUntilTarget += 7; // Passer à la semaine prochaine
+    }
+
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + daysUntilTarget);
+
+    return targetDate.toISOString().split('T')[0];
   };
 
   if (!isOpen) return null;
@@ -1157,6 +1234,12 @@ function CreateGoalModal({
                     </div>
                   </div>
 
+                  {/* Explication de l'analyse */}
+                  <GoalAnalysisExplanation
+                    goalType={goalType}
+                    deadline={goalDeadline}
+                  />
+
                   {/* Analyse de Glowee Work */}
                   {gloweeAnalysis && (
                     <div className="space-y-3">
@@ -1276,6 +1359,15 @@ function CreateGoalModal({
           )}
         </div>
       </DialogContent>
+
+      {/* Dialogue de confirmation */}
+      <GoalConfirmationDialog
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        onConfirm={confirmGoalCreation}
+        goalName={goalName}
+        tasksCount={analyzedTasks.length}
+      />
     </Dialog>
   );
 }

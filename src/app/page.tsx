@@ -33,9 +33,8 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import InstallPrompt from '@/components/InstallPrompt';
 import AppLoader from '@/components/AppLoader';
 import { BoundariesTracker } from '@/components/BoundariesTracker';
-import { CompactSmallWins } from '@/components/dashboard/CompactSmallWins';
-import { CompactEveningQuestion } from '@/components/dashboard/CompactEveningQuestion';
-import { CompactBoundaries } from '@/components/dashboard/CompactBoundaries';
+import { SmallWinsQuickAdd } from '@/components/SmallWinsQuickAdd';
+import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
@@ -1150,11 +1149,61 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Compact Sections - Ordre: Petits succès, 8 limites, Question du soir */}
-            <div className="space-y-4 px-6">
-              <CompactSmallWins theme={theme} />
-              <CompactBoundaries theme={theme} />
-              <CompactEveningQuestion theme={theme} />
+            {/* Quick Add Section - Scroll Horizontal */}
+            <div className="space-y-3">
+              <div
+                ref={quickAddScrollRef}
+                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6"
+                onScroll={(e) => {
+                  const scrollLeft = e.currentTarget.scrollLeft;
+                  const cardWidth = e.currentTarget.scrollWidth / 2;
+                  const index = Math.round(scrollLeft / cardWidth);
+                  setQuickAddScrollIndex(index);
+                }}
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                }}
+              >
+                <div className="snap-start flex-shrink-0 pl-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
+                  <SmallWinsQuickAdd theme={theme} />
+                </div>
+                <div className="snap-start flex-shrink-0 pr-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
+                  <EveningQuestionQuickAdd theme={theme} />
+                </div>
+              </div>
+
+              {/* Indicateurs de pagination */}
+              <div className="flex justify-center gap-2">
+                <button
+                  onClick={() => {
+                    quickAddScrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+                    setQuickAddScrollIndex(0);
+                  }}
+                  className={`h-2 rounded-full transition-all ${
+                    quickAddScrollIndex === 0
+                      ? 'w-6 bg-yellow-500'
+                      : 'w-2 bg-gray-300 dark:bg-gray-600'
+                  }`}
+                  aria-label="Petits Succès"
+                />
+                <button
+                  onClick={() => {
+                    const container = quickAddScrollRef.current;
+                    if (container) {
+                      const cardWidth = container.scrollWidth / 2;
+                      container.scrollTo({ left: cardWidth, behavior: 'smooth' });
+                    }
+                    setQuickAddScrollIndex(1);
+                  }}
+                  className={`h-2 rounded-full transition-all ${
+                    quickAddScrollIndex === 1
+                      ? 'w-6 bg-indigo-500'
+                      : 'w-2 bg-gray-300 dark:bg-gray-600'
+                  }`}
+                  aria-label="Question du Soir"
+                />
+              </div>
             </div>
           </div>
         )}

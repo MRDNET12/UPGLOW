@@ -26,6 +26,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AIChat } from '@/components/AIChat';
 import { GloweeChatPopup } from '@/components/GloweeChatPopup';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -3078,6 +3079,66 @@ export default function GlowUpChallengeApp() {
                 ))}
               </CardContent>
             </Card>
+
+					{/* FAQ */}
+					<Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+					  <CardHeader>
+					    <CardTitle>FAQ</CardTitle>
+					  </CardHeader>
+					  <CardContent>
+					    <Accordion type="single" collapsible>
+					      <AccordionItem value="install-pwa">
+					        <AccordionTrigger>📲 Comment installer l’application (PWA)</AccordionTrigger>
+					        <AccordionContent>
+					          <div className="space-y-4 text-sm text-stone-700 dark:text-stone-300">
+					            <p>
+					              L’application fonctionne comme une application classique, mais elle s’installe directement depuis votre navigateur (sans App Store ni Play Store).
+					            </p>
+
+					            <div className="space-y-2">
+					              <p className="font-semibold">✅ Sur iPhone (iOS – Safari uniquement)</p>
+					              <ol className="list-decimal list-inside space-y-1">
+					                <li>Ouvrez le lien de l’application dans Safari</li>
+					                <li>Appuyez sur l’icône Partager (le carré avec une flèche vers le haut)</li>
+					                <li>Défiler vers le bas</li>
+					                <li>Sélectionnez « Ajouter à l’écran d’accueil »</li>
+					                <li>Confirmez</li>
+					              </ol>
+					              <p className="text-xs text-stone-500 dark:text-stone-500">
+					                ➡️ L’application apparaîtra ensuite sur votre écran d’accueil comme une app normale.
+					              </p>
+					            </div>
+
+					            <div className="space-y-2">
+					              <p className="font-semibold">✅ Sur Android (Chrome recommandé)</p>
+					              <ol className="list-decimal list-inside space-y-1">
+					                <li>Ouvrez le lien de l’application dans Chrome</li>
+					                <li>
+					                  Un message s’affichera : « Installer l’application »
+					                  <ul className="list-disc list-inside mt-1 ml-4 space-y-1">
+					                    <li>Sinon, appuyez sur les 3 points en haut à droite</li>
+					                  </ul>
+					                </li>
+					                <li>Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil »</li>
+					                <li>Confirmez</li>
+					              </ol>
+					              <p className="text-xs text-stone-500 dark:text-stone-500">
+					                ➡️ L’application sera installée et accessible comme une application classique.
+					              </p>
+					            </div>
+					          </div>
+					        </AccordionContent>
+					      </AccordionItem>
+
+					      <AccordionItem value="notifications">
+					        <AccordionTrigger>🔔 Notifications</AccordionTrigger>
+					        <AccordionContent>
+					          <p className="text-sm text-stone-700 dark:text-stone-300">La fonctionnalité arrive bientôt.</p>
+					        </AccordionContent>
+					      </AccordionItem>
+					    </Accordion>
+					  </CardContent>
+					</Card>
 
             {/* Export Data */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>

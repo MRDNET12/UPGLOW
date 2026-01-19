@@ -10,23 +10,26 @@ interface SubscriptionPopupProps {
   isOpen: boolean;
   onClose: () => void;
   theme?: 'light' | 'dark';
+  onOpenAuthDialog?: () => void;
 }
 
-export function SubscriptionPopup({ isOpen, onClose, theme = 'light' }: SubscriptionPopupProps) {
+export function SubscriptionPopup({ isOpen, onClose, theme = 'light', onOpenAuthDialog }: SubscriptionPopupProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { subscribe } = useStore();
   const { user } = useAuth();
 
   const handleSubscribe = () => {
     if (!user || !user.email) {
-      alert('Vous devez être connecté pour vous abonner');
+      // Si l'utilisateur n'est pas connecté, fermer ce popup et ouvrir le dialogue d'authentification
+      onClose();
+      if (onOpenAuthDialog) {
+        onOpenAuthDialog();
+      }
       return;
     }
 
-    // Créer le lien Stripe avec l'email de l'utilisateur
+    // Si l'utilisateur est connecté, rediriger vers Stripe
     const stripeUrl = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00?prefilled_email=${encodeURIComponent(user.email)}`;
-
-    // Rediriger vers Stripe
     window.location.href = stripeUrl;
   };
 

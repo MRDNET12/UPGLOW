@@ -124,6 +124,7 @@ export default function GlowUpChallengeApp() {
   // États pour les popups de paywall
   const [showTrialExtension, setShowTrialExtension] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
+  const [shouldReopenSubscription, setShouldReopenSubscription] = useState(false);
 
   // États pour les popups Glowee
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
@@ -242,6 +243,15 @@ export default function GlowUpChallengeApp() {
       }
     }
   }, [isHydrated, initializeFirstOpen, getRemainingFreeDays, isTrialExpired, subscription]);
+
+  // Rouvrir le popup d'abonnement après l'inscription si nécessaire
+  useEffect(() => {
+    if (user && shouldReopenSubscription) {
+      // L'utilisateur vient de se connecter et on doit rouvrir le popup
+      setShouldReopenSubscription(false);
+      setShowSubscription(true);
+    }
+  }, [user, shouldReopenSubscription]);
 
   // Tracker les visites et afficher les popups Glowee
   // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
@@ -4016,6 +4026,10 @@ export default function GlowUpChallengeApp() {
         isOpen={showSubscription}
         onClose={() => setShowSubscription(false)}
         theme={theme}
+        onOpenAuthDialog={() => {
+          setShouldReopenSubscription(true);
+          setShowAuthDialog(true);
+        }}
       />
 
       {/* Glowee Welcome Popup - 1ère visite Dashboard */}

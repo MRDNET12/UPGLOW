@@ -804,9 +804,16 @@ export default function GlowUpChallengeApp() {
             {/* Glowee Hourly Message */}
             <GloweeHourlyMessage theme={theme} />
 
-            {/* Trial Badge and Challenge Switch Button */}
-            <div className="flex items-center justify-center gap-3">
+            {/* Trial Badge, Plan Pro Button and Challenge Switch Button */}
+            <div className="flex items-center justify-center gap-2">
               <TrialBadge theme={theme} />
+              <button
+                onClick={() => setShowSubscription(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              >
+                <Crown className="w-3.5 h-3.5" />
+                <span>Plan Pro</span>
+              </button>
               <button
                 onClick={() => setShowChallengeDrawer(true)}
                 className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-200 hover:bg-stone-300'}`}

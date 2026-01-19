@@ -33,89 +33,82 @@ export function SubscriptionPopup({ isOpen, onClose, theme = 'light' }: Subscrip
   if (!isOpen) return null;
 
   const features = [
-    'Accès illimité à tous les challenges',
-    'Nouveau contenu chaque semaine',
     'Suivi personnalisé avec Glowee',
-    'Journal et trackers avancés',
-    'Vision board illimité',
-    'Communauté exclusive',
-    'Support prioritaire'
+    'Journal et suivi d\'habitude',
+    'Planning et atteindre tes objectifs',
+    'Glowee te crée ton planning'
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div 
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div
         className={`
-          relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden
+          relative w-full max-w-md rounded-2xl shadow-2xl overflow-hidden
           ${theme === 'dark' ? 'bg-stone-900 text-stone-100' : 'bg-white text-stone-900'}
           animate-in zoom-in-95 duration-300
         `}
       >
         {/* Premium Badge */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300" />
 
         {/* Close Button */}
         <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 rounded-full"
+          className="absolute top-2 right-2 z-10 rounded-full h-8 w-8"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </Button>
 
         {/* Content */}
-        <div className="p-8 space-y-6">
+        <div className="p-5 space-y-4">
           {/* Glowee Image */}
-          <div className="flex justify-center animate-in zoom-in duration-500">
+          <div className="flex justify-center">
             <div className="relative">
               <img
                 src="/Glowee/glowee-felicite.webp"
                 alt="Glowee Premium"
-                className="w-40 h-40 object-contain"
+                className="w-24 h-24 object-contain"
               />
-              <Crown className="absolute -top-2 -right-2 w-10 h-10 text-yellow-400 animate-bounce" />
+              <Crown className="absolute -top-1 -right-1 w-7 h-7 text-yellow-400" />
             </div>
           </div>
 
           {/* Title */}
-          <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+          <div className="text-center space-y-1.5">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent leading-tight">
               Continue ton Glow Up ! ✨
             </h2>
-            <p className={`text-base ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}>
+            <p className={`text-sm leading-snug ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}>
               Ton essai gratuit est terminé, mais ton voyage ne fait que commencer !
             </p>
           </div>
 
           {/* Pricing */}
           <div className={`
-            p-6 rounded-2xl text-center space-y-2
+            p-4 rounded-xl text-center space-y-1
             ${theme === 'dark' ? 'bg-stone-800/50' : 'bg-gradient-to-br from-rose-50 to-pink-50'}
           `}>
-            <div className="flex items-baseline justify-center gap-2">
-              <span className="text-5xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
+            <div className="flex items-baseline justify-center gap-1.5">
+              <span className="text-4xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
                 6,99€
               </span>
-              <span className={`text-lg ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
+              <span className={`text-base ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
                 /mois
               </span>
             </div>
-            <p className={`text-sm ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-              Annule à tout moment
-            </p>
           </div>
 
           {/* Features */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             {features.map((feature, index) => (
-              <div 
+              <div
                 key={index}
-                className="flex items-center gap-3 animate-in slide-in-from-left duration-300"
-                style={{ animationDelay: `${index * 50}ms` }}
+                className="flex items-center gap-2.5"
               >
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-rose-400 to-pink-400 flex items-center justify-center">
-                  <Check className="w-4 h-4 text-white" />
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r from-rose-400 to-pink-400 flex items-center justify-center">
+                  <Check className="w-3 h-3 text-white" />
                 </div>
                 <span className={`text-sm ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}>
                   {feature}
@@ -124,26 +117,41 @@ export function SubscriptionPopup({ isOpen, onClose, theme = 'light' }: Subscrip
             ))}
           </div>
 
+          {/* Glowee Message */}
+          <div className={`
+            p-3 rounded-xl border-2
+            ${theme === 'dark' ? 'bg-rose-900/20 border-rose-800/30' : 'bg-rose-50 border-rose-200'}
+          `}>
+            <div className="flex items-start gap-2">
+              <img
+                src="/Glowee/glowee-nav-bar.webp"
+                alt="Glowee"
+                className="w-8 h-8 object-contain flex-shrink-0"
+              />
+              <div>
+                <p className="text-xs font-semibold text-rose-500 mb-0.5">Glowee</p>
+                <p className={`text-sm italic ${theme === 'dark' ? 'text-stone-300' : 'text-stone-700'}`}>
+                  "J'ai envie de t'aider à faire briller ton glow"
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* CTA Button */}
           <Button
             onClick={handleSubscribe}
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold py-6 text-lg shadow-lg hover:shadow-xl transition-all"
+            className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold py-5 text-base shadow-lg hover:shadow-xl transition-all"
           >
             {isLoading ? (
               'Traitement en cours...'
             ) : (
               <>
-                <Sparkles className="w-5 h-5 mr-2" />
+                <Sparkles className="w-4 h-4 mr-2" />
                 Commencer mon abonnement
               </>
             )}
           </Button>
-
-          {/* Footer */}
-          <p className={`text-xs text-center ${theme === 'dark' ? 'text-stone-500' : 'text-stone-500'}`}>
-            En t'abonnant, tu acceptes nos conditions d'utilisation et notre politique de confidentialité.
-          </p>
         </div>
       </div>
     </div>

@@ -3166,7 +3166,7 @@ export default function GlowUpChallengeApp() {
                 ) : (
                   <Button
                     className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-                    onClick={() => window.location.href = '/'}
+                    onClick={() => setShowAuthDialog(true)}
                   >
                     <LogIn className="mr-2 w-4 h-4" />
                     {language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}

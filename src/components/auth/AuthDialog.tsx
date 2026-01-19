@@ -21,6 +21,7 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const { signIn, signUp } = useAuth();
 
@@ -52,15 +53,22 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
       } else {
         await signIn(email, password);
       }
-      
-      // Réinitialiser le formulaire
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      onClose();
+
+      // Afficher le succès brièvement
+      setSuccess(true);
+
+      // Fermer le dialogue après un court délai
+      setTimeout(() => {
+        // Réinitialiser le formulaire
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setSuccess(false);
+        onClose();
+      }, 500);
     } catch (err: any) {
       console.error('Auth error:', err);
-      
+
       // Messages d'erreur en français
       if (err.message.includes('email-already-in-use')) {
         setError('Cet email est déjà utilisé');
@@ -158,16 +166,31 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
             </div>
           )}
 
+          {/* Success message */}
+          {success && (
+            <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                {mode === 'signin' ? 'Connexion réussie !' : 'Compte créé avec succès !'}
+              </p>
+            </div>
+          )}
+
           {/* Submit button */}
           <Button
             type="submit"
             className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white"
-            disabled={loading}
+            disabled={loading || success}
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 {mode === 'signin' ? 'Connexion...' : 'Création du compte...'}
+              </>
+            ) : success ? (
+              <>
+                <Sparkles className="w-4 h-4 mr-2" />
+                {mode === 'signin' ? 'Connecté !' : 'Compte créé !'}
               </>
             ) : (
               <>

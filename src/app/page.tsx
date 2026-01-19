@@ -3083,12 +3083,26 @@ export default function GlowUpChallengeApp() {
 					{/* FAQ */}
 					<Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
 					  <CardHeader>
-					    <CardTitle>FAQ</CardTitle>
+					    <CardTitle className="flex items-center gap-2">
+					      <Sparkles className="w-5 h-5 text-purple-500" />
+					      FAQ
+					    </CardTitle>
+					    <CardDescription>Questions fréquentes</CardDescription>
 					  </CardHeader>
 					  <CardContent>
-					    <Accordion type="single" collapsible>
-					      <AccordionItem value="install-pwa">
-					        <AccordionTrigger>📲 Comment installer l’application (PWA)</AccordionTrigger>
+					    <Accordion type="single" collapsible className="space-y-3">
+					      <AccordionItem
+					        value="install-pwa"
+					        className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-purple-800/30 bg-purple-900/10' : 'border-purple-200 bg-purple-50/50'}`}
+					      >
+					        <AccordionTrigger className="hover:no-underline">
+					          <div className="flex items-center gap-3">
+					            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-purple-900/30' : 'bg-purple-100'}`}>
+					              <Download className="w-5 h-5 text-purple-500" />
+					            </div>
+					            <span className="font-semibold text-left">Comment installer l’application (PWA)</span>
+					          </div>
+					        </AccordionTrigger>
 					        <AccordionContent>
 					          <div className="space-y-4 text-sm text-stone-700 dark:text-stone-300">
 					            <p>
@@ -3130,10 +3144,32 @@ export default function GlowUpChallengeApp() {
 					        </AccordionContent>
 					      </AccordionItem>
 
-					      <AccordionItem value="notifications">
-					        <AccordionTrigger>🔔 Notifications</AccordionTrigger>
+					      <AccordionItem
+					        value="notifications"
+					        className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-amber-800/30 bg-amber-900/10' : 'border-amber-200 bg-amber-50/50'}`}
+					      >
+					        <AccordionTrigger className="hover:no-underline">
+					          <div className="flex items-center gap-3">
+					            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-amber-900/30' : 'bg-amber-100'}`}>
+					              <Bell className="w-5 h-5 text-amber-500" />
+					            </div>
+					            <span className="font-semibold text-left">Notifications</span>
+					          </div>
+					        </AccordionTrigger>
 					        <AccordionContent>
-					          <p className="text-sm text-stone-700 dark:text-stone-300">La fonctionnalité arrive bientôt.</p>
+					          <div className="pt-4 pb-2">
+					            <div className={`p-5 rounded-xl border-2 ${theme === 'dark' ? 'border-amber-800/30 bg-amber-900/10' : 'border-amber-200 bg-amber-50'}`}>
+					              <div className="flex items-start gap-3">
+					                <Zap className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+					                <div>
+					                  <p className="font-semibold text-amber-600 dark:text-amber-400 mb-1">Fonctionnalité à venir</p>
+					                  <p className="text-sm text-stone-600 dark:text-stone-400">
+					                    Les notifications push arriveront bientôt pour vous rappeler vos objectifs quotidiens et vous motiver ! 🚀
+					                  </p>
+					                </div>
+					              </div>
+					            </div>
+					          </div>
 					        </AccordionContent>
 					      </AccordionItem>
 					    </Accordion>

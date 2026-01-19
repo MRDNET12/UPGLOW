@@ -386,12 +386,16 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
                     size="sm"
                     className="flex-1"
                     onClick={() => {
-                      setSelectedGoalForDetails(goal);
-                      setShowGoalDetailsDialog(true);
+                      if (onShowGoalDetails) {
+                        onShowGoalDetails(goal.id);
+                      } else {
+                        setSelectedGoalForDetails(goal);
+                        setShowGoalDetailsDialog(true);
+                      }
                     }}
                   >
                     <TrendingUp className="w-4 h-4 mr-2" />
-                    Voir détails
+                    Avancer
                   </Button>
                   <Button
                     variant="outline"

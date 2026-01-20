@@ -92,12 +92,12 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent
-          className="max-w-md max-h-[85vh] overflow-y-auto bg-white/95 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50 rounded-[2rem] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300 px-5"
+          className="max-w-lg max-h-[90vh] overflow-y-auto bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 backdrop-blur-2xl border-2 border-pink-200/50 shadow-2xl shadow-pink-300/50 rounded-[2.5rem] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300 px-0"
         >
-          <DialogHeader className="px-0 pb-3 border-b border-pink-100">
+          <DialogHeader className="px-0 pb-0">
             <DialogTitle className="sr-only">{t.bonus.smallWinsTitle}</DialogTitle>
           </DialogHeader>
-          <div className="px-0 py-4">
+          <div className="px-0 py-6">
             <SmallWinsQuickAdd theme={theme} />
           </div>
         </DialogContent>

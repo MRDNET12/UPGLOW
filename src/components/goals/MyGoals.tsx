@@ -577,7 +577,7 @@ function EnergyCheckInModal({
           {/* Glowee Image */}
           <div className="flex justify-center">
             <img
-              src="/Glowee/glowee-felicite.webp"
+              src="/Glowee/Glowee-travaille.webp"
               alt="Glowee"
               className="w-20 h-20 object-contain"
             />

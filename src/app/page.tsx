@@ -1000,7 +1000,7 @@ export default function GlowUpChallengeApp() {
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <div className="p-4 space-y-4 max-w-md mx-auto">
+          <div className="p-4 space-y-4 max-w-7xl mx-auto">
             {/* Header avec avatar et notification */}
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
@@ -1203,7 +1203,7 @@ export default function GlowUpChallengeApp() {
                 <CardContent className="p-2.5">
                   {/* Emoji décoratif */}
                   <div className="absolute top-1 right-1 text-3xl opacity-20">
-                    📅
+                    🗓️
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
@@ -3343,222 +3343,247 @@ export default function GlowUpChallengeApp() {
 
         {/* Settings View */}
         {currentView === 'settings' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+          <div className="pb-20 bg-cream-100 min-h-screen">
+            <div className="max-w-lg mx-auto p-6 space-y-5">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setCurrentView('dashboard')}
+                    className="rounded-full bg-white shadow-soft hover:bg-stone-50"
+                  >
+                    <X className="w-5 h-5 text-navy-900" />
+                  </Button>
+                  <h1 className="text-2xl font-bold text-navy-900">{t.settings.title}</h1>
+                </div>
+
+                {/* Auth Button */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setCurrentView('dashboard')}
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-                <h1 className="text-2xl font-bold">{t.settings.title}</h1>
-              </div>
-
-              {/* Auth Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                onClick={() => {
-                  if (user) {
-                    // Si connecté, demander confirmation avant de se déconnecter
-                    if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-                      signOut();
-                    }
-                  } else {
-                    // Si non connecté, ouvrir le dialogue d'authentification
-                    setShowAuthDialog(true);
-                  }
-                }}
-              >
-                {user ? (
-                  <LogOut className="w-5 h-5 text-purple-500" />
-                ) : (
-                  <LogIn className="w-5 h-5 text-purple-500" />
-                )}
-              </Button>
-            </div>
-
-            {/* Progress Overview */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm">
-                  <TrendingUp className="w-4 h-4 text-rose-400" />
-                  {t.dashboard.progress}
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center">
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.dashboard.daysCompleted}</p>
-                    <p className="font-bold text-lg">{challengeProgress.completedDays.length}/30</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.settings.percentage}</p>
-                    <p className="font-bold text-lg text-rose-500">{progressPercentage}%</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.journal.title}</p>
-                    <p className="font-bold text-lg">{journalEntries.length}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mb-1">{t.visionBoard.title}</p>
-                    <p className="font-bold text-lg">{visionBoardImages.length}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Theme Toggle */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{t.settings.theme}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 dark:bg-stone-800">
-                  <div className="flex items-center gap-3">
-                    {theme === 'light' ? (
-                      <Sun className="w-5 h-5 text-amber-400" />
-                    ) : (
-                      <Moon className="w-5 h-5 text-purple-400" />
-                    )}
-                    <div>
-                      <p className="font-semibold text-sm">
-                        {theme === 'light' ? t.settings.light : t.settings.dark}
-                      </p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={theme === 'dark'}
-                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Language Selection */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{t.settings.language}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {[
-                  { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
-                  { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
-                  { code: 'es' as Language, name: 'Español', flag: '🇪🇸' }
-                ].map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`w-full p-3 rounded-xl border-2 transition-all ${
-                      language === lang.code
-                        ? 'border-rose-400 bg-rose-50 dark:bg-rose-900/20'
-                        : theme === 'dark'
-                          ? 'border-stone-800 bg-stone-800 hover:border-stone-700'
-                          : 'border-stone-200 bg-stone-50 hover:border-stone-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{lang.flag}</span>
-                        <span className="font-semibold text-sm">{lang.name}</span>
-                      </div>
-                      {language === lang.code && (
-                        <Check className="w-4 h-4 text-rose-500" />
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </CardContent>
-            </Card>
-
-					{/* FAQ */}
-					<FAQSection theme={theme} />
-
-            {/* Export Data */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{t.settings.export}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full justify-start"
+                  className="rounded-full bg-white shadow-soft hover:bg-stone-50"
                   onClick={() => {
-                    const data = {
-                      journal: journalEntries,
-                      trackers,
-                      routine,
-                      visionBoardImages,
-                      challengeProgress
-                    };
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `glow-up-export-${new Date().toISOString().split('T')[0]}.json`;
-                    a.click();
+                    if (user) {
+                      // Si connecté, demander confirmation avant de se déconnecter
+                      if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                        signOut();
+                      }
+                    } else {
+                      // Si non connecté, ouvrir le dialogue d'authentification
+                      setShowAuthDialog(true);
+                    }
                   }}
                 >
-                  <Download className="mr-2 w-4 h-4" />
-                  <span className="text-sm">Exporter toutes les données</span>
+                  {user ? (
+                    <LogOut className="w-5 h-5 text-peach-500" />
+                  ) : (
+                    <LogIn className="w-5 h-5 text-peach-500" />
+                  )}
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Account / Connexion */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {user ? (
-                  <div className="space-y-2">
-                    <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-300 flex items-center justify-center">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-xs truncate">{user.email}</p>
-                          {userData && (
-                            <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs mt-1">
-                              ✨ Premium
-                            </Badge>
-                          )}
-                        </div>
+              {/* Progress Overview */}
+              <Card className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-soft-orange-100 rounded-2xl">
+                <CardContent className="p-4">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm text-navy-900">
+                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-peach-500" />
+                    </div>
+                    {t.dashboard.progress}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="text-center bg-white/60 rounded-xl p-3">
+                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.dashboard.daysCompleted}</p>
+                      <p className="font-bold text-lg text-navy-900">{challengeProgress.completedDays.length}/30</p>
+                    </div>
+                    <div className="text-center bg-white/60 rounded-xl p-3">
+                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.settings.percentage}</p>
+                      <p className="font-bold text-lg text-peach-600">{progressPercentage}%</p>
+                    </div>
+                    <div className="text-center bg-white/60 rounded-xl p-3">
+                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.journal.title}</p>
+                      <p className="font-bold text-lg text-navy-900">{journalEntries.length}</p>
+                    </div>
+                    <div className="text-center bg-white/60 rounded-xl p-3">
+                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.visionBoard.title}</p>
+                      <p className="font-bold text-lg text-navy-900">{visionBoardImages.length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Theme Toggle */}
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 flex items-center justify-center">
+                      {theme === 'light' ? (
+                        <Sun className="w-4 h-4 text-soft-purple-500" />
+                      ) : (
+                        <Moon className="w-4 h-4 text-soft-purple-500" />
+                      )}
+                    </div>
+                    {t.settings.theme}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-cream-100">
+                    <div className="flex items-center gap-3">
+                      {theme === 'light' ? (
+                        <Sun className="w-5 h-5 text-amber-500" />
+                      ) : (
+                        <Moon className="w-5 h-5 text-soft-purple-500" />
+                      )}
+                      <div>
+                        <p className="font-semibold text-sm text-navy-900">
+                          {theme === 'light' ? t.settings.light : t.settings.dark}
+                        </p>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      onClick={async () => {
-                        if (confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir vous déconnecter ?' : language === 'en' ? 'Are you sure you want to sign out?' : '¿Estás seguro de que quieres cerrar sesión?')) {
-                          await signOut();
-                        }
-                      }}
-                    >
-                      <LogOut className="mr-2 w-4 h-4" />
-                      <span className="text-sm">{language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}</span>
-                    </Button>
+                    <Switch
+                      checked={theme === 'dark'}
+                      onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                    />
                   </div>
-                ) : (
+                </CardContent>
+              </Card>
+
+              {/* Language Selection */}
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-peach-100 to-soft-orange-100 flex items-center justify-center">
+                      <span className="text-lg">🌍</span>
+                    </div>
+                    {t.settings.language}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {[
+                    { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
+                    { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
+                    { code: 'es' as Language, name: 'Español', flag: '🇪🇸' }
+                  ].map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => setLanguage(lang.code)}
+                      className={`w-full p-3 rounded-xl border-2 transition-all ${
+                        language === lang.code
+                          ? 'border-peach-400 bg-gradient-to-br from-peach-50 to-soft-orange-50 shadow-soft'
+                          : 'border-stone-200 bg-cream-100 hover:border-peach-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{lang.flag}</span>
+                          <span className="font-semibold text-sm text-navy-900">{lang.name}</span>
+                        </div>
+                        {language === lang.code && (
+                          <Check className="w-4 h-4 text-peach-500" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* FAQ */}
+              <FAQSection theme={theme} />
+
+              {/* Export Data */}
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 flex items-center justify-center">
+                      <Download className="w-4 h-4 text-soft-purple-500" />
+                    </div>
+                    {t.settings.export}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   <Button
+                    variant="outline"
                     size="sm"
-                    className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-                    onClick={() => setShowAuthDialog(true)}
+                    className="w-full justify-start bg-cream-100 border-stone-200 hover:bg-peach-50 hover:border-peach-300 text-navy-900 rounded-xl"
+                    onClick={() => {
+                      const data = {
+                        journal: journalEntries,
+                        trackers,
+                        routine,
+                        visionBoardImages,
+                        challengeProgress
+                      };
+                      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `glow-up-export-${new Date().toISOString().split('T')[0]}.json`;
+                      a.click();
+                    }}
                   >
-                    <LogIn className="mr-2 w-4 h-4" />
-                    <span className="text-sm">{language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}</span>
+                    <Download className="mr-2 w-4 h-4 text-peach-500" />
+                    <span className="text-sm font-medium">Exporter toutes les données</span>
                   </Button>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              {/* Account / Connexion */}
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-peach-100 to-soft-orange-100 flex items-center justify-center">
+                      <User className="w-4 h-4 text-peach-500" />
+                    </div>
+                    {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {user ? (
+                    <div className="space-y-2">
+                      <div className="p-3 rounded-xl bg-cream-100">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-peach-400 to-soft-orange-400 flex items-center justify-center">
+                            <User className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-xs truncate text-navy-900">{user.email}</p>
+                            {userData && (
+                              <Badge className="bg-gradient-to-r from-peach-400 to-soft-orange-400 text-white text-xs mt-1">
+                                ✨ Premium
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 border-stone-200 rounded-xl"
+                        onClick={async () => {
+                          if (confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir vous déconnecter ?' : language === 'en' ? 'Are you sure you want to sign out?' : '¿Estás seguro de que quieres cerrar sesión?')) {
+                            await signOut();
+                          }
+                        }}
+                      >
+                        <LogOut className="mr-2 w-4 h-4" />
+                        <span className="text-sm">{language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}</span>
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-peach-400 to-soft-orange-400 hover:from-peach-500 hover:to-soft-orange-500 text-white rounded-2xl py-6 shadow-soft-lg font-semibold"
+                      onClick={() => setShowAuthDialog(true)}
+                    >
+                      <LogIn className="mr-2 w-4 h-4" />
+                      <span className="text-sm">{language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}</span>
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </main>
@@ -3608,7 +3633,7 @@ export default function GlowUpChallengeApp() {
                 <img
                   src="/Glowee/glowee-nav-bar.webp"
                   alt="Glowee"
-                  className="w-6 h-6 object-contain"
+                  className="w-8 h-8 object-contain"
                 />
                 <span className="text-[10px] font-medium">{t.nav.glowee}</span>
               </Button>

@@ -95,10 +95,10 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-cream-100 border-none shadow-soft-xl rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Sparkles className="w-5 h-5 text-purple-500" />
+          <DialogTitle className="flex items-center gap-2 text-xl text-navy-900">
+            <Sparkles className="w-5 h-5 text-peach-500" />
             {mode === 'signin' ? 'Connexion' : 'Créer un compte'}
           </DialogTitle>
         </DialogHeader>
@@ -106,8 +106,8 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2">
-              <Mail className="w-4 h-4" />
+            <Label htmlFor="email" className="flex items-center gap-2 text-navy-900 font-semibold">
+              <Mail className="w-4 h-4 text-peach-500" />
               Email
             </Label>
             <Input
@@ -118,13 +118,14 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
               required
+              className="bg-white border-stone-200 focus:border-peach-400 focus:ring-peach-400 rounded-xl"
             />
           </div>
 
           {/* Password */}
           <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center gap-2">
-              <Lock className="w-4 h-4" />
+            <Label htmlFor="password" className="flex items-center gap-2 text-navy-900 font-semibold">
+              <Lock className="w-4 h-4 text-peach-500" />
               Mot de passe
             </Label>
             <Input
@@ -136,14 +137,15 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
               disabled={loading}
               required
               minLength={6}
+              className="bg-white border-stone-200 focus:border-peach-400 focus:ring-peach-400 rounded-xl"
             />
           </div>
 
           {/* Confirm Password (signup only) */}
           {mode === 'signup' && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="flex items-center gap-2">
-                <Lock className="w-4 h-4" />
+              <Label htmlFor="confirmPassword" className="flex items-center gap-2 text-navy-900 font-semibold">
+                <Lock className="w-4 h-4 text-peach-500" />
                 Confirmer le mot de passe
               </Label>
               <Input
@@ -155,22 +157,23 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
                 disabled={loading}
                 required
                 minLength={6}
+                className="bg-white border-stone-200 focus:border-peach-400 focus:ring-peach-400 rounded-xl"
               />
             </div>
           )}
 
           {/* Error message */}
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 shadow-soft">
+              <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
 
           {/* Success message */}
           {success && (
-            <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-              <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
+            <div className="p-3 rounded-xl bg-gradient-to-br from-peach-100 to-soft-orange-100 border border-peach-200 shadow-soft">
+              <p className="text-sm text-navy-900 flex items-center gap-2 font-semibold">
+                <Sparkles className="w-4 h-4 text-peach-500" />
                 {mode === 'signin' ? 'Connexion réussie !' : 'Compte créé avec succès !'}
               </p>
             </div>
@@ -179,7 +182,7 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
           {/* Submit button */}
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white"
+            className="w-full bg-gradient-to-r from-peach-400 to-soft-orange-400 hover:from-peach-500 hover:to-soft-orange-500 text-white rounded-2xl py-6 shadow-soft-lg font-semibold"
             disabled={loading || success}
           >
             {loading ? (
@@ -214,7 +217,7 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
             <button
               type="button"
               onClick={switchMode}
-              className="text-sm text-purple-600 dark:text-purple-400 hover:underline"
+              className="text-sm text-peach-600 hover:text-peach-700 hover:underline font-medium"
               disabled={loading}
             >
               {mode === 'signin'

@@ -184,9 +184,8 @@ export default function GlowUpChallengeApp() {
     glow: '',
     learned: '',
     freeContent: '',
-    needToday: '',
-    proudOf: '',
-    letGo: ''
+    gratitude: '',
+    intention: ''
   });
 
   // États pour les modals
@@ -504,6 +503,13 @@ export default function GlowUpChallengeApp() {
     }
   }, [hasStarted, setCurrentView, isHydrated]);
 
+  // Scroll to top quand on accède à la page Glow Up (bonus)
+  useEffect(() => {
+    if (currentView === 'bonus') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentView]);
+
   // Fonctions utilitaires pour les dates
   const getWeekDates = (offset: number = 0): string[] => {
     const today = new Date();
@@ -612,7 +618,7 @@ export default function GlowUpChallengeApp() {
       date: new Date(),
       ...newJournalEntry
     });
-    setNewJournalEntry({ mood: '', feelings: '', glow: '', learned: '', freeContent: '', needToday: '', proudOf: '', letGo: '' });
+    setNewJournalEntry({ mood: '', feelings: '', glow: '', learned: '', freeContent: '', gratitude: '', intention: '' });
   };
 
   const handleAddVisionImage = (url: string, caption: string) => {
@@ -1604,10 +1610,10 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Journal View - Refonte Glassmorphism Rose Pastel */}
+        {/* Journal View - Design Féminin Magnifique */}
         {currentView === 'journal' && (
           <div className="pb-20 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 min-h-screen">
-            {/* Header glassmorphism */}
+            {/* Header élégant */}
             <div className="flex items-center gap-3 p-5 pb-3 max-w-3xl mx-auto">
               <Button
                 variant="ghost"
@@ -1618,36 +1624,43 @@ export default function GlowUpChallengeApp() {
                 <X className="w-5 h-5 text-gray-800" />
               </Button>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">{t.journal.title}</h1>
-                <p className="text-xs text-gray-600">{t.journal.expressYourself}</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">{t.journal.title}</h1>
+                <p className="text-xs text-gray-600 font-medium">{t.journal.expressYourself}</p>
               </div>
             </div>
 
-            {/* Formulaire nouvelle entrée - Design glassmorphism */}
+            {/* Formulaire nouvelle entrée - Design Féminin */}
             <div className="px-5 space-y-5 max-w-3xl mx-auto">
-              <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg text-gray-800 flex items-center gap-2">
-                    <span className="text-2xl">✨</span>
-                    {t.journal.newEntry}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-5">
-                  {/* Question 1: Comment te sens-tu aujourd'hui ? */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                      <span>💭</span>
-                      {language === 'fr' ? 'Comment te sens-tu aujourd\'hui ?' : language === 'en' ? 'How do you feel today?' : '¿Cómo te sientes hoy?'}
+              <Card className="border-none shadow-2xl shadow-pink-200/50 bg-white/90 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
+                {/* Header avec gradient */}
+                <div className="bg-gradient-to-r from-pink-100 via-rose-100 to-pink-100 p-6 pb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center shadow-lg">
+                      <span className="text-2xl">✨</span>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-800">{t.journal.newEntry}</h2>
+                      <p className="text-xs text-gray-600 font-medium">{new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <CardContent className="space-y-6 p-6">
+                  {/* Question 1: Comment te sens-tu aujourd'hui ? - Emojis élégants */}
+                  <div className="space-y-3 p-5 rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200/50">
+                    <label className="text-base font-bold text-gray-800 flex items-center gap-2">
+                      <span className="text-2xl">💭</span>
+                      {t.journal.howFeelToday}
                     </label>
-                    <div className="flex gap-2 justify-center py-3">
+                    <div className="flex gap-3 justify-center py-2">
                       {['😔', '😐', '🙂', '😄', '😌'].map((emoji) => (
                         <button
                           key={emoji}
                           onClick={() => setNewJournalEntry({ ...newJournalEntry, mood: emoji })}
-                          className={`w-14 h-14 rounded-2xl text-3xl transition-all ${
+                          className={`w-16 h-16 rounded-2xl text-4xl transition-all ${
                             newJournalEntry.mood === emoji
-                              ? 'bg-gradient-to-br from-pink-200 to-rose-200 scale-110 shadow-lg shadow-pink-200/50'
-                              : 'bg-white/60 backdrop-blur-sm opacity-60 hover:opacity-100 hover:scale-105 shadow-md'
+                              ? 'bg-gradient-to-br from-pink-300 to-rose-300 scale-110 shadow-xl shadow-pink-300/50 ring-4 ring-pink-200'
+                              : 'bg-white/80 backdrop-blur-sm hover:bg-white hover:scale-105 shadow-lg'
                           }`}
                         >
                           {emoji}
@@ -1656,91 +1669,73 @@ export default function GlowUpChallengeApp() {
                     </div>
                   </div>
 
-                  {/* Grid 2 colonnes pour questions courtes */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {/* Question 2: De quoi j'ai le plus besoin aujourd'hui ? */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                        <span>🌸</span>
-                        {language === 'fr' ? 'Besoin du jour' : language === 'en' ? 'Today\'s need' : 'Necesidad del día'}
-                      </label>
-                      <Textarea
-                        placeholder={language === 'fr' ? 'Repos, connexion...' : language === 'en' ? 'Rest, connection...' : 'Descanso, conexión...'}
-                        value={newJournalEntry.needToday}
-                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, needToday: e.target.value })}
-                        rows={3}
-                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
-                      />
-                    </div>
-
-                    {/* Question 3: Qu'est-ce que je suis fière d'avoir fait récemment ? */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                        <span>🌟</span>
-                        {language === 'fr' ? 'Fière de...' : language === 'en' ? 'Proud of...' : 'Orgullosa de...'}
-                      </label>
-                      <Textarea
-                        placeholder={language === 'fr' ? 'Mes victoires...' : language === 'en' ? 'My victories...' : 'Mis victorias...'}
-                        value={newJournalEntry.proudOf}
-                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, proudOf: e.target.value })}
-                        rows={3}
-                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
-                      />
-                    </div>
+                  {/* Question 2: Qu'est-ce qui t'a apporté du glow ? */}
+                  <div className="space-y-3 p-5 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200/50">
+                    <label className="text-base font-bold text-gray-800 flex items-center gap-2">
+                      <span className="text-2xl">✨</span>
+                      {t.journal.whatBroughtGlow}
+                    </label>
+                    <Textarea
+                      placeholder={t.journal.momentsOfJoy}
+                      value={newJournalEntry.glow}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
+                      rows={3}
+                      className="bg-white/80 backdrop-blur-sm border-2 border-orange-200 rounded-2xl text-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-300 shadow-sm resize-none font-medium"
+                    />
                   </div>
 
                   {/* Grid 2 colonnes pour questions courtes */}
                   <div className="grid md:grid-cols-2 gap-4">
-                    {/* Question 4: Qu'est-ce que je suis prête à laisser partir ? */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                        <span>🍃</span>
-                        {language === 'fr' ? 'Laisser partir' : language === 'en' ? 'Let go' : 'Dejar ir'}
+                    {/* Question 3: Gratitude */}
+                    <div className="space-y-3 p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200/50">
+                      <label className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <span className="text-xl">🙏</span>
+                        {language === 'fr' ? 'Gratitude' : language === 'en' ? 'Gratitude' : 'Gratitud'}
                       </label>
                       <Textarea
-                        placeholder={language === 'fr' ? 'Peurs, doutes...' : language === 'en' ? 'Fears, doubts...' : 'Miedos, dudas...'}
-                        value={newJournalEntry.letGo}
-                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, letGo: e.target.value })}
+                        placeholder={language === 'fr' ? 'Je suis reconnaissante pour...' : language === 'en' ? 'I\'m grateful for...' : 'Estoy agradecida por...'}
+                        value={newJournalEntry.gratitude}
+                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, gratitude: e.target.value })}
                         rows={3}
-                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                        className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-300 shadow-sm resize-none font-medium"
                       />
                     </div>
 
-                    {/* Question 5: Qu'est-ce qui m'a apporté du glow ? */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                        <span>✨</span>
-                        {language === 'fr' ? 'Mon glow' : language === 'en' ? 'My glow' : 'Mi brillo'}
+                    {/* Question 4: Intention du jour */}
+                    <div className="space-y-3 p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200/50">
+                      <label className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <span className="text-xl">🎯</span>
+                        {language === 'fr' ? 'Intention' : language === 'en' ? 'Intention' : 'Intención'}
                       </label>
                       <Textarea
-                        placeholder={t.journal.momentsOfJoy}
-                        value={newJournalEntry.glow}
-                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
+                        placeholder={language === 'fr' ? 'Aujourd\'hui, je veux...' : language === 'en' ? 'Today, I want to...' : 'Hoy, quiero...'}
+                        value={newJournalEntry.intention}
+                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, intention: e.target.value })}
                         rows={3}
-                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                        className="bg-white/80 backdrop-blur-sm border-2 border-blue-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 shadow-sm resize-none font-medium"
                       />
                     </div>
                   </div>
 
-                  {/* Question 6: Qu'est-ce que j'ai appris ? */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                      <span>📚</span>
+                  {/* Question 5: Qu'est-ce que j'ai appris ? */}
+                  <div className="space-y-3 p-5 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50">
+                    <label className="text-base font-bold text-gray-800 flex items-center gap-2">
+                      <span className="text-2xl">📚</span>
                       {t.journal.whatLearned}
                     </label>
                     <Textarea
                       placeholder={t.journal.discoveriesLearnings}
                       value={newJournalEntry.learned}
                       onChange={(e) => setNewJournalEntry({ ...newJournalEntry, learned: e.target.value })}
-                      rows={2}
-                      className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                      rows={3}
+                      className="bg-white/80 backdrop-blur-sm border-2 border-green-200 rounded-2xl text-sm focus:ring-2 focus:ring-green-300 focus:border-green-300 shadow-sm resize-none font-medium"
                     />
                   </div>
 
-                  {/* Question 7: Journal libre */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                      <span>💌</span>
+                  {/* Question 6: Journal libre */}
+                  <div className="space-y-3 p-5 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-200/50">
+                    <label className="text-base font-bold text-gray-800 flex items-center gap-2">
+                      <span className="text-2xl">💌</span>
                       {t.journal.freeContent}
                     </label>
                     <Textarea
@@ -1748,16 +1743,17 @@ export default function GlowUpChallengeApp() {
                       value={newJournalEntry.freeContent}
                       onChange={(e) => setNewJournalEntry({ ...newJournalEntry, freeContent: e.target.value })}
                       rows={4}
-                      className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                      className="bg-white/80 backdrop-blur-sm border-2 border-rose-200 rounded-2xl text-sm focus:ring-2 focus:ring-rose-300 focus:border-rose-300 shadow-sm resize-none font-medium"
                     />
                   </div>
 
-                  {/* Bouton de fermeture glassmorphism */}
+                  {/* Bouton de sauvegarde magnifique */}
                   <Button
                     onClick={handleSaveJournalEntry}
-                    className="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white rounded-[1.5rem] shadow-xl shadow-pink-200/50 h-12 font-semibold"
+                    className="w-full bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 hover:from-pink-500 hover:via-rose-500 hover:to-pink-600 text-white rounded-2xl shadow-2xl shadow-pink-300/50 h-14 font-bold text-base hover:scale-[1.02] transition-all"
                   >
-                    {language === 'fr' ? 'Fermer pour aujourd\'hui ✨' : language === 'en' ? 'Close for today ✨' : 'Cerrar por hoy ✨'}
+                    <span className="text-xl mr-2">✨</span>
+                    {language === 'fr' ? 'Sauvegarder mon journal' : language === 'en' ? 'Save my journal' : 'Guardar mi diario'}
                   </Button>
                 </CardContent>
               </Card>
@@ -1799,63 +1795,58 @@ export default function GlowUpChallengeApp() {
                             </Button>
                           </div>
 
-                          {/* Grid 2 colonnes pour les réponses courtes */}
+                          {/* Glow */}
+                          {entry.glow && (
+                            <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-200/50">
+                              <p className="text-xs font-bold text-orange-600 mb-2 flex items-center gap-1">
+                                <span className="text-lg">✨</span>
+                                {t.journal.glowOfDay}
+                              </p>
+                              <p className="text-sm text-gray-800 font-medium">{entry.glow}</p>
+                            </div>
+                          )}
+
+                          {/* Grid 2 colonnes pour gratitude et intention */}
                           <div className="grid md:grid-cols-2 gap-3">
-                            {entry.needToday && (
-                              <div className="bg-gradient-to-br from-pink-50 to-white p-3 rounded-xl">
-                                <p className="text-xs font-semibold text-pink-600 mb-1 flex items-center gap-1">
-                                  <span>🌸</span>
-                                  {language === 'fr' ? 'Besoin' : language === 'en' ? 'Need' : 'Necesidad'}
+                            {entry.gratitude && (
+                              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-3 rounded-xl border border-purple-200/50">
+                                <p className="text-xs font-bold text-purple-600 mb-1 flex items-center gap-1">
+                                  <span>🙏</span>
+                                  {language === 'fr' ? 'Gratitude' : language === 'en' ? 'Gratitude' : 'Gratitud'}
                                 </p>
-                                <p className="text-sm text-gray-800">{entry.needToday}</p>
+                                <p className="text-sm text-gray-800 font-medium">{entry.gratitude}</p>
                               </div>
                             )}
-                            {entry.proudOf && (
-                              <div className="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl">
-                                <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
-                                  <span>🌟</span>
-                                  {language === 'fr' ? 'Fière' : language === 'en' ? 'Proud' : 'Orgullosa'}
+                            {entry.intention && (
+                              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 rounded-xl border border-blue-200/50">
+                                <p className="text-xs font-bold text-blue-600 mb-1 flex items-center gap-1">
+                                  <span>🎯</span>
+                                  {language === 'fr' ? 'Intention' : language === 'en' ? 'Intention' : 'Intención'}
                                 </p>
-                                <p className="text-sm text-gray-800">{entry.proudOf}</p>
-                              </div>
-                            )}
-                            {entry.letGo && (
-                              <div className="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl">
-                                <p className="text-xs font-semibold text-green-600 mb-1 flex items-center gap-1">
-                                  <span>🍃</span>
-                                  {language === 'fr' ? 'Laisser partir' : language === 'en' ? 'Let go' : 'Dejar ir'}
-                                </p>
-                                <p className="text-sm text-gray-800">{entry.letGo}</p>
-                              </div>
-                            )}
-                            {entry.glow && (
-                              <div className="bg-gradient-to-br from-orange-50 to-white p-3 rounded-xl">
-                                <p className="text-xs font-semibold text-orange-600 mb-1 flex items-center gap-1">
-                                  <span>✨</span>
-                                  {t.journal.glowOfDay}
-                                </p>
-                                <p className="text-sm text-gray-800">{entry.glow}</p>
+                                <p className="text-sm text-gray-800 font-medium">{entry.intention}</p>
                               </div>
                             )}
                           </div>
 
-                          {/* Réponses longues en pleine largeur */}
+                          {/* Apprentissage */}
                           {entry.learned && (
-                            <div className="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl">
-                              <p className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1">
-                                <span>📚</span>
+                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200/50">
+                              <p className="text-xs font-bold text-green-600 mb-2 flex items-center gap-1">
+                                <span className="text-lg">📚</span>
                                 {language === 'fr' ? 'Appris' : language === 'en' ? 'Learned' : 'Aprendido'}
                               </p>
-                              <p className="text-sm text-gray-800">{entry.learned}</p>
+                              <p className="text-sm text-gray-800 font-medium">{entry.learned}</p>
                             </div>
                           )}
+
+                          {/* Journal libre */}
                           {entry.freeContent && (
-                            <div className="bg-gradient-to-br from-rose-50 to-white p-3 rounded-xl">
-                              <p className="text-xs font-semibold text-rose-600 mb-1 flex items-center gap-1">
-                                <span>💌</span>
+                            <div className="bg-gradient-to-br from-rose-50 to-pink-50 p-4 rounded-xl border border-rose-200/50">
+                              <p className="text-xs font-bold text-rose-600 mb-2 flex items-center gap-1">
+                                <span className="text-lg">💌</span>
                                 {language === 'fr' ? 'Libre' : language === 'en' ? 'Free' : 'Libre'}
                               </p>
-                              <p className="text-sm text-gray-800">{entry.freeContent}</p>
+                              <p className="text-sm text-gray-800 font-medium">{entry.freeContent}</p>
                             </div>
                           )}
                         </CardContent>
@@ -3391,25 +3382,29 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Bonus View */}
+        {/* Bonus View - Refonte Glassmorphism */}
         {currentView === 'bonus' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto pb-24">
-            {/* Header */}
-            <div className="flex items-center gap-4">
+          <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 min-h-screen">
+            {/* Header élégant */}
+            <div className="flex items-center gap-3 p-5 pb-4 max-w-3xl mx-auto">
               <Button
                 variant="ghost"
                 size="icon"
+                className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-pink-100/50 hover:bg-white"
                 onClick={() => setCurrentView('dashboard')}
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-gray-800" />
               </Button>
-              <h1 className="text-2xl font-bold">{t.bonus.title}</h1>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent">{t.bonus.title}</h1>
+                <p className="text-xs text-gray-600 font-medium">{language === 'fr' ? 'Ton espace de développement' : language === 'en' ? 'Your development space' : 'Tu espacio de desarrollo'}</p>
+              </div>
             </div>
 
+            <div className="px-5 space-y-5 max-w-3xl mx-auto">
 
-
-            {/* Sections Bonus Principales */}
-            <div className="space-y-3">
+              {/* Sections Bonus Principales */}
+              <div className="space-y-4">
               {bonusSections
                 .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir' && section.id !== 'limites-paix' && section.id !== '50-choses-seule')
                 .map((section) => {
@@ -3418,72 +3413,71 @@ export default function GlowUpChallengeApp() {
                   <Card
                     key={section.id}
                     onClick={() => setSelectedBonusSection(section)}
-                    className={`border-none shadow-lg cursor-pointer hover:scale-[1.02] transition-transform bg-gradient-to-r ${section.color}`}
+                    className={`border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
                   >
                     <CardContent className="p-5">
                       <div className="flex items-center gap-4">
-                        <div className={`text-3xl ${section.iconColor} flex-shrink-0`}>
+                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${section.color} flex items-center justify-center text-3xl shadow-lg flex-shrink-0`}>
                           {section.icon}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-base">{section.title}</h3>
+                            <h3 className="font-bold text-base text-gray-800">{section.title}</h3>
                             {weeklyCompletion > 0 && (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                              <Badge variant="outline" className="text-[10px] px-2 py-0.5 bg-pink-50 text-pink-600 border-pink-200 font-semibold">
                                 {weeklyCompletion}/4
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs text-stone-600 dark:text-stone-400">{section.description}</p>
-                          <p className="text-xs text-stone-500 dark:text-stone-500 mt-1 italic">{section.duration}</p>
+                          <p className="text-xs text-gray-600 font-medium">{section.description}</p>
+                          <p className="text-xs text-gray-500 mt-1 italic">{section.duration}</p>
                           {weeklyCompletion > 0 && (
                             <div className="mt-2">
-                              <Progress value={(weeklyCompletion / 4) * 100} className="h-1.5" />
+                              <Progress value={(weeklyCompletion / 4) * 100} className="h-2 bg-pink-100" />
                             </div>
                           )}
                         </div>
-                        <ChevronRight className={`w-5 h-5 ${section.iconColor} flex-shrink-0`} />
+                        <ChevronRight className={`w-5 h-5 text-pink-400 flex-shrink-0`} />
                       </div>
                     </CardContent>
                   </Card>
                 );
               })}
-            </div>
+              </div>
 
-            {/* Checklists */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ListChecks className="w-5 h-5 text-blue-400" />
-                  {t.bonus.checklists}
-                </CardTitle>
-                <CardDescription>{t.bonus.practicalGuides}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {checklistsData.map((checklist) => {
-                  const isCompleted = bonusProgress.checklistsCompleted.includes(checklist.id);
-                  return (
-                    <div
-                      key={checklist.id}
-                      className="space-y-2"
-                    >
+              {/* Checklists - Glassmorphism */}
+              <Card className="border-none shadow-xl shadow-pink-200/30 bg-white/80 backdrop-blur-md rounded-[1.5rem]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center shadow-lg">
+                      <ListChecks className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="font-bold text-gray-800">{t.bonus.checklists}</span>
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 font-medium ml-13">{t.bonus.practicalGuides}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {checklistsData.map((checklist) => {
+                    const isCompleted = bonusProgress.checklistsCompleted.includes(checklist.id);
+                    return (
                       <div
+                        key={checklist.id}
                         onClick={() => setSelectedChecklist(checklist)}
-                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer hover:scale-105 transition-transform ${
+                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer hover:scale-[1.02] transition-all shadow-md ${
                           isCompleted
-                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-500'
-                            : 'bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
+                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400'
+                            : 'bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50'
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
-                            isCompleted ? 'bg-green-100 dark:bg-green-800' : 'bg-blue-100 dark:bg-blue-800'
+                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow-sm ${
+                            isCompleted ? 'bg-gradient-to-br from-green-400 to-emerald-400' : 'bg-gradient-to-br from-blue-400 to-cyan-400'
                           }`}>
                             {checklist.icon}
                           </div>
                           <div>
-                            <p className="font-semibold text-sm">{checklist.title}</p>
-                            <p className="text-xs text-stone-500 dark:text-stone-500">{checklist.items.length} {t.bonus.steps}</p>
+                            <p className="font-bold text-sm text-gray-800">{checklist.title}</p>
+                            <p className="text-xs text-gray-600 font-medium">{checklist.items.length} {t.bonus.steps}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -3492,10 +3486,10 @@ export default function GlowUpChallengeApp() {
                               e.stopPropagation();
                               toggleChecklistCompleted(checklist.id);
                             }}
-                            className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-all ${
+                            className={`w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-sm ${
                               isCompleted
                                 ? 'bg-green-500 text-white'
-                                : 'bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600'
+                                : 'bg-white border-2 border-gray-300 hover:border-blue-400'
                             }`}
                           >
                             {isCompleted && <Check className="w-4 h-4" />}
@@ -3503,60 +3497,64 @@ export default function GlowUpChallengeApp() {
                           <ChevronRight className={`w-5 h-5 ${isCompleted ? 'text-green-400' : 'text-blue-400'}`} />
                         </div>
                       </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+
+              {/* Mini-Guide Soft Life - Glassmorphism */}
+              <Card
+                onClick={() => setShowSoftLifeGuide(true)}
+                className="border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem]"
+              >
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center shadow-lg">
+                      <Sun className="w-5 h-5 text-white" />
                     </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
+                    <span className="font-bold text-gray-800">{t.bonus.miniGuide}</span>
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 font-medium ml-13">{t.bonus.softLifeSteps}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-600 font-medium">
+                      {t.bonus.discoverSoftLife}
+                    </p>
+                    <ChevronRight className="w-5 h-5 text-amber-400" />
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Mini-Guide Soft Life */}
-            <Card
-              onClick={() => setShowSoftLifeGuide(true)}
-              className={`border-none shadow-lg cursor-pointer hover:scale-105 transition-transform ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/30' : 'bg-gradient-to-br from-amber-50 to-orange-50'}`}
-            >
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sun className="w-5 h-5 text-amber-400" />
-                  {t.bonus.miniGuide}
-                </CardTitle>
-                <CardDescription>{t.bonus.softLifeSteps}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-stone-600 dark:text-stone-400">
-                    {t.bonus.discoverSoftLife}
-                  </p>
-                  <ChevronRight className="w-5 h-5 text-amber-400" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* 50 choses à faire seule */}
-            <Card
-              onClick={() => {
-                const fiftyThingsSection = bonusSections.find(s => s.id === '50-choses-seule');
-                if (fiftyThingsSection) setSelectedBonusSection(fiftyThingsSection);
-              }}
-              className={`border-none shadow-lg cursor-pointer hover:scale-105 transition-transform ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/30' : 'bg-gradient-to-br from-amber-50 to-orange-50'}`}
-            >
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-xl">💫</span>
-                  {t.bonus.fiftyThingsAlone}
-                </CardTitle>
-                <CardDescription>
-                  {completedThingsAlone.length} / {fiftyThingsAlone.length} {t.bonus.completedItems}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-stone-600 dark:text-stone-400">
-                    {language === 'fr' ? 'Profite de moments précieux avec toi-même' : language === 'en' ? 'Enjoy precious moments with yourself' : 'Disfruta momentos preciosos contigo misma'}
-                  </p>
-                  <ChevronRight className="w-5 h-5 text-amber-400" />
-                </div>
-              </CardContent>
-            </Card>
+              {/* 50 choses à faire seule - Glassmorphism */}
+              <Card
+                onClick={() => {
+                  const fiftyThingsSection = bonusSections.find(s => s.id === '50-choses-seule');
+                  if (fiftyThingsSection) setSelectedBonusSection(fiftyThingsSection);
+                }}
+                className="border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem]"
+              >
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-lg">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
+                      <span className="text-xl">💫</span>
+                    </div>
+                    <span className="font-bold text-gray-800">{t.bonus.fiftyThingsAlone}</span>
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 font-medium ml-13">
+                    {completedThingsAlone.length} / {fiftyThingsAlone.length} {t.bonus.completedItems}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-600 font-medium">
+                      {language === 'fr' ? 'Profite de moments précieux avec toi-même' : language === 'en' ? 'Enjoy precious moments with yourself' : 'Disfruta momentos preciosos contigo misma'}
+                    </p>
+                    <ChevronRight className="w-5 h-5 text-purple-400" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 

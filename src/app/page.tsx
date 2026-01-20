@@ -636,6 +636,10 @@ export default function GlowUpChallengeApp() {
 
   const progressPercentage = getProgressPercentage();
 
+  // Bloquer l'accès si l'essai est expiré et pas d'abonnement
+  // Cette vérification s'applique à toutes les vues sauf language-selection
+  const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed;
+
   // Language Selection Screen
   if (!hasSelectedLanguage) {
     return (
@@ -694,6 +698,29 @@ export default function GlowUpChallengeApp() {
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
+      </div>
+    );
+  }
+
+  // Si l'accès est bloqué, afficher uniquement le popup de subscription
+  if (shouldBlockAccess) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-stone-950' : 'bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50'}`}>
+        <SubscriptionPopup
+          isOpen={true}
+          onClose={() => {}} // Fonction vide - impossible de fermer
+          theme={theme}
+          onOpenAuthDialog={() => setShowAuthDialog(true)}
+        />
+        <AuthDialog
+          isOpen={showAuthDialog}
+          onClose={() => setShowAuthDialog(false)}
+          theme={theme}
+          onSuccess={() => {
+            setShowAuthDialog(false);
+            setShouldReopenSubscription(true);
+          }}
+        />
       </div>
     );
   }

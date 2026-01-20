@@ -43,7 +43,7 @@ export function SubscriptionPopup({ isOpen, onClose, theme = 'light', onOpenAuth
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
       <div
         className={`
           relative w-full max-w-md rounded-2xl shadow-2xl overflow-hidden
@@ -53,16 +53,6 @@ export function SubscriptionPopup({ isOpen, onClose, theme = 'light', onOpenAuth
       >
         {/* Premium Badge */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300" />
-
-        {/* Close Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="absolute top-2 right-2 z-10 rounded-full h-8 w-8"
-        >
-          <X className="w-4 h-4" />
-        </Button>
 
         {/* Content */}
         <div className="p-5 space-y-4">

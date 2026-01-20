@@ -735,26 +735,26 @@ export default function GlowUpChallengeApp() {
     }
 
     return (
-      <div className="min-h-screen flex flex-col bg-cream-100">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
         <div className="flex-1 overflow-y-auto p-6 pb-24">
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="max-w-md mx-auto space-y-6">
             {/* Header */}
             <div className="text-center space-y-4 pt-6">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-peach-400 to-soft-orange-400 shadow-soft-lg">
-                <Sparkles className="w-10 h-10 text-white" />
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-gradient-to-br from-pink-300 to-pink-400 shadow-2xl shadow-pink-200/50">
+                <Sparkles className="w-12 h-12 text-white drop-shadow-lg" />
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-navy-900">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
                 {t.presentation.title}
               </h1>
-              <p className="text-base md:text-lg text-stone-600 italic">
+              <p className="text-base md:text-lg text-gray-600 italic font-medium">
                 "{t.presentation.quote}"
               </p>
             </div>
 
             {/* Subtitle */}
-            <Card className="border-none shadow-soft-lg bg-white rounded-3xl">
-              <CardContent className="p-5 text-center">
-                <p className="text-lg font-semibold text-navy-900">
+            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+              <CardContent className="p-6 text-center">
+                <p className="text-lg font-bold text-gray-800">
                   {t.presentation.description}
                 </p>
               </CardContent>
@@ -762,19 +762,19 @@ export default function GlowUpChallengeApp() {
 
             {/* Triangle de transformation */}
             <div className="space-y-4">
-              <h2 className="text-xl font-bold text-center flex items-center justify-center gap-2 text-navy-900">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-soft-purple-400 to-soft-purple-500 flex items-center justify-center shadow-soft">
-                  <Target className="w-5 h-5 text-white" />
+              <h2 className="text-xl font-bold text-center flex items-center justify-center gap-3 text-gray-800">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-lg shadow-purple-200/50">
+                  <Target className="w-6 h-6 text-white" />
                 </div>
                 {t.presentation.triangleTitle}
               </h2>
 
               {/* Pilier 1 */}
-              <Card className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-peach-200 rounded-3xl">
+              <Card className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-rose-50 to-white rounded-[1.5rem]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-navy-900 text-base">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-peach-400 to-soft-orange-400 flex items-center justify-center shadow-soft">
-                      <Sparkles className="w-5 h-5 text-white" />
+                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-lg shadow-pink-200/50">
+                      <Sparkles className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar1Title}
                   </CardTitle>
@@ -782,11 +782,11 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               {/* Pilier 2 */}
-              <Card className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 rounded-3xl">
+              <Card className="border-none shadow-xl shadow-purple-100/50 bg-gradient-to-br from-purple-100 via-pink-50 to-white rounded-[1.5rem]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-navy-900 text-base">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-soft-purple-400 to-soft-purple-500 flex items-center justify-center shadow-soft">
-                      <Heart className="w-5 h-5 text-white" />
+                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-lg shadow-purple-200/50">
+                      <Heart className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar2Title}
                   </CardTitle>
@@ -794,11 +794,11 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               {/* Pilier 3 */}
-              <Card className="border-none shadow-soft bg-gradient-to-br from-soft-orange-100 to-soft-orange-200 rounded-3xl">
+              <Card className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-100 via-pink-50 to-white rounded-[1.5rem]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-navy-900 text-base">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-soft-orange-400 to-peach-400 flex items-center justify-center shadow-soft">
-                      <TrendingUp className="w-5 h-5 text-white" />
+                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-300 to-orange-400 flex items-center justify-center shadow-lg shadow-orange-200/50">
+                      <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar3Title}
                   </CardTitle>
@@ -807,11 +807,11 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Règles du Challenge */}
-            <Card className="border-none shadow-soft-lg bg-white rounded-3xl">
+            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
               <CardHeader className="pb-3">
-                <CardTitle className="text-center text-lg flex items-center justify-center gap-2 text-navy-900">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-peach-400 to-soft-orange-400 flex items-center justify-center shadow-soft">
-                    <Award className="w-5 h-5 text-white" />
+                <CardTitle className="text-center text-lg flex items-center justify-center gap-3 text-gray-800">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-lg shadow-pink-200/50">
+                    <Award className="w-6 h-6 text-white" />
                   </div>
                   {t.presentation.rulesTitle}
                 </CardTitle>
@@ -823,12 +823,12 @@ export default function GlowUpChallengeApp() {
                 ].map((rule, index) => (
                   <div
                     key={index}
-                    className="flex items-start gap-3 p-4 rounded-2xl bg-cream-100 shadow-soft"
+                    className="flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-pink-50 to-white shadow-lg shadow-pink-100/30"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-peach-400 to-soft-orange-400 flex items-center justify-center text-white font-bold text-sm shadow-soft">
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-pink-200/50">
                       {index === 0 ? '1' : '5'}
                     </div>
-                    <p className={`flex-1 leading-relaxed text-sm text-navy-900 ${index === 1 ? 'font-bold' : ''}`}>
+                    <p className={`flex-1 leading-relaxed text-sm text-gray-700 ${index === 1 ? 'font-bold' : 'font-medium'}`}>
                       {rule}
                     </p>
                   </div>
@@ -842,7 +842,7 @@ export default function GlowUpChallengeApp() {
                 markPresentationSeen();
                 setCurrentView('onboarding');
               }}
-              className="w-full h-14 text-lg bg-gradient-to-r from-peach-400 to-soft-orange-400 hover:from-peach-500 hover:to-soft-orange-500 text-white font-bold rounded-2xl shadow-soft-lg"
+              className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold rounded-[1.5rem] shadow-xl shadow-pink-200/50 hover:shadow-2xl transition-all"
             >
               {t.presentation.startChallenge}
               <ChevronRight className="ml-2 w-5 h-5" />
@@ -856,46 +856,49 @@ export default function GlowUpChallengeApp() {
   // Challenge Selection Screen
   if (currentView === 'challenge-selection') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-cream-100">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
         <div className="max-w-md w-full space-y-8">
           {/* Glowee Image */}
           <div className="flex justify-center animate-in zoom-in duration-500">
-            <img
-              src="/Glowee/glowee-acceuillante.webp"
-              alt="Glowee"
-              className="w-48 h-48 object-contain drop-shadow-lg"
-            />
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-[2rem] blur-xl opacity-40"></div>
+              <img
+                src="/Glowee/glowee-acceuillante.webp"
+                alt="Glowee"
+                className="w-52 h-52 object-contain drop-shadow-2xl relative z-10"
+              />
+            </div>
           </div>
 
           {/* Title */}
           <div className="text-center space-y-3 animate-in slide-in-from-bottom duration-700">
-            <h1 className="text-3xl font-bold text-navy-900">
+            <h1 className="text-3xl font-bold text-gray-800">
               {t.challengeSelection.title}
             </h1>
-            <p className="text-lg text-stone-600">
+            <p className="text-lg text-gray-600 font-medium">
               {t.challengeSelection.subtitle}
             </p>
           </div>
 
           {/* Challenge Options */}
-          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-200">
+          <div className="space-y-5 animate-in slide-in-from-bottom duration-700 delay-200">
             {/* Option 1: Mind & Life */}
             <button
               onClick={() => {
                 setSelectedChallenge('mind-life');
                 startChallenge();
               }}
-              className="w-full p-6 rounded-3xl border-none shadow-soft-lg transition-all hover:scale-[1.02] bg-gradient-to-br from-soft-purple-100 to-soft-purple-200"
+              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-purple-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-purple-100 via-pink-50 to-white"
             >
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-soft-purple-400 to-soft-purple-500 flex items-center justify-center text-3xl shadow-soft">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center text-4xl shadow-lg shadow-purple-200/50">
                   {t.challengeSelection.mindLifeEmoji}
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-xl font-bold mb-2 text-navy-900">
+                  <h3 className="text-xl font-bold mb-2 text-gray-800">
                     {t.challengeSelection.mindLifeTitle}
                   </h3>
-                  <p className="text-sm text-stone-600">
+                  <p className="text-sm text-gray-600 font-medium">
                     {t.challengeSelection.mindLifeDesc}
                   </p>
                 </div>
@@ -908,17 +911,17 @@ export default function GlowUpChallengeApp() {
                 setSelectedChallenge('beauty-body');
                 startChallenge();
               }}
-              className="w-full p-6 rounded-3xl border-none shadow-soft-lg transition-all hover:scale-[1.02] bg-gradient-to-br from-peach-100 to-peach-200"
+              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-pink-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white"
             >
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-peach-400 to-soft-orange-400 flex items-center justify-center text-3xl shadow-soft">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-4xl shadow-lg shadow-pink-200/50">
                   {t.challengeSelection.beautyBodyEmoji}
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-xl font-bold mb-2 text-navy-900">
+                  <h3 className="text-xl font-bold mb-2 text-gray-800">
                     {t.challengeSelection.beautyBodyTitle}
                   </h3>
-                  <p className="text-sm text-stone-600">
+                  <p className="text-sm text-gray-600 font-medium">
                     {t.challengeSelection.beautyBodyDesc}
                   </p>
                 </div>
@@ -1218,12 +1221,13 @@ export default function GlowUpChallengeApp() {
 
               {/* Ma semaine */}
               <Card
-                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
+                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden h-32"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-4 relative overflow-hidden">
-                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
-                    🗓️
+                <CardContent className="p-4 relative overflow-hidden h-full">
+                  {/* Emoji chef en bas, prenant 60% de la hauteur */}
+                  <div className="absolute bottom-0 right-2 text-[4.5rem] opacity-20 drop-shadow-lg" style={{ lineHeight: '1' }}>
+                    👩‍🍳
                   </div>
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
@@ -1453,6 +1457,40 @@ export default function GlowUpChallengeApp() {
                         getCurrentDayData()?.actions.vision && { key: 'vision', label: 'Vision', icon: '🔮', value: getCurrentDayData()?.actions.vision }
                       ].filter(Boolean).map((action, index) => {
                         const isCompleted = isActionCompleted(currentDay, action.key);
+
+                        // Cas spécial pour l'action "vision" avec lien cliquable
+                        if (action.key === 'vision' && action.value === 'OBJECTIF_LINK') {
+                          return (
+                            <div
+                              key={index}
+                              className={`p-4 rounded-xl cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'} ${isCompleted ? 'opacity-60' : ''}`}
+                              onClick={() => toggleActionCompletion(currentDay, action.key)}
+                            >
+                              <div className="flex items-start gap-3">
+                                <span className="text-2xl">{action.icon}</span>
+                                <div className="flex-1">
+                                  <h4 className={`font-semibold text-sm mb-1 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
+                                  <p className={`text-sm ${isCompleted ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-600 dark:text-stone-400'}`}>
+                                    {language === 'fr' ? 'Objectif : rend toi dans la section ' : language === 'en' ? 'Goal: go to the section ' : 'Objetivo: ve a la sección '}
+                                    <span
+                                      className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentView('my-goals');
+                                      }}
+                                    >
+                                      {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
+                                    </span>
+                                    {language === 'fr' ? ' et crée ta premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                  </p>
+                                </div>
+                                {isCompleted && <Check className="w-5 h-5 text-green-500 flex-shrink-0" />}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Rendu normal pour les autres actions
                         return (
                           <div
                             key={index}

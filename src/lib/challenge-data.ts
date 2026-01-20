@@ -42,7 +42,8 @@ export const challengeDays: ChallengeDay[] = [
       lifestyle: "Organiza tu espacio principal (escritorio, cama, sala).",
       personnalite: "Escribe: '¿Quién soy hoy? ¿Quién me niego a ser en 1 año?'",
       butDeVie: "Escribe lo que quieres cambiar en tu vida",
-      physique: "Camina 20 minutos"
+      physique: "Camina 20 minutos",
+      vision: "OBJECTIF_LINK"
     }
   },
   {

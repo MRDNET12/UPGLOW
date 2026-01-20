@@ -42,6 +42,42 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
+
+  /* Educational Design System Colors */
+  --color-cream-50: #FFF9F0;
+  --color-cream-100: #FFF5E9;
+  --color-cream-200: #FFECD6;
+  --color-cream-300: #FFE3C3;
+
+  --color-soft-purple-100: #E8E4FF;
+  --color-soft-purple-200: #D4CCFF;
+  --color-soft-purple-300: #B8ACFF;
+  --color-soft-purple-400: #9C8CFF;
+  --color-soft-purple-500: #8B7FE8;
+
+  --color-soft-orange-100: #FFE8D9;
+  --color-soft-orange-200: #FFD4B8;
+  --color-soft-orange-300: #FFC09A;
+  --color-soft-orange-400: #FFAC7C;
+  --color-soft-orange-500: #FF9966;
+
+  --color-peach-100: #FFE5D9;
+  --color-peach-200: #FFD4C4;
+  --color-peach-300: #FFC3AF;
+  --color-peach-400: #FFB29A;
+  --color-peach-500: #FFA185;
+
+  --color-navy-800: #2C3E50;
+  --color-navy-900: #1A252F;
+
+  /* Shadows */
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-soft-lg: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-soft-xl: 0 8px 30px rgba(0, 0, 0, 0.10);
+
+  /* Border Radius */
+  --radius-3xl: 24px;
+  --radius-4xl: 28px;
 }
 
 :root {

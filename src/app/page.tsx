@@ -1319,236 +1319,245 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Challenge View */}
+        {/* Challenge View - Glassmorphism */}
         {currentView === 'challenge' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Header */}
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold">{t.challenge.title}</h1>
-                <p className="text-sm text-stone-500 dark:text-stone-500">{t.challenge.day} {currentDay} / 30</p>
+          <div className="pb-20 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 min-h-screen">
+            <div className="p-5 space-y-5 max-w-3xl mx-auto">
+              {/* Header glassmorphism */}
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setCurrentView('dashboard')}
+                  className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-pink-100/50 hover:bg-white"
+                >
+                  <X className="w-5 h-5 text-gray-800" />
+                </Button>
+                <div className="flex-1">
+                  <h1 className="text-2xl font-bold text-gray-800">{t.challenge.title}</h1>
+                  <p className="text-sm text-gray-600 font-medium">{t.challenge.day} {currentDay} / 30</p>
+                </div>
               </div>
-            </div>
 
-            {/* Day Selector */}
-            <ScrollArea className="h-24 w-full">
-              <div className="flex gap-2 pb-4">
-                {challengeDays.map((day) => {
-                  const isLocked = !canAccessDay(day.day);
-                  const isCompleted = challengeProgress.completedDays.includes(day.day);
+              {/* Day Selector - Glassmorphism */}
+              <ScrollArea className="h-24 w-full">
+                <div className="flex gap-2 pb-4">
+                  {challengeDays.map((day) => {
+                    const isLocked = !canAccessDay(day.day);
+                    const isCompleted = challengeProgress.completedDays.includes(day.day);
 
-                  return (
-                    <Button
-                      key={day.day}
-                      variant={currentDay === day.day ? 'default' : 'outline'}
-                      size="sm"
-                      disabled={isLocked}
-                      className={`min-w-12 relative ${
-                        currentDay === day.day
-                          ? 'bg-rose-500 hover:bg-rose-600'
-                          : isCompleted
-                            ? 'bg-green-100 dark:bg-green-900 border-green-400'
-                            : isLocked
-                              ? 'opacity-40'
-                              : ''
-                      }`}
-                      onClick={() => !isLocked && setCurrentDay(day.day)}
-                    >
-                      {isCompleted && <Check className="w-3 h-3 absolute top-0 right-0 text-green-600" />}
-                      {isLocked && <span className="text-xs">🔒</span>}
-                      {!isLocked && !isCompleted && day.day}
-                      {!isLocked && isCompleted && day.day}
-                    </Button>
-                  );
-                })}
-              </div>
-            </ScrollArea>
+                    return (
+                      <Button
+                        key={day.day}
+                        variant={currentDay === day.day ? 'default' : 'outline'}
+                        size="sm"
+                        disabled={isLocked}
+                        className={`min-w-12 relative rounded-xl font-semibold ${
+                          currentDay === day.day
+                            ? 'bg-gradient-to-br from-pink-400 to-rose-400 text-white shadow-lg shadow-pink-200/50'
+                            : isCompleted
+                              ? 'bg-gradient-to-br from-green-100 to-green-200 border-green-300 text-green-700'
+                              : isLocked
+                                ? 'opacity-40 bg-white/60 backdrop-blur-sm'
+                                : 'bg-white/80 backdrop-blur-sm border-pink-200 hover:bg-pink-50'
+                        }`}
+                        onClick={() => !isLocked && setCurrentDay(day.day)}
+                      >
+                        {isCompleted && <Check className="w-3 h-3 absolute top-0 right-0 text-green-600" />}
+                        {isLocked && <span className="text-xs">🔒</span>}
+                        {!isLocked && !isCompleted && day.day}
+                        {!isLocked && isCompleted && day.day}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
 
-            {/* Day Content */}
-            {getCurrentDayData() && (
-              <Card className={`border-none shadow-lg bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20`}>
-                {!canAccessDay(currentDay) ? (
-                  // Jour verrouillé
-                  <CardContent className="p-12 text-center space-y-4">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
-                      <span className="text-4xl">🔒</span>
-                    </div>
-                    <h3 className="text-xl font-bold">{t.challenge.lockedDay}</h3>
-                    <p className="text-stone-600 dark:text-stone-400">
-                      {t.challenge.completeCurrentDay}
-                    </p>
-                    <Button
-                      onClick={() => setCurrentDay(getCurrentUnlockedDay())}
-                      className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-                    >
-                      {t.challenge.viewDay} {getCurrentUnlockedDay()}
-                    </Button>
-                  </CardContent>
-                ) : (
-                  // Jour accessible
-                  <>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Challenge New Me</p>
-                            <div
-                              className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                                challengeProgress.completedDays.includes(currentDay)
-                                  ? 'bg-green-100 dark:bg-green-900'
-                                  : 'bg-white/80 dark:bg-stone-800'
-                              }`}
-                            >
-                              {challengeProgress.completedDays.includes(currentDay) ? (
-                                <Check className="w-6 h-6 text-green-600 dark:text-green-400" />
-                              ) : (
-                                <span className="text-2xl">{currentDay}</span>
-                              )}
-                            </div>
-                          </div>
-                          <Badge className="bg-gradient-to-r from-rose-400 to-pink-400 mb-2">{t.challenge.week} {getCurrentDayData()?.week}</Badge>
-                          <div className="flex items-center gap-2 mb-2">
-                            <CardTitle className="text-2xl">{getCurrentDayData()?.title}</CardTitle>
-                            <Badge className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs px-2 py-0.5">
-                              New me
-                            </Badge>
-                          </div>
-                          <CardDescription className="text-sm">{getCurrentDayData()?.weekObjective}</CardDescription>
+              {/* Day Content - Glassmorphism */}
+              {getCurrentDayData() && (
+                <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+                  {!canAccessDay(currentDay) ? (
+                    // Jour verrouillé
+                    <CardContent className="p-12 text-center space-y-5">
+                      <div className="relative inline-block">
+                        <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-full blur-xl opacity-40"></div>
+                        <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center relative z-10 shadow-lg">
+                          <span className="text-5xl drop-shadow-lg">🔒</span>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                  {/* Description */}
-                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}>
-                    <p className="text-lg leading-relaxed">{getCurrentDayData()?.content}</p>
-                  </div>
-
-                  {/* Affirmation */}
-                  <div className={`p-4 rounded-xl border-l-4 border-rose-400 ${theme === 'dark' ? 'bg-stone-800' : 'bg-rose-50'}`}>
-                    <p className="italic text-stone-700 dark:text-stone-300 font-serif">"{getCurrentDayData()?.affirmation}"</p>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-rose-400" />
-                      {t.challenge.yourDailyActions}
-                    </h3>
-
-                    <div className="grid gap-3">
-                      {[
-                        { key: 'beauty', label: t.challenge.beauty, icon: '💄', value: getCurrentDayData()?.actions.beauty },
-                        getCurrentDayData()?.actions.mental && { key: 'mental', label: t.challenge.mental, icon: '🧠', value: getCurrentDayData()?.actions.mental },
-                        { key: 'lifestyle', label: t.challenge.lifestyle, icon: '✨', value: getCurrentDayData()?.actions.lifestyle },
-                        getCurrentDayData()?.actions.personnalite && { key: 'personnalite', label: 'Personnalité', icon: '🎭', value: getCurrentDayData()?.actions.personnalite },
-                        getCurrentDayData()?.actions.butDeVie && { key: 'butDeVie', label: 'But de vie', icon: '🎯', value: getCurrentDayData()?.actions.butDeVie },
-                        getCurrentDayData()?.actions.physique && { key: 'physique', label: 'Physique', icon: '💪', value: getCurrentDayData()?.actions.physique },
-                        getCurrentDayData()?.actions.glowUp && { key: 'glowUp', label: 'Glow Up', icon: '✨', value: getCurrentDayData()?.actions.glowUp },
-                        getCurrentDayData()?.actions.argent && { key: 'argent', label: 'Argent', icon: '💰', value: getCurrentDayData()?.actions.argent },
-                        getCurrentDayData()?.actions.dieu && { key: 'dieu', label: 'Dieu', icon: '🙏', value: getCurrentDayData()?.actions.dieu },
-                        getCurrentDayData()?.actions.apparence && { key: 'apparence', label: 'Apparence', icon: '👗', value: getCurrentDayData()?.actions.apparence },
-                        getCurrentDayData()?.actions.vision && { key: 'vision', label: 'Vision', icon: '🔮', value: getCurrentDayData()?.actions.vision }
-                      ].filter(Boolean).map((action, index) => {
-                        const isCompleted = isActionCompleted(currentDay, action.key);
-
-                        // Cas spécial pour l'action "vision" avec lien cliquable
-                        if (action.key === 'vision' && action.value === 'OBJECTIF_LINK') {
-                          return (
-                            <div
-                              key={index}
-                              className={`p-4 rounded-xl cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'} ${isCompleted ? 'opacity-60' : ''}`}
-                              onClick={() => toggleActionCompletion(currentDay, action.key)}
-                            >
-                              <div className="flex items-start gap-3">
-                                <span className="text-2xl">{action.icon}</span>
-                                <div className="flex-1">
-                                  <h4 className={`font-semibold text-sm mb-1 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
-                                  <p className={`text-sm ${isCompleted ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-600 dark:text-stone-400'}`}>
-                                    {language === 'fr' ? 'Objectif : rend toi dans la section ' : language === 'en' ? 'Goal: go to the section ' : 'Objetivo: ve a la sección '}
-                                    <span
-                                      className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setCurrentView('my-goals');
-                                      }}
-                                    >
-                                      {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
-                                    </span>
-                                    {language === 'fr' ? ' et crée ta premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
-                                  </p>
-                                </div>
-                                {isCompleted && <Check className="w-5 h-5 text-green-500 flex-shrink-0" />}
+                      <h3 className="text-xl font-bold text-gray-800">{t.challenge.lockedDay}</h3>
+                      <p className="text-gray-600 font-medium">
+                        {t.challenge.completeCurrentDay}
+                      </p>
+                      <Button
+                        onClick={() => setCurrentDay(getCurrentUnlockedDay())}
+                        className="bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white rounded-[1.5rem] shadow-xl shadow-pink-200/50 h-12 px-6"
+                      >
+                        {t.challenge.viewDay} {getCurrentUnlockedDay()}
+                      </Button>
+                    </CardContent>
+                  ) : (
+                    // Jour accessible
+                    <>
+                      <CardHeader className="pb-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-3">
+                              <p className="text-xs font-semibold text-pink-500 bg-pink-50 px-3 py-1 rounded-full">Challenge New Me</p>
+                              <div
+                                className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${
+                                  challengeProgress.completedDays.includes(currentDay)
+                                    ? 'bg-gradient-to-br from-green-100 to-green-200'
+                                    : 'bg-gradient-to-br from-pink-100 to-rose-100'
+                                }`}
+                              >
+                                {challengeProgress.completedDays.includes(currentDay) ? (
+                                  <Check className="w-7 h-7 text-green-600 drop-shadow-lg" />
+                                ) : (
+                                  <span className="text-2xl font-bold text-pink-600">{currentDay}</span>
+                                )}
                               </div>
                             </div>
-                          );
-                        }
-
-                        // Rendu normal pour les autres actions
-                        return (
-                          <div
-                            key={index}
-                            className={`p-4 rounded-xl cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'} ${isCompleted ? 'opacity-60' : ''}`}
-                            onClick={() => toggleActionCompletion(currentDay, action.key)}
-                          >
-                            <div className="flex items-start gap-3">
-                              <span className="text-2xl">{action.icon}</span>
-                              <div className="flex-1">
-                                <h4 className={`font-semibold text-sm mb-1 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
-                                <p className={`text-sm ${isCompleted ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-600 dark:text-stone-400'}`}>{action.value}</p>
-                              </div>
-                              {isCompleted && <Check className="w-5 h-5 text-green-500 flex-shrink-0" />}
+                            <Badge className="bg-gradient-to-r from-pink-400 to-rose-400 mb-3 text-white shadow-lg">{t.challenge.week} {getCurrentDayData()?.week}</Badge>
+                            <div className="flex items-center gap-2 mb-2">
+                              <CardTitle className="text-2xl text-gray-800">{getCurrentDayData()?.title}</CardTitle>
+                              <Badge className="bg-gradient-to-r from-orange-400 to-amber-400 text-white text-xs px-2 py-1 shadow-md">
+                                New me
+                              </Badge>
                             </div>
+                            <CardDescription className="text-sm text-gray-600 font-medium">{getCurrentDayData()?.weekObjective}</CardDescription>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-5">
+                        {/* Description glassmorphism */}
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-pink-50 to-white shadow-md">
+                          <p className="text-base leading-relaxed text-gray-700 font-medium">{getCurrentDayData()?.content}</p>
+                        </div>
 
-                  {/* Notes */}
-                  <div className="space-y-2">
-                    <label className="font-semibold text-sm">{t.challenge.notes}</label>
-                    <Textarea
-                      placeholder={t.challenge.notesPlaceholder}
-                      value={challengeProgress.notes[currentDay] || ''}
-                      onChange={(e) => updateDayNotes(currentDay, e.target.value)}
-                      rows={4}
-                      className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                    />
-                  </div>
+                        {/* Affirmation glassmorphism */}
+                        <div className="p-5 rounded-2xl border-l-4 border-pink-400 bg-gradient-to-br from-pink-50 to-rose-50 shadow-md">
+                          <p className="italic text-gray-700 font-serif text-base">"{getCurrentDayData()?.affirmation}"</p>
+                        </div>
 
-                  {/* Complete Button */}
-                  <Button
-                    onClick={handleCompleteDay}
-                    className={`w-full h-14 text-base font-semibold ${
-                      challengeProgress.completedDays.includes(currentDay)
-                        ? 'bg-green-500 hover:bg-green-600'
-                        : 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400'
-                    } text-white`}
-                  >
-                    {challengeProgress.completedDays.includes(currentDay) ? (
-                      <>
-                        <Check className="mr-2 w-5 h-5" />
-                        {t.challenge.completedButton}
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="mr-2 w-5 h-5" />
-                        {t.challenge.completeButton}
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-                  </>
-                )}
-              </Card>
-            )}
+                        {/* Actions */}
+                        <div className="space-y-4">
+                          <h3 className="font-bold text-lg flex items-center gap-2 text-gray-800">
+                            <Sparkles className="w-6 h-6 text-pink-500 drop-shadow-lg" />
+                            {t.challenge.yourDailyActions}
+                          </h3>
+
+                          <div className="grid gap-3">
+                            {[
+                              { key: 'beauty', label: t.challenge.beauty, icon: '💄', value: getCurrentDayData()?.actions.beauty },
+                              getCurrentDayData()?.actions.mental && { key: 'mental', label: t.challenge.mental, icon: '🧠', value: getCurrentDayData()?.actions.mental },
+                              { key: 'lifestyle', label: t.challenge.lifestyle, icon: '✨', value: getCurrentDayData()?.actions.lifestyle },
+                              getCurrentDayData()?.actions.personnalite && { key: 'personnalite', label: 'Personnalité', icon: '🎭', value: getCurrentDayData()?.actions.personnalite },
+                              getCurrentDayData()?.actions.butDeVie && { key: 'butDeVie', label: 'But de vie', icon: '🎯', value: getCurrentDayData()?.actions.butDeVie },
+                              getCurrentDayData()?.actions.physique && { key: 'physique', label: 'Physique', icon: '💪', value: getCurrentDayData()?.actions.physique },
+                              getCurrentDayData()?.actions.glowUp && { key: 'glowUp', label: 'Glow Up', icon: '✨', value: getCurrentDayData()?.actions.glowUp },
+                              getCurrentDayData()?.actions.argent && { key: 'argent', label: 'Argent', icon: '💰', value: getCurrentDayData()?.actions.argent },
+                              getCurrentDayData()?.actions.dieu && { key: 'dieu', label: 'Dieu', icon: '🙏', value: getCurrentDayData()?.actions.dieu },
+                              getCurrentDayData()?.actions.apparence && { key: 'apparence', label: 'Apparence', icon: '👗', value: getCurrentDayData()?.actions.apparence },
+                              getCurrentDayData()?.actions.vision && { key: 'vision', label: 'Vision', icon: '🔮', value: getCurrentDayData()?.actions.vision }
+                            ].filter(Boolean).map((action, index) => {
+                              const isCompleted = isActionCompleted(currentDay, action.key);
+
+                              // Cas spécial pour l'action "vision" avec lien cliquable
+                              if (action.key === 'vision' && action.value === 'OBJECTIF_LINK') {
+                                return (
+                                  <div
+                                    key={index}
+                                    className={`p-4 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
+                                    onClick={() => toggleActionCompletion(currentDay, action.key)}
+                                  >
+                                    <div className="flex items-start gap-3">
+                                      <span className="text-3xl drop-shadow-lg">{action.icon}</span>
+                                      <div className="flex-1">
+                                        <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
+                                        <p className={`text-sm ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                                          {language === 'fr' ? 'Objectif : rend toi dans la section ' : language === 'en' ? 'Goal: go to the section ' : 'Objetivo: ve a la sección '}
+                                          <span
+                                            className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setCurrentView('my-goals');
+                                            }}
+                                          >
+                                            {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
+                                          </span>
+                                          {language === 'fr' ? ' et crée ta premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                        </p>
+                                      </div>
+                                      {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />}
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              // Rendu normal pour les autres actions
+                              return (
+                                <div
+                                  key={index}
+                                  className={`p-4 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
+                                  onClick={() => toggleActionCompletion(currentDay, action.key)}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <span className="text-3xl drop-shadow-lg">{action.icon}</span>
+                                    <div className="flex-1">
+                                      <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
+                                      <p className={`text-sm ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>{action.value}</p>
+                                    </div>
+                                    {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Notes glassmorphism */}
+                        <div className="space-y-3">
+                          <label className="font-bold text-sm text-gray-800 flex items-center gap-2">
+                            <span>📝</span>
+                            {t.challenge.notes}
+                          </label>
+                          <Textarea
+                            placeholder={t.challenge.notesPlaceholder}
+                            value={challengeProgress.notes[currentDay] || ''}
+                            onChange={(e) => updateDayNotes(currentDay, e.target.value)}
+                            rows={4}
+                            className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                          />
+                        </div>
+
+                        {/* Complete Button glassmorphism */}
+                        <Button
+                          onClick={handleCompleteDay}
+                          className={`w-full h-14 text-base font-bold rounded-[1.5rem] shadow-xl ${
+                            challengeProgress.completedDays.includes(currentDay)
+                              ? 'bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 shadow-green-200/50'
+                              : 'bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 shadow-pink-200/50'
+                          } text-white`}
+                        >
+                          {challengeProgress.completedDays.includes(currentDay) ? (
+                            <>
+                              <Check className="mr-2 w-6 h-6" />
+                              {t.challenge.completedButton}
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="mr-2 w-6 h-6" />
+                              {t.challenge.completeButton}
+                            </>
+                          )}
+                        </Button>
+                      </CardContent>
+                    </>
+                  )}
+                </Card>
+              )}
+            </div>
           </div>
         )}
 

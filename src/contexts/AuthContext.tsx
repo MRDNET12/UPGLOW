@@ -37,19 +37,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Écouter les changements d'authentification
   useEffect(() => {
+    // Si Firebase n'est pas configuré, on skip l'authentification
+    if (!auth || !db) {
+      console.warn('Firebase not configured, skipping authentication');
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      
-      if (user) {
+
+      if (user && db) {
         // Récupérer les données utilisateur depuis Firestore
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          setUserData(userDoc.data() as UserData);
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setUserData(userDoc.data() as UserData);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
       } else {
         setUserData(null);
       }
-      
+
       setLoading(false);
     });
 
@@ -58,6 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Inscription
   const signUp = async (email: string, password: string) => {
+    if (!auth || !db) {
+      throw new Error('Firebase n\'est pas configuré');
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -80,6 +95,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Connexion
   const signIn = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error('Firebase n\'est pas configuré');
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
@@ -90,6 +109,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Déconnexion
   const signOut = async () => {
+    if (!auth) {
+      throw new Error('Firebase n\'est pas configuré');
+    }
+
     try {
       await firebaseSignOut(auth);
       setUserData(null);
@@ -103,6 +126,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUserPaidStatus = async () => {
     if (!user) {
       throw new Error('Utilisateur non connecté');
+    }
+
+    if (!db) {
+      throw new Error('Firebase n\'est pas configuré');
     }
 
     try {

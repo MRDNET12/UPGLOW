@@ -14,24 +14,15 @@ interface BoundariesCompactProps {
 export default function BoundariesCompact({ theme }: BoundariesCompactProps) {
   const [showDialog, setShowDialog] = useState(false);
   const [showFaq, setShowFaq] = useState(false);
-  const { language, boundariesProgress } = useStore();
+  const { language, getBoundaryEntriesThisWeek } = useStore();
   const { t } = useTranslation();
 
-  // Calculer le nombre de limites pratiquées cette semaine
-  const getWeekKey = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const week = Math.ceil(
-      ((now.getTime() - new Date(year, 0, 1).getTime()) / 86400000 + new Date(year, 0, 1).getDay() + 1) / 7
-    );
-    return `${year}-W${week}`;
-  };
-
-  const weekKey = getWeekKey();
-  const thisWeekCount = boundariesProgress[weekKey]?.length || 0;
+  // Obtenir les limites de cette semaine
+  const boundariesThisWeek = getBoundaryEntriesThisWeek();
+  const thisWeekCount = boundariesThisWeek.length;
 
   // Obtenir la dernière limite pratiquée
-  const lastBoundary = boundariesProgress[weekKey]?.[boundariesProgress[weekKey].length - 1];
+  const lastBoundary = boundariesThisWeek[boundariesThisWeek.length - 1];
 
   return (
     <>
@@ -67,7 +58,7 @@ export default function BoundariesCompact({ theme }: BoundariesCompactProps) {
               </div>
               {lastBoundary ? (
                 <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  {lastBoundary.title}
+                  {language === 'fr' ? 'Limite pratiquée' : language === 'en' ? 'Boundary practiced' : 'Límite practicado'}
                 </p>
               ) : (
                 <p className="text-xs text-gray-500 dark:text-gray-500 italic">

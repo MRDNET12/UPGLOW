@@ -94,7 +94,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent
-          className={`max-w-md mx-5 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white'} data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300`}
+          className={`max-w-md max-h-[85vh] overflow-y-auto ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white'} data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300`}
         >
           <DialogHeader>
             <DialogTitle className="sr-only">{t.bonus.smallWinsTitle}</DialogTitle>

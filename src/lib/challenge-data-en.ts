@@ -34,7 +34,8 @@ export const challengeDaysEn: ChallengeDay[] = [
       lifestyle: "Drink at least 6 glasses of water today and start your hydration tracker.",
       personnalite: "Remove added sugar, sodas, alcohol",
       physique: "3 real meals, water only",
-      glowUp: "Learn the basics: proteins, carbs, fats"
+      glowUp: "Learn the basics: proteins, carbs, fats",
+      vision: "OBJECTIF_LINK_DAY2"
     }
   },
   {

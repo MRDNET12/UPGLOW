@@ -60,7 +60,8 @@ export const challengeDays: ChallengeDay[] = [
       lifestyle: "Bebe al menos 6 vasos de agua hoy y comienza tu rastreador de hidratación.",
       personnalite: "Eliminar azúcar añadido, refrescos, alcohol",
       physique: "3 comidas reales, solo agua",
-      glowUp: "Aprender los conceptos básicos: proteínas, carbohidratos, grasas"
+      glowUp: "Aprender los conceptos básicos: proteínas, carbohidratos, grasas",
+      vision: "OBJECTIF_LINK_DAY2"
     }
   },
   {

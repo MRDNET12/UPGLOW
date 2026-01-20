@@ -543,6 +543,58 @@ export const newMePillars: NewMePillar[] = [
   }
 ];
 
+// Piliers spéciaux pour les jours 1 et 2 (avec lien vers objectifs)
+export const specialNewMePillars: { [key: number]: NewMePillar } = {
+  1: {
+    id: 14,
+    icon: '🎯',
+    title: {
+      fr: 'Créer ton premier objectif',
+      en: 'Create your first goal',
+      es: 'Crea tu primer objetivo'
+    },
+    shortDescription: {
+      fr: 'OBJECTIF_LINK_DAY1',
+      en: 'OBJECTIF_LINK_DAY1',
+      es: 'OBJECTIF_LINK_DAY1'
+    },
+    detailedExplanation: {
+      fr: 'OBJECTIF_LINK_DAY1',
+      en: 'OBJECTIF_LINK_DAY1',
+      es: 'OBJECTIF_LINK_DAY1'
+    },
+    benefits: {
+      fr: [],
+      en: [],
+      es: []
+    }
+  },
+  2: {
+    id: 14,
+    icon: '🎯',
+    title: {
+      fr: 'Avancer dans ton objectif',
+      en: 'Progress on your goal',
+      es: 'Avanza en tu objetivo'
+    },
+    shortDescription: {
+      fr: 'OBJECTIF_LINK_DAY2',
+      en: 'OBJECTIF_LINK_DAY2',
+      es: 'OBJECTIF_LINK_DAY2'
+    },
+    detailedExplanation: {
+      fr: 'OBJECTIF_LINK_DAY2',
+      en: 'OBJECTIF_LINK_DAY2',
+      es: 'OBJECTIF_LINK_DAY2'
+    },
+    benefits: {
+      fr: [],
+      en: [],
+      es: []
+    }
+  }
+};
+
 export const newMeGloweeMessage = {
   final: {
     fr: 'En 30 jours, tu ne changes pas qui tu es. Tu redeviens qui tu étais censée être.',

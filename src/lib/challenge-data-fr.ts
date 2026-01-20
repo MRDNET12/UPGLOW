@@ -34,7 +34,8 @@ export const challengeDaysFr: ChallengeDay[] = [
       lifestyle: "Bois au moins 6 verres d'eau aujourd'hui et commence ton tracker d'hydratation.",
       personnalite: "Supprimer sucre ajouté, sodas, alcool",
       physique: "3 vrais repas, eau uniquement",
-      glowUp: "Apprendre les bases : protéines, glucides, lipides"
+      glowUp: "Apprendre les bases : protéines, glucides, lipides",
+      vision: "OBJECTIF_LINK_DAY2"
     }
   },
   {

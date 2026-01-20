@@ -11,7 +11,7 @@ import {
   getLocalizedBonusSections,
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
-import { newMePillars, newMeGloweeMessage } from '@/lib/new-me-data';
+import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
@@ -1464,7 +1464,7 @@ export default function GlowUpChallengeApp() {
                               const isCompleted = isActionCompleted(currentDay, action.key);
 
                               // Cas spécial pour l'action "vision" avec lien cliquable
-                              if (action.key === 'vision' && action.value === 'OBJECTIF_LINK') {
+                              if (action.key === 'vision' && (action.value === 'OBJECTIF_LINK' || action.value === 'OBJECTIF_LINK_DAY2')) {
                                 return (
                                   <div
                                     key={index}
@@ -1476,17 +1476,35 @@ export default function GlowUpChallengeApp() {
                                       <div className="flex-1">
                                         <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
                                         <p className={`text-sm ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
-                                          {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
-                                          <span
-                                            className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setCurrentView('my-goals');
-                                            }}
-                                          >
-                                            {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
-                                          </span>
-                                          {language === 'fr' ? ' et crée ton premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                          {action.value === 'OBJECTIF_LINK' ? (
+                                            <>
+                                              {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
+                                              <span
+                                                className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  setCurrentView('my-goals');
+                                                }}
+                                              >
+                                                {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
+                                              </span>
+                                              {language === 'fr' ? ' et crée ton premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                            </>
+                                          ) : (
+                                            <>
+                                              {language === 'fr' ? 'Pour avancer dans ton ' : language === 'en' ? 'To progress on your ' : 'Para avanzar en tu '}
+                                              <span
+                                                className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  setCurrentView('my-goals');
+                                                }}
+                                              >
+                                                {language === 'fr' ? 'objectif' : language === 'en' ? 'goal' : 'objetivo'}
+                                              </span>
+                                              {language === 'fr' ? ', rends-toi sur la page Objectifs.' : language === 'en' ? ', go to the Goals page.' : ', ve a la página de Objetivos.'}
+                                            </>
+                                          )}
                                         </p>
                                       </div>
                                       {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />}
@@ -2868,7 +2886,9 @@ export default function GlowUpChallengeApp() {
                 </Button>
                 <div className="flex-1">
                   <h1 className="text-lg font-bold flex items-center gap-2">
-                    <span className="text-xl">🦋</span>
+                    <div className="relative w-6 h-6">
+                      <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
+                    </div>
                     {t.newMe.title}
                   </h1>
                   <p className="text-xs text-stone-600 dark:text-stone-400">
@@ -3015,57 +3035,109 @@ export default function GlowUpChallengeApp() {
                     <h2 className="text-lg font-bold">
                       {t.newMe.the13Pillars}
                     </h2>
-                    {newMePillars.map((habit) => {
-                      const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
+                    {(() => {
+                      // Combiner les piliers normaux avec le pilier spécial si applicable
+                      const allPillars = [...newMePillars];
+                      if (specialNewMePillars[newMeCurrentDay]) {
+                        allPillars.push(specialNewMePillars[newMeCurrentDay]);
+                      }
 
-                      return (
-                        <Card
-                          key={habit.id}
-                          className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
-                            theme === 'dark' ? 'bg-stone-900' : 'bg-white'
-                          }`}
-                          onClick={() => {
-                            // Clic sur la carte = valider l'habitude
-                            setNewMeProgress(prev => ({
-                              ...prev,
-                              [newMeCurrentDay]: {
-                                ...(prev[newMeCurrentDay] || {}),
-                                [habit.id.toString()]: !isChecked
-                              }
-                            }));
-                          }}
-                        >
-                          <CardContent className="p-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center">
-                                {isChecked ? (
-                                  <div className="w-6 h-6 rounded-full bg-rose-400 flex items-center justify-center">
-                                    <Check className="w-4 h-4 text-white" />
-                                  </div>
-                                ) : (
-                                  <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
+                      return allPillars.map((habit) => {
+                        const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
+                        const isSpecialPillar = habit.shortDescription[language] === 'OBJECTIF_LINK_DAY1' || habit.shortDescription[language] === 'OBJECTIF_LINK_DAY2';
+
+                        return (
+                          <Card
+                            key={habit.id}
+                            className={`border-none shadow-md cursor-pointer transition-all hover:scale-105 ${
+                              theme === 'dark' ? 'bg-stone-900' : 'bg-white'
+                            }`}
+                            onClick={() => {
+                              if (isSpecialPillar) return; // Ne pas cocher automatiquement les piliers spéciaux
+                              // Clic sur la carte = valider l'habitude
+                              setNewMeProgress(prev => ({
+                                ...prev,
+                                [newMeCurrentDay]: {
+                                  ...(prev[newMeCurrentDay] || {}),
+                                  [habit.id.toString()]: !isChecked
+                                }
+                              }));
+                            }}
+                          >
+                            <CardContent className="p-3">
+                              {isSpecialPillar ? (
+                                // Affichage spécial pour les piliers avec lien
+                                <div className="flex items-center gap-3">
                                   <span className="text-xl">{habit.icon}</span>
-                                  <h3 className={`font-semibold text-sm ${isChecked ? 'line-through' : ''}`}>{habit.title[language]}</h3>
+                                  <div className="flex-1">
+                                    <h3 className="font-semibold text-sm text-gray-800 dark:text-gray-200">{habit.title[language]}</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {habit.shortDescription[language] === 'OBJECTIF_LINK_DAY1' ? (
+                                        <>
+                                          {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
+                                          <span
+                                            className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setCurrentView('my-goals');
+                                            }}
+                                          >
+                                            {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
+                                          </span>
+                                          {language === 'fr' ? ' et crée ton premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                        </>
+                                      ) : (
+                                        <>
+                                          {language === 'fr' ? 'Pour avancer dans ton ' : language === 'en' ? 'To progress on your ' : 'Para avanzar en tu '}
+                                          <span
+                                            className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setCurrentView('my-goals');
+                                            }}
+                                          >
+                                            {language === 'fr' ? 'objectif' : language === 'en' ? 'goal' : 'objetivo'}
+                                          </span>
+                                          {language === 'fr' ? ', rends-toi sur la page Objectifs.' : language === 'en' ? ', go to the Goals page.' : ', ve a la página de Objetivos.'}
+                                        </>
+                                      )}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedHabit(habit);
-                                }}
-                                className="flex-shrink-0 p-1.5 rounded-full transition-colors hover:bg-stone-200 dark:hover:bg-stone-700"
-                              >
-                                <ChevronRight className="w-4 h-4 text-stone-400" />
-                              </button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+                              ) : (
+                                // Affichage normal pour les piliers réguliers
+                                <div className="flex items-center gap-3">
+                                  <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center">
+                                    {isChecked ? (
+                                      <div className="w-6 h-6 rounded-full bg-rose-400 flex items-center justify-center">
+                                        <Check className="w-4 h-4 text-white" />
+                                      </div>
+                                    ) : (
+                                      <div className="w-6 h-6 rounded-full border-2 border-stone-300 dark:border-stone-600" />
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xl">{habit.icon}</span>
+                                      <h3 className={`font-semibold text-sm ${isChecked ? 'line-through' : ''}`}>{habit.title[language]}</h3>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedHabit(habit);
+                                    }}
+                                    className="flex-shrink-0 p-1.5 rounded-full transition-colors hover:bg-stone-200 dark:hover:bg-stone-700"
+                                  >
+                                    <ChevronRight className="w-4 h-4 text-stone-400" />
+                                  </button>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      });
+                    })()}
                   </div>
 
                   {/* Bouton "J'ai complété ce jour" */}
@@ -3085,7 +3157,7 @@ export default function GlowUpChallengeApp() {
                             [newMeCurrentDay]: {}
                           }));
                         } else {
-                          // Sinon, on coche tout
+                          // Sinon, on coche tout (seulement les piliers normaux, pas les spéciaux)
                           const allHabits: Record<string, boolean> = {};
                           newMePillars.forEach(habit => {
                             allHabits[habit.id.toString()] = true;
@@ -3247,7 +3319,7 @@ export default function GlowUpChallengeApp() {
                           { condition: walkingDays >= 7, icon: '🚶‍♀️', title: t.newMe.badgeWalkingStar, desc: t.newMe.badgeWalkingStarDesc },
                           { condition: skincareDays >= 7, icon: '👑', title: t.newMe.badgeSkincareQueen, desc: t.newMe.badgeSkincareQueenDesc },
                           { condition: completedDays >= 14, icon: '🌸', title: t.newMe.badgeTwoWeeks, desc: t.newMe.badgeTwoWeeksDesc },
-                          { condition: completedDays >= 30, icon: '🦋', title: t.newMe.badgeComplete, desc: t.newMe.badgeCompleteDesc },
+                          { condition: completedDays >= 30, icon: '✨', title: t.newMe.badgeComplete, desc: t.newMe.badgeCompleteDesc },
                         ];
 
                         return badges.map((badge, index) => {
@@ -3279,7 +3351,9 @@ export default function GlowUpChallengeApp() {
                       {/* Message d'encouragement de Glowee */}
                       <div className={`p-4 rounded-lg mt-4 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/20 to-pink-900/20' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
                         <div className="flex items-start gap-3">
-                          <div className="text-3xl">🦋</div>
+                          <div className="relative w-10 h-10 flex-shrink-0">
+                            <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
+                          </div>
                           <p className="text-sm italic text-stone-700 dark:text-stone-300">
                             {(() => {
                               const completedDays = Object.keys(newMeProgress).filter(day => {
@@ -3850,7 +3924,9 @@ export default function GlowUpChallengeApp() {
               <Card className={`border-none ${theme === 'dark' ? 'bg-rose-400/20' : 'bg-rose-400/10'}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className="text-2xl">🦋</div>
+                    <div className="relative w-8 h-8 flex-shrink-0">
+                      <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
+                    </div>
                     <div>
                       <p className="text-xs font-semibold text-rose-400 mb-1">
                         {language === 'fr' ? 'Message de Glowee' : language === 'en' ? 'Message from Glowee' : 'Mensaje de Glowee'}

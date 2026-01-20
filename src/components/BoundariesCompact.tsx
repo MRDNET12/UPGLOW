@@ -5,7 +5,7 @@ import { Shield, Plus, HelpCircle } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import BoundariesTracker from './BoundariesTracker';
+import { BoundariesTracker } from './BoundariesTracker';
 
 interface BoundariesCompactProps {
   theme: 'light' | 'dark';

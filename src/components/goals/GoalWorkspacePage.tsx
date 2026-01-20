@@ -209,6 +209,13 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
     solutions: string[];
     rootCause?: string;
   } | null>(null);
+  const [timeBreakdown, setTimeBreakdown] = useState<Array<{
+    level: string;
+    title: string;
+    steps: string[];
+    motivation: string;
+  }> | null>(null);
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -253,6 +260,33 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Générer automatiquement le plan au chargement
+  useEffect(() => {
+    const generatePlan = async () => {
+      if (timeBreakdown || isGeneratingPlan) return; // Déjà généré ou en cours
+
+      setIsGeneratingPlan(true);
+      try {
+        const response = await fetch('/api/goals/generate-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goal })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setTimeBreakdown(data.breakdown);
+        }
+      } catch (error) {
+        console.error('Error generating plan:', error);
+      } finally {
+        setIsGeneratingPlan(false);
+      }
+    };
+
+    generatePlan();
+  }, [goal.id]); // Regénérer si l'objectif change
 
   // Calculer les statistiques des tâches de cette semaine (AVANT useEffect)
   const getThisWeekTasks = () => {
@@ -697,52 +731,72 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
         <div className={`${showMobileChat ? 'hidden' : 'flex'} sm:flex flex-col w-full sm:w-1/2 overflow-y-auto`}>
           <div className="p-4 space-y-4">
 
-            {/* Current Plan Section */}
+            {/* Current Plan Section - Horizontal Timeline */}
             <div className={`rounded-2xl p-4 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} border ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}`}>
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-4">
                 <Target className="w-5 h-5 text-violet-500" />
                 <h3 className="font-bold">{t.currentPlan}</h3>
               </div>
 
-              {currentPlan ? (
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">{t.planBreakdown}</p>
-                    <p className="font-semibold text-violet-600 dark:text-violet-400">{currentPlan.breakdown}</p>
+              {isGeneratingPlan ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="flex gap-1">
+                      <div className="w-3 h-3 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-3 h-3 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-3 h-3 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                    <p className="text-sm text-violet-500 font-medium">Glowee Work crée ton plan...</p>
+                  </div>
+                </div>
+              ) : timeBreakdown && timeBreakdown.length > 0 ? (
+                <div className="space-y-4">
+                  {/* Horizontal Timeline */}
+                  <div className="overflow-x-auto pb-2">
+                    <div className="flex gap-3 min-w-max">
+                      {timeBreakdown.map((phase, index) => (
+                        <div
+                          key={index}
+                          className={`flex-shrink-0 w-64 rounded-xl p-4 border-2 transition-all hover:scale-105 ${
+                            theme === 'dark'
+                              ? 'bg-gradient-to-br from-violet-900/30 to-purple-900/30 border-violet-700/50'
+                              : 'bg-gradient-to-br from-violet-50 to-purple-50 border-violet-200'
+                          }`}
+                        >
+                          {/* Phase Title */}
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="text-xs text-violet-600 dark:text-violet-400 font-semibold">{phase.level}</p>
+                              <p className="text-sm font-bold">{phase.title}</p>
+                            </div>
+                          </div>
+
+                          {/* Steps */}
+                          <div className="space-y-2 mb-3">
+                            {phase.steps.map((step, stepIndex) => (
+                              <div key={stepIndex} className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 flex-shrink-0"></div>
+                                <p className="text-xs leading-relaxed">{step}</p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Motivation */}
+                          <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-violet-900/40' : 'bg-violet-100'}`}>
+                            <p className="text-xs italic text-violet-600 dark:text-violet-300">{phase.motivation}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  {currentPlan.dailyTarget && goal.type === 'financial' && (
-                    <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-green-900/20' : 'bg-green-50'}`}>
-                      <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">{t.dailyTarget}</p>
-                      <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                        {currentPlan.dailyTarget.toFixed(2)} {t.revenuePerDay}
-                      </p>
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">{t.planExplanation}</p>
-                    <p className="text-sm">{currentPlan.explanation}</p>
+                  {/* Scroll Indicator */}
+                  <div className="flex items-center justify-center gap-2 text-xs text-stone-500">
+                    <span>← Fais défiler pour voir toutes les étapes →</span>
                   </div>
-
-                  {!currentPlan.isApproved && (
-                    <div className="flex gap-2 pt-2">
-                      <Button
-                        onClick={() => setCurrentPlan({ ...currentPlan, isApproved: true })}
-                        className="flex-1 bg-green-500 hover:bg-green-600 text-white"
-                        size="sm"
-                      >
-                        {t.approvePlan}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1"
-                        size="sm"
-                      >
-                        {t.rejectPlan}
-                      </Button>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <p className="text-sm text-stone-500 dark:text-stone-400 italic">{t.noPlan}</p>

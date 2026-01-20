@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Sparkles, Mail, Lock } from 'lucide-react';
+import { Sparkles, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useStore } from '@/lib/store';
@@ -13,7 +13,7 @@ interface TrialExtensionPopupProps {
   theme?: 'light' | 'dark';
 }
 
-export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialExtensionPopupProps) {
+export function TrialExtensionPopup({ isOpen, theme = 'light' }: TrialExtensionPopupProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -54,32 +54,17 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
     }
   };
 
-  const handleSkip = () => {
-    markTrialPopupSeen();
-    onClose();
-  };
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
-      <div 
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+      <div
         className={`
           relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden
           ${theme === 'dark' ? 'bg-stone-900 text-stone-100' : 'bg-white text-stone-900'}
           animate-in zoom-in-95 duration-300
         `}
       >
-        {/* Close Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSkip}
-          className="absolute top-4 right-4 z-10 rounded-full"
-        >
-          <X className="w-5 h-5" />
-        </Button>
-
         {/* Content */}
         <div className="p-8 space-y-6">
           {/* Glowee Image */}
@@ -160,13 +145,6 @@ export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialE
                 </>
               )}
             </Button>
-
-            <button
-              onClick={handleSkip}
-              className={`w-full text-sm ${theme === 'dark' ? 'text-stone-400 hover:text-stone-300' : 'text-stone-600 hover:text-stone-900'} transition-colors`}
-            >
-              Peut-être plus tard
-            </button>
           </div>
         </div>
       </div>

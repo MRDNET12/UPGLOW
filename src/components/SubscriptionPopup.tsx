@@ -54,6 +54,16 @@ export function SubscriptionPopup({ isOpen, onClose, theme = 'light', onOpenAuth
         {/* Premium Badge */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300" />
 
+        {/* Close Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800"
+        >
+          <X className="w-5 h-5" />
+        </Button>
+
         {/* Content */}
         <div className="p-5 space-y-4">
           {/* Glowee Image */}
@@ -141,7 +151,7 @@ export function SubscriptionPopup({ isOpen, onClose, theme = 'light', onOpenAuth
             ) : (
               <>
                 <Sparkles className="w-4 h-4 mr-2" />
-                Commencer mon abonnement
+                Je veux Glow up
               </>
             )}
           </Button>

@@ -1476,7 +1476,7 @@ export default function GlowUpChallengeApp() {
                                       <div className="flex-1">
                                         <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
                                         <p className={`text-sm ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
-                                          {language === 'fr' ? 'Objectif : rend toi dans la section ' : language === 'en' ? 'Goal: go to the section ' : 'Objetivo: ve a la sección '}
+                                          {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
                                           <span
                                             className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
                                             onClick={(e) => {
@@ -1486,7 +1486,7 @@ export default function GlowUpChallengeApp() {
                                           >
                                             {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
                                           </span>
-                                          {language === 'fr' ? ' et crée ta premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                          {language === 'fr' ? ' et crée ton premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
                                         </p>
                                       </div>
                                       {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />}

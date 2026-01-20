@@ -35,6 +35,7 @@ import AppLoader from '@/components/AppLoader';
 import { BoundariesTracker } from '@/components/BoundariesTracker';
 import { SmallWinsQuickAdd } from '@/components/SmallWinsQuickAdd';
 import { SmallWinsCompact } from '@/components/SmallWinsCompact';
+import BoundariesCompact from '@/components/BoundariesCompact';
 import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
@@ -1142,8 +1143,8 @@ export default function GlowUpChallengeApp() {
             {/* Question du Soir */}
             <EveningQuestionQuickAdd theme={theme} />
 
-            {/* 8 Limites pour ta Paix Intérieure */}
-            <BoundariesTracker />
+            {/* 8 Limites pour ta Paix Intérieure - Version Compacte */}
+            <BoundariesCompact theme={theme} />
           </div>
         )}
 

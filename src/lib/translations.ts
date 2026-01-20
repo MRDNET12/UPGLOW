@@ -273,6 +273,8 @@ export interface Translation {
     selectBoundary: string;
     idealFrequency: string;
     timesPerWeek: string;
+    boundariesFaqTitle: string;
+    boundariesFaqContent: string;
   };
   
   // Settings
@@ -609,6 +611,8 @@ export const translations: Record<Language, Translation> = {
       selectBoundary: 'Sélectionne une limite',
       idealFrequency: 'Fréquence idéale',
       timesPerWeek: 'fois/semaine',
+      boundariesFaqTitle: 'Pourquoi ça marche ?',
+      boundariesFaqContent: 'Poser des limites n\'est pas égoïste, c\'est essentiel pour ton bien-être mental et émotionnel. Apprends à poser des limites saines pour préserver ta paix intérieure.',
     },
     settings: {
       title: 'Profil',
@@ -934,6 +938,8 @@ export const translations: Record<Language, Translation> = {
       selectBoundary: 'Select a boundary',
       idealFrequency: 'Ideal frequency',
       timesPerWeek: 'times/week',
+      boundariesFaqTitle: 'Why does it work?',
+      boundariesFaqContent: 'Setting boundaries is not selfish, it\'s essential for your mental and emotional well-being. Learn to set healthy boundaries to preserve your inner peace.',
     },
     settings: {
       title: 'Profile',
@@ -1259,6 +1265,8 @@ export const translations: Record<Language, Translation> = {
       selectBoundary: 'Selecciona un límite',
       idealFrequency: 'Frecuencia ideal',
       timesPerWeek: 'veces/semana',
+      boundariesFaqTitle: '¿Por qué funciona?',
+      boundariesFaqContent: 'Establecer límites no es egoísta, es esencial para tu bienestar mental y emocional. Aprende a establecer límites saludables para preservar tu paz interior.',
     },
     settings: {
       title: 'Perfil',

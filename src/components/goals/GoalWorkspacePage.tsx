@@ -254,6 +254,27 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Calculer les statistiques des tâches de cette semaine (AVANT useEffect)
+  const getThisWeekTasks = () => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Lundi
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche
+
+    return goalTasks.filter(task => {
+      if (!task.date) return false;
+      const taskDate = new Date(task.date);
+      return taskDate >= startOfWeek && taskDate <= endOfWeek;
+    });
+  };
+
+  const thisWeekTasks = getThisWeekTasks();
+  const completedTasks = thisWeekTasks.filter(t => t.completed);
+  const completionRate = thisWeekTasks.length > 0
+    ? Math.round((completedTasks.length / thisWeekTasks.length) * 100)
+    : 0;
+
   // Message initial de Glowee Work avec suivi des tâches
   useEffect(() => {
     if (messages.length === 0 && thisWeekTasks.length > 0) {
@@ -339,27 +360,6 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
 
   // Calculate duration in days
   const durationInDays = goal.duration || Math.ceil((new Date(goal.deadline).getTime() - new Date(goal.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-
-  // Calculer les statistiques des tâches de cette semaine
-  const getThisWeekTasks = () => {
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Lundi
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Dimanche
-
-    return goalTasks.filter(task => {
-      if (!task.date) return false;
-      const taskDate = new Date(task.date);
-      return taskDate >= startOfWeek && taskDate <= endOfWeek;
-    });
-  };
-
-  const thisWeekTasks = getThisWeekTasks();
-  const completedTasks = thisWeekTasks.filter(t => t.completed);
-  const completionRate = thisWeekTasks.length > 0
-    ? Math.round((completedTasks.length / thisWeekTasks.length) * 100)
-    : 0;
 
   // Analyser la performance et obtenir des suggestions
   const analyzePerformance = async () => {

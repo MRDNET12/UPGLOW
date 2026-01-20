@@ -200,280 +200,284 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
 
   return (
     <>
-      <div className="p-6 space-y-6 pb-24">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Target className="w-8 h-8 text-rose-400" />
-          <div>
-            <h1 className="text-2xl font-bold text-stone-900">Mes Objectifs</h1>
-            <p className="text-sm text-stone-600">Transforme tes rêves en réalité 🎯</p>
-          </div>
-        </div>
-        <Button
-          onClick={() => setShowEnergyHistory(!showEnergyHistory)}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-        >
-          <Activity className="w-4 h-4" />
-          Énergie
-        </Button>
-      </div>
-
-      {/* Energy History (collapsible) */}
-      {showEnergyHistory && energyLogs.length > 0 && (
-        <Card className="bg-gradient-to-br from-rose-50 to-orange-50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-stone-900">Historique d'énergie</h3>
-              <span className="text-sm text-stone-600">
-                {energyLogs.length} check-in{energyLogs.length > 1 ? 's' : ''}
-              </span>
-            </div>
-
-            {/* Graphique */}
-            <div className="mb-6">
-              <div className="h-32 flex items-end gap-2 mb-2">
-                {energyLogs.slice(-7).map((log, index) => {
-                  const height = (log.level * 10);
-                  return (
-                    <div key={index} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full bg-gradient-to-t from-rose-400 to-orange-300 rounded-t-lg transition-all hover:opacity-80 cursor-pointer relative group"
-                        style={{ height: `${height}%` }}
-                        title={`${log.level * 10}%`}
-                      >
-                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-stone-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          {log.level * 10}%
-                        </div>
-                      </div>
-                      <div className="text-xs text-stone-400">
-                        {new Date(log.timestamp).toLocaleDateString('fr-FR', { weekday: 'short' })}
-                      </div>
-                    </div>
-                  );
-                })}
+      <div className="pb-20 bg-cream-100 min-h-screen">
+        <div className="p-5 space-y-4 max-w-lg mx-auto">
+          {/* Header moderne */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-peach-400 to-peach-500 flex items-center justify-center shadow-soft">
+                <Target className="w-6 h-6 text-white" />
               </div>
+              <div>
+                <h1 className="text-xl font-bold text-navy-900">Mes Objectifs</h1>
+                <p className="text-xs text-stone-600">Transforme tes rêves en réalité 🎯</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setShowEnergyHistory(!showEnergyHistory)}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 rounded-xl border-peach-300 hover:bg-peach-100"
+            >
+              <Activity className="w-4 h-4" />
+              <span className="text-xs">Énergie</span>
+            </Button>
+          </div>
 
-              {/* Moyenne */}
-              {energyLogs.length > 0 && (
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <TrendingUp className="w-4 h-4 text-rose-400" />
-                  <span className="text-stone-600">
-                    Moyenne : <span className="font-semibold text-rose-500">
-                      {Math.round((energyLogs.reduce((sum, log) => sum + log.level, 0) / energyLogs.length) * 10)}%
-                    </span>
+          {/* Historique d'énergie (collapsible) */}
+          {showEnergyHistory && energyLogs.length > 0 && (
+            <Card className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-soft-orange-100 rounded-2xl">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-navy-900 text-sm">Historique d'énergie</h3>
+                  <span className="text-xs text-stone-600">
+                    {energyLogs.length} check-in{energyLogs.length > 1 ? 's' : ''}
                   </span>
                 </div>
+
+                {/* Graphique moderne */}
+                <div className="mb-5">
+                  <div className="h-28 flex items-end gap-2 mb-2">
+                    {energyLogs.slice(-7).map((log, index) => {
+                      const height = (log.level * 10);
+                      return (
+                        <div key={index} className="flex-1 flex flex-col items-center gap-1">
+                          <div
+                            className="w-full bg-gradient-to-t from-peach-400 to-peach-500 rounded-t-xl transition-all hover:opacity-80 cursor-pointer relative group shadow-soft"
+                            style={{ height: `${height}%` }}
+                            title={`${log.level * 10}%`}
+                          >
+                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-navy-900 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                              {log.level * 10}%
+                            </div>
+                          </div>
+                          <div className="text-xs text-stone-500">
+                            {new Date(log.timestamp).toLocaleDateString('fr-FR', { weekday: 'short' })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Moyenne */}
+                  {energyLogs.length > 0 && (
+                    <div className="flex items-center justify-center gap-2 text-xs">
+                      <TrendingUp className="w-4 h-4 text-peach-500" />
+                      <span className="text-stone-600">
+                        Moyenne : <span className="font-semibold text-peach-600">
+                          {Math.round((energyLogs.reduce((sum, log) => sum + log.level, 0) / energyLogs.length) * 10)}%
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Liste détaillée */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-navy-800">Derniers check-ins</h4>
+                  {energyLogs.slice(-5).reverse().map((log, index) => (
+                    <div key={index} className="bg-white rounded-xl p-3 space-y-2 shadow-soft">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-stone-500">
+                          {new Date(log.timestamp).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                        <span className="text-sm font-semibold text-peach-600">
+                          {log.level * 10}%
+                        </span>
+                      </div>
+
+                      {log.mentalState && log.physicalState && !log.skipped && (
+                        <div className="flex gap-2 text-xs">
+                          <span className="px-2 py-1 bg-soft-purple-100 text-soft-purple-600 rounded-lg">
+                            🧠 {log.mentalState === 'calm' ? 'Calme' :
+                                log.mentalState === 'stressed' ? 'Stressée' :
+                                log.mentalState === 'motivated' ? 'Motivée' : 'Fatiguée'}
+                          </span>
+                          <span className="px-2 py-1 bg-peach-100 text-peach-600 rounded-lg">
+                            💪 {log.physicalState === 'energetic' ? 'Énergique' :
+                                log.physicalState === 'fit' ? 'En forme' :
+                                log.physicalState === 'tired' ? 'Fatiguée' : 'Malade'}
+                          </span>
+                        </div>
+                      )}
+
+                      {log.skipped && (
+                        <span className="text-xs text-stone-400 italic">Check-in passé</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Liste des objectifs */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-navy-900">
+                Mes 3 Objectifs Actifs ({goals.length}/3)
+              </h2>
+              {goals.length < 3 && (
+                <Button
+                  onClick={() => setShowCreateGoal(true)}
+                  size="sm"
+                  className="bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  <span className="text-xs">Créer</span>
+                </Button>
               )}
             </div>
 
-            {/* Liste détaillée */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium text-stone-700">Derniers check-ins</h4>
-              {energyLogs.slice(-5).reverse().map((log, index) => (
-                <div key={index} className="bg-white rounded-lg p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-stone-500">
-                      {new Date(log.timestamp).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
-                    <span className="text-sm font-semibold text-rose-500">
-                      {log.level * 10}%
-                    </span>
-                  </div>
-
-                  {log.mentalState && log.physicalState && !log.skipped && (
-                    <div className="flex gap-2 text-xs">
-                      <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
-                        🧠 {log.mentalState === 'calm' ? 'Calme' :
-                            log.mentalState === 'stressed' ? 'Stressée' :
-                            log.mentalState === 'motivated' ? 'Motivée' : 'Fatiguée'}
-                      </span>
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                        💪 {log.physicalState === 'energetic' ? 'Énergique' :
-                            log.physicalState === 'fit' ? 'En forme' :
-                            log.physicalState === 'tired' ? 'Fatiguée' : 'Malade'}
-                      </span>
-                    </div>
-                  )}
-
-                  {log.skipped && (
-                    <span className="text-xs text-stone-400 italic">Check-in passé</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Goals List */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-stone-900">
-            Mes 3 Objectifs Actifs ({goals.length}/3)
-          </h2>
-          {goals.length < 3 && (
-            <Button
-              onClick={() => setShowCreateGoal(true)}
-              size="sm"
-              className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Créer
-            </Button>
-          )}
-        </div>
-
-        {goals.length === 0 ? (
-          <div className="bg-gradient-to-br from-rose-50 to-orange-50 rounded-2xl p-8 text-center">
-            <Target className="w-16 h-16 mx-auto mb-4 text-rose-300" />
-            <h3 className="text-lg font-semibold text-stone-900 mb-2">
-              Prête à conquérir tes objectifs ?
-            </h3>
-            <p className="text-sm text-stone-600 mb-4">
-              Crée ton premier objectif et laisse Glowee Work t'aider à l'atteindre ! 💫
-            </p>
-            <Button
-              onClick={() => setShowCreateGoal(true)}
-              className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Créer mon premier objectif
-            </Button>
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {goals.map((goal) => (
-              <div
-                key={goal.id}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{getGoalIcon(goal.type)}</span>
-                    <div>
-                      <h3 className="font-semibold text-stone-900">{goal.name}</h3>
-                      <p className="text-xs text-stone-500 capitalize">{goal.type}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-rose-500">{goal.progress}%</div>
-                    <div className="text-xs text-stone-500">progression</div>
-                  </div>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-4">
-                  <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-rose-400 to-orange-300 transition-all duration-500"
-                      style={{ width: `${goal.progress}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => {
-                      if (onShowGoalDetails) {
-                        onShowGoalDetails(goal.id);
-                      } else {
-                        setSelectedGoalForDetails(goal);
-                        setShowGoalDetailsDialog(true);
-                      }
-                    }}
-                  >
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    Avancer
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => {
-                      if (onNavigateToPlanning) {
-                        onNavigateToPlanning(goal.id);
-                      } else {
-                        alert('Fonctionnalité à venir !');
-                      }
-                    }}
-                  >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Planning
-                  </Button>
-                </div>
+            {goals.length === 0 ? (
+              <div className="bg-gradient-to-br from-peach-100 to-soft-orange-100 rounded-2xl p-6 text-center shadow-soft">
+                <Target className="w-14 h-14 mx-auto mb-3 text-peach-400" />
+                <h3 className="text-base font-semibold text-navy-900 mb-2">
+                  Prête à conquérir tes objectifs ?
+                </h3>
+                <p className="text-xs text-stone-600 mb-4">
+                  Crée ton premier objectif et laisse Glowee Work t'aider à l'atteindre ! 💫
+                </p>
+                <Button
+                  onClick={() => setShowCreateGoal(true)}
+                  className="bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Créer mon premier objectif
+                </Button>
               </div>
-            ))}
+            ) : (
+              <div className="grid gap-3">
+                {goals.map((goal) => (
+                  <div
+                    key={goal.id}
+                    className="bg-white rounded-2xl p-4 shadow-soft border-none hover:shadow-soft-lg transition-shadow"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{getGoalIcon(goal.type)}</span>
+                        <div>
+                          <h3 className="font-semibold text-navy-900 text-sm">{goal.name}</h3>
+                          <p className="text-xs text-stone-500 capitalize">{goal.type}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-peach-600">{goal.progress}%</div>
+                        <div className="text-xs text-stone-500">progression</div>
+                      </div>
+                    </div>
+
+                    {/* Barre de progression */}
+                    <div className="mb-3">
+                      <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-peach-400 to-peach-500 transition-all duration-500"
+                          style={{ width: `${goal.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 rounded-xl border-peach-300 hover:bg-peach-100 text-xs"
+                        onClick={() => {
+                          if (onShowGoalDetails) {
+                            onShowGoalDetails(goal.id);
+                          } else {
+                            setSelectedGoalForDetails(goal);
+                            setShowGoalDetailsDialog(true);
+                          }
+                        }}
+                      >
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        Avancer
+                      </Button>
+                        <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 rounded-xl border-peach-300 hover:bg-peach-100 text-xs"
+                        onClick={() => {
+                          if (onNavigateToPlanning) {
+                            onNavigateToPlanning(goal.id);
+                          } else {
+                            alert('Fonctionnalité à venir !');
+                          }
+                        }}
+                      >
+                        <Calendar className="w-3 h-3 mr-1" />
+                        Planning
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Energy Check-in Modal */}
+          <EnergyCheckInModal
+            isOpen={showCheckIn}
+            onClose={() => setShowCheckIn(false)}
+            energyLevel={energyLevel}
+            setEnergyLevel={setEnergyLevel}
+            onComplete={handleCheckInComplete}
+          />
+
+          {/* Create Goal Modal */}
+          <CreateGoalModal
+            isOpen={showCreateGoal}
+            onClose={() => setShowCreateGoal(false)}
+            onSuccess={handleGoalCreated}
+            onAddGloweeTasks={onAddGloweeTasks}
+          />
+
+          {/* Glowee Welcome Popup - 1ère visite Objectifs */}
+          <GloweePopup
+            isOpen={showGloweeWelcome}
+            onClose={() => {
+              setShowGloweeWelcome(false);
+              markWelcomeSeen('goals');
+            }}
+            gloweeImage={gloweeMessages.goals.firstVisit.image}
+            userName={gloweeMessages.goals.firstVisit.userName}
+            title={gloweeMessages.goals.firstVisit.title}
+            message={gloweeMessages.goals.firstVisit.message}
+            position="top"
+          />
+
+          {/* Glowee Check-in Welcome Popup - 1ère visite Check-in */}
+          <GloweePopup
+            isOpen={showGloweeCheckInWelcome}
+            onClose={() => {
+              setShowGloweeCheckInWelcome(false);
+              markWelcomeSeen('energy');
+            }}
+            gloweeImage={gloweeMessages.energy.firstVisit.image}
+            userName={gloweeMessages.energy.firstVisit.userName}
+            title={gloweeMessages.energy.firstVisit.title}
+            message={gloweeMessages.energy.firstVisit.message}
+            position="top"
+          />
+
+          {/* Dialogue de détails de l'objectif */}
+          <GoalDetailsDialog
+            goal={selectedGoalForDetails}
+            isOpen={showGoalDetailsDialog}
+            onClose={() => {
+              setShowGoalDetailsDialog(false);
+              setSelectedGoalForDetails(null);
+            }}
+          />
+        </div>
       </div>
-
-      {/* Energy Check-in Modal */}
-      <EnergyCheckInModal
-        isOpen={showCheckIn}
-        onClose={() => setShowCheckIn(false)}
-        energyLevel={energyLevel}
-        setEnergyLevel={setEnergyLevel}
-        onComplete={handleCheckInComplete}
-      />
-
-      {/* Create Goal Modal */}
-      <CreateGoalModal
-        isOpen={showCreateGoal}
-        onClose={() => setShowCreateGoal(false)}
-        onSuccess={handleGoalCreated}
-        onAddGloweeTasks={onAddGloweeTasks}
-      />
-
-      {/* Glowee Welcome Popup - 1ère visite Objectifs */}
-      <GloweePopup
-        isOpen={showGloweeWelcome}
-        onClose={() => {
-          setShowGloweeWelcome(false);
-          markWelcomeSeen('goals');
-        }}
-        gloweeImage={gloweeMessages.goals.firstVisit.image}
-        userName={gloweeMessages.goals.firstVisit.userName}
-        title={gloweeMessages.goals.firstVisit.title}
-        message={gloweeMessages.goals.firstVisit.message}
-        position="top"
-      />
-
-      {/* Glowee Check-in Welcome Popup - 1ère visite Check-in */}
-      <GloweePopup
-        isOpen={showGloweeCheckInWelcome}
-        onClose={() => {
-          setShowGloweeCheckInWelcome(false);
-          markWelcomeSeen('energy');
-        }}
-        gloweeImage={gloweeMessages.energy.firstVisit.image}
-        userName={gloweeMessages.energy.firstVisit.userName}
-        title={gloweeMessages.energy.firstVisit.title}
-        message={gloweeMessages.energy.firstVisit.message}
-        position="top"
-      />
-
-      {/* Dialogue de détails de l'objectif */}
-      <GoalDetailsDialog
-        goal={selectedGoalForDetails}
-        isOpen={showGoalDetailsDialog}
-        onClose={() => {
-          setShowGoalDetailsDialog(false);
-          setSelectedGoalForDetails(null);
-        }}
-      />
-    </div>
     </>
   );
 }
@@ -554,26 +558,28 @@ function EnergyCheckInModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-cream-100 border-none shadow-soft-xl rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-rose-400" />
+          <DialogTitle className="flex items-center gap-2 text-navy-900">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-peach-400 to-peach-500 flex items-center justify-center shadow-soft">
+              <Activity className="w-5 h-5 text-white" />
+            </div>
             Check-in Énergie
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-stone-600">
             {step === 1 && "Comment te sens-tu en ce moment ? 💫"}
             {step === 2 && "Comment est ton état mental ? 🧠"}
             {step === 3 && "Comment est ton état physique ? 💪"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-5 py-3">
           {/* Glowee Image */}
           <div className="flex justify-center">
             <img
               src="/Glowee/glowee-felicite.webp"
               alt="Glowee"
-              className="w-24 h-24 object-contain"
+              className="w-20 h-20 object-contain"
             />
           </div>
 
@@ -581,7 +587,7 @@ function EnergyCheckInModal({
           {step === 1 && (
             <div className="space-y-4">
               <div className="space-y-3">
-                <label className="text-sm font-medium text-stone-700">
+                <label className="text-sm font-semibold text-navy-900">
                   Niveau d'énergie (0-100)
                 </label>
                 <input
@@ -591,11 +597,11 @@ function EnergyCheckInModal({
                   step="5"
                   value={energyLevel * 10}
                   onChange={(e) => setEnergyLevel(Math.round(parseInt(e.target.value) / 10))}
-                  className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-rose-400"
+                  className="w-full h-2 bg-white rounded-lg appearance-none cursor-pointer accent-peach-500 shadow-soft"
                 />
                 <div className="flex justify-between text-xs text-stone-500">
                   <span>0</span>
-                  <span className="text-2xl font-bold text-rose-500">{energyLevel * 10}</span>
+                  <span className="text-2xl font-bold text-peach-600">{energyLevel * 10}</span>
                   <span>100</span>
                 </div>
               </div>
@@ -604,13 +610,13 @@ function EnergyCheckInModal({
                 <Button
                   onClick={handleSkip}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 rounded-xl border-stone-300 hover:bg-white"
                 >
                   Passer
                 </Button>
                 <Button
                   onClick={() => setStep(2)}
-                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                  className="flex-1 bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft"
                 >
                   Suivant
                 </Button>
@@ -621,19 +627,19 @@ function EnergyCheckInModal({
           {/* Step 2: Mental State */}
           {step === 2 && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {mentalStates.map((state) => (
                   <button
                     key={state.value}
                     onClick={() => setMentalState(state.value)}
-                    className={`p-4 rounded-xl border-2 transition-all ${
+                    className={`p-3 rounded-xl border-2 transition-all shadow-soft ${
                       mentalState === state.value
-                        ? 'border-rose-400 bg-rose-50'
-                        : 'border-stone-200 hover:border-stone-300'
+                        ? 'border-soft-purple-400 bg-soft-purple-100'
+                        : 'border-stone-200 bg-white hover:border-soft-purple-300'
                     }`}
                   >
-                    <div className="text-3xl mb-2">{state.emoji}</div>
-                    <div className="text-sm font-medium text-stone-900">{state.label}</div>
+                    <div className="text-2xl mb-1">{state.emoji}</div>
+                    <div className="text-xs font-medium text-navy-900">{state.label}</div>
                   </button>
                 ))}
               </div>
@@ -642,14 +648,14 @@ function EnergyCheckInModal({
                 <Button
                   onClick={handleSkip}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 rounded-xl border-stone-300 hover:bg-white"
                 >
                   Passer
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
                   disabled={!mentalState}
-                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                  className="flex-1 bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft disabled:opacity-50"
                 >
                   Suivant
                 </Button>
@@ -660,19 +666,19 @@ function EnergyCheckInModal({
           {/* Step 3: Physical State */}
           {step === 3 && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {physicalStates.map((state) => (
                   <button
                     key={state.value}
                     onClick={() => setPhysicalState(state.value)}
-                    className={`p-4 rounded-xl border-2 transition-all ${
+                    className={`p-3 rounded-xl border-2 transition-all shadow-soft ${
                       physicalState === state.value
-                        ? 'border-rose-400 bg-rose-50'
-                        : 'border-stone-200 hover:border-stone-300'
+                        ? 'border-peach-400 bg-peach-100'
+                        : 'border-stone-200 bg-white hover:border-peach-300'
                     }`}
                   >
-                    <div className="text-3xl mb-2">{state.emoji}</div>
-                    <div className="text-sm font-medium text-stone-900">{state.label}</div>
+                    <div className="text-2xl mb-1">{state.emoji}</div>
+                    <div className="text-xs font-medium text-navy-900">{state.label}</div>
                   </button>
                 ))}
               </div>
@@ -681,14 +687,14 @@ function EnergyCheckInModal({
                 <Button
                   onClick={handleSkip}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 rounded-xl border-stone-300 hover:bg-white"
                 >
                   Passer
                 </Button>
                 <Button
                   onClick={handleComplete}
                   disabled={!physicalState}
-                  className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                  className="flex-1 bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft disabled:opacity-50"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Valider

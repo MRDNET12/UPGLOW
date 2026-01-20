@@ -34,6 +34,7 @@ import InstallPrompt from '@/components/InstallPrompt';
 import AppLoader from '@/components/AppLoader';
 import { BoundariesTracker } from '@/components/BoundariesTracker';
 import { SmallWinsQuickAdd } from '@/components/SmallWinsQuickAdd';
+import { SmallWinsCompact } from '@/components/SmallWinsCompact';
 import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
@@ -1059,19 +1060,19 @@ export default function GlowUpChallengeApp() {
               </Card>
             )}
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-2">
+            {/* Petits Succès Compact - Juste en dessous du challenge actif */}
+            <SmallWinsCompact theme={theme} />
+
+            {/* Quick Actions - 4 sections sur la même ligne */}
+            <div className="grid grid-cols-4 gap-2">
               <Card
                 className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('journal')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm truncate">{t.journal.title}</h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">{journalEntries.length} {t.journal.entries}</p>
-                    </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <BookOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">{t.journal.title}</h3>
                   </div>
                 </CardContent>
               </Card>
@@ -1081,12 +1082,11 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('trackers')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-2">
-                    <Activity className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm truncate">{t.trackers.title}</h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">{t.trackers.today}</p>
-                    </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">
+                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
+                    </h3>
                   </div>
                 </CardContent>
               </Card>
@@ -1096,16 +1096,11 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('routine')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-2">
-                    <Calendar className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm truncate">
-                        {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
-                      </h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">
-                        {language === 'fr' ? 'Organisez votre semaine' : language === 'en' ? 'Organize your week' : 'Organiza tu semana'}
-                      </p>
-                    </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">
+                      {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
+                    </h3>
                   </div>
                 </CardContent>
               </Card>
@@ -1115,16 +1110,11 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('my-goals')}
               >
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-2">
-                    <Target className={`w-5 h-5 flex-shrink-0 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm truncate">
-                        {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
-                      </h3>
-                      <p className="text-xs text-stone-500 dark:text-stone-500 truncate">
-                        {language === 'fr' ? 'Atteins tes rêves' : language === 'en' ? 'Achieve your dreams' : 'Alcanza tus sueños'}
-                      </p>
-                    </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Target className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">
+                      {language === 'fr' ? 'Objectifs' : language === 'en' ? 'Goals' : 'Objetivos'}
+                    </h3>
                   </div>
                 </CardContent>
               </Card>
@@ -1149,62 +1139,8 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Quick Add Section - Scroll Horizontal */}
-            <div className="space-y-3">
-              <div
-                ref={quickAddScrollRef}
-                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6"
-                onScroll={(e) => {
-                  const scrollLeft = e.currentTarget.scrollLeft;
-                  const cardWidth = e.currentTarget.scrollWidth / 2;
-                  const index = Math.round(scrollLeft / cardWidth);
-                  setQuickAddScrollIndex(index);
-                }}
-                style={{
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                }}
-              >
-                <div className="snap-start flex-shrink-0 pl-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
-                  <SmallWinsQuickAdd theme={theme} />
-                </div>
-                <div className="snap-start flex-shrink-0 pr-6" style={{ width: 'calc(100% - 24px)', maxWidth: '450px' }}>
-                  <EveningQuestionQuickAdd theme={theme} />
-                </div>
-              </div>
-
-              {/* Indicateurs de pagination */}
-              <div className="flex justify-center gap-2">
-                <button
-                  onClick={() => {
-                    quickAddScrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
-                    setQuickAddScrollIndex(0);
-                  }}
-                  className={`h-2 rounded-full transition-all ${
-                    quickAddScrollIndex === 0
-                      ? 'w-6 bg-yellow-500'
-                      : 'w-2 bg-gray-300 dark:bg-gray-600'
-                  }`}
-                  aria-label="Petits Succès"
-                />
-                <button
-                  onClick={() => {
-                    const container = quickAddScrollRef.current;
-                    if (container) {
-                      const cardWidth = container.scrollWidth / 2;
-                      container.scrollTo({ left: cardWidth, behavior: 'smooth' });
-                    }
-                    setQuickAddScrollIndex(1);
-                  }}
-                  className={`h-2 rounded-full transition-all ${
-                    quickAddScrollIndex === 1
-                      ? 'w-6 bg-indigo-500'
-                      : 'w-2 bg-gray-300 dark:bg-gray-600'
-                  }`}
-                  aria-label="Question du Soir"
-                />
-              </div>
-            </div>
+            {/* Question du Soir */}
+            <EveningQuestionQuickAdd theme={theme} />
           </div>
         )}
 

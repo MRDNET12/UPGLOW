@@ -53,7 +53,7 @@ export function EveningQuestionQuickAdd({ theme = 'light' }: EveningQuestionQuic
           className="w-full flex items-center justify-between p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
         >
           <span className="font-semibold text-gray-900 dark:text-white text-xs">
-            Pourquoi ?
+            {t.bonus.why || 'Pourquoi ?'}
           </span>
           {showFaq ? (
             <ChevronUp className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
@@ -65,33 +65,48 @@ export function EveningQuestionQuickAdd({ theme = 'light' }: EveningQuestionQuic
         {showFaq && (
           <div className="mt-2 p-3 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-xl space-y-2 text-xs">
             <div>
-              <p className="font-semibold text-gray-900 dark:text-white mb-1">
-                Le soir avant de dormir, pose toi cette question :
-              </p>
-              <p className="text-indigo-700 dark:text-indigo-300 font-medium mb-2 italic">
-                « Si mon cœur savait déjà, quelle serait sa réponse ? »
-              </p>
-            </div>
-
-            <div>
-              <p className="font-semibold text-gray-900 dark:text-white mb-1">Rituel (30 secondes) :</p>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">{t.bonus.eveningQuestionDescription || 'Réfléchis sur ta journée'}</p>
               <ol className="list-decimal list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                <li>Pense à ton blocage.</li>
-                <li>Pose la question.</li>
-                <li>Note le premier mot qui vient.</li>
+                <li>{t.bonus.eveningQuestionStep1 || 'Pose-toi une question profonde chaque soir.'}</li>
+                <li>{t.bonus.eveningQuestionStep2 || 'Réponds honnêtement, sans jugement.'}</li>
+                <li>{t.bonus.eveningQuestionStep3 || 'Relis tes réponses pour voir ton évolution.'}</li>
               </ol>
             </div>
+            <div className="pt-2 border-t border-indigo-200 dark:border-indigo-800">
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">{t.bonus.whyItWorks || 'Pourquoi ça marche ?'}</p>
+              <p className="text-gray-700 dark:text-gray-300">
+                {t.bonus.eveningQuestionExplanation || "L'introspection quotidienne aide à mieux se connaître et à grandir."}
+              </p>
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                {language === 'fr' ? 'Le soir avant de dormir, pose toi cette question :' : language === 'en' ? 'Before going to bed, ask yourself this question:' : 'Antes de dormir, hazte esta pregunta:'}
+              </p>
+              <p className="text-indigo-700 dark:text-indigo-300 font-medium mb-2 italic">
+                {language === 'fr' ? '« Si mon cœur savait déjà, quelle serait sa réponse ? »' : language === 'en' ? '"If my heart already knew, what would its answer be?"' : '"Si mi corazón ya lo supiera, ¿cuál sería su respuesta?"'}
+              </p>
+            </div>
 
             <div>
-              <p className="font-semibold text-gray-900 dark:text-white mb-1">Exemples</p>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                {language === 'fr' ? 'Exemples' : language === 'en' ? 'Examples' : 'Ejemplos'}
+              </p>
               <div className="space-y-1 text-gray-700 dark:text-gray-300">
                 <div>
-                  <p className="font-medium">« Dois-je quitter ce travail ? »</p>
-                  <p className="text-indigo-600 dark:text-indigo-400">→ Liberté</p>
+                  <p className="font-medium">
+                    {language === 'fr' ? '« Dois-je quitter ce travail ? »' : language === 'en' ? '"Should I quit this job?"' : '"¿Debería dejar este trabajo?"'}
+                  </p>
+                  <p className="text-indigo-600 dark:text-indigo-400">
+                    → {language === 'fr' ? 'Liberté' : language === 'en' ? 'Freedom' : 'Libertad'}
+                  </p>
                 </div>
                 <div>
-                  <p className="font-medium">« Est-ce que cette amitié me convient ? »</p>
-                  <p className="text-indigo-600 dark:text-indigo-400">→ Épuisée</p>
+                  <p className="font-medium">
+                    {language === 'fr' ? '« Est-ce que cette amitié me convient ? »' : language === 'en' ? '"Is this friendship right for me?"' : '"¿Esta amistad me conviene?"'}
+                  </p>
+                  <p className="text-indigo-600 dark:text-indigo-400">
+                    → {language === 'fr' ? 'Épuisée' : language === 'en' ? 'Exhausted' : 'Agotada'}
+                  </p>
                 </div>
               </div>
             </div>

@@ -68,7 +68,7 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
           className="w-full flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
         >
           <span className="font-semibold text-gray-900 dark:text-white text-xs">
-            Pourquoi ?
+            {t.bonus.why || 'Pourquoi ?'}
           </span>
           {showFaq ? (
             <ChevronUp className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
@@ -80,17 +80,17 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
         {showFaq && (
           <div className="mt-2 p-3 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-xl space-y-2 text-xs">
             <div>
-              <p className="font-semibold text-gray-900 dark:text-white mb-1">Célèbre tes victoires quotidiennes !</p>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">{t.bonus.smallWinsDescription || 'Célèbre tes victoires quotidiennes !'}</p>
               <ol className="list-decimal list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                <li>Note trois petits accomplissements réalisés cette semaine (même les plus minimes).</li>
-                <li>Décris pourquoi ces accomplissements sont importants pour toi.</li>
-                <li>Relis cette liste chaque matin pour te rappeler que tu es capable.</li>
+                <li>{t.bonus.smallWinsStep1 || 'Note trois petits accomplissements réalisés cette semaine (même les plus minimes).'}</li>
+                <li>{t.bonus.smallWinsStep2 || 'Décris pourquoi ces accomplissements sont importants pour toi.'}</li>
+                <li>{t.bonus.smallWinsStep3 || 'Relis cette liste chaque matin pour te rappeler que tu es capable.'}</li>
               </ol>
             </div>
             <div className="pt-2 border-t border-yellow-200 dark:border-yellow-800">
-              <p className="font-semibold text-gray-900 dark:text-white mb-1">Pourquoi ça marche ?</p>
+              <p className="font-semibold text-gray-900 dark:text-white mb-1">{t.bonus.whyItWorks || 'Pourquoi ça marche ?'}</p>
               <p className="text-gray-700 dark:text-gray-300">
-                L'auto-valorisation aide à renforcer la confiance et réduire le sentiment d'échec.
+                {t.bonus.smallWinsExplanation || "L'auto-valorisation aide à renforcer la confiance et réduire le sentiment d'échec."}
               </p>
             </div>
           </div>

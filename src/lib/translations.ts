@@ -250,7 +250,19 @@ export interface Translation {
     history: string;
     congratulations: string;
     keepGoing: string;
+    why: string;
+    whyItWorks: string;
+    smallWinsDescription: string;
+    smallWinsStep1: string;
+    smallWinsStep2: string;
+    smallWinsStep3: string;
+    smallWinsExplanation: string;
     eveningQuestionTitle: string;
+    eveningQuestionDescription: string;
+    eveningQuestionStep1: string;
+    eveningQuestionStep2: string;
+    eveningQuestionStep3: string;
+    eveningQuestionExplanation: string;
     eveningQuestionThisMonth: string;
     addEveningQuestion: string;
     questionPlaceholder: string;
@@ -574,7 +586,19 @@ export const translations: Record<Language, Translation> = {
       history: 'Historique',
       congratulations: 'On ne se connaît pas, mais ta joie est contagieuse : je suis très heureux pour toi et je fête avec toi ! 🥂',
       keepGoing: 'Continue comme ça !',
+      why: 'Pourquoi ?',
+      whyItWorks: 'Pourquoi ça marche ?',
+      smallWinsDescription: 'Célèbre tes victoires quotidiennes !',
+      smallWinsStep1: 'Note trois petits accomplissements réalisés cette semaine (même les plus minimes).',
+      smallWinsStep2: 'Décris pourquoi ces accomplissements sont importants pour toi.',
+      smallWinsStep3: 'Relis cette liste chaque matin pour te rappeler que tu es capable.',
+      smallWinsExplanation: "L'auto-valorisation aide à renforcer la confiance et réduire le sentiment d'échec.",
       eveningQuestionTitle: 'Question du Soir',
+      eveningQuestionDescription: 'Réfléchis sur ta journée',
+      eveningQuestionStep1: 'Pose-toi une question profonde chaque soir.',
+      eveningQuestionStep2: 'Réponds honnêtement, sans jugement.',
+      eveningQuestionStep3: 'Relis tes réponses pour voir ton évolution.',
+      eveningQuestionExplanation: "L'introspection quotidienne aide à mieux se connaître et à grandir.",
       eveningQuestionThisMonth: 'Ce mois-ci',
       addEveningQuestion: 'Ajouter une question',
       questionPlaceholder: 'Ta question du soir...',
@@ -887,7 +911,19 @@ export const translations: Record<Language, Translation> = {
       history: 'History',
       congratulations: 'We don\'t know each other, but your joy is contagious: I\'m very happy for you and I celebrate with you! 🥂',
       keepGoing: 'Keep it up!',
+      why: 'Why?',
+      whyItWorks: 'Why does it work?',
+      smallWinsDescription: 'Celebrate your daily victories!',
+      smallWinsStep1: 'Write down three small accomplishments from this week (even the smallest ones).',
+      smallWinsStep2: 'Describe why these accomplishments are important to you.',
+      smallWinsStep3: 'Reread this list every morning to remind yourself that you are capable.',
+      smallWinsExplanation: 'Self-validation helps strengthen confidence and reduce feelings of failure.',
       eveningQuestionTitle: 'Evening Question',
+      eveningQuestionDescription: 'Reflect on your day',
+      eveningQuestionStep1: 'Ask yourself a deep question every evening.',
+      eveningQuestionStep2: 'Answer honestly, without judgment.',
+      eveningQuestionStep3: 'Reread your answers to see your evolution.',
+      eveningQuestionExplanation: 'Daily introspection helps you know yourself better and grow.',
       eveningQuestionThisMonth: 'This month',
       addEveningQuestion: 'Add a question',
       questionPlaceholder: 'Your evening question...',
@@ -1200,7 +1236,19 @@ export const translations: Record<Language, Translation> = {
       history: 'Historial',
       congratulations: 'No nos conocemos, pero tu alegría es contagiosa: ¡estoy muy feliz por ti y celebro contigo! 🥂',
       keepGoing: '¡Sigue así!',
+      why: '¿Por qué?',
+      whyItWorks: '¿Por qué funciona?',
+      smallWinsDescription: '¡Celebra tus victorias diarias!',
+      smallWinsStep1: 'Anota tres pequeños logros de esta semana (incluso los más pequeños).',
+      smallWinsStep2: 'Describe por qué estos logros son importantes para ti.',
+      smallWinsStep3: 'Relee esta lista cada mañana para recordarte que eres capaz.',
+      smallWinsExplanation: 'La autovaloración ayuda a fortalecer la confianza y reducir el sentimiento de fracaso.',
       eveningQuestionTitle: 'Pregunta de la Noche',
+      eveningQuestionDescription: 'Reflexiona sobre tu día',
+      eveningQuestionStep1: 'Hazte una pregunta profunda cada noche.',
+      eveningQuestionStep2: 'Responde honestamente, sin juzgarte.',
+      eveningQuestionStep3: 'Relee tus respuestas para ver tu evolución.',
+      eveningQuestionExplanation: 'La introspección diaria te ayuda a conocerte mejor y crecer.',
       eveningQuestionThisMonth: 'Este mes',
       addEveningQuestion: 'Agregar una pregunta',
       questionPlaceholder: 'Tu pregunta de la noche...',

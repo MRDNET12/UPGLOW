@@ -994,184 +994,282 @@ export default function GlowUpChallengeApp() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-cream-100 text-stone-900'}`}>
       {/* Main Content */}
-      <main className="flex-1 pb-24 overflow-y-auto">
+      <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Glowee Hourly Message */}
-            <GloweeHourlyMessage theme={theme} language={language} />
-
-            {/* Trial Badge, Plan Pro Button and Challenge Switch Button */}
-            <div className="flex items-center justify-center gap-2">
-              <TrialBadge theme={theme} />
-              <button
-                onClick={() => setShowSubscription(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
-              >
-                <Crown className="w-3.5 h-3.5" />
-                <span>Plan Pro</span>
-              </button>
-              <button
-                onClick={() => setShowChallengeDrawer(true)}
-                className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-200 hover:bg-stone-300'}`}
-              >
-                <ChevronRight className="w-5 h-5 rotate-180" />
+          <div className="p-4 space-y-4 max-w-md mx-auto">
+            {/* Header avec avatar et notification */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-soft-purple-300 to-soft-purple-500 flex items-center justify-center text-white font-semibold">
+                  {user?.email?.[0]?.toUpperCase() || 'U'}
+                </div>
+                <div>
+                  <p className="text-xs text-stone-500">Hello,</p>
+                  <p className="font-semibold text-sm">{user?.email?.split('@')[0] || 'User'}</p>
+                </div>
+              </div>
+              <button className="w-10 h-10 rounded-full bg-white shadow-soft flex items-center justify-center">
+                <Bell className="w-5 h-5 text-stone-600" />
               </button>
             </div>
 
-            {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}
+            {/* Grande carte Challenge avec illustration */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-purple-800/20"
+                className="border-none shadow-soft-lg cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-soft-purple-200 to-soft-purple-400 rounded-3xl overflow-hidden relative"
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
                 }}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Esprit & Vie</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
-                      <span className="text-lg font-bold">{challengeProgress.currentDay}</span>
-                    </div>
+                <CardContent className="p-5 relative z-10">
+                  {/* Illustration décorative */}
+                  <div className="absolute top-4 right-4 text-6xl opacity-20">
+                    🎯
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-base font-semibold line-clamp-1">{getCurrentDayData()?.title}</h3>
-                    <Badge className="bg-gradient-to-r from-purple-400 to-violet-400 text-white text-xs px-2 py-0.5 shrink-0">
-                      New me
+
+                  <div className="mb-3">
+                    <p className="text-xs font-medium text-soft-purple-500 mb-1">Jour {challengeProgress.currentDay}/30</p>
+                    <h2 className="text-lg font-bold text-navy-900 mb-1 pr-16 line-clamp-2">
+                      {getCurrentDayData()?.title || 'Challenge du jour'}
+                    </h2>
+                    <Badge className="bg-white/40 backdrop-blur-sm text-navy-900 text-xs px-3 py-1 rounded-full border-0">
+                      Esprit & Vie
                     </Badge>
                   </div>
-                  <div className="space-y-1">
-                    <Progress value={progressPercentage} className="h-2" />
-                    <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
-                      <span>{t.dashboard.week} {Math.ceil(currentDay / 7)}/4</span>
-                      <span>{challengeProgress.completedDays.length}/30 {t.dashboard.daysCompleted}</span>
+
+                  <div className="space-y-2 mt-4">
+                    <div className="flex items-center justify-between text-xs text-navy-800">
+                      <span>Progression</span>
+                      <span className="font-semibold">{Math.round(progressPercentage)}%</span>
+                    </div>
+                    <div className="h-2 bg-white/40 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-navy-900 rounded-full transition-all duration-500"
+                        style={{ width: `${progressPercentage}%` }}
+                      />
                     </div>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* New Me Card - Only show if Beauty & Body is selected */}
+            {/* Grande carte Beauty & Body */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-purple-800/20"
+                className="border-none shadow-soft-lg cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-peach-200 to-peach-400 rounded-3xl overflow-hidden relative"
                 onClick={() => setCurrentView('new-me')}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Beauté & Corps</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
-                      <span className="text-lg font-bold">{newMeCurrentDay}</span>
-                    </div>
+                <CardContent className="p-5 relative z-10">
+                  <div className="absolute top-4 right-4 text-6xl opacity-20">
+                    ✨
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-base font-semibold line-clamp-1">{t.newMe.subtitle}</h3>
-                    <Badge className="bg-gradient-to-r from-purple-400 to-violet-400 text-white text-xs px-2 py-0.5 shrink-0">
-                      New me
+
+                  <div className="mb-3">
+                    <p className="text-xs font-medium text-peach-500 mb-1">Jour {newMeCurrentDay}/30</p>
+                    <h2 className="text-lg font-bold text-navy-900 mb-1 pr-16">
+                      {t.newMe.subtitle}
+                    </h2>
+                    <Badge className="bg-white/40 backdrop-blur-sm text-navy-900 text-xs px-3 py-1 rounded-full border-0">
+                      Beauté & Corps
                     </Badge>
                   </div>
-                  <div className="space-y-1">
-                    <Progress value={(newMeCurrentDay / 30) * 100} className="h-2" />
-                    <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
-                      <span>{t.dashboard.week} {Math.ceil(newMeCurrentDay / 7)}/4</span>
-                      <span>{Object.keys(newMeProgress).length}/30 {t.dashboard.daysCompleted}</span>
+
+                  <div className="space-y-2 mt-4">
+                    <div className="flex items-center justify-between text-xs text-navy-800">
+                      <span>Progression</span>
+                      <span className="font-semibold">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
+                    </div>
+                    <div className="h-2 bg-white/40 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-navy-900 rounded-full transition-all duration-500"
+                        style={{ width: `${(newMeCurrentDay / 30) * 100}%` }}
+                      />
                     </div>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* Petits Succès Compact - Juste en dessous du challenge actif */}
-            <SmallWinsCompact theme={theme} />
-
-            {/* Quick Actions - 4 sections sur la même ligne */}
-            <div className="grid grid-cols-4 gap-2">
-              <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
-                onClick={() => setCurrentView('journal')}
-              >
-                <CardContent className="p-3">
-                  <div className="flex flex-col items-center gap-1">
-                    <BookOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <h3 className="font-semibold text-xs text-center">{t.journal.title}</h3>
+            {/* Grille de 2 cartes stats */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Carte Jours complétés */}
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardContent className="p-4">
+                  <div className="text-3xl font-bold text-navy-900 mb-1">
+                    {selectedChallenge === 'mind-life' ? challengeProgress.completedDays.length : Object.keys(newMeProgress).length}
                   </div>
+                  <p className="text-xs text-stone-500">Jours complétés</p>
                 </CardContent>
               </Card>
 
-              <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
-                onClick={() => setCurrentView('trackers')}
-              >
-                <CardContent className="p-3">
-                  <div className="flex flex-col items-center gap-1">
-                    <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <h3 className="font-semibold text-xs text-center">
-                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
-                    </h3>
+              {/* Carte Streak */}
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardContent className="p-4">
+                  <div className="text-3xl font-bold text-navy-900 mb-1">
+                    {selectedChallenge === 'mind-life' ? challengeProgress.currentDay : newMeCurrentDay}
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
-                onClick={() => setCurrentView('routine')}
-              >
-                <CardContent className="p-3">
-                  <div className="flex flex-col items-center gap-1">
-                    <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <h3 className="font-semibold text-xs text-center">
-                      {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
-                    </h3>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card
-                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
-                onClick={() => setCurrentView('my-goals')}
-              >
-                <CardContent className="p-3">
-                  <div className="flex flex-col items-center gap-1">
-                    <Target className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
-                    <h3 className="font-semibold text-xs text-center">
-                      {language === 'fr' ? 'Objectifs' : language === 'en' ? 'Goals' : 'Objetivos'}
-                    </h3>
-                  </div>
+                  <p className="text-xs text-stone-500">Jour actuel</p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Bonus Section */}
+            {/* Carte Mes Cours / My Courses */}
             <Card
-              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/30' : 'bg-gradient-to-br from-amber-50 to-orange-50'}`}
-              onClick={() => setCurrentView('bonus')}
+              className="border-none shadow-soft-lg bg-gradient-to-br from-soft-orange-200 to-soft-orange-400 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+              onClick={() => setCurrentView('trackers')}
             >
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-full bg-gradient-to-br from-amber-200 to-orange-200 dark:from-amber-800 dark:to-orange-800">
-                    <Gift className="w-6 h-6 text-amber-600 dark:text-amber-300" />
+              <CardContent className="p-5 relative overflow-hidden">
+                <div className="absolute top-2 right-2 text-5xl opacity-20">
+                  📚
+                </div>
+                <div className="relative z-10">
+                  <h3 className="text-sm font-bold text-navy-900 mb-3">
+                    {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
+                  </h3>
+                  <div className="flex gap-2">
+                    <button className="px-4 py-2 bg-navy-900 text-white text-xs font-medium rounded-full">
+                      {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
+                    </button>
+                    <button className="px-4 py-2 bg-white/40 backdrop-blur-sm text-navy-900 text-xs font-medium rounded-full">
+                      {selectedChallenge === 'mind-life' ? challengeProgress.completedDays.length : Object.keys(newMeProgress).length} {language === 'fr' ? 'complétés' : 'completed'}
+                    </button>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{t.bonus.title}</h3>
-                    <p className="text-xs text-stone-500 dark:text-stone-500">{t.bonus.affirmations} & {t.bonus.guides}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-orange-400" />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Question du Soir */}
-            <EveningQuestionQuickAdd theme={theme} />
+            {/* Grille 2 colonnes - Actions rapides */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Journal */}
+              <Card
+                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                onClick={() => setCurrentView('journal')}
+              >
+                <CardContent className="p-4">
+                  <div className="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center mb-3">
+                    <BookOpen className="w-5 h-5 text-soft-purple-500" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-navy-900">{t.journal.title}</h3>
+                </CardContent>
+              </Card>
 
-            {/* 8 Limites pour ta Paix Intérieure - Version Compacte */}
-            <BoundariesCompact theme={theme} />
+              {/* Planning */}
+              <Card
+                className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-peach-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                onClick={() => setCurrentView('routine')}
+              >
+                <CardContent className="p-4">
+                  <div className="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center mb-3">
+                    <Calendar className="w-5 h-5 text-peach-500" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-navy-900">
+                    {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Planificación'}
+                  </h3>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Carte Objectifs */}
+            <Card
+              className="border-none shadow-soft bg-navy-800 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+              onClick={() => setCurrentView('my-goals')}
+            >
+              <CardContent className="p-5 relative overflow-hidden">
+                <div className="absolute top-2 right-2 text-4xl opacity-20">
+                  🎯
+                </div>
+                <div className="relative z-10">
+                  <p className="text-xs text-white/60 mb-1">
+                    {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
+                  </p>
+                  <h3 className="text-base font-bold text-white mb-2">
+                    {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-2">
+                      <div className="w-6 h-6 rounded-full bg-soft-purple-400 border-2 border-navy-800" />
+                      <div className="w-6 h-6 rounded-full bg-soft-orange-400 border-2 border-navy-800" />
+                      <div className="w-6 h-6 rounded-full bg-peach-400 border-2 border-navy-800" />
+                    </div>
+                    <span className="text-xs text-white/80">+{goals.length}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Carte Bonus avec style moderne */}
+            <Card
+              className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 via-peach-100 to-soft-orange-100 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+              onClick={() => setCurrentView('bonus')}
+            >
+              <CardContent className="p-5 relative overflow-hidden">
+                <div className="absolute -top-4 -right-4 text-7xl opacity-10">
+                  🎁
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
+                      <Gift className="w-4 h-4 text-soft-purple-500" />
+                    </div>
+                    <Badge className="bg-white/60 text-navy-900 text-xs px-2 py-0.5 rounded-full border-0">
+                      Nouveau
+                    </Badge>
+                  </div>
+                  <h3 className="font-bold text-sm text-navy-900 mb-1">{t.bonus.title}</h3>
+                  <p className="text-xs text-stone-600">{t.bonus.affirmations} & {t.bonus.guides}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Carte Question du Soir */}
+            <Card
+              className="border-none shadow-soft bg-white rounded-2xl"
+              onClick={() => setCurrentView('evening-questions')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-soft-purple-100 flex items-center justify-center">
+                    <span className="text-lg">🌙</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm text-navy-900">
+                      {language === 'fr' ? 'Question du Soir' : language === 'en' ? 'Evening Question' : 'Pregunta de la Noche'}
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      {language === 'fr' ? 'Réflexion quotidienne' : language === 'en' ? 'Daily reflection' : 'Reflexión diaria'}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-stone-400" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Carte 8 Limites */}
+            <Card
+              className="border-none shadow-soft bg-white rounded-2xl"
+              onClick={() => setCurrentView('boundaries')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-peach-100 flex items-center justify-center">
+                    <span className="text-lg">🛡️</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm text-navy-900">
+                      {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      {language === 'fr' ? 'Pour ta paix intérieure' : language === 'en' ? 'For your inner peace' : 'Para tu paz interior'}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-stone-400" />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -3421,58 +3519,84 @@ export default function GlowUpChallengeApp() {
         )}
       </main>
 
-      {/* Bottom Navigation - Hidden in goal-details view */}
+      {/* Bottom Navigation - Modern Floating Style */}
       {currentView !== 'goal-details' && (
-        <nav className={`fixed bottom-0 left-0 right-0 ${theme === 'dark' ? 'bg-stone-900/95 border-t border-stone-800' : 'bg-white/95 border-t border-stone-200'} backdrop-blur-sm safe-area-pb`}>
-        <div className="flex items-center justify-around max-w-lg mx-auto">
-          <Button
-            variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'dashboard' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('dashboard')}
-          >
-            <Home className="w-6 h-6" />
-            <span className="text-xs">{t.nav.home}</span>
-          </Button>
-          <Button
-            variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'routine' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('routine')}
-          >
-            <Layers className="w-6 h-6" />
-            <span className="text-xs">
-              {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Planificación'}
-            </span>
-          </Button>
-          <Button
-            variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${showGloweeChat ? 'text-rose-500' : ''}`}
-            onClick={() => setShowGloweeChat(!showGloweeChat)}
-          >
-            <img
-              src="/Glowee/glowee-nav-bar.webp"
-              alt="Glowee"
-              className="w-8 h-8 object-contain"
-            />
-            <span className="text-xs">{t.nav.glowee}</span>
-          </Button>
-          <Button
-            variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'trackers' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('trackers')}
-          >
-            <Target className="w-6 h-6" />
-            <span className="text-xs">{t.nav.trackers}</span>
-          </Button>
-          <Button
-            variant="ghost"
-            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'settings' ? 'text-rose-500' : ''}`}
-            onClick={() => setCurrentView('settings')}
-          >
-            <Settings className="w-6 h-6" />
-            <span className="text-xs">{t.nav.settings}</span>
-          </Button>
-        </div>
-      </nav>
+        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md z-50">
+          <div className={`${theme === 'dark' ? 'bg-navy-900' : 'bg-navy-800'} rounded-3xl shadow-soft-xl px-2 py-3 backdrop-blur-lg`}>
+            <div className="flex items-center justify-around">
+              <Button
+                variant="ghost"
+                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                  currentView === 'dashboard'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <Home className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{t.nav.home}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                  currentView === 'routine'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setCurrentView('routine')}
+              >
+                <Layers className="w-5 h-5" />
+                <span className="text-[10px] font-medium">
+                  {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Plan'}
+                </span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                  showGloweeChat
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setShowGloweeChat(!showGloweeChat)}
+              >
+                <img
+                  src="/Glowee/glowee-nav-bar.webp"
+                  alt="Glowee"
+                  className="w-6 h-6 object-contain"
+                />
+                <span className="text-[10px] font-medium">{t.nav.glowee}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                  currentView === 'trackers'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setCurrentView('trackers')}
+              >
+                <Target className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{t.nav.trackers}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                  currentView === 'settings'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setCurrentView('settings')}
+              >
+                <Settings className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{t.nav.settings}</span>
+              </Button>
+            </div>
+          </div>
+        </nav>
       )}
 
       {/* Drawer Checklist - Animation coulissante du bas */}

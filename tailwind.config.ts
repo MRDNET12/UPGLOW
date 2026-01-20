@@ -50,12 +50,53 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			// Modern Educational Design System
+  			'cream': {
+  				50: '#FFF9F0',
+  				100: '#FFF5E9',
+  				200: '#FFECD6',
+  				300: '#FFE3C3'
+  			},
+  			'soft-purple': {
+  				100: '#E8E4FF',
+  				200: '#D4CCFF',
+  				300: '#B8ACFF',
+  				400: '#9C8CFF',
+  				500: '#8B7FE8'
+  			},
+  			'soft-orange': {
+  				100: '#FFE8D9',
+  				200: '#FFD4B8',
+  				300: '#FFC09A',
+  				400: '#FFAC7C',
+  				500: '#FF9966'
+  			},
+  			'peach': {
+  				100: '#FFE5D9',
+  				200: '#FFD4C4',
+  				300: '#FFC3AF',
+  				400: '#FFB29A',
+  				500: '#FFA185'
+  			},
+  			'navy': {
+  				800: '#2C3E50',
+  				900: '#1A252F'
   			}
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			sm: 'calc(var(--radius) - 4px)',
+  			'xl': '16px',
+  			'2xl': '20px',
+  			'3xl': '24px',
+  			'4xl': '28px'
+  		},
+  		boxShadow: {
+  			'soft': '0 2px 12px rgba(0, 0, 0, 0.06)',
+  			'soft-lg': '0 4px 20px rgba(0, 0, 0, 0.08)',
+  			'soft-xl': '0 8px 30px rgba(0, 0, 0, 0.10)'
   		}
   	}
   },

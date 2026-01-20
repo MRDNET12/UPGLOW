@@ -189,6 +189,14 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [goalTasks, setGoalTasks] = useState<Task[]>([]);
+  const [performanceAnalysis, setPerformanceAnalysis] = useState<{
+    completionRate: number;
+    trend: 'improving' | 'stable' | 'declining';
+    suggestions: string[];
+    celebrationMessage?: string;
+  } | null>(null);
+  const [isAnalyzingPerformance, setIsAnalyzingPerformance] = useState(false);
+  const [showWeeklyTasksGenerator, setShowWeeklyTasksGenerator] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -340,6 +348,103 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
   const completionRate = thisWeekTasks.length > 0
     ? Math.round((completedTasks.length / thisWeekTasks.length) * 100)
     : 0;
+
+  // Analyser la performance et obtenir des suggestions
+  const analyzePerformance = async () => {
+    if (thisWeekTasks.length === 0) return;
+
+    setIsAnalyzingPerformance(true);
+    try {
+      const response = await fetch('/api/goals/performance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tasks: thisWeekTasks,
+          goal: {
+            type: goal.type,
+            targetAmount: goal.targetAmount,
+            daysRemaining: Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPerformanceAnalysis(data.analysis);
+
+        // Ajouter un message de Glowee Work avec les suggestions
+        if (data.analysis.suggestions.length > 0) {
+          const suggestionMessage: Message = {
+            id: `msg_suggestions_${Date.now()}`,
+            role: 'glowee',
+            content: `📊 Analyse de ta semaine :\n\n${data.analysis.suggestions.join('\n\n')}`,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, suggestionMessage]);
+        }
+
+        // Message de célébration si applicable
+        if (data.analysis.celebrationMessage) {
+          const celebrationMsg: Message = {
+            id: `msg_celebration_${Date.now()}`,
+            role: 'glowee',
+            content: data.analysis.celebrationMessage,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, celebrationMsg]);
+        }
+      }
+    } catch (error) {
+      console.error('Error analyzing performance:', error);
+    } finally {
+      setIsAnalyzingPerformance(false);
+    }
+  };
+
+  // Générer de nouvelles tâches pour la semaine prochaine
+  const generateWeeklyTasks = async () => {
+    try {
+      const weekNumber = Math.ceil((new Date().getTime() - new Date(goal.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 7));
+
+      const response = await fetch('/api/goals/generate-weekly-tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          goal: {
+            id: goal.id,
+            name: goal.name,
+            type: goal.type,
+            description: goal.description,
+            deadline: goal.deadline,
+            targetAmount: goal.targetAmount,
+            competency: goal.competency,
+            progress: goal.progress
+          },
+          previousTasks: thisWeekTasks,
+          completionRate,
+          weekNumber
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Message de Glowee Work avec les nouvelles tâches
+        const newTasksMessage: Message = {
+          id: `msg_new_tasks_${Date.now()}`,
+          role: 'glowee',
+          content: `✨ J'ai généré ${data.tasks.length} nouvelles tâches pour la semaine ${data.weekNumber} ! Elles sont adaptées à ta performance actuelle (${completionRate}%). Tu peux les voir dans ton Planning.`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, newTasksMessage]);
+
+        // TODO: Ajouter les tâches au Planning
+        // onAddGloweeTasks(data.tasks);
+      }
+    } catch (error) {
+      console.error('Error generating weekly tasks:', error);
+    }
+  };
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
@@ -570,6 +675,31 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
                     </div>
                   </div>
 
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={analyzePerformance}
+                      disabled={isAnalyzingPerformance}
+                      className="flex-1 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white"
+                      size="sm"
+                    >
+                      <Lightbulb className="w-4 h-4 mr-2" />
+                      {isAnalyzingPerformance ? 'Analyse...' : 'Analyser ma semaine'}
+                    </Button>
+                  </div>
+
+                  {/* Performance Analysis */}
+                  {performanceAnalysis && (
+                    <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-violet-900/20' : 'bg-violet-50'} border ${theme === 'dark' ? 'border-violet-800' : 'border-violet-200'}`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Sparkles className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                        <span className="text-xs font-semibold text-violet-600 dark:text-violet-400">
+                          Tendance : {performanceAnalysis.trend === 'improving' ? '📈 En progression' : performanceAnalysis.trend === 'declining' ? '📉 En baisse' : '➡️ Stable'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Task List */}
                   <div className="space-y-2">
                     {thisWeekTasks.map((task) => (
@@ -618,6 +748,27 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
               ) : (
                 <p className="text-sm text-stone-500 dark:text-stone-400 italic">{t.noTasksThisWeek}</p>
               )}
+            </div>
+
+            {/* Weekly Tasks Generator Section */}
+            <div className={`rounded-2xl p-4 ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} border ${theme === 'dark' ? 'border-stone-800' : 'border-stone-200'}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-5 h-5 text-rose-500" />
+                <h3 className="font-bold">Tâches de la semaine prochaine</h3>
+              </div>
+
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-3">
+                Glowee Work peut générer automatiquement de nouvelles tâches adaptées à ta performance actuelle.
+              </p>
+
+              <Button
+                onClick={generateWeeklyTasks}
+                className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                size="sm"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Générer les tâches de la semaine prochaine
+              </Button>
             </div>
 
             {/* Glowee's Notes Section */}

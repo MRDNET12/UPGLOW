@@ -27,7 +27,7 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
     }
   };
 
-  // Déterminer le palier actuel
+  // Déterminer le palier actuel (sans afficher "Débutant")
   const getRank = () => {
     const count = winsThisWeek.length;
     if (count >= 5) {
@@ -37,7 +37,8 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
         color: 'text-purple-600 dark:text-purple-400',
         bgColor: 'bg-gradient-to-r from-purple-500 to-pink-500',
         progress: 100,
-        message: language === 'fr' ? '🎉 Statut Légende atteint !' : language === 'en' ? '🎉 Legend status achieved!' : '🎉 ¡Estado Leyenda alcanzado!'
+        message: language === 'fr' ? '🎉 Statut Légende atteint !' : language === 'en' ? '🎉 Legend status achieved!' : '🎉 ¡Estado Leyenda alcanzado!',
+        showBadge: true
       };
     } else if (count >= 3) {
       return {
@@ -46,16 +47,18 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
         color: 'text-yellow-600 dark:text-yellow-400',
         bgColor: 'bg-gradient-to-r from-yellow-400 to-orange-500',
         progress: (count / 5) * 100,
-        message: language === 'fr' ? `Plus que ${5 - count} pour Légende !` : language === 'en' ? `${5 - count} more for Legend!` : `¡${5 - count} más para Leyenda!`
+        message: language === 'fr' ? `Plus que ${5 - count} pour Légende !` : language === 'en' ? `${5 - count} more for Legend!` : `¡${5 - count} más para Leyenda!`,
+        showBadge: true
       };
     } else {
       return {
-        name: language === 'fr' ? 'Débutant' : language === 'en' ? 'Beginner' : 'Principiante',
+        name: '',
         icon: Sparkles,
         color: 'text-gray-600 dark:text-gray-400',
         bgColor: 'bg-gradient-to-r from-gray-400 to-gray-500',
         progress: (count / 5) * 100,
-        message: language === 'fr' ? `Plus que ${3 - count} pour Alpha !` : language === 'en' ? `${3 - count} more for Alpha!` : `¡${3 - count} más para Alpha!`
+        message: language === 'fr' ? `Plus que ${3 - count} pour Alpha !` : language === 'en' ? `${3 - count} more for Alpha!` : `¡${3 - count} más para Alpha!`,
+        showBadge: false
       };
     }
   };
@@ -75,12 +78,17 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
               {t.bonus.smallWinsTitle}
             </h3>
             <div className="flex items-center gap-2 mt-1">
-              <rank.icon className={`w-4 h-4 ${rank.color}`} />
-              <span className={`text-sm font-bold ${rank.color}`}>
-                {rank.name}
-              </span>
+              {rank.showBadge && (
+                <>
+                  <rank.icon className={`w-4 h-4 ${rank.color}`} />
+                  <span className={`text-sm font-bold ${rank.color}`}>
+                    {rank.name}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">•</span>
+                </>
+              )}
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                • {winsThisWeek.length} {language === 'fr' ? 'cette semaine' : language === 'en' ? 'this week' : 'esta semana'}
+                {winsThisWeek.length} {language === 'fr' ? 'cette semaine' : language === 'en' ? 'this week' : 'esta semana'}
               </span>
             </div>
           </div>

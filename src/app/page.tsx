@@ -3022,7 +3022,7 @@ export default function GlowUpChallengeApp() {
             {/* Sections Bonus Principales */}
             <div className="space-y-3">
               {bonusSections
-                .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir')
+                .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir' && section.id !== 'limites-paix' && section.id !== '50-choses-seule')
                 .map((section) => {
                 const weeklyCompletion = getSectionWeeklyCompletion(section.id);
                 return (
@@ -3060,31 +3060,6 @@ export default function GlowUpChallengeApp() {
                 );
               })}
             </div>
-
-            {/* Affirmations Écrites */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-400" />
-                  {t.bonus.affirmations}
-                </CardTitle>
-                <CardDescription>{t.bonus.arsenalPositive}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-64">
-                  <div className="space-y-2">
-                    {bonusAffirmations.map((affirmation, i) => (
-                      <div
-                        key={i}
-                        className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}
-                      >
-                        <p className="text-sm">✨ {affirmation}</p>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
 
             {/* Checklists */}
             <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
@@ -3161,6 +3136,33 @@ export default function GlowUpChallengeApp() {
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-stone-600 dark:text-stone-400">
                     {t.bonus.discoverSoftLife}
+                  </p>
+                  <ChevronRight className="w-5 h-5 text-amber-400" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 50 choses à faire seule */}
+            <Card
+              onClick={() => {
+                const fiftyThingsSection = bonusSections.find(s => s.id === '50-choses-seule');
+                if (fiftyThingsSection) setSelectedBonusSection(fiftyThingsSection);
+              }}
+              className={`border-none shadow-lg cursor-pointer hover:scale-105 transition-transform ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/30' : 'bg-gradient-to-br from-amber-50 to-orange-50'}`}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-xl">💫</span>
+                  {t.bonus.fiftyThingsAlone}
+                </CardTitle>
+                <CardDescription>
+                  {completedThingsAlone.length} / {fiftyThingsAlone.length} {t.bonus.completedItems}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    {language === 'fr' ? 'Profite de moments précieux avec toi-même' : language === 'en' ? 'Enjoy precious moments with yourself' : 'Disfruta momentos preciosos contigo misma'}
                   </p>
                   <ChevronRight className="w-5 h-5 text-amber-400" />
                 </div>

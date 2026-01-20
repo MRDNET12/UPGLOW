@@ -994,12 +994,12 @@ export default function GlowUpChallengeApp() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-edu-dark text-stone-100' : 'bg-edu-bg-lightest text-edu-dark'}`}>
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
       {/* Main Content */}
       <main className="flex-1 pb-24 overflow-y-auto">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <div className="p-4 space-y-3 max-w-lg mx-auto">
+          <div className="p-6 space-y-6 max-w-lg mx-auto">
             {/* Glowee Hourly Message */}
             <GloweeHourlyMessage theme={theme} language={language} />
 
@@ -1024,30 +1024,30 @@ export default function GlowUpChallengeApp() {
             {/* Today's Challenge with Progress - Only show if Mind & Life is selected */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className="border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-[#A69FF5] to-[#8B7FE8] rounded-card"
+                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-purple-800/20"
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
                 }}
               >
-                <CardContent className="p-card">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-medium text-white/90">Esprit & Vie</p>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Esprit & Vie</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                      <span className="text-lg font-bold text-white">{challengeProgress.currentDay}</span>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
+                      <span className="text-lg font-bold">{challengeProgress.currentDay}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-base font-semibold line-clamp-1 text-white">{getCurrentDayData()?.title}</h3>
-                    <Badge className="bg-white/20 text-white text-xs px-2 py-0.5 shrink-0 rounded-full">
+                    <h3 className="text-base font-semibold line-clamp-1">{getCurrentDayData()?.title}</h3>
+                    <Badge className="bg-gradient-to-r from-purple-400 to-violet-400 text-white text-xs px-2 py-0.5 shrink-0">
                       New me
                     </Badge>
                   </div>
                   <div className="space-y-1">
-                    <Progress value={progressPercentage} className="h-2 bg-white/20" />
-                    <div className="flex items-center justify-between text-xs text-white/80">
+                    <Progress value={progressPercentage} className="h-2" />
+                    <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
                       <span>{t.dashboard.week} {Math.ceil(currentDay / 7)}/4</span>
                       <span>{challengeProgress.completedDays.length}/30 {t.dashboard.daysCompleted}</span>
                     </div>
@@ -1059,27 +1059,27 @@ export default function GlowUpChallengeApp() {
             {/* New Me Card - Only show if Beauty & Body is selected */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className="border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-[#FFB088] to-[#FF9055] rounded-card"
+                className="border-none shadow-lg cursor-pointer transition-all hover:scale-105 bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-purple-900/20 dark:via-violet-900/20 dark:to-purple-800/20"
                 onClick={() => setCurrentView('new-me')}
               >
-                <CardContent className="p-card">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-medium text-white/90">Beauté & Corps</p>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Beauté & Corps</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                      <span className="text-lg font-bold text-white">{newMeCurrentDay}</span>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-stone-800">
+                      <span className="text-lg font-bold">{newMeCurrentDay}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-base font-semibold line-clamp-1 text-white">{t.newMe.subtitle}</h3>
-                    <Badge className="bg-white/20 text-white text-xs px-2 py-0.5 shrink-0 rounded-full">
+                    <h3 className="text-base font-semibold line-clamp-1">{t.newMe.subtitle}</h3>
+                    <Badge className="bg-gradient-to-r from-purple-400 to-violet-400 text-white text-xs px-2 py-0.5 shrink-0">
                       New me
                     </Badge>
                   </div>
                   <div className="space-y-1">
-                    <Progress value={(newMeCurrentDay / 30) * 100} className="h-2 bg-white/20" />
-                    <div className="flex items-center justify-between text-xs text-white/80">
+                    <Progress value={(newMeCurrentDay / 30) * 100} className="h-2" />
+                    <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-500">
                       <span>{t.dashboard.week} {Math.ceil(newMeCurrentDay / 7)}/4</span>
                       <span>{Object.keys(newMeProgress).length}/30 {t.dashboard.daysCompleted}</span>
                     </div>
@@ -1094,25 +1094,25 @@ export default function GlowUpChallengeApp() {
             {/* Quick Actions - 4 sections sur la même ligne */}
             <div className="grid grid-cols-4 gap-2">
               <Card
-                className={`border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-card ${theme === 'dark' ? 'bg-edu-dark-light' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('journal')}
               >
                 <CardContent className="p-3">
                   <div className="flex flex-col items-center gap-1">
-                    <BookOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-edu-dark-light'}`} />
-                    <h3 className="font-medium text-xs text-center">{t.journal.title}</h3>
+                    <BookOpen className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">{t.journal.title}</h3>
                   </div>
                 </CardContent>
               </Card>
 
               <Card
-                className={`border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-card ${theme === 'dark' ? 'bg-edu-dark-light' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('trackers')}
               >
                 <CardContent className="p-3">
                   <div className="flex flex-col items-center gap-1">
-                    <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-edu-dark-light'}`} />
-                    <h3 className="font-medium text-xs text-center">
+                    <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">
                       {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
                     </h3>
                   </div>
@@ -1120,13 +1120,13 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               <Card
-                className={`border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-card ${theme === 'dark' ? 'bg-edu-dark-light' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('routine')}
               >
                 <CardContent className="p-3">
                   <div className="flex flex-col items-center gap-1">
-                    <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-edu-dark-light'}`} />
-                    <h3 className="font-medium text-xs text-center">
+                    <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">
                       {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                     </h3>
                   </div>
@@ -1134,13 +1134,13 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               <Card
-                className={`border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-card ${theme === 'dark' ? 'bg-edu-dark-light' : 'bg-white'}`}
+                className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                 onClick={() => setCurrentView('my-goals')}
               >
                 <CardContent className="p-3">
                   <div className="flex flex-col items-center gap-1">
-                    <Target className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-edu-dark-light'}`} />
-                    <h3 className="font-medium text-xs text-center">
+                    <Target className={`w-5 h-5 ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`} />
+                    <h3 className="font-semibold text-xs text-center">
                       {language === 'fr' ? 'Objectifs' : language === 'en' ? 'Goals' : 'Objetivos'}
                     </h3>
                   </div>
@@ -1150,19 +1150,19 @@ export default function GlowUpChallengeApp() {
 
             {/* Bonus Section */}
             <Card
-              className="border-none shadow-card hover:shadow-card-hover cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-[#7AB4F5] to-[#4A8FD8] rounded-card"
+              className={`border-none shadow-lg cursor-pointer transition-all hover:scale-105 ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/30' : 'bg-gradient-to-br from-amber-50 to-orange-50'}`}
               onClick={() => setCurrentView('bonus')}
             >
-              <CardContent className="p-card">
+              <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-full bg-white/20 backdrop-blur-sm">
-                    <Gift className="w-6 h-6 text-white" />
+                  <div className="p-3 rounded-full bg-gradient-to-br from-amber-200 to-orange-200 dark:from-amber-800 dark:to-orange-800">
+                    <Gift className="w-6 h-6 text-amber-600 dark:text-amber-300" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-white">{t.bonus.title}</h3>
-                    <p className="text-xs text-white/80">{t.bonus.affirmations} & {t.bonus.guides}</p>
+                    <h3 className="font-semibold">{t.bonus.title}</h3>
+                    <p className="text-xs text-stone-500 dark:text-stone-500">{t.bonus.affirmations} & {t.bonus.guides}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-white/80" />
+                  <ChevronRight className="w-5 h-5 text-orange-400" />
                 </div>
               </CardContent>
             </Card>
@@ -3423,53 +3423,53 @@ export default function GlowUpChallengeApp() {
 
       {/* Bottom Navigation - Hidden in goal-details view */}
       {currentView !== 'goal-details' && (
-        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 max-w-md bg-edu-dark rounded-nav shadow-floating safe-area-pb">
-        <div className="flex items-center justify-around px-2 py-3">
+        <nav className={`fixed bottom-0 left-0 right-0 ${theme === 'dark' ? 'bg-stone-900/95 border-t border-stone-800' : 'bg-white/95 border-t border-stone-200'} backdrop-blur-sm safe-area-pb`}>
+        <div className="flex items-center justify-around max-w-lg mx-auto">
           <Button
             variant="ghost"
-            className={`flex-1 h-14 flex-col gap-1 rounded-xl ${currentView === 'dashboard' ? 'text-edu-purple bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'dashboard' ? 'text-rose-500' : ''}`}
             onClick={() => setCurrentView('dashboard')}
           >
-            <Home className="w-5 h-5" />
-            <span className="text-xs font-medium">{t.nav.home}</span>
+            <Home className="w-6 h-6" />
+            <span className="text-xs">{t.nav.home}</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-14 flex-col gap-1 rounded-xl ${currentView === 'routine' ? 'text-edu-purple bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'routine' ? 'text-rose-500' : ''}`}
             onClick={() => setCurrentView('routine')}
           >
-            <Layers className="w-5 h-5" />
-            <span className="text-xs font-medium">
+            <Layers className="w-6 h-6" />
+            <span className="text-xs">
               {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Planificación'}
             </span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-14 flex-col gap-1 rounded-xl ${showGloweeChat ? 'text-edu-purple bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${showGloweeChat ? 'text-rose-500' : ''}`}
             onClick={() => setShowGloweeChat(!showGloweeChat)}
           >
             <img
               src="/Glowee/glowee-nav-bar.webp"
               alt="Glowee"
-              className="w-7 h-7 object-contain"
+              className="w-8 h-8 object-contain"
             />
-            <span className="text-xs font-medium">{t.nav.glowee}</span>
+            <span className="text-xs">{t.nav.glowee}</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-14 flex-col gap-1 rounded-xl ${currentView === 'trackers' ? 'text-edu-purple bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'trackers' ? 'text-rose-500' : ''}`}
             onClick={() => setCurrentView('trackers')}
           >
-            <Target className="w-5 h-5" />
-            <span className="text-xs font-medium">{t.nav.trackers}</span>
+            <Target className="w-6 h-6" />
+            <span className="text-xs">{t.nav.trackers}</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 h-14 flex-col gap-1 rounded-xl ${currentView === 'settings' ? 'text-edu-purple bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 h-16 flex-col gap-1 rounded-none ${currentView === 'settings' ? 'text-rose-500' : ''}`}
             onClick={() => setCurrentView('settings')}
           >
-            <Settings className="w-5 h-5" />
-            <span className="text-xs font-medium">{t.nav.settings}</span>
+            <Settings className="w-6 h-6" />
+            <span className="text-xs">{t.nav.settings}</span>
           </Button>
         </div>
       </nav>

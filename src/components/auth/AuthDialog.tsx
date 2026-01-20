@@ -95,19 +95,19 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-cream-100 border-none shadow-soft-xl rounded-3xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl text-navy-900">
-            <Sparkles className="w-5 h-5 text-peach-500" />
+      <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50 rounded-[2rem]">
+        <DialogHeader className="pb-4 border-b border-pink-100">
+          <DialogTitle className="flex items-center gap-3 text-2xl text-gray-800 font-bold">
+            <Sparkles className="w-6 h-6 text-pink-500 drop-shadow-lg" />
             {mode === 'signin' ? 'Connexion' : 'Créer un compte'}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Email */}
+        <form onSubmit={handleSubmit} className="space-y-5 mt-6">
+          {/* Email - Glassmorphism */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2 text-navy-900 font-semibold">
-              <Mail className="w-4 h-4 text-peach-500" />
+            <Label htmlFor="email" className="flex items-center gap-2 text-gray-800 font-bold text-sm">
+              <Mail className="w-4 h-4 text-pink-500" />
               Email
             </Label>
             <Input
@@ -118,14 +118,14 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
               required
-              className="bg-white border-stone-200 focus:border-peach-400 focus:ring-peach-400 rounded-xl"
+              className="bg-gradient-to-br from-white to-pink-50 border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl shadow-md h-12 text-gray-800 font-medium"
             />
           </div>
 
-          {/* Password */}
+          {/* Password - Glassmorphism */}
           <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center gap-2 text-navy-900 font-semibold">
-              <Lock className="w-4 h-4 text-peach-500" />
+            <Label htmlFor="password" className="flex items-center gap-2 text-gray-800 font-bold text-sm">
+              <Lock className="w-4 h-4 text-pink-500" />
               Mot de passe
             </Label>
             <Input
@@ -137,15 +137,15 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
               disabled={loading}
               required
               minLength={6}
-              className="bg-white border-stone-200 focus:border-peach-400 focus:ring-peach-400 rounded-xl"
+              className="bg-gradient-to-br from-white to-pink-50 border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl shadow-md h-12 text-gray-800 font-medium"
             />
           </div>
 
-          {/* Confirm Password (signup only) */}
+          {/* Confirm Password (signup only) - Glassmorphism */}
           {mode === 'signup' && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="flex items-center gap-2 text-navy-900 font-semibold">
-                <Lock className="w-4 h-4 text-peach-500" />
+              <Label htmlFor="confirmPassword" className="flex items-center gap-2 text-gray-800 font-bold text-sm">
+                <Lock className="w-4 h-4 text-pink-500" />
                 Confirmer le mot de passe
               </Label>
               <Input
@@ -157,54 +157,54 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
                 disabled={loading}
                 required
                 minLength={6}
-                className="bg-white border-stone-200 focus:border-peach-400 focus:ring-peach-400 rounded-xl"
+                className="bg-gradient-to-br from-white to-pink-50 border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl shadow-md h-12 text-gray-800 font-medium"
               />
             </div>
           )}
 
-          {/* Error message */}
+          {/* Error message - Glassmorphism */}
           {error && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 shadow-soft">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="p-4 rounded-xl bg-gradient-to-br from-red-50 to-red-100 border border-red-200 shadow-lg">
+              <p className="text-sm text-red-700 font-semibold">{error}</p>
             </div>
           )}
 
-          {/* Success message */}
+          {/* Success message - Glassmorphism */}
           {success && (
-            <div className="p-3 rounded-xl bg-gradient-to-br from-peach-100 to-soft-orange-100 border border-peach-200 shadow-soft">
-              <p className="text-sm text-navy-900 flex items-center gap-2 font-semibold">
-                <Sparkles className="w-4 h-4 text-peach-500" />
+            <div className="p-4 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 border border-pink-200 shadow-lg">
+              <p className="text-sm text-gray-800 flex items-center gap-2 font-bold">
+                <Sparkles className="w-5 h-5 text-pink-500 drop-shadow-lg" />
                 {mode === 'signin' ? 'Connexion réussie !' : 'Compte créé avec succès !'}
               </p>
             </div>
           )}
 
-          {/* Submit button */}
+          {/* Submit button - Glassmorphism */}
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-peach-400 to-soft-orange-400 hover:from-peach-500 hover:to-soft-orange-500 text-white rounded-2xl py-6 shadow-soft-lg font-semibold"
+            className="w-full bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white rounded-2xl py-7 shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-[1.02] transition-all font-bold text-base"
             disabled={loading || success}
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                 {mode === 'signin' ? 'Connexion...' : 'Création du compte...'}
               </>
             ) : success ? (
               <>
-                <Sparkles className="w-4 h-4 mr-2" />
+                <Sparkles className="w-5 h-5 mr-2 drop-shadow-lg" />
                 {mode === 'signin' ? 'Connecté !' : 'Compte créé !'}
               </>
             ) : (
               <>
                 {mode === 'signin' ? (
                   <>
-                    <User className="w-4 h-4 mr-2" />
+                    <User className="w-5 h-5 mr-2" />
                     Se connecter
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 mr-2" />
+                    <Sparkles className="w-5 h-5 mr-2" />
                     Créer mon compte
                   </>
                 )}
@@ -212,12 +212,12 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
             )}
           </Button>
 
-          {/* Switch mode */}
-          <div className="text-center">
+          {/* Switch mode - Glassmorphism */}
+          <div className="text-center pt-2">
             <button
               type="button"
               onClick={switchMode}
-              className="text-sm text-peach-600 hover:text-peach-700 hover:underline font-medium"
+              className="text-sm text-pink-600 hover:text-pink-700 hover:underline font-bold transition-colors"
               disabled={loading}
             >
               {mode === 'signin'

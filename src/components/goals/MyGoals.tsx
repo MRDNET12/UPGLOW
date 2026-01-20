@@ -564,36 +564,39 @@ function EnergyCheckInModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-cream-100 border-none shadow-soft-xl rounded-3xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-navy-900">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-peach-400 to-peach-500 flex items-center justify-center shadow-soft">
+      <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50 rounded-[2rem]">
+        <DialogHeader className="pb-4 border-b border-pink-100">
+          <DialogTitle className="flex items-center gap-3 text-xl text-gray-800 font-bold">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center shadow-lg drop-shadow-lg">
               <Activity className="w-5 h-5 text-white" />
             </div>
             Check-in Énergie
           </DialogTitle>
-          <DialogDescription className="text-stone-600">
+          <DialogDescription className="text-gray-600 font-medium">
             {step === 1 && "Comment te sens-tu en ce moment ? 💫"}
             {step === 2 && "Comment est ton état mental ? 🧠"}
             {step === 3 && "Comment est ton état physique ? 💪"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5 py-3">
-          {/* Glowee Image */}
+        <div className="space-y-6 py-4">
+          {/* Glowee Image avec effet 3D */}
           <div className="flex justify-center">
-            <img
-              src="/Glowee/Glowee-travaille.webp"
-              alt="Glowee"
-              className="w-20 h-20 object-contain"
-            />
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-full blur-xl opacity-40 scale-110"></div>
+              <img
+                src="/Glowee/Glowee-travaille.webp"
+                alt="Glowee"
+                className="w-24 h-24 object-contain relative z-10 drop-shadow-2xl"
+              />
+            </div>
           </div>
 
-          {/* Step 1: Energy Level */}
+          {/* Step 1: Energy Level - Glassmorphism */}
           {step === 1 && (
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <label className="text-sm font-semibold text-navy-900">
+            <div className="space-y-5">
+              <div className="space-y-3 p-5 rounded-2xl bg-gradient-to-br from-white to-pink-50 shadow-lg border border-pink-100/50">
+                <label className="text-sm font-bold text-gray-800">
                   Niveau d'énergie (0-100)
                 </label>
                 <input
@@ -603,26 +606,26 @@ function EnergyCheckInModal({
                   step="5"
                   value={energyLevel * 10}
                   onChange={(e) => setEnergyLevel(Math.round(parseInt(e.target.value) / 10))}
-                  className="w-full h-2 bg-white rounded-lg appearance-none cursor-pointer accent-peach-500 shadow-soft"
+                  className="w-full h-3 bg-gradient-to-r from-pink-100 to-rose-100 rounded-full appearance-none cursor-pointer accent-pink-500 shadow-md"
                 />
-                <div className="flex justify-between text-xs text-stone-500">
+                <div className="flex justify-between text-xs text-gray-600 font-semibold">
                   <span>0</span>
-                  <span className="text-2xl font-bold text-peach-600">{energyLevel * 10}</span>
+                  <span className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent drop-shadow-lg">{energyLevel * 10}</span>
                   <span>100</span>
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   onClick={handleSkip}
                   variant="outline"
-                  className="flex-1 rounded-xl border-stone-300 hover:bg-white"
+                  className="flex-1 rounded-xl border-pink-200 hover:bg-pink-50 font-semibold"
                 >
                   Passer
                 </Button>
                 <Button
                   onClick={() => setStep(2)}
-                  className="flex-1 bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft"
+                  className="flex-1 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-bold"
                 >
                   Suivant
                 </Button>
@@ -630,38 +633,38 @@ function EnergyCheckInModal({
             </div>
           )}
 
-          {/* Step 2: Mental State */}
+          {/* Step 2: Mental State - Glassmorphism */}
           {step === 2 && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-3">
                 {mentalStates.map((state) => (
                   <button
                     key={state.value}
                     onClick={() => setMentalState(state.value)}
-                    className={`p-3 rounded-xl border-2 transition-all shadow-soft ${
+                    className={`p-4 rounded-2xl border-2 transition-all shadow-md hover:shadow-lg hover:scale-[1.02] ${
                       mentalState === state.value
-                        ? 'border-soft-purple-400 bg-soft-purple-100'
-                        : 'border-stone-200 bg-white hover:border-soft-purple-300'
+                        ? 'border-pink-400 bg-gradient-to-br from-pink-100 to-rose-100'
+                        : 'border-pink-200 bg-gradient-to-br from-white to-pink-50 hover:border-pink-300'
                     }`}
                   >
-                    <div className="text-2xl mb-1">{state.emoji}</div>
-                    <div className="text-xs font-medium text-navy-900">{state.label}</div>
+                    <div className="text-3xl mb-2 drop-shadow-lg">{state.emoji}</div>
+                    <div className="text-xs font-bold text-gray-800">{state.label}</div>
                   </button>
                 ))}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   onClick={handleSkip}
                   variant="outline"
-                  className="flex-1 rounded-xl border-stone-300 hover:bg-white"
+                  className="flex-1 rounded-xl border-pink-200 hover:bg-pink-50 font-semibold"
                 >
                   Passer
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
                   disabled={!mentalState}
-                  className="flex-1 bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft disabled:opacity-50"
+                  className="flex-1 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-bold disabled:opacity-50 disabled:hover:scale-100"
                 >
                   Suivant
                 </Button>
@@ -669,40 +672,40 @@ function EnergyCheckInModal({
             </div>
           )}
 
-          {/* Step 3: Physical State */}
+          {/* Step 3: Physical State - Glassmorphism */}
           {step === 3 && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-3">
                 {physicalStates.map((state) => (
                   <button
                     key={state.value}
                     onClick={() => setPhysicalState(state.value)}
-                    className={`p-3 rounded-xl border-2 transition-all shadow-soft ${
+                    className={`p-4 rounded-2xl border-2 transition-all shadow-md hover:shadow-lg hover:scale-[1.02] ${
                       physicalState === state.value
-                        ? 'border-peach-400 bg-peach-100'
-                        : 'border-stone-200 bg-white hover:border-peach-300'
+                        ? 'border-pink-400 bg-gradient-to-br from-pink-100 to-rose-100'
+                        : 'border-pink-200 bg-gradient-to-br from-white to-pink-50 hover:border-pink-300'
                     }`}
                   >
-                    <div className="text-2xl mb-1">{state.emoji}</div>
-                    <div className="text-xs font-medium text-navy-900">{state.label}</div>
+                    <div className="text-3xl mb-2 drop-shadow-lg">{state.emoji}</div>
+                    <div className="text-xs font-bold text-gray-800">{state.label}</div>
                   </button>
                 ))}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   onClick={handleSkip}
                   variant="outline"
-                  className="flex-1 rounded-xl border-stone-300 hover:bg-white"
+                  className="flex-1 rounded-xl border-pink-200 hover:bg-pink-50 font-semibold"
                 >
                   Passer
                 </Button>
                 <Button
                   onClick={handleComplete}
                   disabled={!physicalState}
-                  className="flex-1 bg-gradient-to-r from-peach-400 to-peach-500 hover:from-peach-500 hover:to-peach-600 text-white rounded-xl shadow-soft disabled:opacity-50"
+                  className="flex-1 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-bold disabled:opacity-50 disabled:hover:scale-100"
                 >
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <Sparkles className="w-5 h-5 mr-2 drop-shadow-lg" />
                   Valider
                 </Button>
               </div>
@@ -949,52 +952,52 @@ function CreateGoalModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-rose-400" />
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50 rounded-[2rem]">
+        <DialogHeader className="pb-4 border-b border-pink-100">
+          <DialogTitle className="flex items-center gap-3 text-xl text-gray-800 font-bold">
+            <Target className="w-6 h-6 text-pink-500 drop-shadow-lg" />
             Créer un Objectif
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-600 font-medium">
             {step <= 4 ? `Étape ${step}/4` : 'Analyse Glowee Work'} - Glowee Work va t'aider à l'atteindre ! 🎯
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {step === 1 && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-stone-900">Quel type d'objectif ?</h3>
+            <div className="space-y-5">
+              <h3 className="font-bold text-gray-800 text-base">Quel type d'objectif ?</h3>
               <div className="grid gap-3">
                 <button
                   onClick={() => setGoalType('financial')}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  className={`p-4 rounded-2xl border-2 text-left transition-all shadow-md hover:shadow-lg hover:scale-[1.02] ${
                     goalType === 'financial'
-                      ? 'border-rose-400 bg-rose-50'
-                      : 'border-stone-200 hover:border-stone-300'
+                      ? 'border-pink-400 bg-gradient-to-br from-pink-100 to-rose-100'
+                      : 'border-pink-200 bg-gradient-to-br from-white to-pink-50 hover:border-pink-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl">💰</span>
+                    <span className="text-3xl drop-shadow-lg">💰</span>
                     <div>
-                      <div className="font-semibold">Financier</div>
-                      <div className="text-sm text-stone-600">Économiser, gagner de l'argent</div>
+                      <div className="font-bold text-gray-800">Financier</div>
+                      <div className="text-sm text-gray-600 font-medium">Économiser, gagner de l'argent</div>
                     </div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setGoalType('personal')}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  className={`p-4 rounded-2xl border-2 text-left transition-all shadow-md hover:shadow-lg hover:scale-[1.02] ${
                     goalType === 'personal'
-                      ? 'border-rose-400 bg-rose-50'
-                      : 'border-stone-200 hover:border-stone-300'
+                      ? 'border-pink-400 bg-gradient-to-br from-pink-100 to-rose-100'
+                      : 'border-pink-200 bg-gradient-to-br from-white to-pink-50 hover:border-pink-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl">💖</span>
+                    <span className="text-3xl drop-shadow-lg">💖</span>
                     <div>
-                      <div className="font-semibold">Personnel</div>
-                      <div className="text-sm text-stone-600">Développement, bien-être</div>
+                      <div className="font-bold text-gray-800">Personnel</div>
+                      <div className="text-sm text-gray-600 font-medium">Développement, bien-être</div>
                     </div>
                   </div>
                 </button>
@@ -1002,7 +1005,7 @@ function CreateGoalModal({
 
               <Button
                 onClick={() => setStep(2)}
-                className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                className="w-full bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white rounded-2xl py-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all font-bold"
               >
                 Suivant
               </Button>

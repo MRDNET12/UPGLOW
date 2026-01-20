@@ -44,7 +44,9 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     <>
       <div
         className={`rounded-2xl p-4 shadow-sm w-full cursor-pointer transition-all hover:shadow-md ${
-          theme === 'dark' ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50'
+          theme === 'dark'
+            ? 'bg-gradient-to-br from-yellow-900/20 via-amber-900/20 to-orange-900/20 hover:from-yellow-900/30 hover:via-amber-900/30 hover:to-orange-900/30'
+            : 'bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 hover:from-yellow-100 hover:via-amber-100 hover:to-orange-100'
         }`}
         onClick={() => setShowDialog(true)}
       >

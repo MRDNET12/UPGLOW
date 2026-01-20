@@ -35,13 +35,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!OPENROUTER_API_KEY) {
-      return NextResponse.json(
-        { error: 'OPENROUTER_API_KEY not configured' },
-        { status: 500 }
-      );
-    }
-
     // Calculer la durée en jours
     const now = new Date();
     const deadline = new Date(goal.deadline);
@@ -58,6 +51,77 @@ export async function POST(req: NextRequest) {
       breakdownLevels = ['Semaine', 'Jour'];
     } else {
       breakdownLevels = ['Semaine', 'Jour'];
+    }
+
+    // Si l'API key n'est pas configurée, utiliser un plan générique
+    if (!OPENROUTER_API_KEY) {
+      console.warn('[Generate Plan API] OPENROUTER_API_KEY not configured, using fallback plan');
+
+      const fallbackBreakdown: TimeBreakdown[] = [];
+
+      if (breakdownLevels.includes('Trimestre')) {
+        fallbackBreakdown.push({
+          level: 'Trimestre',
+          title: '🎯 Vision Trimestrielle',
+          steps: [
+            'Définir les grandes étapes de ton objectif',
+            'Identifier les ressources nécessaires',
+            'Créer un plan d\'action global',
+            'Établir des indicateurs de progression'
+          ],
+          motivation: 'Chaque trimestre est une opportunité de transformer ta vision en réalité ! ✨'
+        });
+      }
+
+      if (breakdownLevels.includes('Mois')) {
+        fallbackBreakdown.push({
+          level: 'Mois',
+          title: '🚀 Objectifs Mensuels',
+          steps: [
+            'Décomposer l\'objectif en jalons mensuels',
+            'Planifier les actions prioritaires',
+            'Suivre ta progression régulièrement',
+            'Ajuster ta stratégie si nécessaire'
+          ],
+          motivation: 'Chaque mois te rapproche de ton objectif. Continue, tu es sur la bonne voie ! 💪'
+        });
+      }
+
+      if (breakdownLevels.includes('Semaine')) {
+        fallbackBreakdown.push({
+          level: 'Semaine',
+          title: '⚡ Actions Hebdomadaires',
+          steps: [
+            'Définir 3-5 actions concrètes pour la semaine',
+            'Bloquer du temps dans ton agenda',
+            'Célébrer chaque petite victoire',
+            'Faire le point en fin de semaine'
+          ],
+          motivation: 'Une semaine à la fois, tu construis ton succès ! Chaque action compte ! 🌟'
+        });
+      }
+
+      if (breakdownLevels.includes('Jour')) {
+        fallbackBreakdown.push({
+          level: 'Jour',
+          title: '✨ Routine Quotidienne',
+          steps: [
+            'Commencer par la tâche la plus importante',
+            'Avancer sur ton objectif pendant 30 minutes minimum',
+            'Noter tes progrès et apprentissages',
+            'Visualiser ton objectif atteint'
+          ],
+          motivation: 'Chaque jour est une nouvelle chance d\'avancer. Tu es capable de grandes choses ! 🔥'
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        breakdown: fallbackBreakdown,
+        daysRemaining,
+        monthsRemaining,
+        isFallback: true
+      });
     }
 
     const systemPrompt = `Tu es Glowee Work, une coach motivante et bienveillante qui aide les femmes à atteindre leurs objectifs.
@@ -141,7 +205,7 @@ Réponds UNIQUEMENT en JSON valide.`;
     }
 
     // Parser la réponse JSON
-    let parsedResponse;
+    let parsedResponse: { breakdown: TimeBreakdown[] };
     try {
       const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       parsedResponse = JSON.parse(cleanedContent);
@@ -157,7 +221,8 @@ Réponds UNIQUEMENT en JSON valide.`;
       success: true,
       breakdown: parsedResponse.breakdown,
       daysRemaining,
-      monthsRemaining
+      monthsRemaining,
+      isFallback: false
     });
 
   } catch (error) {

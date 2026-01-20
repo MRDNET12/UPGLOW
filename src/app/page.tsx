@@ -1173,7 +1173,12 @@ export default function GlowUpChallengeApp() {
                         {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
                       </button>
                       <button className="px-4 py-2 bg-white/40 backdrop-blur-sm text-navy-900 text-xs font-medium rounded-full">
-                        {selectedChallenge === 'mind-life' ? challengeProgress.completedDays.length : Object.keys(newMeProgress).length} {language === 'fr' ? 'complétés' : 'completed'}
+                        {(() => {
+                          const todayTracker = getTodayTracker();
+                          const completedHabits = Object.values(todayTracker.habits).filter(Boolean).length;
+                          const totalHabits = 5 + customHabits.length; // 5 habitudes par défaut + habitudes personnalisées
+                          return `${completedHabits}/${totalHabits} ${language === 'fr' ? 'complétés' : language === 'en' ? 'completed' : 'completados'}`;
+                        })()}
                       </button>
                     </div>
                   </div>
@@ -3499,43 +3504,6 @@ export default function GlowUpChallengeApp() {
 
               {/* FAQ */}
               <FAQSection theme={theme} />
-
-              {/* Export Data */}
-              <Card className="border-none shadow-soft bg-white rounded-2xl">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 flex items-center justify-center">
-                      <Download className="w-4 h-4 text-soft-purple-500" />
-                    </div>
-                    {t.settings.export}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start bg-cream-100 border-stone-200 hover:bg-peach-50 hover:border-peach-300 text-navy-900 rounded-xl"
-                    onClick={() => {
-                      const data = {
-                        journal: journalEntries,
-                        trackers,
-                        routine,
-                        visionBoardImages,
-                        challengeProgress
-                      };
-                      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `glow-up-export-${new Date().toISOString().split('T')[0]}.json`;
-                      a.click();
-                    }}
-                  >
-                    <Download className="mr-2 w-4 h-4 text-peach-500" />
-                    <span className="text-sm font-medium">Exporter toutes les données</span>
-                  </Button>
-                </CardContent>
-              </Card>
 
               {/* Account / Connexion */}
               <Card className="border-none shadow-soft bg-white rounded-2xl">

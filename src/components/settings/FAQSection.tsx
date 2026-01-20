@@ -10,26 +10,28 @@ interface FAQSectionProps {
 
 export function FAQSection({ theme }: FAQSectionProps) {
   return (
-    <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-purple-500" />
+    <Card className="border-none shadow-soft bg-white rounded-2xl">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base text-navy-900 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-soft-purple-500" />
+          </div>
           FAQ
         </CardTitle>
-        <CardDescription>Questions fréquentes</CardDescription>
+        <CardDescription className="text-sm text-stone-600">Questions fréquentes</CardDescription>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible className="space-y-3">
-          <AccordionItem 
+          <AccordionItem
             value="install-pwa"
-            className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-purple-800/30 bg-purple-900/10' : 'border-purple-200 bg-purple-50/50'}`}
+            className="rounded-3xl border-2 border-soft-purple-200 bg-white shadow-soft px-4"
           >
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-purple-900/30' : 'bg-purple-100'}`}>
-                  <Download className="w-5 h-5 text-purple-500" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-soft-purple-400 to-soft-purple-500 shadow-soft flex items-center justify-center">
+                  <Download className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-semibold text-left">Comment installer l'application</span>
+                <span className="font-semibold text-left text-navy-900">Comment installer l'application</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -122,14 +124,14 @@ export function FAQSection({ theme }: FAQSectionProps) {
 
           <AccordionItem
             value="notifications"
-            className={`border rounded-xl px-4 ${theme === 'dark' ? 'border-amber-800/30 bg-amber-900/10' : 'border-amber-200 bg-amber-50/50'}`}
+            className="rounded-3xl border-2 border-peach-200 bg-white shadow-soft px-4"
           >
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-amber-900/30' : 'bg-amber-100'}`}>
-                  <Bell className="w-5 h-5 text-amber-500" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-peach-400 to-soft-orange-400 shadow-soft flex items-center justify-center">
+                  <Bell className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-semibold text-left">Notifications</span>
+                <span className="font-semibold text-left text-navy-900">Notifications</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>

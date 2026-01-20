@@ -1259,12 +1259,11 @@ export default function GlowUpChallengeApp() {
                     <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
                       <Gift className="w-4 h-4 text-soft-purple-500" />
                     </div>
-                    <Badge className="bg-white/60 text-navy-900 text-xs px-2 py-0.5 rounded-full border-0">
-                      Nouveau
-                    </Badge>
                   </div>
-                  <h3 className="font-bold text-sm text-navy-900 mb-1">{t.bonus.title}</h3>
-                  <p className="text-xs text-stone-600">{t.bonus.affirmations} & {t.bonus.guides}</p>
+                  <h3 className="font-bold text-lg text-navy-900 mb-1">{t.bonus.title}</h3>
+                  <p className="text-xs text-stone-600">
+                    {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -1493,185 +1492,204 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Journal View */}
+        {/* Journal View - Refonte Educational Design */}
         {currentView === 'journal' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Header */}
-            <div className="flex items-center gap-4">
+          <div className="pb-20 bg-cream-100 min-h-screen">
+            {/* Header moderne */}
+            <div className="flex items-center gap-3 p-5 pb-3 max-w-lg mx-auto">
               <Button
                 variant="ghost"
                 size="icon"
+                className="rounded-full w-10 h-10 bg-white shadow-soft"
                 onClick={() => setCurrentView('dashboard')}
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-navy-900" />
               </Button>
-              <h1 className="text-2xl font-bold">{t.journal.title}</h1>
+              <h1 className="text-xl font-bold text-navy-900">{t.journal.title}</h1>
             </div>
 
-            {/* New Entry Form */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.journal.newEntry}</CardTitle>
-                <CardDescription>{t.journal.expressYourself}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Question 1: Comment te sens-tu aujourd'hui ? */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Comment te sens-tu aujourd'hui ?</label>
-                  <div className="flex gap-3 justify-center py-2">
-                    {['😔', '😐', '🙂', '😄', '😌'].map((emoji) => (
-                      <button
-                        key={emoji}
-                        onClick={() => setNewJournalEntry({ ...newJournalEntry, mood: emoji })}
-                        className={`text-4xl transition-transform hover:scale-110 ${
-                          newJournalEntry.mood === emoji ? 'scale-125' : 'opacity-50'
-                        }`}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Question 2: De quoi j'ai le plus besoin aujourd'hui ? */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">De quoi j'ai le plus besoin aujourd'hui ?</label>
-                  <Textarea
-                    placeholder="Repos, connexion, créativité..."
-                    value={newJournalEntry.needToday}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, needToday: e.target.value })}
-                    rows={2}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Question 3: Qu'est-ce que je suis fière d'avoir fait récemment ? */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Qu'est-ce que je suis fière d'avoir fait récemment ?</label>
-                  <Textarea
-                    placeholder="Mes petites victoires..."
-                    value={newJournalEntry.proudOf}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, proudOf: e.target.value })}
-                    rows={2}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Question 4: Qu'est-ce que je suis prête à laisser partir ? */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Qu'est-ce que je suis prête à laisser partir ?</label>
-                  <Textarea
-                    placeholder="Peurs, doutes, habitudes..."
-                    value={newJournalEntry.letGo}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, letGo: e.target.value })}
-                    rows={2}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Question 5: Qu'est-ce qui m'a apporté du glow ? */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.whatBroughtGlow}</label>
-                  <Textarea
-                    placeholder={t.journal.momentsOfJoy}
-                    value={newJournalEntry.glow}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
-                    rows={2}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Question 6: Qu'est-ce que j'ai appris ? */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.whatLearned}</label>
-                  <Textarea
-                    placeholder={t.journal.discoveriesLearnings}
-                    value={newJournalEntry.learned}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, learned: e.target.value })}
-                    rows={2}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Question 7: Journal libre */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.journal.freeContent}</label>
-                  <Textarea
-                    placeholder="Écris librement ce qui te passe par la tête..."
-                    value={newJournalEntry.freeContent}
-                    onChange={(e) => setNewJournalEntry({ ...newJournalEntry, freeContent: e.target.value })}
-                    rows={3}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-
-                {/* Bouton de fermeture avec dégradé violet */}
-                <Button
-                  onClick={handleSaveJournalEntry}
-                  className="w-full bg-gradient-to-r from-purple-500 via-violet-500 to-purple-600 hover:from-purple-600 hover:via-violet-600 hover:to-purple-700 text-white"
-                >
-                  Fermer pour aujourd'hui ✨
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Journal History */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">{t.journal.history}</h2>
-              {journalEntries.length === 0 ? (
-                <div className={`text-center p-8 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                  <BookOpen className="w-12 h-12 mx-auto mb-3 text-stone-400" />
-                  <p className="text-stone-500 dark:text-stone-500">{t.journal.noEntries}</p>
-                </div>
-              ) : (
-                journalEntries.map((entry) => (
-                  <Card key={entry.id} className={`border-none shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                    <CardContent className="p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-stone-500 dark:text-stone-500">
-                          {new Date(entry.date).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          })}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          onClick={() => deleteJournalEntry(entry.id)}
+            {/* Formulaire nouvelle entrée - Design moderne */}
+            <div className="px-5 space-y-4 max-w-lg mx-auto">
+              <Card className="border-none shadow-soft bg-white rounded-2xl">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-navy-900">{t.journal.newEntry}</CardTitle>
+                  <CardDescription className="text-sm text-stone-600">{t.journal.expressYourself}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Question 1: Comment te sens-tu aujourd'hui ? */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">
+                      {language === 'fr' ? 'Comment te sens-tu aujourd\'hui ?' : language === 'en' ? 'How do you feel today?' : '¿Cómo te sientes hoy?'}
+                    </label>
+                    <div className="flex gap-2 justify-center py-2">
+                      {['😔', '😐', '🙂', '😄', '😌'].map((emoji) => (
+                        <button
+                          key={emoji}
+                          onClick={() => setNewJournalEntry({ ...newJournalEntry, mood: emoji })}
+                          className={`w-12 h-12 rounded-xl text-3xl transition-all ${
+                            newJournalEntry.mood === emoji
+                              ? 'bg-soft-purple-200 scale-110 shadow-soft'
+                              : 'bg-stone-100 opacity-60 hover:opacity-100 hover:scale-105'
+                          }`}
                         >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      {entry.mood && (
-                        <div>
-                          <p className="text-xs text-stone-500 dark:text-stone-500 mb-1">Humeur</p>
-                          <p className="text-sm">{entry.mood}</p>
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Question 2: De quoi j'ai le plus besoin aujourd'hui ? */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">
+                      {language === 'fr' ? 'De quoi j\'ai le plus besoin aujourd\'hui ?' : language === 'en' ? 'What do I need most today?' : '¿Qué necesito más hoy?'}
+                    </label>
+                    <Textarea
+                      placeholder={language === 'fr' ? 'Repos, connexion, créativité...' : language === 'en' ? 'Rest, connection, creativity...' : 'Descanso, conexión, creatividad...'}
+                      value={newJournalEntry.needToday}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, needToday: e.target.value })}
+                      rows={2}
+                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Question 3: Qu'est-ce que je suis fière d'avoir fait récemment ? */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">
+                      {language === 'fr' ? 'Qu\'est-ce que je suis fière d\'avoir fait récemment ?' : language === 'en' ? 'What am I proud of recently?' : '¿De qué estoy orgullosa recientemente?'}
+                    </label>
+                    <Textarea
+                      placeholder={language === 'fr' ? 'Mes petites victoires...' : language === 'en' ? 'My small victories...' : 'Mis pequeñas victorias...'}
+                      value={newJournalEntry.proudOf}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, proudOf: e.target.value })}
+                      rows={2}
+                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Question 4: Qu'est-ce que je suis prête à laisser partir ? */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">
+                      {language === 'fr' ? 'Qu\'est-ce que je suis prête à laisser partir ?' : language === 'en' ? 'What am I ready to let go?' : '¿Qué estoy lista para dejar ir?'}
+                    </label>
+                    <Textarea
+                      placeholder={language === 'fr' ? 'Peurs, doutes, habitudes...' : language === 'en' ? 'Fears, doubts, habits...' : 'Miedos, dudas, hábitos...'}
+                      value={newJournalEntry.letGo}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, letGo: e.target.value })}
+                      rows={2}
+                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Question 5: Qu'est-ce qui m'a apporté du glow ? */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">{t.journal.whatBroughtGlow}</label>
+                    <Textarea
+                      placeholder={t.journal.momentsOfJoy}
+                      value={newJournalEntry.glow}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
+                      rows={2}
+                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Question 6: Qu'est-ce que j'ai appris ? */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">{t.journal.whatLearned}</label>
+                    <Textarea
+                      placeholder={t.journal.discoveriesLearnings}
+                      value={newJournalEntry.learned}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, learned: e.target.value })}
+                      rows={2}
+                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Question 7: Journal libre */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-navy-900">{t.journal.freeContent}</label>
+                    <Textarea
+                      placeholder={language === 'fr' ? 'Écris librement ce qui te passe par la tête...' : language === 'en' ? 'Write freely what\'s on your mind...' : 'Escribe libremente lo que piensas...'}
+                      value={newJournalEntry.freeContent}
+                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, freeContent: e.target.value })}
+                      rows={3}
+                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Bouton de fermeture moderne */}
+                  <Button
+                    onClick={handleSaveJournalEntry}
+                    className="w-full bg-gradient-to-r from-soft-purple-400 to-soft-purple-500 hover:from-soft-purple-500 hover:to-soft-purple-600 text-white rounded-xl shadow-soft"
+                  >
+                    {language === 'fr' ? 'Fermer pour aujourd\'hui ✨' : language === 'en' ? 'Close for today ✨' : 'Cerrar por hoy ✨'}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Historique du Journal */}
+              <div className="space-y-3">
+                <h2 className="text-lg font-bold text-navy-900">{t.journal.history}</h2>
+                {journalEntries.length === 0 ? (
+                  <div className="text-center p-8 rounded-2xl bg-white shadow-soft">
+                    <BookOpen className="w-12 h-12 mx-auto mb-3 text-stone-400" />
+                    <p className="text-stone-500">{t.journal.noEntries}</p>
+                  </div>
+                ) : (
+                  journalEntries.map((entry) => (
+                    <Card key={entry.id} className="border-none shadow-soft bg-white rounded-2xl">
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-soft-purple-500">
+                            {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl"
+                            onClick={() => deleteJournalEntry(entry.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
-                      )}
-                      {entry.glow && (
-                        <div>
-                          <p className="text-xs text-stone-500 dark:text-stone-500 mb-1">{t.journal.glowOfDay}</p>
-                          <p className="text-sm">{entry.glow}</p>
-                        </div>
-                      )}
-                      {entry.learned && (
-                        <div>
-                          <p className="text-xs text-stone-500 dark:text-stone-500 mb-1">Appris</p>
-                          <p className="text-sm">{entry.learned}</p>
-                        </div>
-                      )}
-                      {entry.freeContent && (
-                        <div>
-                          <p className="text-xs text-stone-500 dark:text-stone-500 mb-1">Libre</p>
-                          <p className="text-sm">{entry.freeContent}</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))
-              )}
+                        {entry.mood && (
+                          <div>
+                            <p className="text-xs font-semibold text-stone-500 mb-1">
+                              {language === 'fr' ? 'Humeur' : language === 'en' ? 'Mood' : 'Estado de ánimo'}
+                            </p>
+                            <p className="text-sm text-navy-900">{entry.mood}</p>
+                          </div>
+                        )}
+                        {entry.glow && (
+                          <div>
+                            <p className="text-xs font-semibold text-stone-500 mb-1">{t.journal.glowOfDay}</p>
+                            <p className="text-sm text-navy-900">{entry.glow}</p>
+                          </div>
+                        )}
+                        {entry.learned && (
+                          <div>
+                            <p className="text-xs font-semibold text-stone-500 mb-1">
+                              {language === 'fr' ? 'Appris' : language === 'en' ? 'Learned' : 'Aprendido'}
+                            </p>
+                            <p className="text-sm text-navy-900">{entry.learned}</p>
+                          </div>
+                        )}
+                        {entry.freeContent && (
+                          <div>
+                            <p className="text-xs font-semibold text-stone-500 mb-1">
+                              {language === 'fr' ? 'Libre' : language === 'en' ? 'Free' : 'Libre'}
+                            </p>
+                            <p className="text-sm text-navy-900">{entry.freeContent}</p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         )}

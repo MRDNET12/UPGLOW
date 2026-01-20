@@ -50,13 +50,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         }`}
         onClick={() => setShowDialog(true)}
       >
-        {/* Emoji décoratif */}
-        <div className="absolute top-1 right-1 text-4xl opacity-20">
-          🏆
-        </div>
-
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 flex-1 pr-10">
+          <div className="flex items-center gap-2 flex-1">
             <div className="w-9 h-9 bg-white/60 rounded-xl flex items-center justify-center flex-shrink-0">
               <Trophy className="w-4 h-4 text-soft-orange-500" />
             </div>
@@ -97,12 +92,14 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent
-          className="max-w-md max-h-[85vh] overflow-y-auto bg-cream-100 border-none shadow-soft-xl rounded-3xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300"
+          className="max-w-md max-h-[85vh] overflow-y-auto bg-cream-100 border-none shadow-soft-xl rounded-3xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300 px-5"
         >
-          <DialogHeader>
+          <DialogHeader className="px-0">
             <DialogTitle className="sr-only">{t.bonus.smallWinsTitle}</DialogTitle>
           </DialogHeader>
-          <SmallWinsQuickAdd theme={theme} />
+          <div className="px-0">
+            <SmallWinsQuickAdd theme={theme} />
+          </div>
         </DialogContent>
       </Dialog>
     </>

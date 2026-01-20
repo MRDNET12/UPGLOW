@@ -385,7 +385,7 @@ export const translations: Record<Language, Translation> = {
       selfReflection: 'Introspection',
       habits: 'Habitudes',
       gloweeGreeting: 'Bonjour!',
-      gloweeIntro: 'Je m\'appelle Glowee\nTon reflet bienveillant.',
+      gloweeIntro: 'Je m\'appelle Glowee\nJe suis ton reflet bienveillant.',
       gloweeMessage: 'Je t\'aide à voir tout ce qui brille déjà en toi ✨',
       gloweeButton: 'Avançons ensemble',
     },

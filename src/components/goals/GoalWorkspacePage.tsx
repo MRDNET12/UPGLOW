@@ -197,6 +197,18 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
   } | null>(null);
   const [isAnalyzingPerformance, setIsAnalyzingPerformance] = useState(false);
   const [showWeeklyTasksGenerator, setShowWeeklyTasksGenerator] = useState(false);
+  const [dailyCheck, setDailyCheck] = useState<{
+    status: 'on_track' | 'behind' | 'ahead';
+    message: string;
+    suggestions: string[];
+    urgency: 'low' | 'medium' | 'high';
+  } | null>(null);
+  const [blockerAnalysis, setBlockerAnalysis] = useState<{
+    blockedCategories: Array<{ category: string; count: number; percentage: number }>;
+    patterns: string[];
+    solutions: string[];
+    rootCause?: string;
+  } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -446,6 +458,92 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
     }
   };
 
+  // Vérification quotidienne de l'objectif
+  const performDailyCheck = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const todayTasks = goalTasks.filter(t => t.date === today);
+      const todayCompleted = todayTasks.filter(t => t.completed);
+
+      const response = await fetch('/api/goals/daily-check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          goalId: goal.id,
+          goalType: goal.type,
+          targetAmount: goal.targetAmount,
+          daysRemaining: Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
+          todayRevenue: 0, // TODO: Récupérer depuis tracking utilisateur
+          todayTasksCompleted: todayCompleted.length,
+          todayTasksTotal: todayTasks.length
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setDailyCheck(data.check);
+
+        // Message de Glowee Work avec le check quotidien
+        const checkMessage: Message = {
+          id: `msg_daily_check_${Date.now()}`,
+          role: 'glowee',
+          content: `${data.check.message}\n\n${data.check.suggestions.join('\n\n')}${data.check.encouragement ? `\n\n${data.check.encouragement}` : ''}`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, checkMessage]);
+      }
+    } catch (error) {
+      console.error('Error performing daily check:', error);
+    }
+  };
+
+  // Analyser les blocages
+  const analyzeBlockers = async () => {
+    try {
+      const response = await fetch('/api/goals/analyze-blockers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tasks: thisWeekTasks,
+          goal: {
+            id: goal.id,
+            name: goal.name
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBlockerAnalysis(data.analysis);
+
+        // Message de Glowee Work avec l'analyse des blocages
+        let blockerMessage = `🔍 Analyse de tes blocages :\n\n`;
+
+        if (data.analysis.patterns.length > 0) {
+          blockerMessage += `📊 Patterns identifiés :\n${data.analysis.patterns.join('\n')}\n\n`;
+        }
+
+        if (data.analysis.rootCause) {
+          blockerMessage += `💡 Cause racine : ${data.analysis.rootCause}\n\n`;
+        }
+
+        if (data.analysis.solutions.length > 0) {
+          blockerMessage += `✅ Solutions proposées :\n${data.analysis.solutions.join('\n')}`;
+        }
+
+        const analysisMessage: Message = {
+          id: `msg_blocker_analysis_${Date.now()}`,
+          role: 'glowee',
+          content: blockerMessage,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, analysisMessage]);
+      }
+    } catch (error) {
+      console.error('Error analyzing blockers:', error);
+    }
+  };
+
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-stone-950 text-stone-100' : 'bg-amber-50 text-stone-900'}`}>
       {/* Header - Mobile optimized */}
@@ -676,17 +774,37 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       onClick={analyzePerformance}
                       disabled={isAnalyzingPerformance}
-                      className="flex-1 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white"
+                      className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white"
                       size="sm"
                     >
-                      <Lightbulb className="w-4 h-4 mr-2" />
-                      {isAnalyzingPerformance ? 'Analyse...' : 'Analyser ma semaine'}
+                      <Lightbulb className="w-4 h-4 mr-1" />
+                      <span className="text-xs">{isAnalyzingPerformance ? 'Analyse...' : 'Analyser'}</span>
+                    </Button>
+                    <Button
+                      onClick={analyzeBlockers}
+                      className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                      size="sm"
+                    >
+                      <Target className="w-4 h-4 mr-1" />
+                      <span className="text-xs">Blocages</span>
                     </Button>
                   </div>
+
+                  {/* Daily Check Button for Financial Goals */}
+                  {goal.type === 'financial' && goal.targetAmount && (
+                    <Button
+                      onClick={performDailyCheck}
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+                      size="sm"
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Vérifier mon objectif du jour
+                    </Button>
+                  )}
 
                   {/* Performance Analysis */}
                   {performanceAnalysis && (

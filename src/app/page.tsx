@@ -1552,44 +1552,50 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Journal View - Refonte Educational Design */}
+        {/* Journal View - Refonte Glassmorphism Rose Pastel */}
         {currentView === 'journal' && (
-          <div className="pb-20 bg-cream-100 min-h-screen">
-            {/* Header moderne */}
-            <div className="flex items-center gap-3 p-5 pb-3 max-w-lg mx-auto">
+          <div className="pb-20 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 min-h-screen">
+            {/* Header glassmorphism */}
+            <div className="flex items-center gap-3 p-5 pb-3 max-w-3xl mx-auto">
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full w-10 h-10 bg-white shadow-soft"
+                className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-pink-100/50 hover:bg-white"
                 onClick={() => setCurrentView('dashboard')}
               >
-                <X className="w-5 h-5 text-navy-900" />
+                <X className="w-5 h-5 text-gray-800" />
               </Button>
-              <h1 className="text-xl font-bold text-navy-900">{t.journal.title}</h1>
+              <div>
+                <h1 className="text-xl font-bold text-gray-800">{t.journal.title}</h1>
+                <p className="text-xs text-gray-600">{t.journal.expressYourself}</p>
+              </div>
             </div>
 
-            {/* Formulaire nouvelle entrée - Design moderne */}
-            <div className="px-5 space-y-4 max-w-lg mx-auto">
-              <Card className="border-none shadow-soft bg-white rounded-2xl">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-navy-900">{t.journal.newEntry}</CardTitle>
-                  <CardDescription className="text-sm text-stone-600">{t.journal.expressYourself}</CardDescription>
+            {/* Formulaire nouvelle entrée - Design glassmorphism */}
+            <div className="px-5 space-y-5 max-w-3xl mx-auto">
+              <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg text-gray-800 flex items-center gap-2">
+                    <span className="text-2xl">✨</span>
+                    {t.journal.newEntry}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-5">
                   {/* Question 1: Comment te sens-tu aujourd'hui ? */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">
+                  <div className="space-y-3">
+                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                      <span>💭</span>
                       {language === 'fr' ? 'Comment te sens-tu aujourd\'hui ?' : language === 'en' ? 'How do you feel today?' : '¿Cómo te sientes hoy?'}
                     </label>
-                    <div className="flex gap-2 justify-center py-2">
+                    <div className="flex gap-2 justify-center py-3">
                       {['😔', '😐', '🙂', '😄', '😌'].map((emoji) => (
                         <button
                           key={emoji}
                           onClick={() => setNewJournalEntry({ ...newJournalEntry, mood: emoji })}
-                          className={`w-12 h-12 rounded-xl text-3xl transition-all ${
+                          className={`w-14 h-14 rounded-2xl text-3xl transition-all ${
                             newJournalEntry.mood === emoji
-                              ? 'bg-soft-purple-200 scale-110 shadow-soft'
-                              : 'bg-stone-100 opacity-60 hover:opacity-100 hover:scale-105'
+                              ? 'bg-gradient-to-br from-pink-200 to-rose-200 scale-110 shadow-lg shadow-pink-200/50'
+                              : 'bg-white/60 backdrop-blur-sm opacity-60 hover:opacity-100 hover:scale-105 shadow-md'
                           }`}
                         >
                           {emoji}
@@ -1598,88 +1604,106 @@ export default function GlowUpChallengeApp() {
                     </div>
                   </div>
 
-                  {/* Question 2: De quoi j'ai le plus besoin aujourd'hui ? */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">
-                      {language === 'fr' ? 'De quoi j\'ai le plus besoin aujourd\'hui ?' : language === 'en' ? 'What do I need most today?' : '¿Qué necesito más hoy?'}
-                    </label>
-                    <Textarea
-                      placeholder={language === 'fr' ? 'Repos, connexion, créativité...' : language === 'en' ? 'Rest, connection, creativity...' : 'Descanso, conexión, creatividad...'}
-                      value={newJournalEntry.needToday}
-                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, needToday: e.target.value })}
-                      rows={2}
-                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
-                    />
+                  {/* Grid 2 colonnes pour questions courtes */}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Question 2: De quoi j'ai le plus besoin aujourd'hui ? */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <span>🌸</span>
+                        {language === 'fr' ? 'Besoin du jour' : language === 'en' ? 'Today\'s need' : 'Necesidad del día'}
+                      </label>
+                      <Textarea
+                        placeholder={language === 'fr' ? 'Repos, connexion...' : language === 'en' ? 'Rest, connection...' : 'Descanso, conexión...'}
+                        value={newJournalEntry.needToday}
+                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, needToday: e.target.value })}
+                        rows={3}
+                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                      />
+                    </div>
+
+                    {/* Question 3: Qu'est-ce que je suis fière d'avoir fait récemment ? */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <span>🌟</span>
+                        {language === 'fr' ? 'Fière de...' : language === 'en' ? 'Proud of...' : 'Orgullosa de...'}
+                      </label>
+                      <Textarea
+                        placeholder={language === 'fr' ? 'Mes victoires...' : language === 'en' ? 'My victories...' : 'Mis victorias...'}
+                        value={newJournalEntry.proudOf}
+                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, proudOf: e.target.value })}
+                        rows={3}
+                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                      />
+                    </div>
                   </div>
 
-                  {/* Question 3: Qu'est-ce que je suis fière d'avoir fait récemment ? */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">
-                      {language === 'fr' ? 'Qu\'est-ce que je suis fière d\'avoir fait récemment ?' : language === 'en' ? 'What am I proud of recently?' : '¿De qué estoy orgullosa recientemente?'}
-                    </label>
-                    <Textarea
-                      placeholder={language === 'fr' ? 'Mes petites victoires...' : language === 'en' ? 'My small victories...' : 'Mis pequeñas victorias...'}
-                      value={newJournalEntry.proudOf}
-                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, proudOf: e.target.value })}
-                      rows={2}
-                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
-                    />
-                  </div>
+                  {/* Grid 2 colonnes pour questions courtes */}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Question 4: Qu'est-ce que je suis prête à laisser partir ? */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <span>🍃</span>
+                        {language === 'fr' ? 'Laisser partir' : language === 'en' ? 'Let go' : 'Dejar ir'}
+                      </label>
+                      <Textarea
+                        placeholder={language === 'fr' ? 'Peurs, doutes...' : language === 'en' ? 'Fears, doubts...' : 'Miedos, dudas...'}
+                        value={newJournalEntry.letGo}
+                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, letGo: e.target.value })}
+                        rows={3}
+                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                      />
+                    </div>
 
-                  {/* Question 4: Qu'est-ce que je suis prête à laisser partir ? */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">
-                      {language === 'fr' ? 'Qu\'est-ce que je suis prête à laisser partir ?' : language === 'en' ? 'What am I ready to let go?' : '¿Qué estoy lista para dejar ir?'}
-                    </label>
-                    <Textarea
-                      placeholder={language === 'fr' ? 'Peurs, doutes, habitudes...' : language === 'en' ? 'Fears, doubts, habits...' : 'Miedos, dudas, hábitos...'}
-                      value={newJournalEntry.letGo}
-                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, letGo: e.target.value })}
-                      rows={2}
-                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
-                    />
-                  </div>
-
-                  {/* Question 5: Qu'est-ce qui m'a apporté du glow ? */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">{t.journal.whatBroughtGlow}</label>
-                    <Textarea
-                      placeholder={t.journal.momentsOfJoy}
-                      value={newJournalEntry.glow}
-                      onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
-                      rows={2}
-                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
-                    />
+                    {/* Question 5: Qu'est-ce qui m'a apporté du glow ? */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <span>✨</span>
+                        {language === 'fr' ? 'Mon glow' : language === 'en' ? 'My glow' : 'Mi brillo'}
+                      </label>
+                      <Textarea
+                        placeholder={t.journal.momentsOfJoy}
+                        value={newJournalEntry.glow}
+                        onChange={(e) => setNewJournalEntry({ ...newJournalEntry, glow: e.target.value })}
+                        rows={3}
+                        className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
+                      />
+                    </div>
                   </div>
 
                   {/* Question 6: Qu'est-ce que j'ai appris ? */}
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">{t.journal.whatLearned}</label>
+                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                      <span>📚</span>
+                      {t.journal.whatLearned}
+                    </label>
                     <Textarea
                       placeholder={t.journal.discoveriesLearnings}
                       value={newJournalEntry.learned}
                       onChange={(e) => setNewJournalEntry({ ...newJournalEntry, learned: e.target.value })}
                       rows={2}
-                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                      className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
                     />
                   </div>
 
                   {/* Question 7: Journal libre */}
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-navy-900">{t.journal.freeContent}</label>
+                    <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                      <span>💌</span>
+                      {t.journal.freeContent}
+                    </label>
                     <Textarea
                       placeholder={language === 'fr' ? 'Écris librement ce qui te passe par la tête...' : language === 'en' ? 'Write freely what\'s on your mind...' : 'Escribe libremente lo que piensas...'}
                       value={newJournalEntry.freeContent}
                       onChange={(e) => setNewJournalEntry({ ...newJournalEntry, freeContent: e.target.value })}
-                      rows={3}
-                      className="bg-cream-100 border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-soft-purple-400 focus:border-transparent"
+                      rows={4}
+                      className="bg-white/60 backdrop-blur-sm border-pink-200 rounded-2xl text-sm focus:ring-2 focus:ring-pink-300 focus:border-transparent shadow-sm resize-none"
                     />
                   </div>
 
-                  {/* Bouton de fermeture moderne */}
+                  {/* Bouton de fermeture glassmorphism */}
                   <Button
                     onClick={handleSaveJournalEntry}
-                    className="w-full bg-gradient-to-r from-soft-purple-400 to-soft-purple-500 hover:from-soft-purple-500 hover:to-soft-purple-600 text-white rounded-xl shadow-soft"
+                    className="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white rounded-[1.5rem] shadow-xl shadow-pink-200/50 h-12 font-semibold"
                   >
                     {language === 'fr' ? 'Fermer pour aujourd\'hui ✨' : language === 'en' ? 'Close for today ✨' : 'Cerrar por hoy ✨'}
                   </Button>
@@ -1687,67 +1711,105 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               {/* Historique du Journal */}
-              <div className="space-y-3">
-                <h2 className="text-lg font-bold text-navy-900">{t.journal.history}</h2>
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-pink-400" />
+                  {t.journal.history}
+                </h2>
                 {journalEntries.length === 0 ? (
-                  <div className="text-center p-8 rounded-2xl bg-white shadow-soft">
-                    <BookOpen className="w-12 h-12 mx-auto mb-3 text-stone-400" />
-                    <p className="text-stone-500">{t.journal.noEntries}</p>
+                  <div className="text-center p-10 rounded-[2rem] bg-white/80 backdrop-blur-md shadow-xl shadow-pink-100/50">
+                    <BookOpen className="w-16 h-16 mx-auto mb-4 text-pink-300 drop-shadow-lg" />
+                    <p className="text-gray-600 font-medium">{t.journal.noEntries}</p>
                   </div>
                 ) : (
-                  journalEntries.map((entry) => (
-                    <Card key={entry.id} className="border-none shadow-soft bg-white rounded-2xl">
-                      <CardContent className="p-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-soft-purple-500">
-                            {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric'
-                            })}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl"
-                            onClick={() => deleteJournalEntry(entry.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        {entry.mood && (
-                          <div>
-                            <p className="text-xs font-semibold text-stone-500 mb-1">
-                              {language === 'fr' ? 'Humeur' : language === 'en' ? 'Mood' : 'Estado de ánimo'}
-                            </p>
-                            <p className="text-sm text-navy-900">{entry.mood}</p>
+                  <div className="grid gap-4">
+                    {journalEntries.map((entry) => (
+                      <Card key={entry.id} className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem] hover:scale-[1.01] transition-transform">
+                        <CardContent className="p-5 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              {entry.mood && <span className="text-3xl drop-shadow-lg">{entry.mood}</span>}
+                              <span className="text-xs font-semibold text-pink-500 bg-pink-50 px-3 py-1 rounded-full">
+                                {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric'
+                                })}
+                              </span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl"
+                              onClick={() => deleteJournalEntry(entry.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
-                        )}
-                        {entry.glow && (
-                          <div>
-                            <p className="text-xs font-semibold text-stone-500 mb-1">{t.journal.glowOfDay}</p>
-                            <p className="text-sm text-navy-900">{entry.glow}</p>
+
+                          {/* Grid 2 colonnes pour les réponses courtes */}
+                          <div className="grid md:grid-cols-2 gap-3">
+                            {entry.needToday && (
+                              <div className="bg-gradient-to-br from-pink-50 to-white p-3 rounded-xl">
+                                <p className="text-xs font-semibold text-pink-600 mb-1 flex items-center gap-1">
+                                  <span>🌸</span>
+                                  {language === 'fr' ? 'Besoin' : language === 'en' ? 'Need' : 'Necesidad'}
+                                </p>
+                                <p className="text-sm text-gray-800">{entry.needToday}</p>
+                              </div>
+                            )}
+                            {entry.proudOf && (
+                              <div className="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl">
+                                <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
+                                  <span>🌟</span>
+                                  {language === 'fr' ? 'Fière' : language === 'en' ? 'Proud' : 'Orgullosa'}
+                                </p>
+                                <p className="text-sm text-gray-800">{entry.proudOf}</p>
+                              </div>
+                            )}
+                            {entry.letGo && (
+                              <div className="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl">
+                                <p className="text-xs font-semibold text-green-600 mb-1 flex items-center gap-1">
+                                  <span>🍃</span>
+                                  {language === 'fr' ? 'Laisser partir' : language === 'en' ? 'Let go' : 'Dejar ir'}
+                                </p>
+                                <p className="text-sm text-gray-800">{entry.letGo}</p>
+                              </div>
+                            )}
+                            {entry.glow && (
+                              <div className="bg-gradient-to-br from-orange-50 to-white p-3 rounded-xl">
+                                <p className="text-xs font-semibold text-orange-600 mb-1 flex items-center gap-1">
+                                  <span>✨</span>
+                                  {t.journal.glowOfDay}
+                                </p>
+                                <p className="text-sm text-gray-800">{entry.glow}</p>
+                              </div>
+                            )}
                           </div>
-                        )}
-                        {entry.learned && (
-                          <div>
-                            <p className="text-xs font-semibold text-stone-500 mb-1">
-                              {language === 'fr' ? 'Appris' : language === 'en' ? 'Learned' : 'Aprendido'}
-                            </p>
-                            <p className="text-sm text-navy-900">{entry.learned}</p>
-                          </div>
-                        )}
-                        {entry.freeContent && (
-                          <div>
-                            <p className="text-xs font-semibold text-stone-500 mb-1">
-                              {language === 'fr' ? 'Libre' : language === 'en' ? 'Free' : 'Libre'}
-                            </p>
-                            <p className="text-sm text-navy-900">{entry.freeContent}</p>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))
+
+                          {/* Réponses longues en pleine largeur */}
+                          {entry.learned && (
+                            <div className="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl">
+                              <p className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1">
+                                <span>📚</span>
+                                {language === 'fr' ? 'Appris' : language === 'en' ? 'Learned' : 'Aprendido'}
+                              </p>
+                              <p className="text-sm text-gray-800">{entry.learned}</p>
+                            </div>
+                          )}
+                          {entry.freeContent && (
+                            <div className="bg-gradient-to-br from-rose-50 to-white p-3 rounded-xl">
+                              <p className="text-xs font-semibold text-rose-600 mb-1 flex items-center gap-1">
+                                <span>💌</span>
+                                {language === 'fr' ? 'Libre' : language === 'en' ? 'Free' : 'Libre'}
+                              </p>
+                              <p className="text-sm text-gray-800">{entry.freeContent}</p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

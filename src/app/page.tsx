@@ -1066,7 +1066,7 @@ export default function GlowUpChallengeApp() {
               </button>
             </div>
 
-            {/* Grande carte Challenge avec illustration et stats intégrées */}
+            {/* Grande carte Challenge - Design épuré */}
             {selectedChallenge === 'mind-life' && (
               <Card
                 className="border-none shadow-soft-lg cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-soft-purple-200 to-soft-purple-400 rounded-3xl overflow-hidden relative"
@@ -1091,20 +1091,8 @@ export default function GlowUpChallengeApp() {
                     </Badge>
                   </div>
 
-                  {/* Stats intégrées */}
-                  <div className="grid grid-cols-2 gap-2 mb-2">
-                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2">
-                      <div className="text-xl font-bold text-navy-900">{challengeProgress.completedDays.length}</div>
-                      <p className="text-[10px] text-navy-800">Jours complétés</p>
-                    </div>
-                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2">
-                      <div className="text-xl font-bold text-navy-900">{challengeProgress.currentDay}</div>
-                      <p className="text-[10px] text-navy-800">Jour actuel</p>
-                    </div>
-                  </div>
-
                   {/* Barre de progression */}
-                  <div className="space-y-1">
+                  <div className="space-y-1 mt-3">
                     <div className="flex items-center justify-between text-[10px] text-navy-800">
                       <span>Progression</span>
                       <span className="font-semibold">{Math.round(progressPercentage)}%</span>
@@ -1120,7 +1108,7 @@ export default function GlowUpChallengeApp() {
               </Card>
             )}
 
-            {/* Grande carte Beauty & Body avec stats intégrées */}
+            {/* Grande carte Beauty & Body - Design épuré */}
             {selectedChallenge === 'beauty-body' && (
               <Card
                 className="border-none shadow-soft-lg cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-peach-200 to-peach-400 rounded-3xl overflow-hidden relative"
@@ -1141,20 +1129,8 @@ export default function GlowUpChallengeApp() {
                     </Badge>
                   </div>
 
-                  {/* Stats intégrées */}
-                  <div className="grid grid-cols-2 gap-2 mb-2">
-                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2">
-                      <div className="text-xl font-bold text-navy-900">{Object.keys(newMeProgress).length}</div>
-                      <p className="text-[10px] text-navy-800">Jours complétés</p>
-                    </div>
-                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-2">
-                      <div className="text-xl font-bold text-navy-900">{newMeCurrentDay}</div>
-                      <p className="text-[10px] text-navy-800">Jour actuel</p>
-                    </div>
-                  </div>
-
                   {/* Barre de progression */}
-                  <div className="space-y-1">
+                  <div className="space-y-1 mt-3">
                     <div className="flex items-center justify-between text-[10px] text-navy-800">
                       <span>Progression</span>
                       <span className="font-semibold">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
@@ -1198,34 +1174,42 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Cartes rectangulaires - Journal et Ma semaine */}
-            <div className="space-y-3">
+            {/* Cartes compactes - Journal et Ma semaine (même ligne) */}
+            <div className="grid grid-cols-2 gap-3">
               {/* Mon Journal */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-r from-soft-purple-100 to-soft-purple-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('journal')}
               >
-                <CardContent className="p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-soft-purple-500" />
+                <CardContent className="p-2.5">
+                  {/* Emoji décoratif */}
+                  <div className="absolute top-1 right-1 text-3xl opacity-20">
+                    📖
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-4 h-4 text-soft-purple-500" />
                     </div>
-                    <h3 className="font-semibold text-sm text-navy-900">{t.journal.title}</h3>
+                    <h3 className="font-semibold text-xs text-navy-900 pr-8">{t.journal.title}</h3>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Ma semaine */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-r from-peach-100 to-peach-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+                className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-peach-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="w-5 h-5 text-peach-500" />
+                <CardContent className="p-2.5">
+                  {/* Emoji décoratif */}
+                  <div className="absolute top-1 right-1 text-3xl opacity-20">
+                    📅
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-4 h-4 text-peach-500" />
                     </div>
-                    <h3 className="font-semibold text-sm text-navy-900">
+                    <h3 className="font-semibold text-xs text-navy-900 pr-8">
                       {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                     </h3>
                   </div>
@@ -1705,23 +1689,24 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Trackers View */}
+        {/* Trackers View - Design Educational Moderne */}
         {currentView === 'trackers' && (
-          <div className="pb-20">
+          <div className="pb-20 bg-cream-100 min-h-screen">
             {/* Header avec bouton retour */}
-            <div className="flex items-center gap-4 p-6 pb-0 max-w-lg mx-auto">
+            <div className="flex items-center gap-3 p-5 pb-3 max-w-lg mx-auto">
               <Button
                 variant="ghost"
                 size="icon"
+                className="rounded-full w-10 h-10 bg-white shadow-soft"
                 onClick={() => setCurrentView('dashboard')}
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-navy-900" />
               </Button>
-              <h1 className="text-2xl font-bold">{t.trackers.title} Glow Up</h1>
+              <h1 className="text-xl font-bold text-navy-900">{t.trackers.title}</h1>
             </div>
 
-            {/* Sélecteur de jours - Scrollable horizontal sans barre */}
-            <div className="overflow-x-auto scrollbar-hide px-6 py-4">
+            {/* Sélecteur de jours - Design moderne */}
+            <div className="overflow-x-auto scrollbar-hide px-5 py-3">
               <div className="flex gap-2 min-w-max">
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
                   const dayData = trackers.find(t => {
@@ -1745,22 +1730,20 @@ export default function GlowUpChallengeApp() {
                     <button
                       key={day}
                       onClick={() => setTrackerCurrentDay(day)}
-                      className={`flex-shrink-0 w-14 h-14 rounded-xl font-semibold transition-all relative ${
+                      className={`flex-shrink-0 w-12 h-12 rounded-2xl font-semibold text-sm transition-all relative shadow-soft ${
                         trackerCurrentDay === day
-                          ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg scale-110'
-                          : theme === 'dark'
-                            ? 'bg-stone-800 text-stone-300 hover:bg-stone-700'
-                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                          ? 'bg-gradient-to-br from-soft-purple-300 to-soft-purple-500 text-white scale-105'
+                          : 'bg-white text-navy-900 hover:bg-soft-purple-100'
                       }`}
                     >
                       {day}
                       {isCompleted && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-full flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" />
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-soft-orange-400 to-soft-orange-500 rounded-full flex items-center justify-center">
+                          <Check className="w-2.5 h-2.5 text-white" />
                         </div>
                       )}
                       {!isCompleted && completionPercentage > 0 && (
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-rose-400">
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold text-soft-purple-500">
                           {completionPercentage}%
                         </div>
                       )}
@@ -1770,19 +1753,24 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Barre de progression */}
-            <div className={`mx-6 p-6 rounded-2xl shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <div className="space-y-4">
-                <h2 className="text-xl font-bold">
-                  {language === 'fr' ? `Bonjour, prête pour ton jour ${trackerCurrentDay} !` :
-                   language === 'en' ? `Hello, ready for day ${trackerCurrentDay}!` :
-                   `¡Hola, lista para el día ${trackerCurrentDay}!`}
+            {/* Carte de progression */}
+            <div className="mx-5 p-4 rounded-3xl shadow-soft-lg bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 relative overflow-hidden">
+              {/* Emoji décoratif */}
+              <div className="absolute top-2 right-2 text-6xl opacity-10">
+                🎯
+              </div>
+
+              <div className="space-y-3 relative z-10">
+                <h2 className="text-lg font-bold text-navy-900">
+                  {language === 'fr' ? `Jour ${trackerCurrentDay} !` :
+                   language === 'en' ? `Day ${trackerCurrentDay}!` :
+                   `¡Día ${trackerCurrentDay}!`}
                 </h2>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-soft-purple-500">
                     {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {trackerCurrentDay} / 30
                   </span>
-                  <span className="text-stone-500">
+                  <span className="text-navy-800">
                     {(() => {
                       const dayData = trackers.find(t => {
                         if (!trackerStartDate) return false;
@@ -1803,11 +1791,11 @@ export default function GlowUpChallengeApp() {
                   </span>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">
-                      {language === 'fr' ? 'Progression du jour' : language === 'en' ? 'Day progress' : 'Progreso del día'}
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-medium text-navy-900">
+                      {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
                     </span>
-                    <span className="text-2xl font-bold text-rose-400">
+                    <span className="text-xl font-bold text-soft-purple-500">
                       {(() => {
                         const dayData = trackers.find(t => {
                           if (!trackerStartDate) return false;
@@ -1828,9 +1816,9 @@ export default function GlowUpChallengeApp() {
                       })()}
                     </span>
                   </div>
-                  <div className="h-3 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
+                  <div className="h-2 bg-white/40 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500 rounded-full"
+                      className="h-full bg-navy-900 transition-all duration-500 rounded-full"
                       style={{
                         width: (() => {
                           const dayData = trackers.find(t => {
@@ -1858,31 +1846,33 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Contenu des trackers */}
-            <div className="p-6 space-y-6 max-w-lg mx-auto">
-              {/* Jour et Date */}
-              <div className="text-center pb-4 border-b border-stone-200 dark:border-stone-800">
-                <h2 className="text-2xl font-bold text-rose-400">
+            <div className="p-5 space-y-4 max-w-lg mx-auto">
+              {/* Jour et Date - Design moderne */}
+              <div className="text-center pb-3">
+                <h2 className="text-lg font-bold text-navy-900 capitalize">
                   {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long' })}
                 </h2>
-                <p className="text-sm text-stone-600 dark:text-stone-400 mt-1">
+                <p className="text-xs text-stone-600 mt-0.5">
                   {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
 
-              {/* Hydration */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Droplet className="w-5 h-5 text-blue-400" />
-                  <h3 className="font-semibold">{t.trackers.hydration}</h3>
-                  <span className="ml-auto text-sm text-stone-500 dark:text-stone-500">{getTodayTracker().waterGlasses} / 8 {t.trackers.glasses}</span>
+              {/* Hydration - Design moderne */}
+              <div className="bg-white rounded-2xl p-4 shadow-soft">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-xl bg-soft-purple-100 flex items-center justify-center">
+                    <Droplet className="w-4 h-4 text-soft-purple-500" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-navy-900">{t.trackers.hydration}</h3>
+                  <span className="ml-auto text-xs text-navy-800 font-medium">{getTodayTracker().waterGlasses} / 8</span>
                 </div>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1.5 flex-wrap">
                   {[...Array(8)].map((_, i) => (
                     <Button
                       key={i}
                       variant={i < getTodayTracker().waterGlasses ? 'default' : 'outline'}
                       size="icon"
-                      className={`w-10 h-10 ${i < getTodayTracker().waterGlasses ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
+                      className={`w-9 h-9 rounded-xl text-base ${i < getTodayTracker().waterGlasses ? 'bg-soft-purple-400 hover:bg-soft-purple-500 border-none' : 'border-soft-purple-200 hover:bg-soft-purple-100'}`}
                       onClick={() => updateTodayTracker({ waterGlasses: i < getTodayTracker().waterGlasses ? i : i + 1 })}
                     >
                       💧
@@ -1891,47 +1881,44 @@ export default function GlowUpChallengeApp() {
                 </div>
               </div>
 
-              {/* Sleep - Nouveau design avec - 8 + ✓ */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Moon className="w-5 h-5 text-purple-400" />
-                  <h3 className="font-semibold">{t.trackers.sleep}</h3>
+              {/* Sleep - Design moderne */}
+              <div className="bg-white rounded-2xl p-4 shadow-soft">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-xl bg-peach-100 flex items-center justify-center">
+                    <Moon className="w-4 h-4 text-peach-500" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-navy-900">{t.trackers.sleep}</h3>
                 </div>
-                <div className="flex items-center gap-4 justify-center">
+                <div className="flex items-center gap-3 justify-center">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="w-12 h-12 rounded-full"
+                    className="w-10 h-10 rounded-xl border-peach-200 hover:bg-peach-100"
                     onClick={() => updateTodayTracker({ sleepHours: Math.max(0, (getTodayTracker().sleepHours || 0) - 0.5) })}
                   >
                     -
                   </Button>
-                  <div className="text-4xl font-bold min-w-[80px] text-center">
-                    {getTodayTracker().sleepHours || 0}<span className="text-2xl">h</span>
+                  <div className="text-3xl font-bold min-w-[70px] text-center text-navy-900">
+                    {getTodayTracker().sleepHours || 0}<span className="text-xl">h</span>
                   </div>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="w-12 h-12 rounded-full"
+                    className="w-10 h-10 rounded-xl border-peach-200 hover:bg-peach-100"
                     onClick={() => updateTodayTracker({ sleepHours: Math.min(12, (getTodayTracker().sleepHours || 0) + 0.5) })}
                   >
                     +
                   </Button>
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="w-12 h-12 rounded-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white border-0"
-                  >
-                    ✓
-                  </Button>
                 </div>
               </div>
 
-              {/* Mood - Avec traduction correcte */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Smile className="w-5 h-5 text-yellow-400" />
-                  <h3 className="font-semibold">{t.trackers.mood}</h3>
+              {/* Mood - Design moderne */}
+              <div className="bg-white rounded-2xl p-4 shadow-soft">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-xl bg-soft-orange-100 flex items-center justify-center">
+                    <Smile className="w-4 h-4 text-soft-orange-500" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-navy-900">{t.trackers.mood}</h3>
                 </div>
                 <div className="flex gap-2 justify-between">
                   {['😢', '😕', '😐', '🙂', '😄'].map((emoji, i) => (
@@ -1939,7 +1926,7 @@ export default function GlowUpChallengeApp() {
                       key={i}
                       variant={getTodayTracker().mood === i + 1 ? 'default' : 'outline'}
                       size="icon"
-                      className={`w-12 h-12 text-2xl ${getTodayTracker().mood === i + 1 ? 'bg-yellow-500 hover:bg-yellow-600' : ''}`}
+                      className={`w-11 h-11 rounded-xl text-xl ${getTodayTracker().mood === i + 1 ? 'bg-soft-orange-400 hover:bg-soft-orange-500 border-none' : 'border-soft-orange-200 hover:bg-soft-orange-100'}`}
                       onClick={() => updateTodayTracker({ mood: i + 1 })}
                     >
                       {emoji}
@@ -1948,26 +1935,28 @@ export default function GlowUpChallengeApp() {
                 </div>
               </div>
 
-              {/* Skincare */}
+              {/* Skincare - Design moderne */}
               <button
                 onClick={() => updateTodayTracker({ skincareCompleted: !getTodayTracker().skincareCompleted })}
-                className={`flex items-center justify-between p-4 rounded-xl transition-all bg-gradient-to-r from-rose-100 to-pink-100 dark:from-rose-900/30 dark:to-pink-900/30`}
+                className="w-full flex items-center justify-between p-4 rounded-2xl transition-all bg-gradient-to-br from-peach-100 to-peach-200 shadow-soft hover:scale-[1.01]"
               >
                 <div className="flex items-center gap-3">
-                  <Activity className="w-5 h-5 text-rose-500" />
+                  <div className="w-8 h-8 rounded-xl bg-white/60 flex items-center justify-center">
+                    <Activity className="w-4 h-4 text-peach-500" />
+                  </div>
                   <div className="text-left">
-                    <h3 className={`font-semibold ${getTodayTracker().skincareCompleted ? 'line-through' : ''}`}>
+                    <h3 className={`font-semibold text-sm text-navy-900 ${getTodayTracker().skincareCompleted ? 'line-through' : ''}`}>
                       {t.trackers.skincareCompleted}
                     </h3>
-                    <p className="text-xs text-stone-600 dark:text-stone-400">
+                    <p className="text-xs text-navy-800">
                       {t.trackers.todaysRoutine}
                     </p>
                   </div>
                 </div>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                   getTodayTracker().skincareCompleted
-                    ? 'bg-rose-400 border-rose-400'
-                    : 'border-rose-300 dark:border-rose-700'
+                    ? 'bg-peach-500 border-peach-500'
+                    : 'border-peach-300'
                 }`}>
                   {getTodayTracker().skincareCompleted && <Check className="w-4 h-4 text-white" />}
                 </div>
@@ -4497,48 +4486,51 @@ export default function GlowUpChallengeApp() {
         language={language}
       />
 
-      {/* Challenge Switch Drawer */}
+      {/* Challenge Switch Drawer - Design moderne */}
       <Drawer open={showChallengeDrawer} onOpenChange={setShowChallengeDrawer}>
-        <DrawerContent className={`max-w-lg mx-auto ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
-          <DrawerHeader className="border-b">
-            <DrawerTitle className="text-center text-xl">
+        <DrawerContent className="max-w-lg mx-auto bg-cream-100 border-none rounded-t-3xl">
+          <DrawerHeader className="border-b border-stone-200 pb-4">
+            <DrawerTitle className="text-center text-xl font-bold text-navy-900">
               {language === 'fr' ? 'Choisir un challenge' : language === 'en' ? 'Choose a challenge' : 'Elegir un desafío'}
             </DrawerTitle>
-            <DrawerDescription className="text-center">
+            <DrawerDescription className="text-center text-sm text-stone-600">
               {language === 'fr' ? 'Sélectionne le challenge que tu veux suivre' : language === 'en' ? 'Select the challenge you want to follow' : 'Selecciona el desafío que quieres seguir'}
             </DrawerDescription>
           </DrawerHeader>
 
-          <div className="p-6 space-y-4">
+          <div className="p-5 space-y-3">
             {/* Mind & Life Option */}
             <button
               onClick={() => {
                 setSelectedChallenge('mind-life');
                 setShowChallengeDrawer(false);
               }}
-              className={`w-full p-6 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+              className={`w-full p-4 rounded-2xl border-none shadow-soft transition-all hover:scale-[1.02] relative overflow-hidden ${
                 selectedChallenge === 'mind-life'
-                  ? theme === 'dark'
-                    ? 'border-green-700 bg-gradient-to-br from-green-900/30 to-emerald-900/30'
-                    : 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50'
-                  : theme === 'dark'
-                    ? 'border-stone-800 bg-gradient-to-br from-green-900/10 to-emerald-900/10 hover:border-green-700'
-                    : 'border-stone-200 bg-gradient-to-br from-green-50/50 to-emerald-50/50 hover:border-green-400'
+                  ? 'bg-gradient-to-br from-soft-purple-200 to-soft-purple-400'
+                  : 'bg-gradient-to-br from-soft-purple-100 to-soft-purple-200'
               }`}
             >
-              <div className="flex items-start gap-4">
-                <span className="text-5xl">🌱</span>
+              {/* Emoji décoratif */}
+              <div className="absolute top-2 right-2 text-5xl opacity-20">
+                🎯
+              </div>
+
+              <div className="flex items-start gap-3 relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">🌱</span>
+                </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  <h3 className="text-lg font-bold mb-1 text-navy-900">
                     {t.challengeSelection.mindLifeTitle}
                   </h3>
-                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                  <p className="text-xs text-navy-800 leading-relaxed">
                     {t.challengeSelection.mindLifeDesc}
                   </p>
                   {selectedChallenge === 'mind-life' && (
-                    <div className="mt-3 flex items-center gap-2 text-green-600 dark:text-green-400">
-                      <Check className="w-5 h-5" />
-                      <span className="text-sm font-semibold">
+                    <div className="mt-2 flex items-center gap-1.5 text-soft-purple-500">
+                      <Check className="w-4 h-4" />
+                      <span className="text-xs font-semibold">
                         {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desafío activo'}
                       </span>
                     </div>
@@ -4553,29 +4545,32 @@ export default function GlowUpChallengeApp() {
                 setSelectedChallenge('beauty-body');
                 setShowChallengeDrawer(false);
               }}
-              className={`w-full p-6 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+              className={`w-full p-4 rounded-2xl border-none shadow-soft transition-all hover:scale-[1.02] relative overflow-hidden ${
                 selectedChallenge === 'beauty-body'
-                  ? theme === 'dark'
-                    ? 'border-pink-700 bg-gradient-to-br from-pink-900/30 to-purple-900/30'
-                    : 'border-pink-400 bg-gradient-to-br from-pink-50 to-purple-50'
-                  : theme === 'dark'
-                    ? 'border-stone-800 bg-gradient-to-br from-pink-900/10 to-purple-900/10 hover:border-pink-700'
-                    : 'border-stone-200 bg-gradient-to-br from-pink-50/50 to-purple-50/50 hover:border-pink-400'
+                  ? 'bg-gradient-to-br from-peach-200 to-peach-400'
+                  : 'bg-gradient-to-br from-peach-100 to-peach-200'
               }`}
             >
-              <div className="flex items-start gap-4">
-                <span className="text-5xl">💄</span>
+              {/* Emoji décoratif */}
+              <div className="absolute top-2 right-2 text-5xl opacity-20">
+                ✨
+              </div>
+
+              <div className="flex items-start gap-3 relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">💄</span>
+                </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  <h3 className="text-lg font-bold mb-1 text-navy-900">
                     {t.challengeSelection.beautyBodyTitle}
                   </h3>
-                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                  <p className="text-xs text-navy-800 leading-relaxed">
                     {t.challengeSelection.beautyBodyDesc}
                   </p>
                   {selectedChallenge === 'beauty-body' && (
-                    <div className="mt-3 flex items-center gap-2 text-pink-600 dark:text-pink-400">
-                      <Check className="w-5 h-5" />
-                      <span className="text-sm font-semibold">
+                    <div className="mt-2 flex items-center gap-1.5 text-peach-500">
+                      <Check className="w-4 h-4" />
+                      <span className="text-xs font-semibold">
                         {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desafío activo'}
                       </span>
                     </div>

@@ -24,15 +24,15 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
         icon: Crown,
-        color: 'text-purple-600 dark:text-purple-400',
-        bgColor: 'bg-purple-100 dark:bg-purple-900/30'
+        color: 'text-soft-purple-500',
+        bgColor: 'bg-soft-purple-100'
       };
     } else if (count >= 3) {
       return {
         name: 'Alpha',
         icon: Award,
-        color: 'text-yellow-600 dark:text-yellow-400',
-        bgColor: 'bg-yellow-100 dark:bg-yellow-900/30'
+        color: 'text-soft-orange-500',
+        bgColor: 'bg-soft-orange-100'
       };
     }
     return null;
@@ -43,38 +43,41 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   return (
     <>
       <div
-        className={`rounded-2xl p-4 shadow-sm w-full cursor-pointer transition-all hover:shadow-md ${
+        className={`rounded-2xl p-3 shadow-soft w-full cursor-pointer transition-all hover:scale-[1.01] relative overflow-hidden ${
           winsThisWeek.length > 0
-            ? (theme === 'dark'
-                ? 'bg-gradient-to-br from-yellow-900/20 via-amber-900/20 to-orange-900/20'
-                : 'bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50')
-            : (theme === 'dark' ? 'bg-gray-800' : 'bg-white')
+            ? 'bg-gradient-to-br from-soft-orange-100 to-soft-orange-200'
+            : 'bg-white'
         }`}
         onClick={() => setShowDialog(true)}
       >
+        {/* Emoji décoratif */}
+        <div className="absolute top-1 right-1 text-4xl opacity-20">
+          🏆
+        </div>
+
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 flex-1">
-            <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+          <div className="flex items-center gap-2 flex-1 pr-10">
+            <div className="w-9 h-9 bg-white/60 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Trophy className="w-4 h-4 text-soft-orange-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-base font-bold text-gray-900 dark:text-white">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <h3 className="text-sm font-bold text-navy-900">
                   {t.bonus.smallWinsTitle}
                 </h3>
                 {rank && (
-                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${rank.bgColor}`}>
-                    <rank.icon className={`w-3 h-3 ${rank.color}`} />
-                    <span className={`text-xs font-bold ${rank.color}`}>{rank.name}</span>
+                  <div className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full ${rank.bgColor}`}>
+                    <rank.icon className={`w-2.5 h-2.5 ${rank.color}`} />
+                    <span className={`text-[10px] font-bold ${rank.color}`}>{rank.name}</span>
                   </div>
                 )}
               </div>
               {lastWin ? (
-                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                <p className="text-[11px] text-navy-800 truncate">
                   {lastWin.text}
                 </p>
               ) : (
-                <p className="text-xs text-gray-500 dark:text-gray-500 italic">
+                <p className="text-[11px] text-stone-500 italic">
                   {t.bonus.addSmallWin}
                 </p>
               )}
@@ -85,16 +88,16 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
               e.stopPropagation();
               setShowDialog(true);
             }}
-            className="ml-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-sm hover:shadow-md"
+            className="ml-1 w-7 h-7 bg-gradient-to-r from-soft-orange-400 to-soft-orange-500 hover:from-soft-orange-500 hover:to-soft-orange-600 rounded-full flex items-center justify-center flex-shrink-0 transition-all shadow-soft"
           >
-            <Plus className="w-4 h-4 text-white" />
+            <Plus className="w-3.5 h-3.5 text-white" />
           </button>
         </div>
       </div>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent
-          className={`max-w-md max-h-[85vh] overflow-y-auto ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white'} data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300`}
+          className="max-w-md max-h-[85vh] overflow-y-auto bg-cream-100 border-none shadow-soft-xl rounded-3xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300"
         >
           <DialogHeader>
             <DialogTitle className="sr-only">{t.bonus.smallWinsTitle}</DialogTitle>

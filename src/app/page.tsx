@@ -3942,9 +3942,6 @@ export default function GlowUpChallengeApp() {
                     <Image src="/Glowee/glowee.webp" alt="Glowee" width={48} height={48} className="object-contain relative z-10 drop-shadow-2xl" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold text-pink-500 mb-2">
-                      {language === 'fr' ? 'Message de Glowee' : language === 'en' ? 'Message from Glowee' : 'Mensaje de Glowee'}
-                    </p>
                     <p className="text-sm italic text-gray-800 font-medium leading-relaxed">
                       {selectedHabit.gloweeMessage[language]}
                     </p>

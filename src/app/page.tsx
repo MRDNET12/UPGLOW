@@ -1252,15 +1252,15 @@ export default function GlowUpChallengeApp() {
             >
               <CardContent className="p-5 relative overflow-hidden">
                 <div className="absolute -top-4 -right-4 text-7xl opacity-10">
-                  🎁
+                  ✨
                 </div>
                 <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
                       <Gift className="w-4 h-4 text-soft-purple-500" />
                     </div>
+                    <h3 className="font-bold text-2xl text-navy-900">{t.bonus.title}</h3>
                   </div>
-                  <h3 className="font-bold text-lg text-navy-900 mb-1">{t.bonus.title}</h3>
                   <p className="text-xs text-stone-600">
                     {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
                   </p>
@@ -2001,10 +2001,10 @@ export default function GlowUpChallengeApp() {
                         }
                         className="flex items-center justify-between p-3 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
                       >
-                        <span className={`text-sm ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                        <span className="text-sm">{habit.label}</span>
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                           isCompleted
-                            ? 'bg-rose-400 border-rose-400'
+                            ? 'bg-green-600 border-green-600'
                             : 'border-stone-300 dark:border-stone-600'
                         }`}>
                           {isCompleted && <Check className="w-4 h-4 text-white" />}
@@ -2032,10 +2032,10 @@ export default function GlowUpChallengeApp() {
                           }
                           className="flex items-center justify-between p-2.5 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
                         >
-                          <span className={`text-xs flex-1 text-left ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                          <span className="text-xs flex-1 text-left">{habit.label}</span>
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                             isCompleted
-                              ? 'bg-green-500 border-green-500'
+                              ? 'bg-green-600 border-green-600'
                               : 'border-stone-300 dark:border-stone-600'
                           }`}>
                             {isCompleted && <Check className="w-3 h-3 text-white" />}
@@ -2059,10 +2059,10 @@ export default function GlowUpChallengeApp() {
                         }
                         className="flex items-center justify-between p-3 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
                       >
-                        <span className={`text-sm ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
+                        <span className="text-sm">{habit.label}</span>
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                           isCompleted
-                            ? 'bg-rose-400 border-rose-400'
+                            ? 'bg-green-600 border-green-600'
                             : 'border-stone-300 dark:border-stone-600'
                         }`}>
                           {isCompleted && <Check className="w-4 h-4 text-white" />}
@@ -2080,34 +2080,7 @@ export default function GlowUpChallengeApp() {
                           ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
                           : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
                       }`}>
-                        <button
-                          onClick={() =>
-                            updateTodayTracker({
-                              habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
-                            })
-                          }
-                          className="flex items-center gap-2 flex-1"
-                        >
-                          <span className={`text-sm ${isCompleted ? 'line-through' : ''}`}>{habit.label}</span>
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-white dark:bg-stone-800">
-                            {habit.type === 'good' ? '✨' : '⚠️'}
-                          </span>
-                        </button>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() =>
-                              updateTodayTracker({
-                                habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
-                              })
-                            }
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                              isCompleted
-                                ? 'bg-green-500 border-green-500'
-                                : 'border-stone-300 dark:border-stone-600'
-                            }`}
-                          >
-                            {isCompleted && <Check className="w-4 h-4 text-white" />}
-                          </button>
+                        <div className="flex items-center gap-2 flex-1">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -2116,7 +2089,34 @@ export default function GlowUpChallengeApp() {
                           >
                             <X className="w-4 h-4" />
                           </Button>
+                          <button
+                            onClick={() =>
+                              updateTodayTracker({
+                                habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
+                              })
+                            }
+                            className="flex items-center gap-2 flex-1"
+                          >
+                            <span className="text-sm">{habit.label}</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-white dark:bg-stone-800">
+                              {habit.type === 'good' ? '✨' : '⚠️'}
+                            </span>
+                          </button>
                         </div>
+                        <button
+                          onClick={() =>
+                            updateTodayTracker({
+                              habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
+                            })
+                          }
+                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                            isCompleted
+                              ? 'bg-green-600 border-green-600'
+                              : 'border-stone-300 dark:border-stone-600'
+                          }`}
+                        >
+                          {isCompleted && <Check className="w-4 h-4 text-white" />}
+                        </button>
                       </div>
                     );
                   })}
@@ -2127,7 +2127,7 @@ export default function GlowUpChallengeApp() {
               {!showAddHabit ? (
                 <Button
                   variant="outline"
-                  className="w-full border-dashed border-2"
+                  className="w-full border-dashed border-2 bg-rose-500 hover:bg-rose-600 text-white border-rose-400"
                   onClick={() => setShowAddHabit(true)}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -2161,7 +2161,7 @@ export default function GlowUpChallengeApp() {
                     <div className="flex gap-2">
                       <Button
                         variant="default"
-                        className="flex-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white border-0"
+                        className="flex-1 bg-rose-500 hover:bg-rose-600 text-white border-0"
                         onClick={() => {
                           if (newHabitLabel.trim()) {
                             setCustomHabits([...customHabits, {

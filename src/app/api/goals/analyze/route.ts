@@ -7,6 +7,10 @@ interface Goal {
   type: 'financial' | 'personal';
   description: string;
   deadline: string;
+  targetAmount?: number;
+  competency?: string;
+  why?: string;
+  desiredFeeling?: string;
 }
 
 interface Task {
@@ -75,11 +79,31 @@ Catégories possibles : recherche, planification, action, apprentissage, créati
 
 Réponds UNIQUEMENT avec le JSON, sans aucun texte avant ou après.`;
 
+    // Calculer l'objectif journalier pour les objectifs financiers
+    let dailyTarget = 0;
+    if (goal.type === 'financial' && goal.targetAmount) {
+      dailyTarget = goal.targetAmount / daysUntilDeadline;
+    }
+
     const userPrompt = `Objectif à analyser :
 - Type : ${goal.type === 'financial' ? 'Financier' : 'Personnel'}
 - Nom : ${goal.name}
 - Description : ${goal.description}
-- Deadline : ${goal.deadline} (dans ${daysUntilDeadline} jours)`;
+- Deadline : ${goal.deadline} (dans ${daysUntilDeadline} jours)
+${goal.targetAmount ? `- Montant cible : ${goal.targetAmount}€` : ''}
+${dailyTarget > 0 ? `- Objectif journalier : ${dailyTarget.toFixed(2)}€/jour` : ''}
+${goal.competency ? `- Niveau de compétence : ${goal.competency}` : ''}
+${goal.why ? `- Motivation : ${goal.why}` : ''}
+${goal.desiredFeeling ? `- Ressenti recherché : ${goal.desiredFeeling}` : ''}
+
+IMPORTANT pour les objectifs financiers :
+${goal.type === 'financial' && dailyTarget > 0 ? `
+- L'utilisateur doit générer ${dailyTarget.toFixed(2)}€ par jour pour atteindre ${goal.targetAmount}€ en ${daysUntilDeadline} jours
+- Les tâches doivent être orientées vers la génération de revenus
+- Priorise les actions qui ont un impact direct sur le chiffre d'affaires
+- Si c'est un projet e-commerce, concentre-toi sur : création produit, marketing, ventes, optimisation conversion
+- Adapte la complexité des tâches selon le niveau de compétence (${goal.competency || 'non spécifié'})
+` : ''}`;
 
     // Appeler OpenRouter API avec DeepSeek
     const response = await fetch(OPENROUTER_API_URL, {

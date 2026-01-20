@@ -784,6 +784,10 @@ function CreateGoalModal({
             type: goalType,
             description: goalDescription,
             deadline: goalDeadline,
+            targetAmount: targetAmount ? parseFloat(targetAmount) : undefined,
+            competency: competency || undefined,
+            why: why || undefined,
+            desiredFeeling: desiredFeeling || undefined,
           },
         }),
       });

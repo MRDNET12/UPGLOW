@@ -1026,26 +1026,26 @@ export default function GlowUpChallengeApp() {
               </button>
             </div>
 
-            {/* Message Glowee - Style glassmorphism */}
+            {/* Message Glowee - Style glassmorphism - Hauteur réduite 30% */}
             <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-hidden">
               <CardContent className="p-0">
-                <div className="flex items-center gap-3 p-4">
+                <div className="flex items-center gap-3 p-3">
                   {/* Image Glowee avec effet 3D */}
-                  <div className="relative w-16 h-16 flex-shrink-0">
+                  <div className="relative w-12 h-12 flex-shrink-0">
                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-2xl blur-sm opacity-50"></div>
                     <Image
                       src="/Glowee/glowee.webp"
                       alt="Glowee"
-                      width={64}
-                      height={64}
+                      width={48}
+                      height={48}
                       className="object-contain relative z-10 drop-shadow-lg"
                     />
                   </div>
 
                   {/* Message */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-pink-400 mb-1">Glowee</p>
-                    <p className="text-sm text-gray-700 leading-relaxed font-medium">
+                    <p className="text-xs font-bold text-pink-400">Glowee</p>
+                    <p className="text-xs text-gray-700 leading-relaxed font-medium">
                       {language === 'fr'
                         ? 'Continue comme ça, tu es sur la bonne voie ! ✨'
                         : language === 'en'
@@ -1221,10 +1221,10 @@ export default function GlowUpChallengeApp() {
 
               {/* Ma semaine */}
               <Card
-                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden h-32"
+                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-4 relative overflow-hidden h-full">
+                <CardContent className="p-4 relative overflow-hidden">
                   {/* Emoji chef en bas, prenant 60% de la hauteur */}
                   <div className="absolute bottom-0 right-2 text-[4.5rem] opacity-20 drop-shadow-lg" style={{ lineHeight: '1' }}>
                     👩‍🍳
@@ -3673,79 +3673,79 @@ export default function GlowUpChallengeApp() {
         )}
       </main>
 
-      {/* Bottom Navigation - Modern Floating Style */}
+      {/* Bottom Navigation - Glassmorphism Rose Pastel */}
       {currentView !== 'goal-details' && (
         <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md z-50">
-          <div className={`${theme === 'dark' ? 'bg-navy-900' : 'bg-navy-800'} rounded-3xl shadow-soft-xl px-2 py-3 backdrop-blur-lg`}>
+          <div className="bg-white/80 backdrop-blur-md rounded-[2rem] shadow-2xl shadow-pink-200/50 px-3 py-3 border border-pink-100/50">
             <div className="flex items-center justify-around">
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
                   currentView === 'dashboard'
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
+                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('dashboard')}
               >
                 <Home className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{t.nav.home}</span>
+                <span className="text-[10px] font-semibold">{t.nav.home}</span>
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
                   currentView === 'routine'
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
+                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('routine')}
               >
                 <Layers className="w-5 h-5" />
-                <span className="text-[10px] font-medium">
+                <span className="text-[10px] font-semibold">
                   {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Plan'}
                 </span>
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex items-center justify-center rounded-2xl transition-all duration-200 ${
+                className={`flex-1 h-14 flex items-center justify-center rounded-xl transition-all duration-200 ${
                   showGloweeChat
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-pink-100 to-rose-100'
+                    : 'hover:bg-pink-50/50'
                 }`}
                 onClick={() => setShowGloweeChat(!showGloweeChat)}
               >
                 <img
                   src="/Glowee/glowee-nav-bar.webp"
                   alt="Glowee"
-                  className="w-13 h-13 object-contain"
+                  className="w-13 h-13 object-contain drop-shadow-lg"
                 />
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
                   currentView === 'trackers'
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
+                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('trackers')}
               >
                 <Target className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{t.nav.trackers}</span>
+                <span className="text-[10px] font-semibold">{t.nav.trackers}</span>
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
                   currentView === 'settings'
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
+                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('settings')}
               >
                 <Settings className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{t.nav.settings}</span>
+                <span className="text-[10px] font-semibold">{t.nav.settings}</span>
               </Button>
             </div>
           </div>

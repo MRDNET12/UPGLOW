@@ -30,18 +30,18 @@ export function BoundariesTracker() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
-            <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+            <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               {t.bonus.boundariesTitle}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               {t.bonus.boundariesThisWeek}: {entriesThisWeek.length}
             </p>
           </div>
@@ -57,22 +57,22 @@ export function BoundariesTracker() {
       {/* Add Button */}
       <button
         onClick={() => setShowAddModal(true)}
-        className="w-full mb-6 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl transition-colors flex items-center justify-center gap-2"
+        className="w-full mb-4 px-4 py-2.5 sm:px-6 sm:py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
       >
-        <Plus className="w-5 h-5" />
+        <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
         {t.bonus.addBoundary}
       </button>
 
-      {/* Boundaries List */}
-      <div className="space-y-3">
+      {/* Boundaries List - Grid on desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-3">
         {boundaries.map((boundary) => {
           const count = getBoundaryCountThisWeek(boundary.key);
           const isInRange = count >= boundary.idealFrequency.min && count <= boundary.idealFrequency.max;
-          
+
           return (
             <div
               key={boundary.key}
-              className={`p-4 rounded-lg border-2 transition-all ${
+              className={`p-3 sm:p-4 rounded-lg border-2 transition-all ${
                 count > 0
                   ? isInRange
                     ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700'
@@ -80,23 +80,23 @@ export function BoundariesTracker() {
                   : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600'
               }`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 flex-1">
-                  <span className="text-2xl">{boundary.icon}</span>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+              <div className="flex items-start justify-between gap-2 sm:gap-3">
+                <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                  <span className="text-xl sm:text-2xl flex-shrink-0">{boundary.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white mb-0.5 sm:mb-1">
                       {getBoundaryLabel(boundary.key, language)}
                     </h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 sm:mb-2 line-clamp-2 lg:line-clamp-1">
                       {getBoundaryDescription(boundary.key, language)}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-500 hidden sm:block">
                       {t.bonus.idealFrequency}: {boundary.idealFrequency.min}-{boundary.idealFrequency.max} {t.bonus.timesPerWeek}
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col items-center gap-1">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base ${
                     count > 0
                       ? isInRange
                         ? 'bg-green-500 text-white'
@@ -106,7 +106,7 @@ export function BoundariesTracker() {
                     {count}
                   </div>
                   {isInRange && count > 0 && (
-                    <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                    <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" />
                   )}
                 </div>
               </div>

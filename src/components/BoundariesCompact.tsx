@@ -94,7 +94,7 @@ export default function BoundariesCompact({ theme }: BoundariesCompactProps) {
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent
-          className={`max-w-md max-h-[85vh] overflow-y-auto ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white'} data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300`}
+          className={`max-w-4xl max-h-[90vh] overflow-y-auto ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white'} data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300`}
         >
           <DialogHeader>
             <DialogTitle className="sr-only">{t.bonus.boundariesTitle}</DialogTitle>

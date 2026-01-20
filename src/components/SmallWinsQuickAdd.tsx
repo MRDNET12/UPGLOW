@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Trophy, Plus, ChevronDown, ChevronUp, History } from 'lucide-react';
+import { Trophy, Plus, ChevronDown, ChevronUp, History, Award, Crown, Sparkles } from 'lucide-react';
 
 interface SmallWinsQuickAddProps {
   theme?: 'light' | 'dark';
 }
 
 export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [newWin, setNewWin] = useState('');
   const [showFaq, setShowFaq] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -27,36 +27,77 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleAddWin();
+  // Déterminer le palier actuel
+  const getRank = () => {
+    const count = winsThisWeek.length;
+    if (count >= 5) {
+      return {
+        name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
+        icon: Crown,
+        color: 'text-purple-600 dark:text-purple-400',
+        bgColor: 'bg-gradient-to-r from-purple-500 to-pink-500',
+        progress: 100,
+        message: language === 'fr' ? '🎉 Statut Légende atteint !' : language === 'en' ? '🎉 Legend status achieved!' : '🎉 ¡Estado Leyenda alcanzado!'
+      };
+    } else if (count >= 3) {
+      return {
+        name: 'Alpha',
+        icon: Award,
+        color: 'text-yellow-600 dark:text-yellow-400',
+        bgColor: 'bg-gradient-to-r from-yellow-400 to-orange-500',
+        progress: (count / 5) * 100,
+        message: language === 'fr' ? `Plus que ${5 - count} pour Légende !` : language === 'en' ? `${5 - count} more for Legend!` : `¡${5 - count} más para Leyenda!`
+      };
+    } else {
+      return {
+        name: language === 'fr' ? 'Débutant' : language === 'en' ? 'Beginner' : 'Principiante',
+        icon: Sparkles,
+        color: 'text-gray-600 dark:text-gray-400',
+        bgColor: 'bg-gradient-to-r from-gray-400 to-gray-500',
+        progress: (count / 5) * 100,
+        message: language === 'fr' ? `Plus que ${3 - count} pour Alpha !` : language === 'en' ? `${3 - count} more for Alpha!` : `¡${3 - count} más para Alpha!`
+      };
     }
   };
 
+  const rank = getRank();
+
   return (
-    <div className={`rounded-2xl p-4 shadow-sm w-full ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-          <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-base font-bold text-gray-900 dark:text-white">
-            {t.bonus.smallWinsTitle}
-          </h3>
-          <p className="text-xs text-gray-600 dark:text-gray-400">
-            {winsThisWeek.length}/3 cette semaine
-          </p>
+    <div className={`rounded-2xl p-5 shadow-lg w-full ${theme === 'dark' ? 'bg-gradient-to-br from-gray-800 to-gray-900' : 'bg-gradient-to-br from-white to-yellow-50/30'}`}>
+      {/* Header avec badge de rang */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-12 h-12 ${rank.bgColor} rounded-2xl flex items-center justify-center shadow-lg`}>
+            <Trophy className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              {t.bonus.smallWinsTitle}
+            </h3>
+            <div className="flex items-center gap-2 mt-1">
+              <rank.icon className={`w-4 h-4 ${rank.color}`} />
+              <span className={`text-sm font-bold ${rank.color}`}>
+                {rank.name}
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                • {winsThisWeek.length} {language === 'fr' ? 'cette semaine' : language === 'en' ? 'this week' : 'esta semana'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mb-3">
-        <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      {/* Barre de progression améliorée */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            {rank.message}
+          </span>
+        </div>
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
           <div
-            className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 transition-all duration-500"
-            style={{ width: `${Math.min((winsThisWeek.length / 3) * 100, 100)}%` }}
+            className={`h-full ${rank.bgColor} transition-all duration-500 shadow-lg`}
+            style={{ width: `${rank.progress}%` }}
           />
         </div>
       </div>
@@ -97,66 +138,91 @@ export function SmallWinsQuickAdd({ theme = 'light' }: SmallWinsQuickAddProps) {
         )}
       </div>
 
-      {/* Input */}
-      <div className="flex gap-2 mb-3">
-        <input
-          type="text"
-          value={newWin}
-          onChange={(e) => setNewWin(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder={t.bonus.smallWinPlaceholder}
-          className="flex-1 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:text-white"
-        />
-        <button
-          onClick={handleAddWin}
-          disabled={!newWin.trim()}
-          className="px-4 py-2 text-sm bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
+      {/* Input amélioré */}
+      <div className="mb-4">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newWin}
+            onChange={(e) => setNewWin(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleAddWin();
+              }
+            }}
+            placeholder={t.bonus.smallWinPlaceholder}
+            className="flex-1 px-4 py-3 text-sm bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent dark:text-white placeholder:text-gray-400 shadow-sm"
+          />
+          <button
+            onClick={handleAddWin}
+            disabled={!newWin.trim()}
+            className={`px-5 py-3 ${rank.bgColor} hover:shadow-lg disabled:bg-gray-300 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-xl transition-all disabled:cursor-not-allowed flex items-center gap-2 text-sm font-semibold shadow-md`}
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
-      {/* Dernier ajouté */}
+      {/* Succès de la semaine */}
       {winsThisWeek.length > 0 && (
-        <div className="mb-3">
-          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Dernier ajouté :</p>
-          <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-            <p className="text-sm text-gray-900 dark:text-white">{winsThisWeek[winsThisWeek.length - 1].text}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {new Date(winsThisWeek[winsThisWeek.length - 1].date).toLocaleDateString()}
-            </p>
+        <div className="mb-4">
+          <p className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
+            {language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana'}
+          </p>
+          <div className="space-y-2">
+            {winsThisWeek.slice().reverse().map((win, index) => (
+              <div
+                key={win.id}
+                className={`p-3 rounded-xl border-2 transition-all ${
+                  index === 0
+                    ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 border-yellow-300 dark:border-yellow-700 shadow-md'
+                    : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                }`}
+              >
+                <div className="flex items-start gap-2">
+                  <Trophy className={`w-4 h-4 mt-0.5 flex-shrink-0 ${index === 0 ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400'}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{win.text}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {new Date(win.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Historique */}
+      {/* Historique amélioré */}
       {history.length > 0 && (
-        <div>
+        <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-4">
           <button
             onClick={() => setShowHistory(!showHistory)}
-            className="w-full flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
+            className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-2">
-              <History className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-              <span className="font-semibold text-gray-900 dark:text-white text-xs">
-                Historique ({history.length})
+              <History className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <span className="font-bold text-gray-900 dark:text-white text-sm">
+                {language === 'fr' ? 'Historique' : language === 'en' ? 'History' : 'Historial'} ({history.length})
               </span>
             </div>
             {showHistory ? (
-              <ChevronUp className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              <ChevronUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             )}
           </button>
 
           {showHistory && (
-            <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+            <div className="mt-3 space-y-2 max-h-64 overflow-y-auto pr-1">
               {history.map((win) => (
                 <div
                   key={win.id}
-                  className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                  className="p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-yellow-300 dark:hover:border-yellow-700 transition-all"
                 >
-                  <p className="text-sm text-gray-900 dark:text-white">{win.text}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{win.text}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {new Date(win.date).toLocaleDateString()}
                   </p>

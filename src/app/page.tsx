@@ -1082,19 +1082,21 @@ export default function GlowUpChallengeApp() {
                   </div>
 
                   <div className="mb-2">
-                    <p className="text-xs font-medium text-soft-purple-500 mb-1">Jour {challengeProgress.currentDay}/30</p>
+                    <p className="text-xs font-medium text-soft-purple-500 mb-1">
+                      {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {challengeProgress.currentDay}/30
+                    </p>
                     <h2 className="text-base font-bold text-navy-900 mb-1 pr-14 line-clamp-1">
-                      {getCurrentDayData()?.title || 'Challenge du jour'}
+                      {getCurrentDayData()?.title || (language === 'fr' ? 'Challenge du jour' : language === 'en' ? 'Challenge of the day' : 'Desafío del día')}
                     </h2>
                     <Badge className="bg-white/40 backdrop-blur-sm text-navy-900 text-xs px-2 py-0.5 rounded-full border-0">
-                      Esprit & Vie
+                      {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente & Vida'}
                     </Badge>
                   </div>
 
                   {/* Barre de progression */}
                   <div className="space-y-1 mt-3">
                     <div className="flex items-center justify-between text-[10px] text-navy-800">
-                      <span>Progression</span>
+                      <span>{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
                       <span className="font-semibold">{Math.round(progressPercentage)}%</span>
                     </div>
                     <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
@@ -1120,19 +1122,21 @@ export default function GlowUpChallengeApp() {
                   </div>
 
                   <div className="mb-2">
-                    <p className="text-xs font-medium text-peach-500 mb-1">Jour {newMeCurrentDay}/30</p>
+                    <p className="text-xs font-medium text-peach-500 mb-1">
+                      {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {newMeCurrentDay}/30
+                    </p>
                     <h2 className="text-base font-bold text-navy-900 mb-1 pr-14 line-clamp-1">
                       {t.newMe.subtitle}
                     </h2>
                     <Badge className="bg-white/40 backdrop-blur-sm text-navy-900 text-xs px-2 py-0.5 rounded-full border-0">
-                      Beauté & Corps
+                      {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>
 
                   {/* Barre de progression */}
                   <div className="space-y-1 mt-3">
                     <div className="flex items-center justify-between text-[10px] text-navy-800">
-                      <span>Progression</span>
+                      <span>{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
                       <span className="font-semibold">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
                     </div>
                     <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
@@ -1149,124 +1153,128 @@ export default function GlowUpChallengeApp() {
             {/* Petits Succès Compact */}
             <SmallWinsCompact theme={theme} />
 
-            {/* Carte Mes Cours / My Courses */}
-            <Card
-              className="border-none shadow-soft-lg bg-gradient-to-br from-soft-orange-200 to-soft-orange-400 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-              onClick={() => setCurrentView('trackers')}
-            >
-              <CardContent className="p-5 relative overflow-hidden">
-                <div className="absolute top-2 right-2 text-5xl opacity-20">
-                  📚
-                </div>
-                <div className="relative z-10">
-                  <h3 className="text-sm font-bold text-navy-900 mb-3">
-                    {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
-                  </h3>
-                  <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-navy-900 text-white text-xs font-medium rounded-full">
-                      {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
-                    </button>
-                    <button className="px-4 py-2 bg-white/40 backdrop-blur-sm text-navy-900 text-xs font-medium rounded-full">
-                      {selectedChallenge === 'mind-life' ? challengeProgress.completedDays.length : Object.keys(newMeProgress).length} {language === 'fr' ? 'complétés' : 'completed'}
-                    </button>
+            {/* Grille responsive pour les cartes principales */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Carte Mes Habitudes */}
+              <Card
+                className="border-none shadow-soft-lg bg-gradient-to-br from-soft-orange-200 to-soft-orange-400 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                onClick={() => setCurrentView('trackers')}
+              >
+                <CardContent className="p-5 relative overflow-hidden">
+                  <div className="absolute top-2 right-2 text-5xl opacity-20">
+                    📚
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="relative z-10">
+                    <h3 className="text-sm font-bold text-navy-900 mb-3">
+                      {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
+                    </h3>
+                    <div className="flex gap-2">
+                      <button className="px-4 py-2 bg-navy-900 text-white text-xs font-medium rounded-full">
+                        {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
+                      </button>
+                      <button className="px-4 py-2 bg-white/40 backdrop-blur-sm text-navy-900 text-xs font-medium rounded-full">
+                        {selectedChallenge === 'mind-life' ? challengeProgress.completedDays.length : Object.keys(newMeProgress).length} {language === 'fr' ? 'complétés' : 'completed'}
+                      </button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Cartes compactes - Journal et Ma semaine (même ligne) */}
-            <div className="grid grid-cols-2 gap-3">
               {/* Mon Journal */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
+                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('journal')}
               >
-                <CardContent className="p-2.5">
+                <CardContent className="p-5 relative overflow-hidden">
                   {/* Emoji décoratif */}
-                  <div className="absolute top-1 right-1 text-3xl opacity-20">
+                  <div className="absolute top-2 right-2 text-5xl opacity-20">
                     📖
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-4 h-4 text-soft-purple-500" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
+                        <BookOpen className="w-4 h-4 text-soft-purple-500" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-navy-900">{t.journal.title}</h3>
                     </div>
-                    <h3 className="font-semibold text-xs text-navy-900 pr-8">{t.journal.title}</h3>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Ma semaine */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-peach-200 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
+                className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-peach-200 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-2.5">
+                <CardContent className="p-5 relative overflow-hidden">
                   {/* Emoji décoratif */}
-                  <div className="absolute top-1 right-1 text-3xl opacity-20">
+                  <div className="absolute top-2 right-2 text-5xl opacity-20">
                     🗓️
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="w-4 h-4 text-peach-500" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
+                        <Calendar className="w-4 h-4 text-peach-500" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-navy-900">
+                        {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
+                      </h3>
                     </div>
-                    <h3 className="font-semibold text-xs text-navy-900 pr-8">
-                      {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Carte Objectifs */}
+              <Card
+                className="border-none shadow-soft bg-navy-800 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                onClick={() => setCurrentView('my-goals')}
+              >
+                <CardContent className="p-5 relative overflow-hidden">
+                  <div className="absolute top-2 right-2 text-4xl opacity-20">
+                    🎯
+                  </div>
+                  <div className="relative z-10">
+                    <p className="text-xs text-white/60 mb-1">
+                      {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
+                    </p>
+                    <h3 className="text-base font-bold text-white mb-2">
+                      {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
                     </h3>
+                    <div className="flex items-center gap-2">
+                      <div className="flex -space-x-2">
+                        <div className="w-6 h-6 rounded-full bg-soft-purple-400 border-2 border-navy-800" />
+                        <div className="w-6 h-6 rounded-full bg-soft-orange-400 border-2 border-navy-800" />
+                        <div className="w-6 h-6 rounded-full bg-peach-400 border-2 border-navy-800" />
+                      </div>
+                      <span className="text-xs text-white/80">+{goals.length}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Carte Bonus avec style moderne */}
+              <Card
+                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 via-peach-100 to-soft-orange-100 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                onClick={() => setCurrentView('bonus')}
+              >
+                <CardContent className="p-5 relative overflow-hidden">
+                  <div className="absolute -top-4 -right-4 text-7xl opacity-10">
+                    ✨
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
+                        <Gift className="w-4 h-4 text-soft-purple-500" />
+                      </div>
+                      <h3 className="font-bold text-2xl text-navy-900">{t.bonus.title}</h3>
+                    </div>
+                    <p className="text-xs text-stone-600">
+                      {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
             </div>
-
-            {/* Carte Objectifs */}
-            <Card
-              className="border-none shadow-soft bg-navy-800 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-              onClick={() => setCurrentView('my-goals')}
-            >
-              <CardContent className="p-5 relative overflow-hidden">
-                <div className="absolute top-2 right-2 text-4xl opacity-20">
-                  🎯
-                </div>
-                <div className="relative z-10">
-                  <p className="text-xs text-white/60 mb-1">
-                    {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
-                  </p>
-                  <h3 className="text-base font-bold text-white mb-2">
-                    {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="flex -space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-soft-purple-400 border-2 border-navy-800" />
-                      <div className="w-6 h-6 rounded-full bg-soft-orange-400 border-2 border-navy-800" />
-                      <div className="w-6 h-6 rounded-full bg-peach-400 border-2 border-navy-800" />
-                    </div>
-                    <span className="text-xs text-white/80">+{goals.length}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Carte Bonus avec style moderne */}
-            <Card
-              className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 via-peach-100 to-soft-orange-100 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-              onClick={() => setCurrentView('bonus')}
-            >
-              <CardContent className="p-5 relative overflow-hidden">
-                <div className="absolute -top-4 -right-4 text-7xl opacity-10">
-                  ✨
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
-                      <Gift className="w-4 h-4 text-soft-purple-500" />
-                    </div>
-                    <h3 className="font-bold text-2xl text-navy-900">{t.bonus.title}</h3>
-                  </div>
-                  <p className="text-xs text-stone-600">
-                    {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Carte 8 Limites */}
             <Card
@@ -3623,7 +3631,7 @@ export default function GlowUpChallengeApp() {
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-2xl transition-all duration-200 ${
+                className={`flex-1 h-14 flex items-center justify-center rounded-2xl transition-all duration-200 ${
                   showGloweeChat
                     ? 'bg-white/10 text-white'
                     : 'text-white/60 hover:text-white hover:bg-white/5'
@@ -3633,9 +3641,8 @@ export default function GlowUpChallengeApp() {
                 <img
                   src="/Glowee/glowee-nav-bar.webp"
                   alt="Glowee"
-                  className="w-8 h-8 object-contain"
+                  className="w-13 h-13 object-contain"
                 />
-                <span className="text-[10px] font-medium">{t.nav.glowee}</span>
               </Button>
 
               <Button

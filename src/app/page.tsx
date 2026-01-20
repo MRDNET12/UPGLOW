@@ -1141,6 +1141,9 @@ export default function GlowUpChallengeApp() {
 
             {/* Question du Soir */}
             <EveningQuestionQuickAdd theme={theme} />
+
+            {/* 8 Limites pour ta Paix Intérieure */}
+            <BoundariesTracker />
           </div>
         )}
 

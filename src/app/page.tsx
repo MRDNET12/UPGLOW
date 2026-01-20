@@ -1001,47 +1001,48 @@ export default function GlowUpChallengeApp() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-cream-100 text-stone-900'}`}>
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 text-stone-900'}`}>
       {/* Main Content */}
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <div className="p-4 space-y-4 max-w-7xl mx-auto">
+          <div className="p-5 space-y-5 max-w-md mx-auto">
             {/* Header avec avatar et notification */}
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-soft-purple-300 to-soft-purple-500 flex items-center justify-center text-white font-semibold">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-200/50">
                   {user?.email?.[0]?.toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <p className="text-xs text-stone-500">Hello,</p>
-                  <p className="font-semibold text-sm">{user?.email?.split('@')[0] || 'User'}</p>
+                  <p className="text-xs text-pink-400 font-medium">Hello,</p>
+                  <p className="font-bold text-base text-gray-800">{user?.email?.split('@')[0] || 'User'}</p>
                 </div>
               </div>
-              <button className="w-10 h-10 rounded-full bg-white shadow-soft flex items-center justify-center">
-                <Bell className="w-5 h-5 text-stone-600" />
+              <button className="w-11 h-11 rounded-full bg-white shadow-lg shadow-pink-100/50 flex items-center justify-center hover:shadow-xl transition-shadow">
+                <Bell className="w-5 h-5 text-pink-400" />
               </button>
             </div>
 
-            {/* Message Glowee - Refonte */}
-            <Card className="border-none shadow-soft bg-white rounded-2xl overflow-hidden">
+            {/* Message Glowee - Style glassmorphism */}
+            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-hidden">
               <CardContent className="p-0">
-                <div className="flex items-center gap-3 p-3">
-                  {/* Image Glowee */}
-                  <div className="relative w-14 h-14 flex-shrink-0">
+                <div className="flex items-center gap-3 p-4">
+                  {/* Image Glowee avec effet 3D */}
+                  <div className="relative w-16 h-16 flex-shrink-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-2xl blur-sm opacity-50"></div>
                     <Image
                       src="/Glowee/glowee.webp"
                       alt="Glowee"
-                      width={56}
-                      height={56}
-                      className="object-contain"
+                      width={64}
+                      height={64}
+                      className="object-contain relative z-10 drop-shadow-lg"
                     />
                   </div>
 
                   {/* Message */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-soft-purple-500 mb-0.5">Glowee</p>
-                    <p className="text-sm text-navy-900 leading-snug">
+                    <p className="text-xs font-bold text-pink-400 mb-1">Glowee</p>
+                    <p className="text-sm text-gray-700 leading-relaxed font-medium">
                       {language === 'fr'
                         ? 'Continue comme ça, tu es sur la bonne voie ! ✨'
                         : language === 'en'
@@ -1059,55 +1060,57 @@ export default function GlowUpChallengeApp() {
               <TrialBadge theme={theme} />
               <button
                 onClick={() => setShowSubscription(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg shadow-pink-200/50 hover:shadow-xl hover:scale-105 transition-all"
               >
-                <Crown className="w-3.5 h-3.5" />
+                <Crown className="w-4 h-4" />
                 <span>Plan Pro</span>
               </button>
               <button
                 onClick={() => setShowChallengeDrawer(true)}
-                className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-200 hover:bg-stone-300'}`}
+                className="p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all"
               >
-                <ChevronRight className="w-5 h-5 rotate-180" />
+                <ChevronRight className="w-5 h-5 rotate-180 text-pink-400" />
               </button>
             </div>
 
-            {/* Grande carte Challenge - Design épuré */}
+            {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className="border-none shadow-soft-lg cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-soft-purple-200 to-soft-purple-400 rounded-3xl overflow-hidden relative"
+                className="border-none shadow-2xl shadow-purple-200/50 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-100 via-pink-50 to-white rounded-[2rem] overflow-hidden relative"
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
                 }}
               >
-                <CardContent className="p-4 relative z-10">
-                  {/* Illustration décorative */}
-                  <div className="absolute top-3 right-3 text-5xl opacity-20">
+                <CardContent className="p-6 relative z-10">
+                  {/* Illustration décorative 3D */}
+                  <div className="absolute -top-2 -right-2 text-6xl opacity-10 drop-shadow-lg">
                     🎯
                   </div>
 
-                  <div className="mb-2">
-                    <p className="text-xs font-medium text-soft-purple-500 mb-1">
-                      {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {challengeProgress.currentDay}/30
-                    </p>
-                    <h2 className="text-base font-bold text-navy-900 mb-1 pr-14 line-clamp-1">
+                  <div className="mb-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-sm mb-2">
+                      <span className="text-xs font-bold text-purple-500">
+                        {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {challengeProgress.currentDay}/30
+                      </span>
+                    </div>
+                    <h2 className="text-lg font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
                       {getCurrentDayData()?.title || (language === 'fr' ? 'Challenge du jour' : language === 'en' ? 'Challenge of the day' : 'Desafío del día')}
                     </h2>
-                    <Badge className="bg-white/40 backdrop-blur-sm text-navy-900 text-xs px-2 py-0.5 rounded-full border-0">
+                    <Badge className="bg-gradient-to-r from-purple-400 to-pink-400 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-purple-200/50">
                       {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente & Vida'}
                     </Badge>
                   </div>
 
-                  {/* Barre de progression */}
-                  <div className="space-y-1 mt-3">
-                    <div className="flex items-center justify-between text-[10px] text-navy-800">
-                      <span>{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
-                      <span className="font-semibold">{Math.round(progressPercentage)}%</span>
+                  {/* Barre de progression avec style glassmorphism */}
+                  <div className="space-y-2 mt-4">
+                    <div className="flex items-center justify-between text-xs text-gray-600">
+                      <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
+                      <span className="font-bold text-purple-500">{Math.round(progressPercentage)}%</span>
                     </div>
-                    <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
+                    <div className="h-2 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-navy-900 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transition-all duration-500 shadow-lg"
                         style={{ width: `${progressPercentage}%` }}
                       />
                     </div>
@@ -1116,38 +1119,40 @@ export default function GlowUpChallengeApp() {
               </Card>
             )}
 
-            {/* Grande carte Beauty & Body - Design épuré */}
+            {/* Grande carte Beauty & Body - Style glassmorphism */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className="border-none shadow-soft-lg cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-peach-200 to-peach-400 rounded-3xl overflow-hidden relative"
+                className="border-none shadow-2xl shadow-pink-200/50 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white rounded-[2rem] overflow-hidden relative"
                 onClick={() => setCurrentView('new-me')}
               >
-                <CardContent className="p-4 relative z-10">
-                  <div className="absolute top-3 right-3 text-5xl opacity-20">
+                <CardContent className="p-6 relative z-10">
+                  <div className="absolute -top-2 -right-2 text-6xl opacity-10 drop-shadow-lg">
                     ✨
                   </div>
 
-                  <div className="mb-2">
-                    <p className="text-xs font-medium text-peach-500 mb-1">
-                      {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {newMeCurrentDay}/30
-                    </p>
-                    <h2 className="text-base font-bold text-navy-900 mb-1 pr-14 line-clamp-1">
+                  <div className="mb-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-sm mb-2">
+                      <span className="text-xs font-bold text-pink-500">
+                        {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {newMeCurrentDay}/30
+                      </span>
+                    </div>
+                    <h2 className="text-lg font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
                       {t.newMe.subtitle}
                     </h2>
-                    <Badge className="bg-white/40 backdrop-blur-sm text-navy-900 text-xs px-2 py-0.5 rounded-full border-0">
+                    <Badge className="bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-pink-200/50">
                       {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>
 
-                  {/* Barre de progression */}
-                  <div className="space-y-1 mt-3">
-                    <div className="flex items-center justify-between text-[10px] text-navy-800">
-                      <span>{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
-                      <span className="font-semibold">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
+                  {/* Barre de progression avec style glassmorphism */}
+                  <div className="space-y-2 mt-4">
+                    <div className="flex items-center justify-between text-xs text-gray-600">
+                      <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
+                      <span className="font-bold text-pink-500">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
                     </div>
-                    <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
+                    <div className="h-2 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-navy-900 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-pink-400 to-rose-400 rounded-full transition-all duration-500 shadow-lg"
                         style={{ width: `${(newMeCurrentDay / 30) * 100}%` }}
                       />
                     </div>
@@ -1159,33 +1164,33 @@ export default function GlowUpChallengeApp() {
             {/* Petits Succès Compact */}
             <SmallWinsCompact theme={theme} />
 
-            {/* Grille responsive pour les cartes principales */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Grille de cartes - 2 colonnes */}
+            <div className="grid grid-cols-2 gap-3">
               {/* Carte Mes Habitudes */}
               <Card
-                className="border-none shadow-soft-lg bg-gradient-to-br from-soft-orange-200 to-soft-orange-400 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('trackers')}
               >
-                <CardContent className="p-5 relative overflow-hidden">
-                  <div className="absolute top-2 right-2 text-5xl opacity-20">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
                     📚
                   </div>
                   <div className="relative z-10">
-                    <h3 className="text-sm font-bold text-navy-900 mb-3">
+                    <h3 className="text-sm font-bold text-gray-800 mb-3">
                       {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                     </h3>
-                    <div className="flex gap-2">
-                      <button className="px-4 py-2 bg-navy-900 text-white text-xs font-medium rounded-full">
+                    <div className="space-y-2">
+                      <button className="w-full px-3 py-1.5 bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold rounded-full shadow-lg shadow-pink-200/50">
                         {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
                       </button>
-                      <button className="px-4 py-2 bg-white/40 backdrop-blur-sm text-navy-900 text-xs font-medium rounded-full">
+                      <div className="px-3 py-1.5 bg-white/60 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full text-center">
                         {(() => {
                           const todayTracker = getTodayTracker();
                           const completedHabits = Object.values(todayTracker.habits).filter(Boolean).length;
-                          const totalHabits = 5 + customHabits.length; // 5 habitudes par défaut + habitudes personnalisées
+                          const totalHabits = 5 + customHabits.length;
                           return `${completedHabits}/${totalHabits} ${language === 'fr' ? 'complétés' : language === 'en' ? 'completed' : 'completados'}`;
                         })()}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -1193,20 +1198,19 @@ export default function GlowUpChallengeApp() {
 
               {/* Mon Journal */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
+                className="border-none shadow-xl shadow-purple-100/50 bg-gradient-to-br from-purple-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('journal')}
               >
-                <CardContent className="p-5 relative overflow-hidden">
-                  {/* Emoji décoratif */}
-                  <div className="absolute top-2 right-2 text-5xl opacity-20">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
                     📖
                   </div>
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
-                        <BookOpen className="w-4 h-4 text-soft-purple-500" />
+                      <div className="w-10 h-10 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <BookOpen className="w-5 h-5 text-purple-400" />
                       </div>
-                      <h3 className="font-semibold text-sm text-navy-900">{t.journal.title}</h3>
+                      <h3 className="font-bold text-sm text-gray-800">{t.journal.title}</h3>
                     </div>
                   </div>
                 </CardContent>
@@ -1214,20 +1218,19 @@ export default function GlowUpChallengeApp() {
 
               {/* Ma semaine */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-peach-200 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
+                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-5 relative overflow-hidden">
-                  {/* Emoji décoratif */}
-                  <div className="absolute top-2 right-2 text-5xl opacity-20">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
                     🗓️
                   </div>
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center flex-shrink-0">
-                        <Calendar className="w-4 h-4 text-peach-500" />
+                      <div className="w-10 h-10 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <Calendar className="w-5 h-5 text-pink-400" />
                       </div>
-                      <h3 className="font-semibold text-sm text-navy-900">
+                      <h3 className="font-bold text-sm text-gray-800">
                         {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                       </h3>
                     </div>
@@ -1237,49 +1240,49 @@ export default function GlowUpChallengeApp() {
 
               {/* Carte Objectifs */}
               <Card
-                className="border-none shadow-soft bg-navy-800 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                className="border-none shadow-xl shadow-gray-200/50 bg-gradient-to-br from-gray-700 via-gray-600 to-gray-700 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('my-goals')}
               >
-                <CardContent className="p-5 relative overflow-hidden">
-                  <div className="absolute top-2 right-2 text-4xl opacity-20">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-4xl opacity-20 drop-shadow-lg">
                     🎯
                   </div>
                   <div className="relative z-10">
-                    <p className="text-xs text-white/60 mb-1">
+                    <p className="text-xs text-white/70 mb-1 font-medium">
                       {language === 'fr' ? 'Mes Objectifs' : language === 'en' ? 'My Goals' : 'Mis Objetivos'}
                     </p>
-                    <h3 className="text-base font-bold text-white mb-2">
+                    <h3 className="text-sm font-bold text-white mb-3">
                       {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
                     </h3>
                     <div className="flex items-center gap-2">
                       <div className="flex -space-x-2">
-                        <div className="w-6 h-6 rounded-full bg-soft-purple-400 border-2 border-navy-800" />
-                        <div className="w-6 h-6 rounded-full bg-soft-orange-400 border-2 border-navy-800" />
-                        <div className="w-6 h-6 rounded-full bg-peach-400 border-2 border-navy-800" />
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-300 to-purple-400 border-2 border-white shadow-lg" />
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 border-2 border-white shadow-lg" />
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-300 to-orange-400 border-2 border-white shadow-lg" />
                       </div>
-                      <span className="text-xs text-white/80">+{goals.length}</span>
+                      <span className="text-xs text-white/90 font-bold">+{goals.length}</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Carte Bonus avec style moderne */}
+              {/* Carte Glow Up (Bonus) */}
               <Card
-                className="border-none shadow-soft bg-gradient-to-br from-soft-purple-100 via-peach-100 to-soft-orange-100 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-purple-50 to-orange-50 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('bonus')}
               >
-                <CardContent className="p-5 relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 text-7xl opacity-10">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
                     ✨
                   </div>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
-                        <Gift className="w-4 h-4 text-soft-purple-500" />
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-10 h-10 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                        <Gift className="w-5 h-5 text-pink-400" />
                       </div>
-                      <h3 className="font-bold text-2xl text-navy-900">{t.bonus.title}</h3>
+                      <h3 className="font-bold text-xl text-gray-800">{t.bonus.title}</h3>
                     </div>
-                    <p className="text-xs text-stone-600">
+                    <p className="text-xs text-gray-600 font-medium">
                       {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
                     </p>
                   </div>
@@ -1289,23 +1292,23 @@ export default function GlowUpChallengeApp() {
 
             {/* Carte 8 Limites */}
             <Card
-              className="border-none shadow-soft bg-white rounded-2xl"
+              className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01]"
               onClick={() => setCurrentView('boundaries')}
             >
-              <CardContent className="p-4">
+              <CardContent className="p-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-peach-100 flex items-center justify-center">
-                    <span className="text-lg">🛡️</span>
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center shadow-lg">
+                    <span className="text-2xl drop-shadow-sm">🛡️</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-sm text-navy-900">
+                    <h3 className="font-bold text-base text-gray-800">
                       {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
                     </h3>
-                    <p className="text-xs text-stone-500">
+                    <p className="text-xs text-gray-500 font-medium">
                       {language === 'fr' ? 'Pour ta paix intérieure' : language === 'en' ? 'For your inner peace' : 'Para tu paz interior'}
                     </p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-stone-400" />
+                  <ChevronRight className="w-5 h-5 text-pink-400" />
                 </div>
               </CardContent>
             </Card>

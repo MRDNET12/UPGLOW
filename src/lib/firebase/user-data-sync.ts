@@ -18,9 +18,14 @@ export async function saveUserData(userId: string, data: any): Promise<void> {
       ...data,
       updatedAt: Timestamp.now()
     }, { merge: true });
-  } catch (error) {
+  } catch (error: any) {
+    // Si l'erreur est due au mode hors ligne, ne pas bloquer l'app
+    if (error?.code === 'unavailable' || error?.message?.includes('offline')) {
+      console.warn('Firebase is offline, data will be saved locally');
+      return;
+    }
     console.error('Error saving user data:', error);
-    throw error;
+    // Ne pas throw l'erreur pour ne pas bloquer l'app
   }
 }
 
@@ -36,14 +41,20 @@ export async function getUserData(userId: string): Promise<any | null> {
   try {
     const userDocRef = doc(db, 'user_data', userId);
     const docSnap = await getDoc(userDocRef);
-    
+
     if (docSnap.exists()) {
       return docSnap.data();
     }
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    // Si l'erreur est due au mode hors ligne, ne pas bloquer l'app
+    if (error?.code === 'unavailable' || error?.message?.includes('offline')) {
+      console.warn('Firebase is offline, using local data');
+      return null;
+    }
     console.error('Error fetching user data:', error);
-    throw error;
+    // Ne pas throw l'erreur, retourner null pour permettre à l'app de continuer
+    return null;
   }
 }
 
@@ -76,7 +87,7 @@ export async function saveTask(userId: string, task: TaskWithDate): Promise<stri
 
   try {
     const tasksRef = collection(db, 'planning_tasks');
-    
+
     // Si la tâche a déjà un ID Firebase, on update
     if (task.id.startsWith('firebase_')) {
       const taskId = task.id.replace('firebase_', '');
@@ -88,7 +99,7 @@ export async function saveTask(userId: string, task: TaskWithDate): Promise<stri
       });
       return task.id;
     }
-    
+
     // Sinon, on crée une nouvelle tâche
     const docRef = await addDoc(tasksRef, {
       ...task,
@@ -96,11 +107,17 @@ export async function saveTask(userId: string, task: TaskWithDate): Promise<stri
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
     });
-    
+
     return `firebase_${docRef.id}`;
-  } catch (error) {
+  } catch (error: any) {
+    // Si l'erreur est due au mode hors ligne, retourner l'ID local
+    if (error?.code === 'unavailable' || error?.message?.includes('offline')) {
+      console.warn('Firebase is offline, task will be saved locally');
+      return task.id;
+    }
     console.error('Error saving task:', error);
-    throw error;
+    // Retourner l'ID local pour ne pas bloquer l'app
+    return task.id;
   }
 }
 
@@ -117,16 +134,22 @@ export async function getUserTasks(userId: string): Promise<TaskWithDate[]> {
     const tasksRef = collection(db, 'planning_tasks');
     const q = query(tasksRef, where('userId', '==', userId));
     const snapshot = await getDocs(q);
-    
+
     return snapshot.docs.map(doc => ({
       ...doc.data(),
       id: `firebase_${doc.id}`,
       createdAt: doc.data().createdAt?.toDate(),
       updatedAt: doc.data().updatedAt?.toDate()
     } as TaskWithDate));
-  } catch (error) {
+  } catch (error: any) {
+    // Si l'erreur est due au mode hors ligne, ne pas bloquer l'app
+    if (error?.code === 'unavailable' || error?.message?.includes('offline')) {
+      console.warn('Firebase is offline, using local tasks');
+      return [];
+    }
     console.error('Error fetching tasks:', error);
-    throw error;
+    // Ne pas throw l'erreur, retourner un tableau vide pour permettre à l'app de continuer
+    return [];
   }
 }
 

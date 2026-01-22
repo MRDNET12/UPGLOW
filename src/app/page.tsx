@@ -53,6 +53,14 @@ import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 
+// Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
+const getLocalDateString = (date: Date = new Date()): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
   const { user, userData, signOut } = useAuth();
@@ -175,7 +183,7 @@ export default function GlowUpChallengeApp() {
     };
   }, [isHydrated]);
 
-  const [todayDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [todayDate] = useState(() => getLocalDateString());
   const [newJournalEntry, setNewJournalEntry] = useState({
     mood: '',
     feelings: '',
@@ -218,7 +226,7 @@ export default function GlowUpChallengeApp() {
 
   // États pour Planning
   const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
 
   // Mes tâches (manuelles)
   const [myWeekPriorities, setMyWeekPriorities] = useState<Array<{id: string, text: string, completed: boolean}>>([]);
@@ -280,9 +288,57 @@ export default function GlowUpChallengeApp() {
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
 
+  // États pour l'installation PWA (Android uniquement)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
+
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
     setIsHydrated(true);
+  }, []);
+
+  // Gestion de l'installation PWA pour Android
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Détecter si l'utilisateur est sur Android
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isAndroidDevice = userAgent.includes('android');
+    setIsAndroid(isAndroidDevice);
+
+    // Vérifier si l'app est déjà installée (mode standalone)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || (window.navigator as any).standalone === true;
+
+    if (isStandalone) {
+      setShowInstallButton(false);
+      return;
+    }
+
+    // Écouter l'événement beforeinstallprompt
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      // Afficher le bouton uniquement sur Android
+      if (isAndroidDevice) {
+        setShowInstallButton(true);
+      }
+    };
+
+    // Écouter quand l'app est installée
+    const handleAppInstalled = () => {
+      setShowInstallButton(false);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   // Initialiser la première ouverture de l'app et gérer le paywall
@@ -353,7 +409,7 @@ export default function GlowUpChallengeApp() {
     if (isHydrated) {
       const storedStartDate = localStorage.getItem('newMeStartDate');
       if (!storedStartDate) {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         localStorage.setItem('newMeStartDate', today);
         setNewMeStartDate(today);
         setNewMeCurrentDay(1);
@@ -377,7 +433,7 @@ export default function GlowUpChallengeApp() {
       const storedHabits = localStorage.getItem('customHabits');
 
       if (!storedStartDate) {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         localStorage.setItem('trackerStartDate', today);
         setTrackerStartDate(today);
         setTrackerCurrentDay(1);
@@ -504,7 +560,8 @@ export default function GlowUpChallengeApp() {
     for (let i = 0; i < 7; i++) {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
-      dates.push(date.toISOString().split('T')[0]);
+      // Utiliser getLocalDateString pour éviter les problèmes de timezone avec toISOString()
+      dates.push(getLocalDateString(date));
     }
     return dates;
   };
@@ -1031,9 +1088,30 @@ export default function GlowUpChallengeApp() {
                   <p className="font-bold text-base text-gray-800">{user?.email?.split('@')[0] || 'User'}</p>
                 </div>
               </div>
-              <button className="w-11 h-11 rounded-full bg-white shadow-lg shadow-pink-100/50 flex items-center justify-center hover:shadow-xl transition-shadow">
-                <Bell className="w-5 h-5 text-pink-400" />
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Bouton d'installation PWA - Android uniquement */}
+                {showInstallButton && isAndroid && (
+                  <button
+                    onClick={async () => {
+                      if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                          setShowInstallButton(false);
+                        }
+                        setDeferredPrompt(null);
+                      }
+                    }}
+                    className="px-3 py-2 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold shadow-lg shadow-pink-200/50 flex items-center gap-1.5 hover:shadow-xl transition-shadow"
+                  >
+                    <Download className="w-4 h-4" />
+                    {language === 'fr' ? 'Installer' : language === 'en' ? 'Install' : 'Instalar'}
+                  </button>
+                )}
+                <button className="w-11 h-11 rounded-full bg-white shadow-lg shadow-pink-100/50 flex items-center justify-center hover:shadow-xl transition-shadow">
+                  <Bell className="w-5 h-5 text-pink-400" />
+                </button>
+              </div>
             </div>
 
             {/* Message Glowee - Style glassmorphism - Hauteur réduite 60% + Glowee débordante */}
@@ -1265,13 +1343,37 @@ export default function GlowUpChallengeApp() {
                     👩‍🍳
                   </div>
                   <div className="relative z-10">
-                    <div className="flex flex-col items-center gap-1.5">
-                      <div className="w-8 h-8 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Calendar className="w-4 h-4 text-pink-400" />
+                    <h3 className="text-xs font-bold text-gray-800 mb-2 text-center">
+                      {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
+                    </h3>
+                    <div className="space-y-1.5">
+                      <button className="w-full px-2 py-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white text-[10px] font-bold rounded-full shadow-lg shadow-pink-200/50">
+                        {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
+                      </button>
+                      <div className="px-2 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
+                        {(() => {
+                          // Calculer les dates de la semaine en cours (lundi à dimanche)
+                          const today = new Date();
+                          const dayOfWeek = today.getDay();
+                          const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                          const monday = new Date(today);
+                          monday.setDate(today.getDate() + diffToMonday);
+                          const sunday = new Date(monday);
+                          sunday.setDate(monday.getDate() + 6);
+
+                          // Filtrer les tâches utilisateur de la semaine
+                          const userTasksThisWeek = tasksWithDates.filter(task => {
+                            if (task.type !== 'user') return false;
+                            const taskDate = new Date(task.date);
+                            return taskDate >= monday && taskDate <= sunday;
+                          });
+
+                          const completedUserTasks = userTasksThisWeek.filter(task => task.completed).length;
+                          const totalUserTasks = userTasksThisWeek.length;
+
+                          return `${completedUserTasks}/${totalUserTasks}`;
+                        })()}
                       </div>
-                      <h3 className="font-bold text-xs text-gray-800 text-center">
-                        {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
-                      </h3>
                     </div>
                   </div>
                 </CardContent>
@@ -1920,7 +2022,7 @@ export default function GlowUpChallengeApp() {
                     if (!trackerStartDate) return false;
                     const trackerDate = new Date(trackerStartDate);
                     trackerDate.setDate(trackerDate.getDate() + (day - 1));
-                    return t.date === trackerDate.toISOString().split('T')[0];
+                    return t.date === getLocalDateString(trackerDate);
                   });
                   const isCompleted = dayData?.completed || false;
                   const completionPercentage = dayData ? Math.round(
@@ -1983,7 +2085,7 @@ export default function GlowUpChallengeApp() {
                         if (!trackerStartDate) return false;
                         const trackerDate = new Date(trackerStartDate);
                         trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
-                        return t.date === trackerDate.toISOString().split('T')[0];
+                        return t.date === getLocalDateString(trackerDate);
                       });
                       const completed = dayData ?
                         (dayData.waterGlasses > 0 ? 1 : 0) +
@@ -1992,7 +2094,7 @@ export default function GlowUpChallengeApp() {
                         (dayData.activityMinutes > 0 ? 1 : 0) +
                         (dayData.skincareCompleted ? 1 : 0) +
                         Object.values(dayData.habits).filter(Boolean).length : 0;
-                      const total = 5 + (dayData ? Object.keys(dayData.habits).length : 6) + customHabits.length;
+                      const total = 5 + (dayData ? Object.keys(dayData.habits).length : 0) + customHabits.length;
                       return `${completed} / ${total} ${language === 'fr' ? 'habitudes' : language === 'en' ? 'habits' : 'hábitos'}`;
                     })()}
                   </span>
@@ -2008,7 +2110,7 @@ export default function GlowUpChallengeApp() {
                           if (!trackerStartDate) return false;
                           const trackerDate = new Date(trackerStartDate);
                           trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
-                          return t.date === trackerDate.toISOString().split('T')[0];
+                          return t.date === getLocalDateString(trackerDate);
                         });
                         if (!dayData) return '0%';
                         const completed =
@@ -2018,7 +2120,8 @@ export default function GlowUpChallengeApp() {
                           (dayData.activityMinutes > 0 ? 1 : 0) +
                           (dayData.skincareCompleted ? 1 : 0) +
                           Object.values(dayData.habits).filter(Boolean).length;
-                        const total = 5 + Object.keys(dayData.habits).length;
+                        // Le total doit inclure les 5 habitudes de base + les habitudes personnalisées
+                        const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
                         return Math.round((completed / total) * 100) + '%';
                       })()}
                     </span>
@@ -2032,7 +2135,7 @@ export default function GlowUpChallengeApp() {
                             if (!trackerStartDate) return false;
                             const trackerDate = new Date(trackerStartDate);
                             trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
-                            return t.date === trackerDate.toISOString().split('T')[0];
+                            return t.date === getLocalDateString(trackerDate);
                           });
                           if (!dayData) return '0%';
                           const completed =
@@ -2042,7 +2145,8 @@ export default function GlowUpChallengeApp() {
                             (dayData.activityMinutes > 0 ? 1 : 0) +
                             (dayData.skincareCompleted ? 1 : 0) +
                             Object.values(dayData.habits).filter(Boolean).length;
-                          const total = 5 + Object.keys(dayData.habits).length;
+                          // Le total doit inclure les 5 habitudes de base + les habitudes personnalisées
+                          const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
                           return Math.round((completed / total) * 100) + '%';
                         })()
                       }}
@@ -2626,7 +2730,7 @@ export default function GlowUpChallengeApp() {
               <div className="grid grid-cols-2 gap-3 items-start">
                 {(() => {
                   const today = new Date();
-                  const todayStr = today.toISOString().split('T')[0];
+                  const todayStr = getLocalDateString(today);
                   const weekDates = getWeekDates(currentWeekOffset);
 
                   return [
@@ -4484,7 +4588,7 @@ export default function GlowUpChallengeApp() {
                       const dayIndex = date.getDay();
                       const dayKey = dayKeys[dayIndex];
                       if (dayKey === newTaskDestination) {
-                        targetDate = date.toISOString().split('T')[0];
+                        targetDate = getLocalDateString(date);
                         break;
                       }
                     }
@@ -4598,7 +4702,7 @@ export default function GlowUpChallengeApp() {
               selected={new Date(selectedDate)}
               onSelect={(date) => {
                 if (date) {
-                  setSelectedDate(date.toISOString().split('T')[0]);
+                  setSelectedDate(getLocalDateString(date));
                   setShowCalendar(false);
                 }
               }}

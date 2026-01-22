@@ -127,13 +127,13 @@ Génère des tâches qui :
         'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-v3.2', // DeepSeek V3.2 pour génération de tâches (agentique)
+        model: 'deepseek/deepseek-r1', // DeepSeek R1 avec mode think pour génération de tâches
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 2048
+        max_tokens: 4096
       })
     });
 
@@ -156,8 +156,12 @@ Génère des tâches qui :
       );
     }
 
-    // Parser la réponse
-    const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    // Parser la réponse - Nettoyer les balises <think> de DeepSeek R1
+    const cleanedContent = content
+      .replace(/<think>[\s\S]*?<\/think>/gi, '') // Enlever les balises <think> de DeepSeek R1
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
     const parsedResponse = JSON.parse(cleanedContent);
 
     return NextResponse.json({

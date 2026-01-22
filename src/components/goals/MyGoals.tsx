@@ -11,7 +11,7 @@ import GloweePopup from '@/components/shared/GloweePopup';
 import { GoalDetailsDialog } from '@/components/goals/GoalDetailsDialog';
 import { GoalAnalysisExplanation } from '@/components/goals/GoalAnalysisExplanation';
 import { GoalConfirmationDialog } from '@/components/goals/GoalConfirmationDialog';
-import { isFirstVisit, trackVisit, markWelcomeSeen } from '@/utils/visitTracker';
+import { markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 import { useGoalsSync } from '@/hooks/useFirebaseSync';
 import { useAuth } from '@/contexts/AuthContext';

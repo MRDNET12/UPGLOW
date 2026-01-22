@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useStore, View } from '@/lib/store';
 import {
@@ -46,12 +46,12 @@ import { MyGoals } from '@/components/goals/MyGoals';
 import { GoalWorkspacePage } from '@/components/goals/GoalWorkspacePage';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
-import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
+import { markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
-import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion, saveUserData } from '@/lib/firebase/user-data-sync';
+import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -161,22 +161,17 @@ export default function GlowUpChallengeApp() {
   useEffect(() => {
     if (!isHydrated) return;
 
-    const handleStorageChange = () => {
-      const savedGoals = localStorage.getItem('myGoals');
-      if (savedGoals) {
-        setGoals(JSON.parse(savedGoals));
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'myGoals' && e.newValue) {
+        setGoals(JSON.parse(e.newValue));
       }
     };
 
-    // Écouter les changements de localStorage
+    // Écouter les changements de localStorage (entre onglets uniquement)
     window.addEventListener('storage', handleStorageChange);
-
-    // Vérifier périodiquement les changements (pour les changements dans le même onglet)
-    const interval = setInterval(handleStorageChange, 1000);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
     };
   }, [isHydrated]);
 
@@ -203,9 +198,6 @@ export default function GlowUpChallengeApp() {
   const [newMeFeeling, setNewMeFeeling] = useState('');
   const [newMeActiveTab, setNewMeActiveTab] = useState<'daily' | 'progress' | 'badges'>('daily');
 
-  // État pour le scroll horizontal des quick adds
-  const [quickAddScrollIndex, setQuickAddScrollIndex] = useState(0);
-  const quickAddScrollRef = useRef<HTMLDivElement>(null);
   const [newMeProgress, setNewMeProgress] = useState<Record<number, Record<string, boolean>>>({});
   const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
   const [newMeStartDate, setNewMeStartDate] = useState<string | null>(null);
@@ -287,8 +279,6 @@ export default function GlowUpChallengeApp() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
-  const [showSwipeHintPopup, setShowSwipeHintPopup] = useState(false);
-  const [hasSeenSwipeHint, setHasSeenSwipeHint] = useState(false);
 
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { X, ArrowLeft, ArrowRight, Target, DollarSign, Briefcase, Heart } from 'lucide-react';
+import { X, ArrowLeft, ArrowRight, Target, DollarSign, Briefcase, Heart, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { createGoal } from '@/lib/firebase/goals-service';
+import { createGoal, updateGoal } from '@/lib/firebase/goals-service';
 import { useAuth } from '@/contexts/AuthContext';
-import type { GoalType } from '@/types/goals';
+import type { GoalType, TimeBreakdownItem } from '@/types/goals';
 
 interface CreateGoalProps {
   isOpen: boolean;
@@ -36,15 +36,20 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
   const [why, setWhy] = useState('');
   const [desiredFeeling, setDesiredFeeling] = useState('');
 
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+
   const handleSubmit = async () => {
     if (!user || !type) return;
 
     setIsSubmitting(true);
+    setIsGeneratingPlan(false);
+
     try {
       const targetDate = new Date();
       targetDate.setMonth(targetDate.getMonth() + parseInt(timeframe || '12'));
 
-      await createGoal(user.uid, {
+      // 1. Créer l'objectif d'abord
+      const goalId = await createGoal(user.uid, {
         type,
         name,
         targetAmount: type === 'financial' ? parseFloat(targetAmount) : undefined,
@@ -57,6 +62,44 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
         progress: 0
       });
 
+      // 2. Générer le plan avec Glowee Work (en arrière-plan)
+      setIsGeneratingPlan(true);
+
+      try {
+        const response = await fetch('/api/goals/generate-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            goal: {
+              id: goalId,
+              name,
+              type,
+              description: why || '',
+              deadline: targetDate.toISOString().split('T')[0],
+              createdAt: new Date().toISOString(),
+              targetAmount: type === 'financial' ? parseFloat(targetAmount) : undefined,
+              why,
+              desiredFeeling
+            }
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.breakdown && Array.isArray(data.breakdown)) {
+            // 3. Sauvegarder le plan dans l'objectif
+            await updateGoal(goalId, {
+              breakdown: data.breakdown as TimeBreakdownItem[],
+              breakdownGeneratedAt: new Date()
+            });
+            console.log('Plan generated and saved for goal:', goalId);
+          }
+        }
+      } catch (planError) {
+        // Ne pas bloquer la création si la génération du plan échoue
+        console.error('Error generating plan (non-blocking):', planError);
+      }
+
       onSuccess();
       onClose();
       resetForm();
@@ -64,6 +107,7 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
       console.error('Error creating goal:', error);
     } finally {
       setIsSubmitting(false);
+      setIsGeneratingPlan(false);
     }
   };
 

@@ -18,25 +18,37 @@ export type AIAction =
   | 'goal_created'
   | 'breakdown_generated';
 
+// Structure du plan généré par Glowee
+export interface TimeBreakdownItem {
+  level: string; // 'Trimestre', 'Mois', 'Semaine', 'Jour'
+  title: string;
+  steps: string[];
+  motivation: string;
+}
+
 // Goal (Objectif)
 export interface Goal {
   id: string;
   userId: string;
   type: GoalType;
   name: string;
-  
+
   // Questions spécifiques selon le type
   targetAmount?: number; // Pour type: financial
   targetDate: string; // YYYY-MM-DD
   timeframe?: number; // En mois
   competencies?: string[]; // Pour type: project
-  
+
   why: string; // Pourquoi cet objectif
   desiredFeeling: string; // Ressenti recherché
-  
+
   status: GoalStatus;
   progress: number; // 0-100
-  
+
+  // Plan généré par Glowee Work (stocké au moment de la création)
+  breakdown?: TimeBreakdownItem[];
+  breakdownGeneratedAt?: Date;
+
   createdAt: Date;
   updatedAt: Date;
 }

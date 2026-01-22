@@ -6,6 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Progress } from '@/components/ui/progress';
 
+interface TimeBreakdownItem {
+  level: string;
+  title: string;
+  steps: string[];
+  motivation: string;
+}
+
 interface Goal {
   id: string;
   name: string;
@@ -19,6 +26,8 @@ interface Goal {
   targetAmount?: number;
   competency?: string;
   duration?: number; // en jours
+  breakdown?: TimeBreakdownItem[]; // Plan pré-généré à la création
+  breakdownGeneratedAt?: string;
 }
 
 interface Message {
@@ -261,11 +270,20 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Générer automatiquement le plan au chargement
+  // Charger le plan pré-généré ou générer si absent
   useEffect(() => {
-    const generatePlan = async () => {
-      if (timeBreakdown || isGeneratingPlan) return; // Déjà généré ou en cours
+    const loadOrGeneratePlan = async () => {
+      if (timeBreakdown || isGeneratingPlan) return; // Déjà chargé ou en cours
 
+      // 1. Vérifier si le plan est déjà stocké dans l'objectif
+      if (goal.breakdown && Array.isArray(goal.breakdown) && goal.breakdown.length > 0) {
+        console.log('Plan loaded from goal:', goal.breakdown.length, 'phases');
+        setTimeBreakdown(goal.breakdown);
+        return;
+      }
+
+      // 2. Sinon, générer le plan (pour les anciens objectifs sans plan)
+      console.log('No pre-generated plan found, generating...');
       setIsGeneratingPlan(true);
       try {
         const response = await fetch('/api/goals/generate-plan', {
@@ -285,8 +303,8 @@ export function GoalWorkspacePage({ goal, onBack, theme = 'light', language = 'f
       }
     };
 
-    generatePlan();
-  }, [goal.id]); // Regénérer si l'objectif change
+    loadOrGeneratePlan();
+  }, [goal.id, goal.breakdown]); // Recharger si l'objectif ou son plan change
 
   // Calculer les statistiques des tâches de cette semaine (AVANT useEffect)
   const getThisWeekTasks = () => {

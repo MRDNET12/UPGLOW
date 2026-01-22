@@ -4406,24 +4406,46 @@ export default function GlowUpChallengeApp() {
               className="w-full h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
               onClick={() => {
                 if (newTaskText.trim()) {
-                  const newTask = {
-                    id: `task_${Date.now()}`,
-                    text: newTaskText,
-                    completed: false
-                  };
-
                   if (newTaskDestination === 'priority') {
+                    // Ajouter aux priorités de la semaine
                     if (weekPriorities.length < 3) {
+                      const newTask = {
+                        id: `task_${Date.now()}`,
+                        text: newTaskText,
+                        completed: false
+                      };
                       setWeekPriorities([...weekPriorities, newTask]);
                     } else {
                       alert(language === 'fr' ? 'Vous avez déjà 3 priorités!' : language === 'en' ? 'You already have 3 priorities!' : '¡Ya tienes 3 prioridades!');
                       return;
                     }
                   } else {
-                    setWeeklyTasks({
-                      ...weeklyTasks,
-                      [newTaskDestination]: [...weeklyTasks[newTaskDestination as keyof typeof weeklyTasks], newTask]
-                    });
+                    // Ajouter aux tâches avec dates (nouveau système)
+                    const today = new Date();
+                    const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+
+                    // Trouver la date correspondant au jour sélectionné
+                    let targetDate = '';
+                    for (let i = 0; i < 7; i++) {
+                      const date = new Date(today);
+                      date.setDate(today.getDate() + i);
+                      const dayIndex = date.getDay();
+                      const dayKey = dayKeys[dayIndex];
+                      if (dayKey === newTaskDestination) {
+                        targetDate = date.toISOString().split('T')[0];
+                        break;
+                      }
+                    }
+
+                    const newTaskWithDate = {
+                      id: `user_${Date.now()}_${Math.random()}`,
+                      text: newTaskText,
+                      date: targetDate,
+                      completed: false,
+                      type: 'user' as const
+                    };
+
+                    setTasksWithDates(prev => [...prev, newTaskWithDate]);
                   }
 
                   setNewTaskText('');

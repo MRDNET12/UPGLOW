@@ -181,7 +181,7 @@ export function GloweeChatPopup({ isOpen, onClose, theme = 'light', language = '
         body: JSON.stringify({
           message: userMessage,
           sessionId,
-          shortResponse: true // Demander des réponses courtes
+          shortResponse: false // Laisser Glowee répondre naturellement
         })
       });
 

@@ -2016,21 +2016,21 @@ export default function GlowUpChallengeApp() {
         {currentView === 'trackers' && (
           <div className="pb-20 bg-cream-100 min-h-screen">
             {/* Header avec bouton retour */}
-            <div className="flex items-center gap-3 p-5 pb-3 max-w-lg mx-auto">
+            <div className="flex items-center gap-2 p-3 pb-2 max-w-lg mx-auto">
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full w-10 h-10 bg-white shadow-soft"
+                className="rounded-full w-8 h-8 bg-white shadow-soft"
                 onClick={() => setCurrentView('dashboard')}
               >
-                <X className="w-5 h-5 text-navy-900" />
+                <X className="w-4 h-4 text-navy-900" />
               </Button>
-              <h1 className="text-xl font-bold text-navy-900">{t.trackers.title}</h1>
+              <h1 className="text-lg font-bold text-navy-900">{t.trackers.title}</h1>
             </div>
 
             {/* Sélecteur de jours - Design moderne */}
-            <div className="overflow-x-auto scrollbar-hide px-5 py-3">
-              <div className="flex gap-2 min-w-max">
+            <div className="overflow-x-auto scrollbar-hide px-3 py-2">
+              <div className="flex gap-1.5 min-w-max">
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
                   const dayData = trackers.find(t => {
                     if (!trackerStartDate) return false;
@@ -2053,7 +2053,7 @@ export default function GlowUpChallengeApp() {
                     <button
                       key={day}
                       onClick={() => setTrackerCurrentDay(day)}
-                      className={`flex-shrink-0 w-12 h-12 rounded-2xl font-semibold text-sm transition-all relative shadow-soft ${
+                      className={`flex-shrink-0 w-10 h-10 rounded-xl font-semibold text-xs transition-all relative shadow-soft ${
                         trackerCurrentDay === day
                           ? 'bg-gradient-to-br from-soft-purple-300 to-soft-purple-500 text-white scale-105'
                           : 'bg-white text-navy-900 hover:bg-soft-purple-100'
@@ -2061,12 +2061,12 @@ export default function GlowUpChallengeApp() {
                     >
                       {day}
                       {isCompleted && (
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-soft-orange-400 to-soft-orange-500 rounded-full flex items-center justify-center">
-                          <Check className="w-2.5 h-2.5 text-white" />
+                        <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-gradient-to-br from-soft-orange-400 to-soft-orange-500 rounded-full flex items-center justify-center">
+                          <Check className="w-2 h-2 text-white" />
                         </div>
                       )}
                       {!isCompleted && completionPercentage > 0 && (
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold text-soft-purple-500">
+                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[8px] font-bold text-soft-purple-500">
                           {completionPercentage}%
                         </div>
                       )}
@@ -2077,23 +2077,20 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Carte de progression */}
-            <div className="mx-5 p-4 rounded-3xl shadow-soft-lg bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 relative overflow-hidden">
+            <div className="mx-3 p-3 rounded-2xl shadow-soft-lg bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 relative overflow-hidden">
               {/* Emoji décoratif */}
-              <div className="absolute top-2 right-2 text-6xl opacity-10">
+              <div className="absolute top-1 right-1 text-4xl opacity-10">
                 🎯
               </div>
 
-              <div className="space-y-3 relative z-10">
-                <h2 className="text-lg font-bold text-navy-900">
-                  {language === 'fr' ? `Jour ${trackerCurrentDay} !` :
-                   language === 'en' ? `Day ${trackerCurrentDay}!` :
-                   `¡Día ${trackerCurrentDay}!`}
-                </h2>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-soft-purple-500">
-                    {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {trackerCurrentDay} / 30
-                  </span>
-                  <span className="text-navy-800">
+              <div className="space-y-2 relative z-10">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-bold text-navy-900">
+                    {language === 'fr' ? `Jour ${trackerCurrentDay}` :
+                     language === 'en' ? `Day ${trackerCurrentDay}` :
+                     `Día ${trackerCurrentDay}`}
+                  </h2>
+                  <span className="text-lg font-bold text-soft-purple-500">
                     {(() => {
                       const dayData = trackers.find(t => {
                         if (!trackerStartDate) return false;
@@ -2101,25 +2098,24 @@ export default function GlowUpChallengeApp() {
                         trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
                         return t.date === getLocalDateString(trackerDate);
                       });
-                      const completed = dayData ?
+                      if (!dayData) return '0%';
+                      const completed =
                         (dayData.waterGlasses > 0 ? 1 : 0) +
                         (dayData.sleepHours > 0 ? 1 : 0) +
                         (dayData.mood > 0 ? 1 : 0) +
                         (dayData.activityMinutes > 0 ? 1 : 0) +
                         (dayData.skincareCompleted ? 1 : 0) +
-                        Object.values(dayData.habits).filter(Boolean).length : 0;
-                      const total = 5 + (dayData ? Object.keys(dayData.habits).length : 0) + customHabits.length;
-                      return `${completed} / ${total} ${language === 'fr' ? 'habitudes' : language === 'en' ? 'habits' : 'hábitos'}`;
+                        Object.values(dayData.habits).filter(Boolean).length;
+                      const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
+                      return Math.round((completed / total) * 100) + '%';
                     })()}
                   </span>
                 </div>
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium text-navy-900">
-                      {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
-                    </span>
-                    <span className="text-xl font-bold text-soft-purple-500">
-                      {(() => {
+                <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-navy-900 transition-all duration-500 rounded-full"
+                    style={{
+                      width: (() => {
                         const dayData = trackers.find(t => {
                           if (!trackerStartDate) return false;
                           const trackerDate = new Date(trackerStartDate);
@@ -2134,70 +2130,43 @@ export default function GlowUpChallengeApp() {
                           (dayData.activityMinutes > 0 ? 1 : 0) +
                           (dayData.skincareCompleted ? 1 : 0) +
                           Object.values(dayData.habits).filter(Boolean).length;
-                        // Le total doit inclure les 5 habitudes de base + les habitudes personnalisées
                         const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
                         return Math.round((completed / total) * 100) + '%';
-                      })()}
-                    </span>
-                  </div>
-                  <div className="h-2 bg-white/40 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-navy-900 transition-all duration-500 rounded-full"
-                      style={{
-                        width: (() => {
-                          const dayData = trackers.find(t => {
-                            if (!trackerStartDate) return false;
-                            const trackerDate = new Date(trackerStartDate);
-                            trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
-                            return t.date === getLocalDateString(trackerDate);
-                          });
-                          if (!dayData) return '0%';
-                          const completed =
-                            (dayData.waterGlasses > 0 ? 1 : 0) +
-                            (dayData.sleepHours > 0 ? 1 : 0) +
-                            (dayData.mood > 0 ? 1 : 0) +
-                            (dayData.activityMinutes > 0 ? 1 : 0) +
-                            (dayData.skincareCompleted ? 1 : 0) +
-                            Object.values(dayData.habits).filter(Boolean).length;
-                          // Le total doit inclure les 5 habitudes de base + les habitudes personnalisées
-                          const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
-                          return Math.round((completed / total) * 100) + '%';
-                        })()
-                      }}
-                    />
-                  </div>
+                      })()
+                    }}
+                  />
                 </div>
               </div>
             </div>
 
             {/* Contenu des trackers */}
-            <div className="p-5 space-y-4 max-w-lg mx-auto">
+            <div className="p-3 space-y-2.5 max-w-lg mx-auto">
               {/* Jour et Date - Design moderne */}
-              <div className="text-center pb-3">
-                <h2 className="text-lg font-bold text-navy-900 capitalize">
+              <div className="text-center pb-1.5">
+                <h2 className="text-sm font-bold text-navy-900 capitalize">
                   {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long' })}
                 </h2>
-                <p className="text-xs text-stone-600 mt-0.5">
-                  {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+                <p className="text-[10px] text-stone-600">
+                  {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
                 </p>
               </div>
 
               {/* Hydration - Design moderne */}
-              <div className="bg-white rounded-2xl p-4 shadow-soft">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-xl bg-soft-purple-100 flex items-center justify-center">
-                    <Droplet className="w-4 h-4 text-soft-purple-500" />
+              <div className="bg-white rounded-xl p-3 shadow-soft">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="w-6 h-6 rounded-lg bg-soft-purple-100 flex items-center justify-center">
+                    <Droplet className="w-3 h-3 text-soft-purple-500" />
                   </div>
-                  <h3 className="font-semibold text-sm text-navy-900">{t.trackers.hydration}</h3>
-                  <span className="ml-auto text-xs text-navy-800 font-medium">{getTodayTracker().waterGlasses} / 8</span>
+                  <h3 className="font-semibold text-xs text-navy-900">{t.trackers.hydration}</h3>
+                  <span className="ml-auto text-[10px] text-navy-800 font-medium">{getTodayTracker().waterGlasses}/8</span>
                 </div>
-                <div className="flex gap-1.5 flex-wrap">
+                <div className="flex gap-1 flex-wrap">
                   {[...Array(8)].map((_, i) => (
                     <Button
                       key={i}
                       variant={i < getTodayTracker().waterGlasses ? 'default' : 'outline'}
                       size="icon"
-                      className={`w-9 h-9 rounded-xl text-base ${i < getTodayTracker().waterGlasses ? 'bg-soft-purple-400 hover:bg-soft-purple-500 border-none' : 'border-soft-purple-200 hover:bg-soft-purple-100'}`}
+                      className={`w-8 h-8 rounded-lg text-sm ${i < getTodayTracker().waterGlasses ? 'bg-soft-purple-400 hover:bg-soft-purple-500 border-none' : 'border-soft-purple-200 hover:bg-soft-purple-100'}`}
                       onClick={() => updateTodayTracker({ waterGlasses: i < getTodayTracker().waterGlasses ? i : i + 1 })}
                     >
                       💧
@@ -2207,29 +2176,29 @@ export default function GlowUpChallengeApp() {
               </div>
 
               {/* Sleep - Design moderne */}
-              <div className="bg-white rounded-2xl p-4 shadow-soft">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-xl bg-peach-100 flex items-center justify-center">
-                    <Moon className="w-4 h-4 text-peach-500" />
+              <div className="bg-white rounded-xl p-3 shadow-soft">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="w-6 h-6 rounded-lg bg-peach-100 flex items-center justify-center">
+                    <Moon className="w-3 h-3 text-peach-500" />
                   </div>
-                  <h3 className="font-semibold text-sm text-navy-900">{t.trackers.sleep}</h3>
+                  <h3 className="font-semibold text-xs text-navy-900">{t.trackers.sleep}</h3>
                 </div>
-                <div className="flex items-center gap-3 justify-center">
+                <div className="flex items-center gap-2 justify-center">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="w-10 h-10 rounded-xl border-peach-200 hover:bg-peach-100"
+                    className="w-8 h-8 rounded-lg border-peach-200 hover:bg-peach-100"
                     onClick={() => updateTodayTracker({ sleepHours: Math.max(0, (getTodayTracker().sleepHours || 0) - 0.5) })}
                   >
                     -
                   </Button>
-                  <div className="text-3xl font-bold min-w-[70px] text-center text-navy-900">
-                    {getTodayTracker().sleepHours || 0}<span className="text-xl">h</span>
+                  <div className="text-2xl font-bold min-w-[60px] text-center text-navy-900">
+                    {getTodayTracker().sleepHours || 0}<span className="text-base">h</span>
                   </div>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="w-10 h-10 rounded-xl border-peach-200 hover:bg-peach-100"
+                    className="w-8 h-8 rounded-lg border-peach-200 hover:bg-peach-100"
                     onClick={() => updateTodayTracker({ sleepHours: Math.min(12, (getTodayTracker().sleepHours || 0) + 0.5) })}
                   >
                     +
@@ -2238,20 +2207,20 @@ export default function GlowUpChallengeApp() {
               </div>
 
               {/* Mood - Design moderne */}
-              <div className="bg-white rounded-2xl p-4 shadow-soft">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-xl bg-soft-orange-100 flex items-center justify-center">
-                    <Smile className="w-4 h-4 text-soft-orange-500" />
+              <div className="bg-white rounded-xl p-3 shadow-soft">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="w-6 h-6 rounded-lg bg-soft-orange-100 flex items-center justify-center">
+                    <Smile className="w-3 h-3 text-soft-orange-500" />
                   </div>
-                  <h3 className="font-semibold text-sm text-navy-900">{t.trackers.mood}</h3>
+                  <h3 className="font-semibold text-xs text-navy-900">{t.trackers.mood}</h3>
                 </div>
-                <div className="flex gap-2 justify-between">
+                <div className="flex gap-1.5 justify-between">
                   {['😢', '😕', '😐', '🙂', '😄'].map((emoji, i) => (
                     <Button
                       key={i}
                       variant={getTodayTracker().mood === i + 1 ? 'default' : 'outline'}
                       size="icon"
-                      className={`w-11 h-11 rounded-xl text-xl ${getTodayTracker().mood === i + 1 ? 'bg-soft-orange-400 hover:bg-soft-orange-500 border-none' : 'border-soft-orange-200 hover:bg-soft-orange-100'}`}
+                      className={`w-10 h-10 rounded-lg text-lg ${getTodayTracker().mood === i + 1 ? 'bg-soft-orange-400 hover:bg-soft-orange-500 border-none' : 'border-soft-orange-200 hover:bg-soft-orange-100'}`}
                       onClick={() => updateTodayTracker({ mood: i + 1 })}
                     >
                       {emoji}
@@ -2263,37 +2232,37 @@ export default function GlowUpChallengeApp() {
               {/* Skincare - Design moderne */}
               <button
                 onClick={() => updateTodayTracker({ skincareCompleted: !getTodayTracker().skincareCompleted })}
-                className="w-full flex items-center justify-between p-4 rounded-2xl transition-all bg-gradient-to-br from-peach-100 to-peach-200 shadow-soft hover:scale-[1.01]"
+                className="w-full flex items-center justify-between p-3 rounded-xl transition-all bg-gradient-to-br from-peach-100 to-peach-200 shadow-soft hover:scale-[1.01]"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-white/60 flex items-center justify-center">
-                    <Activity className="w-4 h-4 text-peach-500" />
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-white/60 flex items-center justify-center">
+                    <Activity className="w-3 h-3 text-peach-500" />
                   </div>
                   <div className="text-left">
-                    <h3 className={`font-semibold text-sm text-navy-900 ${getTodayTracker().skincareCompleted ? 'line-through' : ''}`}>
+                    <h3 className={`font-semibold text-xs text-navy-900 ${getTodayTracker().skincareCompleted ? 'line-through' : ''}`}>
                       {t.trackers.skincareCompleted}
                     </h3>
-                    <p className="text-xs text-navy-800">
+                    <p className="text-[10px] text-navy-800">
                       {t.trackers.todaysRoutine}
                     </p>
                   </div>
                 </div>
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                   getTodayTracker().skincareCompleted
                     ? 'bg-peach-500 border-peach-500'
                     : 'border-peach-300'
                 }`}>
-                  {getTodayTracker().skincareCompleted && <Check className="w-4 h-4 text-white" />}
+                  {getTodayTracker().skincareCompleted && <Check className="w-3 h-3 text-white" />}
                 </div>
               </button>
 
               {/* Habits */}
-              <div className="space-y-3">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5 text-green-400" />
+              <div className="space-y-2">
+                <h3 className="font-semibold text-xs flex items-center gap-1.5">
+                  <Lightbulb className="w-4 h-4 text-green-400" />
                   {t.trackers.dailyHabits}
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {/* Médite sur dieu - pleine largeur */}
                   {(() => {
                     const habit = { key: 'meditation', label: t.trackers.meditation5min };
@@ -2306,22 +2275,22 @@ export default function GlowUpChallengeApp() {
                             habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
                           })
                         }
-                        className="flex items-center justify-between p-3 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
+                        className="flex items-center justify-between p-2 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
                       >
-                        <span className="text-sm">{habit.label}</span>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        <span className="text-xs">{habit.label}</span>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                           isCompleted
                             ? 'bg-green-600 border-green-600'
                             : 'border-stone-300 dark:border-stone-600'
                         }`}>
-                          {isCompleted && <Check className="w-4 h-4 text-white" />}
+                          {isCompleted && <Check className="w-3 h-3 text-white" />}
                         </div>
                       </button>
                     );
                   })()}
 
                   {/* Journaling, Gratitude, Exercice, Lecture - Cases à cocher sur la même ligne */}
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-1.5">
                     {[
                       { key: 'journaling', label: t.trackers.journaling },
                       { key: 'gratitude', label: t.trackers.gratitude },
@@ -2337,15 +2306,15 @@ export default function GlowUpChallengeApp() {
                               habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
                             })
                           }
-                          className="flex items-center justify-between p-2.5 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
+                          className="flex items-center justify-between p-2 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
                         >
-                          <span className="text-xs flex-1 text-left">{habit.label}</span>
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          <span className="text-[10px] flex-1 text-left">{habit.label}</span>
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                             isCompleted
                               ? 'bg-green-600 border-green-600'
                               : 'border-stone-300 dark:border-stone-600'
                           }`}>
-                            {isCompleted && <Check className="w-3 h-3 text-white" />}
+                            {isCompleted && <Check className="w-2.5 h-2.5 text-white" />}
                           </div>
                         </button>
                       );
@@ -2364,15 +2333,15 @@ export default function GlowUpChallengeApp() {
                             habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
                           })
                         }
-                        className="flex items-center justify-between p-3 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
+                        className="flex items-center justify-between p-2 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
                       >
-                        <span className="text-sm">{habit.label}</span>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        <span className="text-xs">{habit.label}</span>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                           isCompleted
                             ? 'bg-green-600 border-green-600'
                             : 'border-stone-300 dark:border-stone-600'
                         }`}>
-                          {isCompleted && <Check className="w-4 h-4 text-white" />}
+                          {isCompleted && <Check className="w-3 h-3 text-white" />}
                         </div>
                       </button>
                     );
@@ -2382,19 +2351,19 @@ export default function GlowUpChallengeApp() {
                   {customHabits.map((habit) => {
                     const isCompleted = getTodayTracker().habits[habit.id] || false;
                     return (
-                      <div key={habit.id} className={`flex items-center justify-between p-3 rounded-lg ${
+                      <div key={habit.id} className={`flex items-center justify-between p-2 rounded-lg ${
                         habit.type === 'good'
                           ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
                           : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
                       }`}>
-                        <div className="flex items-center gap-2 flex-1">
+                        <div className="flex items-center gap-1.5 flex-1">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="w-8 h-8"
+                            className="w-6 h-6"
                             onClick={() => setCustomHabits(customHabits.filter(h => h.id !== habit.id))}
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-3 h-3" />
                           </Button>
                           <button
                             onClick={() =>
@@ -2402,10 +2371,10 @@ export default function GlowUpChallengeApp() {
                                 habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
                               })
                             }
-                            className="flex items-center gap-2 flex-1"
+                            className="flex items-center gap-1.5 flex-1"
                           >
-                            <span className="text-sm">{habit.label}</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-white dark:bg-stone-800">
+                            <span className="text-xs">{habit.label}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white dark:bg-stone-800">
                               {habit.type === 'good' ? '✨' : '⚠️'}
                             </span>
                           </button>
@@ -2416,13 +2385,13 @@ export default function GlowUpChallengeApp() {
                               habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
                             })
                           }
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                             isCompleted
                               ? 'bg-green-600 border-green-600'
                               : 'border-stone-300 dark:border-stone-600'
                           }`}
                         >
-                          {isCompleted && <Check className="w-4 h-4 text-white" />}
+                          {isCompleted && <Check className="w-3 h-3 text-white" />}
                         </button>
                       </div>
                     );
@@ -2434,41 +2403,45 @@ export default function GlowUpChallengeApp() {
               {!showAddHabit ? (
                 <Button
                   variant="outline"
-                  className="w-full border-dashed border-2 bg-rose-500 hover:bg-rose-600 text-white border-rose-400"
+                  size="sm"
+                  className="w-full border-dashed border-2 bg-rose-500 hover:bg-rose-600 text-white border-rose-400 h-8 text-xs"
                   onClick={() => setShowAddHabit(true)}
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-3.5 h-3.5 mr-1.5" />
                   {language === 'fr' ? 'Ajouter une habitude' : language === 'en' ? 'Add a habit' : 'Agregar un hábito'}
                 </Button>
               ) : (
-                <div className={`p-4 rounded-xl border-2 border-dashed ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-300'}`}>
-                  <div className="space-y-3">
+                <div className={`p-3 rounded-lg border-2 border-dashed ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-300'}`}>
+                  <div className="space-y-2">
                     <Input
                       placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
                       value={newHabitLabel}
                       onChange={(e) => setNewHabitLabel(e.target.value)}
-                      className={theme === 'dark' ? 'bg-stone-900 border-stone-700' : 'bg-white'}
+                      className={`h-8 text-xs ${theme === 'dark' ? 'bg-stone-900 border-stone-700' : 'bg-white'}`}
                     />
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5">
                       <Button
                         variant="outline"
-                        className={`flex-1 ${newHabitType === 'good' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
+                        size="sm"
+                        className={`flex-1 h-7 text-xs ${newHabitType === 'good' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
                         onClick={() => setNewHabitType('good')}
                       >
                         ✨ {language === 'fr' ? 'Bonne' : language === 'en' ? 'Good' : 'Buena'}
                       </Button>
                       <Button
                         variant="outline"
-                        className={`flex-1 ${newHabitType === 'bad' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
+                        size="sm"
+                        className={`flex-1 h-7 text-xs ${newHabitType === 'bad' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
                         onClick={() => setNewHabitType('bad')}
                       >
                         ⚠️ {language === 'fr' ? 'Mauvaise' : language === 'en' ? 'Bad' : 'Mala'}
                       </Button>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5">
                       <Button
                         variant="default"
-                        className="flex-1 bg-rose-500 hover:bg-rose-600 text-white border-0"
+                        size="sm"
+                        className="flex-1 bg-rose-500 hover:bg-rose-600 text-white border-0 h-7 text-xs"
                         onClick={() => {
                           if (newHabitLabel.trim()) {
                             setCustomHabits([...customHabits, {
@@ -2485,6 +2458,8 @@ export default function GlowUpChallengeApp() {
                       </Button>
                       <Button
                         variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
                         onClick={() => {
                           setShowAddHabit(false);
                           setNewHabitLabel('');
@@ -2504,8 +2479,8 @@ export default function GlowUpChallengeApp() {
         {currentView === 'routine' && (
           <div className="pb-24 relative z-0">
             {/* Header */}
-            <div className="p-6 pb-0">
-              <div className="flex items-center gap-4 mb-6">
+            <div className="p-4 pb-0">
+              <div className="flex items-center gap-3 mb-3">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -2513,18 +2488,18 @@ export default function GlowUpChallengeApp() {
                 >
                   <X className="w-5 h-5" />
                 </Button>
-                <h1 className="text-2xl font-bold">
+                <h1 className="text-xl font-bold">
                   {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
                 </h1>
               </div>
             </div>
 
             {/* Navigation Tabs - Mes tâches & Glowee tâches */}
-            <div className="px-6 pb-4">
+            <div className="px-4 pb-2">
               <div className="flex gap-2 max-w-lg mx-auto">
                 <button
                   onClick={() => setPlanningTab('my-tasks')}
-                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     planningTab === 'my-tasks'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                       : theme === 'dark'
@@ -2536,7 +2511,7 @@ export default function GlowUpChallengeApp() {
                 </button>
                 <button
                   onClick={() => setPlanningTab('glowee-tasks')}
-                  className={`flex-1 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     planningTab === 'glowee-tasks'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                       : theme === 'dark'
@@ -2550,22 +2525,22 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Navigation par semaine */}
-            <div className="px-6 pb-4">
-              <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
-                <div className="flex items-center justify-between gap-3">
+            <div className="px-4 pb-2">
+              <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
+                <div className="flex items-center justify-between gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setCurrentWeekOffset(prev => prev - 1)}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 h-8 w-8 p-0"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
 
                   <div className="flex-1 text-center">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <Calendar className="w-4 h-4 text-rose-400" />
-                      <p className="text-sm font-semibold">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-rose-400" />
+                      <p className="text-xs font-semibold">
                         {currentWeekOffset === 0
                           ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
                           : currentWeekOffset === 1
@@ -2576,7 +2551,7 @@ export default function GlowUpChallengeApp() {
                         }
                       </p>
                     </div>
-                    <p className={`text-xs ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
+                    <p className={`text-[10px] ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
                       {formatWeekRange(currentWeekOffset)}
                     </p>
                   </div>
@@ -2585,7 +2560,7 @@ export default function GlowUpChallengeApp() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setCurrentWeekOffset(prev => prev + 1)}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 h-8 w-8 p-0"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -2596,7 +2571,7 @@ export default function GlowUpChallengeApp() {
                     variant="outline"
                     size="sm"
                     onClick={() => setCurrentWeekOffset(0)}
-                    className="w-full mt-3 text-xs"
+                    className="w-full mt-2 text-xs h-7"
                   >
                     {language === 'fr' ? 'Retour à cette semaine' : language === 'en' ? 'Back to this week' : 'Volver a esta semana'}
                   </Button>
@@ -2605,30 +2580,30 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Contenu du planning */}
-            <div className="px-6 space-y-4 max-w-lg mx-auto">
+            <div className="px-4 space-y-2.5 max-w-lg mx-auto">
               {/* Légende des objectifs (seulement pour Glowee tâches et s'il y a 2+ objectifs) */}
               {planningTab === 'glowee-tasks' && (() => {
                 const activeGoals = getActiveGoals();
                 if (activeGoals.length >= 2) {
                   return (
-                    <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
-                      <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                        <Target className="w-4 h-4 text-rose-400" />
+                    <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
+                      <h3 className="text-xs font-semibold mb-2 flex items-center gap-1.5">
+                        <Target className="w-3.5 h-3.5 text-rose-400" />
                         {language === 'fr' ? 'Objectifs en cours' : language === 'en' ? 'Active goals' : 'Objetivos activos'}
                       </h3>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {activeGoals.map((goal) => (
                           <div
                             key={goal.id}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                            className={`flex items-center gap-1.5 px-2 py-1 rounded-full ${
                               theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                             }`}
                           >
                             <div
-                              className="w-3 h-3 rounded-full flex-shrink-0"
+                              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                               style={{ backgroundColor: goal.color }}
                             />
-                            <span className="text-xs font-medium truncate max-w-[150px]">
+                            <span className="text-[10px] font-medium truncate max-w-[120px]">
                               {goal.name}
                             </span>
                           </div>
@@ -2641,42 +2616,42 @@ export default function GlowUpChallengeApp() {
               })()}
 
               {/* Mes 3 priorités de la semaine */}
-              <div className={`p-6 rounded-2xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <Star className="w-5 h-5 text-rose-400" />
+              <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
+                <h2 className="text-sm font-bold mb-2.5 flex items-center gap-1.5">
+                  <Star className="w-4 h-4 text-rose-400" />
                   {language === 'fr' ? 'Mes 3 priorités de la semaine' : language === 'en' ? 'My 3 weekly priorities' : 'Mis 3 prioridades semanales'}
                 </h2>
 
                 {/* Sélecteur d'objectif (seulement pour Glowee tâches) */}
                 {planningTab === 'glowee-tasks' && goalsWithPriorities.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mb-2">
+                  <div className="mb-2.5">
+                    <p className="text-[10px] text-stone-500 dark:text-stone-400 mb-1.5">
                       {language === 'fr' ? 'Afficher les priorités de :' : language === 'en' ? 'Show priorities for:' : 'Mostrar prioridades de:'}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                       {goalsWithPriorities.map((goal) => (
                         <button
                           key={goal.id}
                           onClick={() => setSelectedGoalForPriorities(goal.id)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                          className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
                             selectedGoalForPriorities === goal.id
-                              ? theme === 'dark' ? 'bg-stone-700 ring-2 ring-offset-2 ring-offset-stone-900' : 'bg-stone-200 ring-2 ring-offset-2 ring-offset-white'
+                              ? theme === 'dark' ? 'bg-stone-700 ring-2 ring-offset-1 ring-offset-stone-900' : 'bg-stone-200 ring-2 ring-offset-1 ring-offset-white'
                               : theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'
                           }`}
                           style={selectedGoalForPriorities === goal.id ? { ringColor: goal.color } : {}}
                         >
                           <div
-                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                             style={{ backgroundColor: goal.color }}
                           />
-                          <span className="truncate max-w-[120px]">{goal.name}</span>
+                          <span className="truncate max-w-[100px]">{goal.name}</span>
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {(() => {
                     // Déterminer quelles priorités afficher
                     let prioritiesToShow = weekPriorities;
@@ -2699,7 +2674,7 @@ export default function GlowUpChallengeApp() {
                     return prioritiesToShow.map((priority) => (
                       <div
                         key={priority.id}
-                        className={`flex items-center gap-3 p-3 rounded-xl ${
+                        className={`flex items-center gap-2 p-2 rounded-lg ${
                           theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                         }`}
                       >
@@ -2708,12 +2683,12 @@ export default function GlowUpChallengeApp() {
                           const selectedGoal = goalsWithPriorities.find(g => g.id === selectedGoalForPriorities);
                           return selectedGoal ? (
                             <div
-                              className="w-2 h-2 rounded-full flex-shrink-0"
+                              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                               style={{ backgroundColor: selectedGoal.color }}
                             />
                           ) : null;
                         })()}
-                        <span className={`flex-1 ${priority.completed ? 'line-through text-stone-500' : ''}`}>
+                        <span className={`flex-1 text-xs ${priority.completed ? 'line-through text-stone-500' : ''}`}>
                           {priority.text}
                         </span>
                         <button
@@ -2732,7 +2707,7 @@ export default function GlowUpChallengeApp() {
                           }}
                           className="text-stone-400 hover:text-red-500"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ));
@@ -2741,20 +2716,20 @@ export default function GlowUpChallengeApp() {
               </div>
 
               {/* Jours de la semaine - 2 par ligne */}
-              <div className="grid grid-cols-2 gap-3 items-start">
+              <div className="grid grid-cols-2 gap-2 items-start">
                 {(() => {
                   const today = new Date();
                   const todayStr = getLocalDateString(today);
                   const weekDates = getWeekDates(currentWeekOffset);
 
                   return [
-                    { key: 'monday', label: language === 'fr' ? 'Lundi' : language === 'en' ? 'Monday' : 'Lunes', index: 0 },
-                    { key: 'tuesday', label: language === 'fr' ? 'Mardi' : language === 'en' ? 'Tuesday' : 'Martes', index: 1 },
-                    { key: 'wednesday', label: language === 'fr' ? 'Mercredi' : language === 'en' ? 'Wednesday' : 'Miércoles', index: 2 },
-                    { key: 'thursday', label: language === 'fr' ? 'Jeudi' : language === 'en' ? 'Thursday' : 'Jueves', index: 3 },
-                    { key: 'friday', label: language === 'fr' ? 'Vendredi' : language === 'en' ? 'Friday' : 'Viernes', index: 4 },
-                    { key: 'saturday', label: language === 'fr' ? 'Samedi' : language === 'en' ? 'Saturday' : 'Sábado', index: 5 },
-                    { key: 'sunday', label: language === 'fr' ? 'Dimanche' : language === 'en' ? 'Sunday' : 'Domingo', index: 6 }
+                    { key: 'monday', label: language === 'fr' ? 'Lun' : language === 'en' ? 'Mon' : 'Lun', index: 0 },
+                    { key: 'tuesday', label: language === 'fr' ? 'Mar' : language === 'en' ? 'Tue' : 'Mar', index: 1 },
+                    { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mié', index: 2 },
+                    { key: 'thursday', label: language === 'fr' ? 'Jeu' : language === 'en' ? 'Thu' : 'Jue', index: 3 },
+                    { key: 'friday', label: language === 'fr' ? 'Ven' : language === 'en' ? 'Fri' : 'Vie', index: 4 },
+                    { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'Sáb', index: 5 },
+                    { key: 'sunday', label: language === 'fr' ? 'Dim' : language === 'en' ? 'Sun' : 'Dom', index: 6 }
                   ].map((day) => {
                     const dateStr = weekDates[day.index];
                     const isToday = dateStr === todayStr;
@@ -2769,20 +2744,20 @@ export default function GlowUpChallengeApp() {
                     return (
                       <div
                         key={day.key}
-                        className={`rounded-2xl shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden`}
+                        className={`rounded-xl shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden`}
                       >
-                        {/* Bordure grise en haut pour le jour actuel */}
+                        {/* Bordure en haut pour le jour actuel */}
                         {isToday && (
-                          <div className="absolute top-0 left-[20%] right-[20%] h-1.5 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
+                          <div className="absolute top-0 left-[20%] right-[20%] h-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
                         )}
-                        <div className="p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <h3 className="font-bold text-sm">{day.label}</h3>
-                            <span className="text-xs text-stone-400">{formattedDate}</span>
+                        <div className="p-2.5">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="font-bold text-xs">{day.label}</h3>
+                            <span className="text-[10px] text-stone-400">{formattedDate}</span>
                           </div>
-                          <div className="space-y-2">
+                          <div className="space-y-1.5">
                       {dayTasks.length === 0 ? (
-                        <p className="text-xs text-stone-400 text-center py-2">
+                        <p className="text-[10px] text-stone-400 text-center py-1">
                           {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
                         </p>
                       ) : (
@@ -2806,7 +2781,7 @@ export default function GlowUpChallengeApp() {
                           return (
                           <div
                             key={task.id}
-                            className={`relative p-2 pr-6 rounded-lg text-xs ${
+                            className={`relative p-1.5 pr-5 rounded-md text-[10px] ${
                               task.type === 'glowee' && taskGradient
                                 ? `bg-gradient-to-r ${taskGradient}`
                                 : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
@@ -2824,9 +2799,9 @@ export default function GlowUpChallengeApp() {
                                   }
                                 }
                               }}
-                              className="absolute top-1 right-1 text-stone-400 hover:text-red-500 transition-colors p-0.5"
+                              className="absolute top-0.5 right-0.5 text-stone-400 hover:text-red-500 transition-colors p-0.5"
                             >
-                              <X className="w-3 h-3" />
+                              <X className="w-2.5 h-2.5" />
                             </button>
                             <span
                               onClick={async () => {
@@ -2842,7 +2817,7 @@ export default function GlowUpChallengeApp() {
                                   }
                                 }
                               }}
-                              className={`cursor-pointer block ${task.completed ? 'line-through text-stone-500' : ''}`}
+                              className={`cursor-pointer block leading-tight ${task.completed ? 'line-through text-stone-500' : ''}`}
                             >
                               {task.text}
                             </span>
@@ -2860,13 +2835,13 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Bouton Ajouter une tâche */}
-            <div className="px-6 pb-6 pt-5 max-w-lg mx-auto">
+            <div className="px-4 pb-4 pt-3 max-w-lg mx-auto">
               <Button
                 size="sm"
-                className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white"
+                className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white h-8 text-xs"
                 onClick={() => setShowAddTask(true)}
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-3.5 h-3.5 mr-1.5" />
                 {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
               </Button>
             </div>
@@ -3761,26 +3736,26 @@ export default function GlowUpChallengeApp() {
         {/* Settings View */}
         {currentView === 'settings' && (
           <div className="pb-20 bg-cream-100 min-h-screen">
-            <div className="max-w-lg mx-auto p-6 space-y-5">
+            <div className="max-w-lg mx-auto p-4 space-y-3">
               {/* Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setCurrentView('dashboard')}
-                    className="rounded-full bg-white shadow-soft hover:bg-stone-50"
+                    className="rounded-full w-8 h-8 bg-white shadow-soft hover:bg-stone-50"
                   >
-                    <X className="w-5 h-5 text-navy-900" />
+                    <X className="w-4 h-4 text-navy-900" />
                   </Button>
-                  <h1 className="text-2xl font-bold text-navy-900">{t.settings.title}</h1>
+                  <h1 className="text-lg font-bold text-navy-900">{t.settings.title}</h1>
                 </div>
 
                 {/* Auth Button */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full bg-white shadow-soft hover:bg-stone-50"
+                  className="rounded-full w-8 h-8 bg-white shadow-soft hover:bg-stone-50"
                   onClick={() => {
                     if (user) {
                       // Si connecté, demander confirmation avant de se déconnecter
@@ -3794,70 +3769,68 @@ export default function GlowUpChallengeApp() {
                   }}
                 >
                   {user ? (
-                    <LogOut className="w-5 h-5 text-peach-500" />
+                    <LogOut className="w-4 h-4 text-peach-500" />
                   ) : (
-                    <LogIn className="w-5 h-5 text-peach-500" />
+                    <LogIn className="w-4 h-4 text-peach-500" />
                   )}
                 </Button>
               </div>
 
               {/* Progress Overview */}
-              <Card className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-soft-orange-100 rounded-2xl">
-                <CardContent className="p-4">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm text-navy-900">
-                    <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-peach-500" />
+              <Card className="border-none shadow-soft bg-gradient-to-br from-peach-100 to-soft-orange-100 rounded-xl">
+                <CardContent className="p-3">
+                  <h3 className="font-semibold mb-2 flex items-center gap-1.5 text-xs text-navy-900">
+                    <div className="w-6 h-6 rounded-full bg-white/60 flex items-center justify-center">
+                      <TrendingUp className="w-3 h-3 text-peach-500" />
                     </div>
                     {t.dashboard.progress}
                   </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="text-center bg-white/60 rounded-xl p-3">
-                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.dashboard.daysCompleted}</p>
-                      <p className="font-bold text-lg text-navy-900">{challengeProgress.completedDays.length}/30</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="text-center bg-white/60 rounded-lg p-2">
+                      <p className="text-[10px] text-stone-600 font-medium">{t.dashboard.daysCompleted}</p>
+                      <p className="font-bold text-sm text-navy-900">{challengeProgress.completedDays.length}/30</p>
                     </div>
-                    <div className="text-center bg-white/60 rounded-xl p-3">
-                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.settings.percentage}</p>
-                      <p className="font-bold text-lg text-peach-600">{progressPercentage}%</p>
+                    <div className="text-center bg-white/60 rounded-lg p-2">
+                      <p className="text-[10px] text-stone-600 font-medium">{t.settings.percentage}</p>
+                      <p className="font-bold text-sm text-peach-600">{progressPercentage}%</p>
                     </div>
-                    <div className="text-center bg-white/60 rounded-xl p-3">
-                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.journal.title}</p>
-                      <p className="font-bold text-lg text-navy-900">{journalEntries.length}</p>
+                    <div className="text-center bg-white/60 rounded-lg p-2">
+                      <p className="text-[10px] text-stone-600 font-medium">{t.journal.title}</p>
+                      <p className="font-bold text-sm text-navy-900">{journalEntries.length}</p>
                     </div>
-                    <div className="text-center bg-white/60 rounded-xl p-3">
-                      <p className="text-xs text-stone-600 mb-1 font-medium">{t.visionBoard.title}</p>
-                      <p className="font-bold text-lg text-navy-900">{visionBoardImages.length}</p>
+                    <div className="text-center bg-white/60 rounded-lg p-2">
+                      <p className="text-[10px] text-stone-600 font-medium">{t.visionBoard.title}</p>
+                      <p className="font-bold text-sm text-navy-900">{visionBoardImages.length}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Theme Toggle */}
-              <Card className="border-none shadow-soft bg-white rounded-2xl">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 flex items-center justify-center">
+              <Card className="border-none shadow-soft bg-white rounded-xl">
+                <CardHeader className="p-3 pb-2">
+                  <CardTitle className="text-xs text-navy-900 flex items-center gap-1.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 flex items-center justify-center">
                       {theme === 'light' ? (
-                        <Sun className="w-4 h-4 text-soft-purple-500" />
+                        <Sun className="w-3 h-3 text-soft-purple-500" />
                       ) : (
-                        <Moon className="w-4 h-4 text-soft-purple-500" />
+                        <Moon className="w-3 h-3 text-soft-purple-500" />
                       )}
                     </div>
                     {t.settings.theme}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-cream-100">
-                    <div className="flex items-center gap-3">
+                <CardContent className="p-3 pt-0">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-cream-100">
+                    <div className="flex items-center gap-2">
                       {theme === 'light' ? (
-                        <Sun className="w-5 h-5 text-amber-500" />
+                        <Sun className="w-4 h-4 text-amber-500" />
                       ) : (
-                        <Moon className="w-5 h-5 text-soft-purple-500" />
+                        <Moon className="w-4 h-4 text-soft-purple-500" />
                       )}
-                      <div>
-                        <p className="font-semibold text-sm text-navy-900">
-                          {theme === 'light' ? t.settings.light : t.settings.dark}
-                        </p>
-                      </div>
+                      <p className="font-semibold text-xs text-navy-900">
+                        {theme === 'light' ? t.settings.light : t.settings.dark}
+                      </p>
                     </div>
                     <Switch
                       checked={theme === 'dark'}
@@ -3868,16 +3841,16 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               {/* Language Selection */}
-              <Card className="border-none shadow-soft bg-white rounded-2xl">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-peach-100 to-soft-orange-100 flex items-center justify-center">
-                      <span className="text-lg">🌍</span>
+              <Card className="border-none shadow-soft bg-white rounded-xl">
+                <CardHeader className="p-3 pb-2">
+                  <CardTitle className="text-xs text-navy-900 flex items-center gap-1.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-peach-100 to-soft-orange-100 flex items-center justify-center">
+                      <span className="text-sm">🌍</span>
                     </div>
                     {t.settings.language}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="p-3 pt-0 space-y-1.5">
                   {[
                     { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
                     { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
@@ -3886,19 +3859,19 @@ export default function GlowUpChallengeApp() {
                     <button
                       key={lang.code}
                       onClick={() => setLanguage(lang.code)}
-                      className={`w-full p-3 rounded-xl border-2 transition-all ${
+                      className={`w-full p-2 rounded-lg border-2 transition-all ${
                         language === lang.code
                           ? 'border-peach-400 bg-gradient-to-br from-peach-50 to-soft-orange-50 shadow-soft'
                           : 'border-stone-200 bg-cream-100 hover:border-peach-300'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">{lang.flag}</span>
-                          <span className="font-semibold text-sm text-navy-900">{lang.name}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-base">{lang.flag}</span>
+                          <span className="font-semibold text-xs text-navy-900">{lang.name}</span>
                         </div>
                         {language === lang.code && (
-                          <Check className="w-4 h-4 text-peach-500" />
+                          <Check className="w-3.5 h-3.5 text-peach-500" />
                         )}
                       </div>
                     </button>
@@ -3910,27 +3883,27 @@ export default function GlowUpChallengeApp() {
               <FAQSection theme={theme} />
 
               {/* Account / Connexion */}
-              <Card className="border-none shadow-soft bg-white rounded-2xl">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base text-navy-900 flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-peach-100 to-soft-orange-100 flex items-center justify-center">
-                      <User className="w-4 h-4 text-peach-500" />
+              <Card className="border-none shadow-soft bg-white rounded-xl">
+                <CardHeader className="p-3 pb-2">
+                  <CardTitle className="text-xs text-navy-900 flex items-center gap-1.5">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-peach-100 to-soft-orange-100 flex items-center justify-center">
+                      <User className="w-3 h-3 text-peach-500" />
                     </div>
                     {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-3 pt-0">
                   {user ? (
-                    <div className="space-y-2">
-                      <div className="p-3 rounded-xl bg-cream-100">
+                    <div className="space-y-1.5">
+                      <div className="p-2 rounded-lg bg-cream-100">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-peach-400 to-soft-orange-400 flex items-center justify-center">
-                            <User className="w-4 h-4 text-white" />
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-peach-400 to-soft-orange-400 flex items-center justify-center">
+                            <User className="w-3 h-3 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-xs truncate text-navy-900">{user.email}</p>
+                            <p className="font-semibold text-[10px] truncate text-navy-900">{user.email}</p>
                             {userData && (
-                              <Badge className="bg-gradient-to-r from-peach-400 to-soft-orange-400 text-white text-xs mt-1">
+                              <Badge className="bg-gradient-to-r from-peach-400 to-soft-orange-400 text-white text-[10px] mt-0.5">
                                 ✨ Premium
                               </Badge>
                             )}
@@ -3940,25 +3913,25 @@ export default function GlowUpChallengeApp() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 border-stone-200 rounded-xl"
+                        className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 border-stone-200 rounded-lg h-7 text-xs"
                         onClick={async () => {
                           if (confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir vous déconnecter ?' : language === 'en' ? 'Are you sure you want to sign out?' : '¿Estás seguro de que quieres cerrar sesión?')) {
                             await signOut();
                           }
                         }}
                       >
-                        <LogOut className="mr-2 w-4 h-4" />
-                        <span className="text-sm">{language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}</span>
+                        <LogOut className="mr-1.5 w-3.5 h-3.5" />
+                        <span className="text-xs">{language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}</span>
                       </Button>
                     </div>
                   ) : (
                     <Button
                       size="sm"
-                      className="w-full bg-gradient-to-r from-peach-400 to-soft-orange-400 hover:from-peach-500 hover:to-soft-orange-500 text-white rounded-2xl py-6 shadow-soft-lg font-semibold"
+                      className="w-full bg-gradient-to-r from-peach-400 to-soft-orange-400 hover:from-peach-500 hover:to-soft-orange-500 text-white rounded-xl py-3 shadow-soft-lg font-semibold h-9 text-xs"
                       onClick={() => setShowAuthDialog(true)}
                     >
-                      <LogIn className="mr-2 w-4 h-4" />
-                      <span className="text-sm">{language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}</span>
+                      <LogIn className="mr-1.5 w-3.5 h-3.5" />
+                      <span>{language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}</span>
                     </Button>
                   )}
                 </CardContent>

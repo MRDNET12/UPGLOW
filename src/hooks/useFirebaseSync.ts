@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveUserData, getUserData, saveTask, getUserTasks, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
+import { getActiveGoals } from '@/lib/firebase/goals-service';
+import type { Goal } from '@/types/goals';
 
 /**
  * Hook pour synchroniser automatiquement les données avec Firebase
@@ -154,5 +156,33 @@ export function usePlanningSync(tasksWithDates: any[], setTasksWithDates: (tasks
 
     return () => clearTimeout(timeoutId);
   }, [user, tasksWithDates, setTasksWithDates]);
+}
+
+/**
+ * Hook pour synchroniser les objectifs avec Firebase
+ * Charge les objectifs au montage et permet de rafraîchir manuellement
+ */
+export function useGoalsSync() {
+  const { user } = useAuth();
+  const isInitialLoad = useRef(true);
+
+  const loadGoals = async (): Promise<Goal[]> => {
+    if (!user) return [];
+
+    try {
+      console.log('Loading goals from Firebase for user:', user.uid);
+      const firebaseGoals = await getActiveGoals(user.uid);
+      console.log('Loaded goals from Firebase:', firebaseGoals.length);
+      return firebaseGoals;
+    } catch (error) {
+      console.error('Error loading goals from Firebase:', error);
+      return [];
+    }
+  };
+
+  return {
+    loadGoals,
+    userId: user?.uid
+  };
 }
 

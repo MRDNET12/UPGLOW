@@ -13,6 +13,8 @@ import { GoalAnalysisExplanation } from '@/components/goals/GoalAnalysisExplanat
 import { GoalConfirmationDialog } from '@/components/goals/GoalConfirmationDialog';
 import { isFirstVisit, trackVisit, markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
+import { useGoalsSync } from '@/hooks/useFirebaseSync';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Goal {
   id: string;
@@ -65,6 +67,9 @@ interface MyGoalsProps {
 }
 
 export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDetails }: MyGoalsProps = {}) {
+  const { user } = useAuth();
+  const { loadGoals } = useGoalsSync();
+
   const [goals, setGoals] = useState<Goal[]>([]);
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [showCreateGoal, setShowCreateGoal] = useState(false);
@@ -85,14 +90,45 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingGoalData, setPendingGoalData] = useState<any>(null);
 
-  // Load data from localStorage
+  // Load data from Firebase and localStorage
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
       try {
-        // Load goals
-        const savedGoals = localStorage.getItem('myGoals');
-        if (savedGoals) {
-          setGoals(JSON.parse(savedGoals));
+        // Load goals from Firebase if user is authenticated
+        if (user) {
+          console.log('Loading goals from Firebase...');
+          const firebaseGoals = await loadGoals();
+          if (firebaseGoals.length > 0) {
+            console.log('Loaded goals from Firebase:', firebaseGoals);
+            // Convertir les objectifs Firebase au format local
+            const formattedGoals = firebaseGoals.map((goal: any) => ({
+              id: goal.id,
+              name: goal.name,
+              type: goal.type,
+              description: goal.why || '',
+              deadline: goal.targetDate,
+              progress: goal.progress || 0,
+              createdAt: goal.createdAt?.toISOString?.() || new Date().toISOString(),
+              tasks: [],
+              weeklyPriorities: [],
+              goalColor: goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e'
+            }));
+            setGoals(formattedGoals);
+            // Sauvegarder aussi dans localStorage pour backup
+            localStorage.setItem('myGoals', JSON.stringify(formattedGoals));
+          } else {
+            // Si pas d'objectifs Firebase, charger depuis localStorage
+            const savedGoals = localStorage.getItem('myGoals');
+            if (savedGoals) {
+              setGoals(JSON.parse(savedGoals));
+            }
+          }
+        } else {
+          // Si pas d'utilisateur, charger depuis localStorage
+          const savedGoals = localStorage.getItem('myGoals');
+          if (savedGoals) {
+            setGoals(JSON.parse(savedGoals));
+          }
         }
 
         // Load energy logs
@@ -119,7 +155,7 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
     };
 
     loadData();
-  }, []);
+  }, [user, loadGoals]);
 
   const checkEnergyCheckIn = () => {
     const savedLogs = localStorage.getItem('energyLogs');
@@ -170,10 +206,31 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
     setShowCheckIn(false);
   };
 
-  const handleGoalCreated = (newGoal: Goal) => {
-    const updatedGoals = [...goals, newGoal];
-    setGoals(updatedGoals);
-    localStorage.setItem('myGoals', JSON.stringify(updatedGoals));
+  const handleGoalCreated = async () => {
+    // Recharger les objectifs depuis Firebase après création
+    if (user) {
+      try {
+        console.log('Reloading goals after creation...');
+        const firebaseGoals = await loadGoals();
+        const formattedGoals = firebaseGoals.map((goal: any) => ({
+          id: goal.id,
+          name: goal.name,
+          type: goal.type,
+          description: goal.why || '',
+          deadline: goal.targetDate,
+          progress: goal.progress || 0,
+          createdAt: goal.createdAt?.toISOString?.() || new Date().toISOString(),
+          tasks: [],
+          weeklyPriorities: [],
+          goalColor: goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e'
+        }));
+        setGoals(formattedGoals);
+        localStorage.setItem('myGoals', JSON.stringify(formattedGoals));
+        console.log('Goals reloaded successfully:', formattedGoals.length);
+      } catch (error) {
+        console.error('Error reloading goals:', error);
+      }
+    }
     setShowCreateGoal(false);
   };
 

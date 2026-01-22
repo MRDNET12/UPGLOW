@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Sparkles, Crown } from 'lucide-react';
+import { X, Sparkles, Check, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -32,9 +32,17 @@ export function SubscriptionPopup({ isOpen, onClose, onOpenAuthDialog }: Subscri
 
   if (!isOpen) return null;
 
+  const features = [
+    'Suivi personnalisé avec Glowee, ton coach IA',
+    'Journal intime et suivi d\'habitudes quotidiennes',
+    'Planning hebdomadaire et atteindre tes objectifs',
+    'Glowee te crée ton planning personnalisé',
+    'Accès illimité à tous les bonus et contenus'
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="relative w-full max-w-[280px] rounded-[1.5rem] shadow-2xl shadow-pink-200/50 overflow-hidden bg-white/95 backdrop-blur-xl border border-pink-100/50 animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-sm rounded-[1.5rem] shadow-2xl shadow-pink-200/50 overflow-hidden bg-white/95 backdrop-blur-xl border border-pink-100/50 animate-in zoom-in-95 duration-300">
         {/* Premium Badge */}
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300" />
 
@@ -48,8 +56,8 @@ export function SubscriptionPopup({ isOpen, onClose, onOpenAuthDialog }: Subscri
           <X className="w-3.5 h-3.5 text-gray-700" />
         </Button>
 
-        {/* Content - Ultra compact */}
-        <div className="p-5 space-y-3 pt-6">
+        {/* Content - Padding latéral de 20px */}
+        <div className="px-5 py-4 space-y-3 pt-6">
           {/* Glowee Image */}
           <div className="flex justify-center">
             <div className="relative">
@@ -83,6 +91,23 @@ export function SubscriptionPopup({ isOpen, onClose, onOpenAuthDialog }: Subscri
                 /mois
               </span>
             </div>
+          </div>
+
+          {/* Features - Avantages du plan */}
+          <div className="space-y-1.5">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-white to-pink-50 shadow-sm"
+              >
+                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 flex items-center justify-center">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <span className="text-xs text-gray-800 font-semibold">
+                  {feature}
+                </span>
+              </div>
+            ))}
           </div>
 
           {/* Glowee Message */}

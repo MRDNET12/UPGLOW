@@ -1512,7 +1512,15 @@ export default function GlowUpChallengeApp() {
                               getCurrentDayData()?.actions.dieu && { key: 'dieu', label: 'Dieu', icon: '🙏', value: getCurrentDayData()?.actions.dieu },
                               getCurrentDayData()?.actions.apparence && { key: 'apparence', label: 'Apparence', icon: '👗', value: getCurrentDayData()?.actions.apparence },
                               getCurrentDayData()?.actions.vision && { key: 'vision', label: 'Vision', icon: '🔮', value: getCurrentDayData()?.actions.vision }
-                            ].filter(Boolean).map((action, index) => {
+                            ].filter(Boolean)
+                            // Trier: tâches non complétées en haut, complétées en bas
+                            .sort((a, b) => {
+                              const aCompleted = isActionCompleted(currentDay, a.key);
+                              const bCompleted = isActionCompleted(currentDay, b.key);
+                              if (aCompleted === bCompleted) return 0;
+                              return aCompleted ? 1 : -1;
+                            })
+                            .map((action, index) => {
                               const isCompleted = isActionCompleted(currentDay, action.key);
 
                               // Cas spécial pour l'action "vision" avec lien cliquable
@@ -1520,14 +1528,18 @@ export default function GlowUpChallengeApp() {
                                 return (
                                   <div
                                     key={index}
-                                    className={`p-4 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
+                                    className={`p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
                                     onClick={() => toggleActionCompletion(currentDay, action.key)}
+                                    style={{
+                                      transform: isCompleted ? 'translateY(0)' : 'translateY(0)',
+                                      transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    }}
                                   >
                                     <div className="flex items-start gap-3">
                                       <span className="text-3xl drop-shadow-lg">{action.icon}</span>
                                       <div className="flex-1">
-                                        <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
-                                        <p className={`text-sm ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                                        <h4 className={`font-bold text-sm mb-1 text-gray-800 transition-all duration-300 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
+                                        <p className={`text-sm transition-all duration-300 ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
                                           {action.value === 'OBJECTIF_LINK' ? (
                                             <>
                                               {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
@@ -1559,7 +1571,7 @@ export default function GlowUpChallengeApp() {
                                           )}
                                         </p>
                                       </div>
-                                      {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />}
+                                      {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg animate-in fade-in duration-300" />}
                                     </div>
                                   </div>
                                 );
@@ -1569,16 +1581,20 @@ export default function GlowUpChallengeApp() {
                               return (
                                 <div
                                   key={index}
-                                  className={`p-4 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
+                                  className={`p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
                                   onClick={() => toggleActionCompletion(currentDay, action.key)}
+                                  style={{
+                                    transform: isCompleted ? 'translateY(0)' : 'translateY(0)',
+                                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                                  }}
                                 >
                                   <div className="flex items-start gap-3">
                                     <span className="text-3xl drop-shadow-lg">{action.icon}</span>
                                     <div className="flex-1">
-                                      <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
-                                      <p className={`text-sm ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>{action.value}</p>
+                                      <h4 className={`font-bold text-sm mb-1 text-gray-800 transition-all duration-300 ${isCompleted ? 'line-through' : ''}`}>{action.label}</h4>
+                                      <p className={`text-sm transition-all duration-300 ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>{action.value}</p>
                                     </div>
-                                    {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />}
+                                    {isCompleted && <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg animate-in fade-in duration-300" />}
                                   </div>
                                 </div>
                               );
@@ -4451,12 +4467,6 @@ export default function GlowUpChallengeApp() {
                   setNewTaskText('');
                   setNewTaskDestination('priority');
                   setShowAddTask(false);
-
-                  // Afficher le popup de hint swipe si c'est la première fois
-                  if (!hasSeenSwipeHint) {
-                    setTimeout(() => setShowSwipeHintPopup(true), 500);
-                    setHasSeenSwipeHint(true);
-                  }
                 }
               }}
             >
@@ -4733,21 +4743,7 @@ export default function GlowUpChallengeApp() {
         language={language}
       />
 
-      {/* Glowee Swipe Hint Popup - Planning */}
-      <GloweePopup
-        isOpen={showSwipeHintPopup}
-        onClose={() => setShowSwipeHintPopup(false)}
-        gloweeImage="glowee-acceuillante.webp"
-        userName={language === 'fr' ? 'Ma belle' : language === 'en' ? 'My dear' : 'Mi bella'}
-        title={language === 'fr' ? 'Astuce pour supprimer une tâche 💡' : language === 'en' ? 'Tip to delete a task 💡' : 'Consejo para eliminar una tarea 💡'}
-        message={language === 'fr'
-          ? 'Pour supprimer une tâche, il te suffit de la balayer vers la gauche ! Une croix de suppression apparaîtra. Simple et rapide ! ✨'
-          : language === 'en'
-            ? 'To delete a task, just swipe it to the left! A delete cross will appear. Simple and fast! ✨'
-            : '¡Para eliminar una tarea, simplemente deslízala hacia la izquierda! Aparecerá una cruz de eliminación. ¡Simple y rápido! ✨'}
-        position="top"
-        language={language}
-      />
+
 
       {/* Challenge Switch Drawer - Design moderne */}
       <Drawer open={showChallengeDrawer} onOpenChange={setShowChallengeDrawer}>

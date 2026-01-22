@@ -1277,8 +1277,8 @@ export default function GlowUpChallengeApp() {
                 onClick={() => setCurrentView('routine')}
               >
                 <CardContent className="p-4 relative overflow-hidden">
-                  {/* Emoji chef en bas, prenant 60% de la hauteur */}
-                  <div className="absolute bottom-0 right-2 text-[4.5rem] opacity-20 drop-shadow-lg" style={{ lineHeight: '1' }}>
+                  {/* Emoji chef en bas touchant la bordure */}
+                  <div className="absolute -bottom-2 right-1/2 translate-x-1/2 text-[5rem] opacity-20 drop-shadow-lg" style={{ lineHeight: '1' }}>
                     👩‍🍳
                   </div>
                   <div className="relative z-10">

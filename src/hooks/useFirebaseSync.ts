@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveUserData, getUserData, saveTask, getUserTasks, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 import { getActiveGoals } from '@/lib/firebase/goals-service';
@@ -209,9 +209,9 @@ export function usePlanningSync(tasksWithDates: any[], setTasksWithDates: (tasks
  */
 export function useGoalsSync() {
   const { user } = useAuth();
-  const isInitialLoad = useRef(true);
 
-  const loadGoals = async (): Promise<Goal[]> => {
+  // useCallback pour éviter les re-renders infinis
+  const loadGoals = useCallback(async (): Promise<Goal[]> => {
     if (!user) return [];
 
     try {
@@ -223,7 +223,7 @@ export function useGoalsSync() {
       console.error('Error loading goals from Firebase:', error);
       return [];
     }
-  };
+  }, [user]);
 
   return {
     loadGoals,

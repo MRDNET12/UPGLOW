@@ -38,20 +38,31 @@ export async function createGoal(userId: string, goalData: Omit<Goal, 'id' | 'cr
 
 export async function getActiveGoals(userId: string): Promise<Goal[]> {
   const goalsRef = collection(db, 'goals');
+
+  // Requête simple sans orderBy pour éviter le besoin d'index composite
   const q = query(
     goalsRef,
-    where('userId', '==', userId),
-    where('status', '==', 'active'),
-    orderBy('createdAt', 'desc')
+    where('userId', '==', userId)
   );
-  
+
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate(),
-    updatedAt: doc.data().updatedAt?.toDate()
-  } as Goal));
+
+  // Filtrer les objectifs actifs et trier côté client
+  const goals = snapshot.docs
+    .map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    } as Goal))
+    .filter(goal => goal.status === 'active' || !goal.status) // Accepter aussi les goals sans status
+    .sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA; // Plus récent en premier
+    });
+
+  return goals;
 }
 
 export async function getGoalById(goalId: string): Promise<Goal | null> {

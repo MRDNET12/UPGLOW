@@ -157,12 +157,52 @@ Génère des tâches qui :
     }
 
     // Parser la réponse - Nettoyer les balises <think> de DeepSeek R1
-    const cleanedContent = content
+    let cleanedContent = content
       .replace(/<think>[\s\S]*?<\/think>/gi, '') // Enlever les balises <think> de DeepSeek R1
       .replace(/```json\n?/g, '')
       .replace(/```\n?/g, '')
+      .replace(/```/g, '')
       .trim();
-    const parsedResponse = JSON.parse(cleanedContent);
+
+    // Extraire le JSON s'il est entouré de texte
+    const jsonMatch = cleanedContent.match(/\{[\s\S]*"tasks"[\s\S]*\}/);
+    if (jsonMatch) {
+      cleanedContent = jsonMatch[0];
+    }
+
+    // Nettoyage supplémentaire pour gérer les erreurs courantes de DeepSeek R1
+    cleanedContent = cleanedContent
+      .replace(/,(\s*[\]}])/g, '$1') // Supprimer virgules en trop avant ] ou }
+      .replace(/[\u2018\u2019]/g, "'") // Guillemets simples courbes
+      .replace(/[\u201C\u201D]/g, '"'); // Guillemets doubles courbes
+
+    // Supprimer les caractères non-JSON après la dernière accolade
+    const lastBraceIndex = cleanedContent.lastIndexOf('}');
+    if (lastBraceIndex !== -1) {
+      cleanedContent = cleanedContent.substring(0, lastBraceIndex + 1);
+    }
+
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(cleanedContent);
+    } catch (parseError) {
+      console.error('[Weekly Tasks API] Parse error:', parseError);
+      console.error('[Weekly Tasks API] Raw content was:', content.substring(0, 500));
+      // Fallback avec des tâches par défaut
+      return NextResponse.json({
+        success: true,
+        tasks: [
+          { day: 'monday', task: `Planifier la semaine pour "${goal.name}"`, priority: 'high', category: 'planification' },
+          { day: 'tuesday', task: `Avancer sur "${goal.name}"`, priority: 'high', category: 'action' },
+          { day: 'wednesday', task: `Faire le point sur "${goal.name}"`, priority: 'medium', category: 'réflexion' },
+          { day: 'thursday', task: `Continuer les efforts pour "${goal.name}"`, priority: 'medium', category: 'action' },
+          { day: 'friday', task: `Finaliser la semaine pour "${goal.name}"`, priority: 'high', category: 'action' }
+        ],
+        weekNumber,
+        generatedAt: new Date().toISOString(),
+        isFallback: true
+      });
+    }
 
     return NextResponse.json({
       success: true,

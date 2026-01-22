@@ -290,6 +290,7 @@ Réponds UNIQUEMENT en JSON valide.`;
         let cleanedContent = content
           .replace(/```json\n?/g, '')
           .replace(/```\n?/g, '')
+          .replace(/```/g, '')
           .trim();
 
         // Extraire le JSON s'il est entouré de texte
@@ -298,6 +299,24 @@ Réponds UNIQUEMENT en JSON valide.`;
           cleanedContent = jsonMatch[0];
         }
 
+        // Nettoyage supplémentaire pour gérer les erreurs courantes de DeepSeek R1
+        // 1. Supprimer les virgules en trop avant ] ou }
+        cleanedContent = cleanedContent.replace(/,(\s*[\]}])/g, '$1');
+
+        // 2. Supprimer les caractères non-JSON après la dernière accolade
+        const lastBraceIndex = cleanedContent.lastIndexOf('}');
+        if (lastBraceIndex !== -1) {
+          cleanedContent = cleanedContent.substring(0, lastBraceIndex + 1);
+        }
+
+        // 3. Essayer de réparer les guillemets mal échappés
+        cleanedContent = cleanedContent
+          .replace(/[\u2018\u2019]/g, "'") // Guillemets simples courbes
+          .replace(/[\u201C\u201D]/g, '"') // Guillemets doubles courbes
+          .replace(/\n\s*\n/g, '\n'); // Lignes vides multiples
+
+        console.log('[Generate Plan API] Attempting to parse cleaned content...');
+
         parsedResponse = JSON.parse(cleanedContent);
 
         if (!parsedResponse.breakdown || !Array.isArray(parsedResponse.breakdown)) {
@@ -305,6 +324,7 @@ Réponds UNIQUEMENT en JSON valide.`;
         }
       } catch (parseError) {
         console.error('[Generate Plan API] Parse error, using fallback:', parseError);
+        console.error('[Generate Plan API] Raw content was:', content.substring(0, 500) + '...');
         return NextResponse.json({
           success: true,
           breakdown: createFallbackBreakdown(),

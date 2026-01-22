@@ -155,20 +155,34 @@ ${goal.type === 'financial' && dailyTarget > 0 ? `
     try {
       // Nettoyer la réponse (enlever les backticks, balises think, etc.)
       let cleanedContent = content
-        .replace(/<think>[\s\S]*?<\/think>/g, '') // Enlever les balises <think> de DeepSeek R1
+        .replace(/<think>[\s\S]*?<\/think>/gi, '') // Enlever les balises <think> de DeepSeek R1
         .replace(/```json\n?/g, '')
         .replace(/```\n?/g, '')
+        .replace(/```/g, '')
         .trim();
 
       // Extraire le JSON si entouré de texte
-      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+      const jsonMatch = cleanedContent.match(/\{[\s\S]*"tasks"[\s\S]*\}/);
       if (jsonMatch) {
         cleanedContent = jsonMatch[0];
       }
 
+      // Nettoyage supplémentaire pour gérer les erreurs courantes de DeepSeek R1
+      cleanedContent = cleanedContent
+        .replace(/,(\s*[\]}])/g, '$1') // Supprimer virgules en trop avant ] ou }
+        .replace(/[\u2018\u2019]/g, "'") // Guillemets simples courbes
+        .replace(/[\u201C\u201D]/g, '"'); // Guillemets doubles courbes
+
+      // Supprimer les caractères non-JSON après la dernière accolade
+      const lastBraceIndex = cleanedContent.lastIndexOf('}');
+      if (lastBraceIndex !== -1) {
+        cleanedContent = cleanedContent.substring(0, lastBraceIndex + 1);
+      }
+
       parsedResponse = JSON.parse(cleanedContent);
     } catch (parseError) {
-      console.error('Failed to parse AI response:', content);
+      console.error('[Goals Analyze API] Failed to parse AI response:', parseError);
+      console.error('[Goals Analyze API] Raw content was:', content.substring(0, 500));
       // Fallback : créer des tâches génériques si l'IA échoue
       parsedResponse = {
         tasks: [

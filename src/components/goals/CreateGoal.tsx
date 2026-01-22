@@ -21,6 +21,19 @@ const GOAL_TYPES: { value: GoalType; label: string; icon: any; color: string }[]
   { value: 'personal', label: 'Personnel', icon: Heart, color: 'text-rose-500' }
 ];
 
+// Sauvegarder un objectif en localStorage (pour les utilisateurs non connectés)
+const saveGoalToLocalStorage = (goal: any) => {
+  try {
+    const existingGoals = localStorage.getItem('myGoals');
+    const goals = existingGoals ? JSON.parse(existingGoals) : [];
+    goals.push(goal);
+    localStorage.setItem('myGoals', JSON.stringify(goals));
+    console.log('Goal saved to localStorage:', goal.id);
+  } catch (error) {
+    console.error('Error saving goal to localStorage:', error);
+  }
+};
+
 export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
@@ -39,7 +52,7 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
 
   const handleSubmit = async () => {
-    if (!user || !type) return;
+    if (!type) return;
 
     setIsSubmitting(true);
     setIsGeneratingPlan(false);
@@ -48,8 +61,7 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
       const targetDate = new Date();
       targetDate.setMonth(targetDate.getMonth() + parseInt(timeframe || '12'));
 
-      // 1. Créer l'objectif d'abord
-      const goalId = await createGoal(user.uid, {
+      const goalData = {
         type,
         name,
         targetAmount: type === 'financial' ? parseFloat(targetAmount) : undefined,
@@ -58,9 +70,26 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
         competencies: type === 'project' ? competencies.split(',').map(c => c.trim()) : undefined,
         why,
         desiredFeeling,
-        status: 'active',
+        status: 'active' as const,
         progress: 0
-      });
+      };
+
+      let goalId: string;
+
+      // Si l'utilisateur est connecté, sauvegarder dans Firebase
+      if (user) {
+        goalId = await createGoal(user.uid, goalData);
+      } else {
+        // Sinon, sauvegarder en localStorage
+        goalId = `local_${Date.now()}`;
+        const localGoal = {
+          id: goalId,
+          ...goalData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        saveGoalToLocalStorage(localGoal);
+      }
 
       // 2. Générer le plan avec Glowee Work (en arrière-plan)
       setIsGeneratingPlan(true);
@@ -88,10 +117,24 @@ export function CreateGoal({ isOpen, onClose, onSuccess }: CreateGoalProps) {
           const data = await response.json();
           if (data.breakdown && Array.isArray(data.breakdown)) {
             // 3. Sauvegarder le plan dans l'objectif
-            await updateGoal(goalId, {
-              breakdown: data.breakdown as TimeBreakdownItem[],
-              breakdownGeneratedAt: new Date()
-            });
+            if (user) {
+              await updateGoal(goalId, {
+                breakdown: data.breakdown as TimeBreakdownItem[],
+                breakdownGeneratedAt: new Date()
+              });
+            } else {
+              // Mettre à jour l'objectif en localStorage avec le breakdown
+              const existingGoals = localStorage.getItem('myGoals');
+              if (existingGoals) {
+                const goals = JSON.parse(existingGoals);
+                const updatedGoals = goals.map((g: any) =>
+                  g.id === goalId
+                    ? { ...g, breakdown: data.breakdown, breakdownGeneratedAt: new Date().toISOString() }
+                    : g
+                );
+                localStorage.setItem('myGoals', JSON.stringify(updatedGoals));
+              }
+            }
             console.log('Plan generated and saved for goal:', goalId);
           }
         }

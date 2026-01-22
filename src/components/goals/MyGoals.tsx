@@ -207,10 +207,11 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
   };
 
   const handleGoalCreated = async () => {
-    // Recharger les objectifs depuis Firebase après création
+    // Recharger les objectifs après création
     if (user) {
+      // Utilisateur connecté: recharger depuis Firebase
       try {
-        console.log('Reloading goals after creation...');
+        console.log('Reloading goals from Firebase after creation...');
         const firebaseGoals = await loadGoals();
         const formattedGoals = firebaseGoals.map((goal: any) => ({
           id: goal.id,
@@ -229,6 +230,20 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
         console.log('Goals reloaded successfully:', formattedGoals.length);
       } catch (error) {
         console.error('Error reloading goals:', error);
+      }
+    } else {
+      // Utilisateur non connecté: recharger depuis localStorage
+      console.log('Reloading goals from localStorage after creation...');
+      const savedGoals = localStorage.getItem('myGoals');
+      if (savedGoals) {
+        const parsedGoals = JSON.parse(savedGoals);
+        // Assigner les couleurs par défaut si manquantes
+        const goalsWithColors = parsedGoals.map((goal: any) => ({
+          ...goal,
+          goalColor: goal.goalColor || (goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e')
+        }));
+        setGoals(goalsWithColors);
+        console.log('Goals reloaded from localStorage:', goalsWithColors.length);
       }
     }
     setShowCreateGoal(false);

@@ -206,8 +206,16 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
     setShowCheckIn(false);
   };
 
-  const handleGoalCreated = async () => {
-    // Recharger les objectifs après création
+  const handleGoalCreated = async (newGoal?: Goal) => {
+    // Si on reçoit directement le nouvel objectif, l'ajouter à la liste
+    if (newGoal) {
+      console.log('Adding new goal directly:', newGoal.id);
+      setGoals(prev => [...prev, newGoal]);
+      setShowCreateGoal(false);
+      return;
+    }
+
+    // Sinon, recharger depuis localStorage/Firebase
     if (user) {
       // Utilisateur connecté: recharger depuis Firebase
       try {
@@ -799,7 +807,15 @@ function CreateGoalModal({
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (goal: Goal) => void;
-  onAddGloweeTasks?: (tasks: Task[]) => void;
+  onAddGloweeTasks?: (
+    tasks: Task[],
+    goalData: {
+      id: string;
+      name: string;
+      color: string;
+      weeklyPriorities: { id: string; text: string; completed: boolean }[];
+    }
+  ) => void;
 }) {
   const [step, setStep] = useState(1);
   const [goalType, setGoalType] = useState<'financial' | 'personal'>('personal');
@@ -964,7 +980,18 @@ function CreateGoalModal({
   const confirmGoalCreation = () => {
     if (!pendingGoalData) return;
 
-    // Ajouter les tâches dans Glowee tâches du Planning avec dates spécifiques
+    // 1. D'abord sauvegarder l'objectif dans localStorage
+    try {
+      const existingGoals = localStorage.getItem('myGoals');
+      const goals = existingGoals ? JSON.parse(existingGoals) : [];
+      goals.push(pendingGoalData);
+      localStorage.setItem('myGoals', JSON.stringify(goals));
+      console.log('Goal saved to localStorage:', pendingGoalData.id);
+    } catch (error) {
+      console.error('Error saving goal to localStorage:', error);
+    }
+
+    // 2. Ajouter les tâches dans Glowee tâches du Planning avec dates spécifiques
     if (onAddGloweeTasks && analyzedTasks.length > 0) {
       const goalColor = pendingGoalData.goalColor || getGoalColor(pendingGoalData.id);
 
@@ -988,6 +1015,7 @@ function CreateGoalModal({
       onAddGloweeTasks(tasksWithDates, goalDataForPlanning);
     }
 
+    // 3. Appeler onSuccess pour mettre à jour l'état parent
     onSuccess(pendingGoalData);
     resetForm();
     setPendingGoalData(null);

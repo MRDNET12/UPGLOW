@@ -3136,14 +3136,27 @@ export default function GlowUpChallengeApp() {
                         allPillars.push(specialNewMePillars[newMeCurrentDay]);
                       }
 
-                      return allPillars.map((habit) => {
+                      // Trier: tâches non complétées en haut, complétées en bas
+                      const sortedPillars = allPillars.sort((a, b) => {
+                        const aChecked = newMeProgress[newMeCurrentDay]?.[a.id.toString()] || false;
+                        const bChecked = newMeProgress[newMeCurrentDay]?.[b.id.toString()] || false;
+
+                        // Les non cochées d'abord (false < true)
+                        if (aChecked === bChecked) return 0;
+                        return aChecked ? 1 : -1;
+                      });
+
+                      return sortedPillars.map((habit) => {
                         const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
                         const isSpecialPillar = habit.shortDescription[language] === 'OBJECTIF_LINK_DAY1' || habit.shortDescription[language] === 'OBJECTIF_LINK_DAY2';
 
                         return (
                           <div
                             key={habit.id}
-                            className={`p-4 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isChecked ? 'opacity-60' : ''}`}
+                            className={`p-4 rounded-2xl cursor-pointer bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isChecked ? 'opacity-60' : ''}`}
+                            style={{
+                              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            }}
                             onClick={() => {
                               if (isSpecialPillar) return; // Ne pas cocher automatiquement les piliers spéciaux
                               // Clic sur la carte = valider l'habitude

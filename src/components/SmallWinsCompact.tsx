@@ -10,6 +10,7 @@ interface SmallWinsCompactProps {
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   const { t, language } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
   const [newWin, setNewWin] = useState('');
 
   const addSmallWin = useStore((state) => state.addSmallWin);
@@ -107,6 +108,48 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
         <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-pink-100/50 border border-pink-100/50 space-y-4 animate-in slide-in-from-top duration-300">
+          {/* FAQ Pourquoi ? - Design magnifique */}
+          <div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowWhy(!showWhy);
+              }}
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100 rounded-xl hover:from-pink-200 hover:via-rose-200 hover:to-orange-200 transition-all shadow-lg shadow-pink-200/50 border border-pink-200/50"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-lg">💡</span>
+                <span className="font-bold text-gray-800 text-sm">
+                  {t.bonus.why || 'Pourquoi ?'}
+                </span>
+              </div>
+              {showWhy ? (
+                <ChevronUp className="w-5 h-5 text-pink-500" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-pink-500" />
+              )}
+            </button>
+
+            {showWhy && (
+              <div className="mt-3 p-4 bg-white/80 backdrop-blur-md rounded-xl space-y-3 shadow-lg shadow-pink-200/50 border border-pink-100/50 animate-in slide-in-from-top duration-300">
+                <div>
+                  <p className="font-bold text-gray-800 mb-2 text-sm">{t.bonus.smallWinsDescription || 'Célèbre tes victoires quotidiennes !'}</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-gray-700 font-medium text-xs">
+                    <li>{t.bonus.smallWinsStep1 || 'Note trois petits accomplissements réalisés cette semaine (même les plus minimes).'}</li>
+                    <li>{t.bonus.smallWinsStep2 || 'Décris pourquoi ces accomplissements sont importants pour toi.'}</li>
+                    <li>{t.bonus.smallWinsStep3 || 'Relis cette liste chaque matin pour te rappeler que tu es capable.'}</li>
+                  </ol>
+                </div>
+                <div className="pt-3 border-t-2 border-pink-200">
+                  <p className="font-bold text-gray-800 mb-2 text-sm">{t.bonus.whyItWorks || 'Pourquoi ça marche ?'}</p>
+                  <p className="text-gray-700 font-medium text-xs leading-relaxed">
+                    {t.bonus.smallWinsExplanation || "L'auto-valorisation aide à renforcer la confiance et réduire le sentiment d'échec."}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Input d'ajout rapide */}
           <div className="flex gap-2">
             <input

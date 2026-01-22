@@ -115,7 +115,7 @@ ${goal.type === 'financial' && dailyTarget > 0 ? `
         'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'deepseek/deepseek-chat', // Modèle plus stable que R1
         messages: [
           {
             role: 'system',
@@ -153,15 +153,34 @@ ${goal.type === 'financial' && dailyTarget > 0 ? `
     // Parser la réponse JSON
     let parsedResponse;
     try {
-      // Nettoyer la réponse (enlever les backticks si présents)
-      const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      // Nettoyer la réponse (enlever les backticks, balises think, etc.)
+      let cleanedContent = content
+        .replace(/<think>[\s\S]*?<\/think>/g, '') // Enlever les balises <think> de DeepSeek R1
+        .replace(/```json\n?/g, '')
+        .replace(/```\n?/g, '')
+        .trim();
+
+      // Extraire le JSON si entouré de texte
+      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        cleanedContent = jsonMatch[0];
+      }
+
       parsedResponse = JSON.parse(cleanedContent);
     } catch (parseError) {
       console.error('Failed to parse AI response:', content);
-      return NextResponse.json(
-        { error: 'Invalid AI response format' },
-        { status: 500 }
-      );
+      // Fallback : créer des tâches génériques si l'IA échoue
+      parsedResponse = {
+        tasks: [
+          { day: 'monday', task: `Recherche et planification pour "${goal.name}"`, priority: 'high', category: 'planification' },
+          { day: 'tuesday', task: `Définir les étapes clés pour "${goal.name}"`, priority: 'high', category: 'organisation' },
+          { day: 'wednesday', task: `Commencer les premières actions pour "${goal.name}"`, priority: 'medium', category: 'action' },
+          { day: 'thursday', task: `Continuer le travail sur "${goal.name}"`, priority: 'medium', category: 'action' },
+          { day: 'friday', task: `Évaluer les progrès sur "${goal.name}"`, priority: 'medium', category: 'réflexion' },
+          { day: 'saturday', task: `Ajuster la stratégie pour "${goal.name}"`, priority: 'low', category: 'planification' },
+          { day: 'sunday', task: `Préparer la semaine suivante pour "${goal.name}"`, priority: 'low', category: 'organisation' }
+        ]
+      };
     }
 
     // Valider la structure de la réponse

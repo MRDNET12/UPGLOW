@@ -165,65 +165,173 @@ Crée un plan de découpage ULTRA MOTIVANT avec :
 
 Réponds UNIQUEMENT en JSON valide.`;
 
-    // Appeler OpenRouter API
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://upglow.app',
-        'X-Title': 'Glowee Work - UPGLOW'
-      },
-      body: JSON.stringify({
-        model: 'deepseek/deepseek-r1', // DeepSeek R1 pour génération de plan
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.8,
-        max_tokens: 2048
-      })
-    });
+    // Créer un plan de fallback en cas d'erreur
+    const createFallbackBreakdown = (): TimeBreakdown[] => {
+      const fallback: TimeBreakdown[] = [];
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('[Generate Plan API] OpenRouter error:', errorData);
-      return NextResponse.json(
-        { error: 'Failed to generate plan' },
-        { status: 500 }
-      );
-    }
+      if (breakdownLevels.includes('Trimestre')) {
+        fallback.push({
+          level: 'Trimestre',
+          title: '🎯 Vision Trimestrielle',
+          steps: [
+            `Définir les grandes étapes pour "${goal.name}"`,
+            'Identifier les ressources nécessaires',
+            'Créer un plan d\'action global',
+            'Établir des indicateurs de progression'
+          ],
+          motivation: 'Chaque trimestre est une opportunité de transformer ta vision en réalité ! ✨'
+        });
+      }
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+      if (breakdownLevels.includes('Mois')) {
+        fallback.push({
+          level: 'Mois',
+          title: '🚀 Objectifs Mensuels',
+          steps: [
+            'Décomposer l\'objectif en jalons mensuels',
+            'Planifier les actions prioritaires',
+            'Suivre ta progression régulièrement',
+            'Ajuster ta stratégie si nécessaire'
+          ],
+          motivation: 'Chaque mois te rapproche de ton objectif. Continue, tu es sur la bonne voie ! 💪'
+        });
+      }
 
-    if (!content) {
-      return NextResponse.json(
-        { error: 'No response from AI' },
-        { status: 500 }
-      );
-    }
+      if (breakdownLevels.includes('Semaine')) {
+        fallback.push({
+          level: 'Semaine',
+          title: '⚡ Actions Hebdomadaires',
+          steps: [
+            'Définir 3-5 actions concrètes pour la semaine',
+            'Bloquer du temps dans ton agenda',
+            'Célébrer chaque petite victoire',
+            'Faire le point en fin de semaine'
+          ],
+          motivation: 'Une semaine à la fois, tu construis ton succès ! Chaque action compte ! 🌟'
+        });
+      }
 
-    // Parser la réponse JSON
-    let parsedResponse: { breakdown: TimeBreakdown[] };
+      if (breakdownLevels.includes('Jour')) {
+        fallback.push({
+          level: 'Jour',
+          title: '✨ Routine Quotidienne',
+          steps: [
+            'Commencer par la tâche la plus importante',
+            'Avancer sur ton objectif pendant 30 minutes minimum',
+            'Noter tes progrès et apprentissages',
+            'Visualiser ton objectif atteint'
+          ],
+          motivation: 'Chaque jour est une nouvelle chance d\'avancer. Tu es capable de grandes choses ! 🔥'
+        });
+      }
+
+      return fallback;
+    };
+
+    // Appeler OpenRouter API avec timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 secondes timeout
+
     try {
-      const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      parsedResponse = JSON.parse(cleanedContent);
-    } catch (parseError) {
-      console.error('Failed to parse AI response:', content);
-      return NextResponse.json(
-        { error: 'Invalid AI response format' },
-        { status: 500 }
-      );
-    }
+      const response = await fetch(OPENROUTER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://upglow.app',
+          'X-Title': 'Glowee Work - UPGLOW'
+        },
+        body: JSON.stringify({
+          model: 'deepseek/deepseek-r1',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 2048
+        }),
+        signal: controller.signal
+      });
 
-    return NextResponse.json({
-      success: true,
-      breakdown: parsedResponse.breakdown,
-      daysRemaining,
-      monthsRemaining,
-      isFallback: false
-    });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.error('[Generate Plan API] OpenRouter error, using fallback');
+        return NextResponse.json({
+          success: true,
+          breakdown: createFallbackBreakdown(),
+          daysRemaining,
+          monthsRemaining,
+          isFallback: true
+        });
+      }
+
+      const data = await response.json();
+      let content = data.choices?.[0]?.message?.content;
+
+      if (!content) {
+        console.error('[Generate Plan API] No content, using fallback');
+        return NextResponse.json({
+          success: true,
+          breakdown: createFallbackBreakdown(),
+          daysRemaining,
+          monthsRemaining,
+          isFallback: true
+        });
+      }
+
+      // Nettoyer la réponse de DeepSeek R1 (supprimer <think>...</think>)
+      content = content.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+
+      // Parser la réponse JSON
+      let parsedResponse: { breakdown: TimeBreakdown[] };
+      try {
+        // Nettoyer le contenu
+        let cleanedContent = content
+          .replace(/```json\n?/g, '')
+          .replace(/```\n?/g, '')
+          .trim();
+
+        // Extraire le JSON s'il est entouré de texte
+        const jsonMatch = cleanedContent.match(/\{[\s\S]*"breakdown"[\s\S]*\}/);
+        if (jsonMatch) {
+          cleanedContent = jsonMatch[0];
+        }
+
+        parsedResponse = JSON.parse(cleanedContent);
+
+        if (!parsedResponse.breakdown || !Array.isArray(parsedResponse.breakdown)) {
+          throw new Error('Invalid breakdown format');
+        }
+      } catch (parseError) {
+        console.error('[Generate Plan API] Parse error, using fallback:', parseError);
+        return NextResponse.json({
+          success: true,
+          breakdown: createFallbackBreakdown(),
+          daysRemaining,
+          monthsRemaining,
+          isFallback: true
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        breakdown: parsedResponse.breakdown,
+        daysRemaining,
+        monthsRemaining,
+        isFallback: false
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      console.error('[Generate Plan API] Fetch error, using fallback:', fetchError);
+      return NextResponse.json({
+        success: true,
+        breakdown: createFallbackBreakdown(),
+        daysRemaining,
+        monthsRemaining,
+        isFallback: true
+      });
+    }
 
   } catch (error) {
     console.error('Error generating plan:', error);

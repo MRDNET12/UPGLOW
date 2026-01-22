@@ -118,18 +118,60 @@ export function useFirebaseSync(store: any) {
 export function usePlanningSync(tasksWithDates: any[], setTasksWithDates: (tasks: any[]) => void) {
   const { user } = useAuth();
   const lastSyncedTasks = useRef<string>('');
+  const isInitialLoad = useRef(true);
 
+  // Charger les tâches depuis Firebase au montage
   useEffect(() => {
-    if (!user || !tasksWithDates) return;
+    if (!user || !isInitialLoad.current) return;
+
+    const loadTasksFromFirebase = async () => {
+      try {
+        console.log('Loading planning tasks from Firebase for user:', user.uid);
+        const firebaseTasks = await getUserTasks(user.uid);
+
+        if (firebaseTasks.length > 0) {
+          console.log('Loaded planning tasks from Firebase:', firebaseTasks.length);
+          setTasksWithDates(firebaseTasks);
+          // Sauvegarder aussi dans localStorage pour backup
+          localStorage.setItem('tasksWithDates', JSON.stringify(firebaseTasks));
+          lastSyncedTasks.current = JSON.stringify(firebaseTasks);
+        } else {
+          // Si pas de tâches Firebase, charger depuis localStorage
+          const savedTasks = localStorage.getItem('tasksWithDates');
+          if (savedTasks) {
+            const localTasks = JSON.parse(savedTasks);
+            setTasksWithDates(localTasks);
+            console.log('Loaded planning tasks from localStorage:', localTasks.length);
+          }
+        }
+
+        isInitialLoad.current = false;
+      } catch (error) {
+        console.error('Error loading planning tasks from Firebase:', error);
+        // Fallback vers localStorage en cas d'erreur
+        const savedTasks = localStorage.getItem('tasksWithDates');
+        if (savedTasks) {
+          setTasksWithDates(JSON.parse(savedTasks));
+        }
+        isInitialLoad.current = false;
+      }
+    };
+
+    loadTasksFromFirebase();
+  }, [user, setTasksWithDates]);
+
+  // Synchroniser les changements vers Firebase
+  useEffect(() => {
+    if (!user || !tasksWithDates || isInitialLoad.current) return;
 
     const syncTasks = async () => {
       try {
         const tasksJson = JSON.stringify(tasksWithDates);
-        
+
         // Ne synchroniser que si les tâches ont changé
         if (tasksJson !== lastSyncedTasks.current) {
           console.log('Syncing tasks to Firebase...');
-          
+
           // Sauvegarder chaque tâche
           for (const task of tasksWithDates) {
             // Ne sauvegarder que les tâches qui ne sont pas déjà dans Firebase
@@ -142,9 +184,12 @@ export function usePlanningSync(tasksWithDates: any[], setTasksWithDates: (tasks
               await saveTask(user.uid, task);
             }
           }
-          
+
           lastSyncedTasks.current = tasksJson;
           console.log('Tasks synced to Firebase successfully');
+
+          // Sauvegarder aussi dans localStorage pour backup
+          localStorage.setItem('tasksWithDates', JSON.stringify(tasksWithDates));
         }
       } catch (error) {
         console.error('Error syncing tasks to Firebase:', error);

@@ -461,21 +461,8 @@ export default function GlowUpChallengeApp() {
     }
   }, [gloweeWeeklyTasks, isHydrated]);
 
-  // Charger et sauvegarder les tâches avec dates
-  useEffect(() => {
-    if (isHydrated) {
-      const savedTasksWithDates = localStorage.getItem('tasksWithDates');
-      if (savedTasksWithDates) {
-        setTasksWithDates(JSON.parse(savedTasksWithDates));
-      }
-    }
-  }, [isHydrated]);
-
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem('tasksWithDates', JSON.stringify(tasksWithDates));
-    }
-  }, [tasksWithDates, isHydrated]);
+  // Note: Le chargement et la sauvegarde des tâches avec dates sont maintenant gérés par usePlanningSync
+  // qui charge depuis Firebase au montage et synchronise automatiquement les changements
 
   // Charger et sauvegarder les objectifs avec priorités
   useEffect(() => {

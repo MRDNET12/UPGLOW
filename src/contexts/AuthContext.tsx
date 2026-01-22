@@ -51,9 +51,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user && db) {
         // Récupérer les données utilisateur depuis Firestore
         try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          // Vérifier si c'est l'email administrateur
+          const isAdminEmail = user.email?.toLowerCase() === 'miroidi40@gmail.com';
+
           if (userDoc.exists()) {
-            setUserData(userDoc.data() as UserData);
+            const data = userDoc.data() as UserData;
+
+            // Si c'est l'admin et que les privilèges ne sont pas encore définis, les ajouter
+            if (isAdminEmail && (!data.isAdmin || !data.hasPaid)) {
+              const updatedData = { ...data, isAdmin: true, hasPaid: true };
+              await setDoc(userDocRef, updatedData, { merge: true });
+              setUserData(updatedData);
+              console.log('Admin privileges granted to:', user.email);
+            } else {
+              setUserData(data);
+            }
+          } else if (isAdminEmail) {
+            // Si le document n'existe pas mais c'est l'admin, le créer avec les privilèges
+            const newUserData: UserData = {
+              email: user.email || '',
+              hasPaid: true,
+              isAdmin: true,
+              createdAt: new Date().toISOString(),
+              registrationDate: new Date().toISOString()
+            };
+            await setDoc(userDocRef, newUserData);
+            setUserData(newUserData);
+            console.log('Admin document created for:', user.email);
           }
         } catch (error) {
           console.error('Error fetching user data:', error);

@@ -169,9 +169,9 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             </div>
           )}
 
-          {/* Barre de progression */}
-          <div className="p-3 rounded-xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200/50">
-            <div className="flex items-center justify-between mb-2">
+          {/* Barre de progression avec points */}
+          <div className="p-4 rounded-xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200/50">
+            <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold text-gray-700">
                 {winsThisWeek.length >= 5
                   ? (language === 'fr' ? '🎉 Statut Légende !' : language === 'en' ? '🎉 Legend status!' : '¡Estado Leyenda!')
@@ -181,14 +181,52 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 }
               </span>
               <span className="text-xs font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                {Math.round((winsThisWeek.length / 5) * 100)}%
+                {winsThisWeek.length}/5
               </span>
             </div>
-            <div className="h-2 bg-gradient-to-r from-pink-100 via-rose-100 to-orange-100 rounded-full overflow-hidden shadow-inner">
+
+            {/* Barre avec points style image */}
+            <div className="relative flex items-center justify-between px-1">
+              {/* Barre de fond */}
+              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-2 bg-gradient-to-r from-purple-200 via-pink-200 to-rose-200 rounded-full shadow-inner" />
+
+              {/* Barre de progression */}
               <div
-                className={`h-full bg-gradient-to-r ${rank.bgGradient} transition-all duration-700 shadow-lg`}
-                style={{ width: `${(winsThisWeek.length / 5) * 100}%` }}
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-2 bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 rounded-full shadow-lg transition-all duration-700"
+                style={{
+                  width: `calc(${(winsThisWeek.length / 5) * 100}% - ${winsThisWeek.length === 0 ? '0px' : '0px'})`
+                }}
               />
+
+              {/* Points (5 points pour 5 succès) */}
+              {[0, 1, 2, 3, 4].map((index) => {
+                const isCompleted = index < winsThisWeek.length;
+                const isCurrent = index === winsThisWeek.length;
+
+                return (
+                  <div
+                    key={index}
+                    className="relative z-10 flex items-center justify-center transition-all duration-500"
+                    style={{ flex: 1 }}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
+                        isCompleted
+                          ? 'bg-gradient-to-br from-amber-300 via-orange-300 to-amber-400 shadow-lg shadow-orange-300/50 scale-110'
+                          : isCurrent
+                            ? 'bg-gradient-to-br from-purple-300 via-pink-300 to-rose-300 shadow-lg shadow-pink-300/50 scale-105 animate-pulse'
+                            : 'bg-white border-2 border-purple-200 shadow-md'
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <span className="text-white text-sm font-bold drop-shadow-md">✓</span>
+                      ) : (
+                        <div className={`w-3 h-3 rounded-full ${isCurrent ? 'bg-white' : 'bg-purple-200'}`} />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

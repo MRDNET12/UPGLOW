@@ -4461,7 +4461,7 @@ export default function GlowUpChallengeApp() {
             {/* Bouton Planifier */}
             <Button
               className="w-full h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
-              onClick={() => {
+              onClick={async () => {
                 if (newTaskText.trim()) {
                   if (newTaskDestination === 'priority') {
                     // Ajouter aux priorités de la semaine

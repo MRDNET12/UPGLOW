@@ -7,6 +7,21 @@ interface SmallWinsCompactProps {
   theme?: 'light' | 'dark';
 }
 
+// Messages d'auto-validation qui tournent à chaque ajout
+const AUTO_VALIDATIONS = [
+  'Je suis une légende.',
+  'Encore une victoire.',
+  'La discipline paie.',
+  'Un pas de plus.',
+  'Personne ne m\'arrête.',
+  'Je mérite cette victoire.',
+  'Ce que je fais a de la valeur.',
+  'Je progresse honnêtement.',
+  'Je grandis.',
+  'Ma constance me rend fier.',
+  'Merci moi.'
+];
+
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   const { t, language } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -18,6 +33,13 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   const winsThisWeek = getSmallWinsThisWeek();
   const lastWin = winsThisWeek.length > 0 ? winsThisWeek[winsThisWeek.length - 1] : null;
+
+  // Message d'auto-validation qui change à chaque nouvel ajout
+  const getAutoValidation = () => {
+    const count = winsThisWeek.length;
+    if (count === 0) return AUTO_VALIDATIONS[0];
+    return AUTO_VALIDATIONS[count % AUTO_VALIDATIONS.length];
+  };
 
   // Déterminer le palier
   const getRank = () => {
@@ -39,8 +61,9 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         emoji: '🏆'
       };
     }
+    // Utiliser l'auto-validation au lieu de "En route"
     return {
-      name: language === 'fr' ? 'En route' : language === 'en' ? 'On the way' : 'En camino',
+      name: getAutoValidation(),
       icon: Trophy,
       color: 'text-pink-600',
       bgGradient: 'from-pink-400 via-rose-400 to-orange-400',

@@ -1120,33 +1120,33 @@ export default function GlowUpChallengeApp() {
                   setCurrentView('challenge');
                 }}
               >
-                <CardContent className="p-4 relative z-10">
+                <CardContent className="p-3 relative z-10">
                   {/* Illustration décorative 3D */}
-                  <div className="absolute -top-2 -right-2 text-6xl opacity-10 drop-shadow-lg">
+                  <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
                     🎯
                   </div>
 
-                  <div className="mb-2">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-sm mb-2">
+                  <div className="mb-1">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/60 backdrop-blur-sm mb-1.5">
                       <span className="text-xs font-bold text-purple-600">
                         {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {challengeProgress.currentDay}/30
                       </span>
                     </div>
-                    <h2 className="text-base font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
+                    <h2 className="text-sm font-bold text-gray-800 mb-1.5 pr-14 line-clamp-2">
                       {getCurrentDayData()?.title || (language === 'fr' ? 'Challenge du jour' : language === 'en' ? 'Challenge of the day' : 'Desafío del día')}
                     </h2>
-                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-purple-300/50">
+                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-purple-300/50">
                       {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente & Vida'}
                     </Badge>
                   </div>
 
                   {/* Barre de progression avec style glassmorphism */}
-                  <div className="space-y-2 mt-3">
+                  <div className="space-y-1.5 mt-2">
                     <div className="flex items-center justify-between text-xs text-gray-700">
                       <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
                       <span className="font-bold text-purple-600">{Math.round(progressPercentage)}%</span>
                     </div>
-                    <div className="h-2 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
+                    <div className="h-1.5 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
                       <div
                         className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 shadow-lg"
                         style={{ width: `${progressPercentage}%` }}
@@ -1163,32 +1163,32 @@ export default function GlowUpChallengeApp() {
                 className="border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50 rounded-[2rem] overflow-hidden relative"
                 onClick={() => setCurrentView('new-me')}
               >
-                <CardContent className="p-4 relative z-10">
-                  <div className="absolute -top-2 -right-2 text-6xl opacity-10 drop-shadow-lg">
+                <CardContent className="p-3 relative z-10">
+                  <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
                     ✨
                   </div>
 
-                  <div className="mb-2">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-sm mb-2">
+                  <div className="mb-1">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/60 backdrop-blur-sm mb-1.5">
                       <span className="text-xs font-bold text-pink-600">
                         {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {newMeCurrentDay}/30
                       </span>
                     </div>
-                    <h2 className="text-base font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
+                    <h2 className="text-sm font-bold text-gray-800 mb-1.5 pr-14 line-clamp-2">
                       {t.newMe.subtitle}
                     </h2>
-                    <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-pink-300/50">
+                    <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-pink-300/50">
                       {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>
 
                   {/* Barre de progression avec style glassmorphism */}
-                  <div className="space-y-2 mt-3">
+                  <div className="space-y-1.5 mt-2">
                     <div className="flex items-center justify-between text-xs text-gray-700">
                       <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
                       <span className="font-bold text-pink-600">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
                     </div>
-                    <div className="h-2 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
+                    <div className="h-1.5 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
                       <div
                         className="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full transition-all duration-500 shadow-lg"
                         style={{ width: `${(newMeCurrentDay / 30) * 100}%` }}
@@ -1202,31 +1202,31 @@ export default function GlowUpChallengeApp() {
             {/* Petits Succès Compact */}
             <SmallWinsCompact theme={theme} />
 
-            {/* Grille de cartes - 2 colonnes */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Grille de cartes - 3 colonnes pour les 3 premières cartes */}
+            <div className="grid grid-cols-3 gap-3">
               {/* Carte Mes Habitudes */}
               <Card
                 className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('trackers')}
               >
-                <CardContent className="p-4 relative overflow-hidden">
-                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
+                <CardContent className="p-3 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-3xl opacity-10 drop-shadow-lg">
                     📚
                   </div>
                   <div className="relative z-10">
-                    <h3 className="text-sm font-bold text-gray-800 mb-3">
+                    <h3 className="text-xs font-bold text-gray-800 mb-2">
                       {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                     </h3>
-                    <div className="space-y-2">
-                      <button className="w-full px-3 py-1.5 bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold rounded-full shadow-lg shadow-pink-200/50">
+                    <div className="space-y-1.5">
+                      <button className="w-full px-2 py-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white text-[10px] font-bold rounded-full shadow-lg shadow-pink-200/50">
                         {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
                       </button>
-                      <div className="px-3 py-1.5 bg-white/60 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full text-center">
+                      <div className="px-2 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
                         {(() => {
                           const todayTracker = getTodayTracker();
                           const completedHabits = Object.values(todayTracker.habits).filter(Boolean).length;
                           const totalHabits = 5 + customHabits.length;
-                          return `${completedHabits}/${totalHabits} ${language === 'fr' ? 'complétés' : language === 'en' ? 'completed' : 'completados'}`;
+                          return `${completedHabits}/${totalHabits}`;
                         })()}
                       </div>
                     </div>
@@ -1239,16 +1239,16 @@ export default function GlowUpChallengeApp() {
                 className="border-none shadow-xl shadow-purple-100/50 bg-gradient-to-br from-purple-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('journal')}
               >
-                <CardContent className="p-4 relative overflow-hidden">
-                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
+                <CardContent className="p-3 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-3xl opacity-10 drop-shadow-lg">
                     📖
                   </div>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <BookOpen className="w-5 h-5 text-purple-400" />
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-8 h-8 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <BookOpen className="w-4 h-4 text-purple-400" />
                       </div>
-                      <h3 className="font-bold text-sm text-gray-800">{t.journal.title}</h3>
+                      <h3 className="font-bold text-xs text-gray-800 text-center">{t.journal.title}</h3>
                     </div>
                   </div>
                 </CardContent>
@@ -1259,23 +1259,27 @@ export default function GlowUpChallengeApp() {
                 className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-4 relative overflow-hidden">
+                <CardContent className="p-3 relative overflow-hidden">
                   {/* Emoji chef en bas touchant la bordure */}
-                  <div className="absolute -bottom-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
+                  <div className="absolute -bottom-1 -right-1 text-3xl opacity-10 drop-shadow-lg">
                     👩‍🍳
                   </div>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Calendar className="w-5 h-5 text-pink-400" />
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-8 h-8 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <Calendar className="w-4 h-4 text-pink-400" />
                       </div>
-                      <h3 className="font-bold text-sm text-gray-800">
+                      <h3 className="font-bold text-xs text-gray-800 text-center">
                         {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                       </h3>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+            </div>
+
+            {/* Grille de cartes - 2 colonnes pour Objectifs et autres */}
+            <div className="grid grid-cols-2 gap-3">
 
               {/* Carte Objectifs */}
               <Card
@@ -1305,7 +1309,7 @@ export default function GlowUpChallengeApp() {
                 </CardContent>
               </Card>
 
-              {/* Carte Glow Up (Bonus) */}
+              {/* Carte Glow Up (Bonus) - hauteur adaptée à Objectifs */}
               <Card
                 className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-purple-50 to-orange-50 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('bonus')}
@@ -1315,15 +1319,15 @@ export default function GlowUpChallengeApp() {
                     ✨
                   </div>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-2">
+                    <p className="text-xs text-gray-500 mb-1 font-medium">
+                      {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
+                    </p>
+                    <h3 className="text-sm font-bold text-gray-800 mb-3">{t.bonus.title}</h3>
+                    <div className="flex items-center gap-2">
                       <div className="w-10 h-10 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg">
                         <Gift className="w-5 h-5 text-pink-400" />
                       </div>
-                      <h3 className="font-bold text-xl text-gray-800">{t.bonus.title}</h3>
                     </div>
-                    <p className="text-xs text-gray-600 font-medium">
-                      {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
-                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -1334,16 +1338,16 @@ export default function GlowUpChallengeApp() {
               className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01]"
               onClick={() => setCurrentView('boundaries')}
             >
-              <CardContent className="p-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center shadow-lg">
-                    <span className="text-2xl drop-shadow-sm">🛡️</span>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center shadow-lg">
+                    <span className="text-xl drop-shadow-sm">🛡️</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-base text-gray-800">
+                    <h3 className="font-bold text-sm text-gray-800">
                       {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
                     </h3>
-                    <p className="text-xs text-gray-500 font-medium">
+                    <p className="text-[10px] text-gray-500 font-medium">
                       {language === 'fr' ? 'Pour ta paix intérieure' : language === 'en' ? 'For your inner peace' : 'Para tu paz interior'}
                     </p>
                   </div>

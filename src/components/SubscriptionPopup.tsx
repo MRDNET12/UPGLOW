@@ -11,9 +11,15 @@ interface SubscriptionPopupProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenAuthDialog?: () => void;
+  source?: 'button' | 'trial_expired'; // 'button' = Plan Pro button, 'trial_expired' = trial ended
 }
 
-export function SubscriptionPopup({ isOpen, onClose }: SubscriptionPopupProps) {
+// Nouveau lien Stripe pour le premier popup
+const STRIPE_LINK_POPUP_1 = 'https://buy.stripe.com/eVq3cv5nocni1CDfmJf3a01';
+// Ancien lien Stripe pour le deuxième popup (non fermable)
+const STRIPE_LINK_POPUP_2 = 'https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00';
+
+export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }: SubscriptionPopupProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showTrialExtension, setShowTrialExtension] = useState(false);
   const [email, setEmail] = useState('');
@@ -24,20 +30,27 @@ export function SubscriptionPopup({ isOpen, onClose }: SubscriptionPopupProps) {
   const { registerUser, markTrialPopupSeen } = useStore();
 
   const handleSubscribe = () => {
+    // Utiliser le nouveau lien pour le premier popup
+    const baseUrl = STRIPE_LINK_POPUP_1;
+
     if (!user || !user.email) {
       // Rediriger vers Stripe sans email
-      const stripeUrl = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00`;
-      window.location.href = stripeUrl;
+      window.location.href = baseUrl;
       return;
     }
 
     // Si l'utilisateur est connecté, rediriger vers Stripe avec email
-    const stripeUrl = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00?prefilled_email=${encodeURIComponent(user.email)}`;
+    const stripeUrl = `${baseUrl}?prefilled_email=${encodeURIComponent(user.email)}`;
     window.location.href = stripeUrl;
   };
 
   const handleClose = () => {
-    // Afficher le popup d'extension de trial au lieu de fermer
+    // Si ouvert depuis le bouton Plan Pro, fermer simplement
+    if (source === 'button') {
+      onClose();
+      return;
+    }
+    // Si trial expiré, afficher le popup d'extension de trial
     setShowTrialExtension(true);
   };
 
@@ -60,8 +73,8 @@ export function SubscriptionPopup({ isOpen, onClose }: SubscriptionPopupProps) {
       registerUser();
       markTrialPopupSeen();
 
-      // Rediriger vers Stripe avec 3 jours d'essai
-      const stripeUrlWithTrial = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
+      // Rediriger vers Stripe avec 3 jours d'essai (utilise le lien du popup 2)
+      const stripeUrlWithTrial = `${STRIPE_LINK_POPUP_2}?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
       window.location.href = stripeUrlWithTrial;
     } catch (error: any) {
       console.error('Registration error:', error);

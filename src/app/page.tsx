@@ -142,12 +142,19 @@ export default function GlowUpChallengeApp() {
   const [showTrialExtension, setShowTrialExtension] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
   const [shouldReopenSubscription, setShouldReopenSubscription] = useState(false);
+  const [subscriptionSource, setSubscriptionSource] = useState<'button' | 'trial_expired'>('trial_expired');
 
   // États pour les popups Glowee
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
   const [showGloweeFifthVisit, setShowGloweeFifthVisit] = useState(false);
   const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
   const [showGloweeJournalWelcome, setShowGloweeJournalWelcome] = useState(false);
+
+  // États pour le message Glowee avec effet typing et rotation toutes les 10 minutes
+  const [gloweeMessageIndex, setGloweeMessageIndex] = useState(0);
+  const [displayedMessage, setDisplayedMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  const [hasShownFirstMessage, setHasShownFirstMessage] = useState(false);
 
   // État pour le dialogue d'authentification
   const [showAuthDialog, setShowAuthDialog] = useState(false);
@@ -359,6 +366,7 @@ export default function GlowUpChallengeApp() {
 
       // Si la période d'essai est expirée et pas d'abonnement
       if (hasExpired && !subscription.isSubscribed) {
+        setSubscriptionSource('trial_expired');
         setShowSubscription(true);
       }
     }
@@ -369,6 +377,7 @@ export default function GlowUpChallengeApp() {
     if (user && shouldReopenSubscription) {
       // L'utilisateur vient de se connecter et on doit rouvrir le popup
       setShouldReopenSubscription(false);
+      setSubscriptionSource('trial_expired');
       setShowSubscription(true);
     }
   }, [user, shouldReopenSubscription]);
@@ -403,6 +412,81 @@ export default function GlowUpChallengeApp() {
     }
   }, [isHydrated, hasStarted, currentView]);
   */
+
+  // Messages Glowee avec effet typing et rotation toutes les 10 minutes
+  const gloweeMessages = {
+    fr: [
+      'Continue comme ça, tu es sur la bonne voie ! ✨',
+      'Chaque petit pas compte, ma belle ! 💫',
+      'Tu fais déjà tellement de progrès ! 🌸',
+      'Je suis fière de toi ! Continue ! 💖',
+      'Tu rayonnes de plus en plus ! ✨',
+      'Avance à ton rythme, c\'est parfait ! 🌟'
+    ],
+    en: [
+      'Keep it up, you\'re on the right track! ✨',
+      'Every little step counts, beautiful! 💫',
+      'You\'re already making so much progress! 🌸',
+      'I\'m proud of you! Keep going! 💖',
+      'You\'re shining more and more! ✨',
+      'Go at your own pace, it\'s perfect! 🌟'
+    ],
+    es: [
+      '¡Sigue así, vas por buen camino! ✨',
+      '¡Cada pequeño paso cuenta, hermosa! 💫',
+      '¡Ya estás haciendo tanto progreso! 🌸',
+      '¡Estoy orgullosa de ti! ¡Continúa! 💖',
+      '¡Brillas cada vez más! ✨',
+      '¡Ve a tu ritmo, es perfecto! 🌟'
+    ]
+  };
+
+  // Effet typing pour le premier message
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const langMessages = gloweeMessages[language] || gloweeMessages.fr;
+    const currentMessage = langMessages[gloweeMessageIndex % langMessages.length];
+
+    // Vérifier si c'est la première apparition
+    const hasShownTyping = localStorage.getItem('gloweeTypingShown');
+
+    if (!hasShownTyping && !hasShownFirstMessage) {
+      // Effet typing pour la première fois
+      setIsTyping(true);
+      let charIndex = 0;
+      setDisplayedMessage('');
+
+      const typingInterval = setInterval(() => {
+        if (charIndex < currentMessage.length) {
+          setDisplayedMessage(currentMessage.slice(0, charIndex + 1));
+          charIndex++;
+        } else {
+          clearInterval(typingInterval);
+          setIsTyping(false);
+          setHasShownFirstMessage(true);
+          localStorage.setItem('gloweeTypingShown', 'true');
+        }
+      }, 30);
+
+      return () => clearInterval(typingInterval);
+    } else {
+      // Pas d'effet typing pour les messages suivants
+      setDisplayedMessage(currentMessage);
+      setIsTyping(false);
+    }
+  }, [isHydrated, gloweeMessageIndex, language, hasShownFirstMessage]);
+
+  // Rotation des messages toutes les 10 minutes
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const interval = setInterval(() => {
+      setGloweeMessageIndex(prev => prev + 1);
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(interval);
+  }, [isHydrated]);
 
   // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
@@ -767,13 +851,12 @@ export default function GlowUpChallengeApp() {
         <SubscriptionPopup
           isOpen={true}
           onClose={() => {}} // Fonction vide - impossible de fermer
-          theme={theme}
+          source="trial_expired"
           onOpenAuthDialog={() => setShowAuthDialog(true)}
         />
         <AuthDialog
           isOpen={showAuthDialog}
           onClose={() => setShowAuthDialog(false)}
-          theme={theme}
           onSuccess={() => {
             setShowAuthDialog(false);
             setShouldReopenSubscription(true);
@@ -1114,57 +1197,28 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Message Glowee - Style glassmorphism - Hauteur réduite 60% + Glowee débordante */}
+            {/* Message Glowee - Style glassmorphism - Hauteur réduite 30% + Glowee agrandie et débordante */}
             <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible relative">
               <CardContent className="p-0">
-                <div className="flex items-center gap-2 p-2 pr-3 relative">
+                <div className="flex items-center gap-1.5 p-1 pr-2.5 relative">
                   {/* Image Glowee agrandie et débordante en bas */}
-                  <div className="relative w-16 h-20 flex-shrink-0 -mb-4">
+                  <div className="relative w-20 h-24 flex-shrink-0 -mb-6">
                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-2xl blur-md opacity-40"></div>
                     <Image
                       src="/Glowee/glowee.webp"
                       alt="Glowee"
-                      width={64}
-                      height={80}
+                      width={80}
+                      height={96}
                       className="object-contain relative z-10 drop-shadow-2xl"
                     />
                   </div>
 
-                  {/* Message avec rotation */}
+                  {/* Message avec rotation et effet typing */}
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold text-pink-400">Glowee</p>
                     <p className="text-[11px] text-gray-700 leading-snug font-medium">
-                      {(() => {
-                        const hour = new Date().getHours();
-                        const messages = {
-                          fr: [
-                            'Continue comme ça, tu es sur la bonne voie ! ✨',
-                            'Chaque petit pas compte, ma belle ! 💫',
-                            'Tu fais déjà tellement de progrès ! 🌸',
-                            'Je suis fière de toi ! Continue ! 💖',
-                            'Tu rayonnes de plus en plus ! ✨',
-                            'Avance à ton rythme, c\'est parfait ! 🌟'
-                          ],
-                          en: [
-                            'Keep it up, you\'re on the right track! ✨',
-                            'Every little step counts, beautiful! 💫',
-                            'You\'re already making so much progress! 🌸',
-                            'I\'m proud of you! Keep going! 💖',
-                            'You\'re shining more and more! ✨',
-                            'Go at your own pace, it\'s perfect! 🌟'
-                          ],
-                          es: [
-                            '¡Sigue así, vas por buen camino! ✨',
-                            '¡Cada pequeño paso cuenta, hermosa! 💫',
-                            '¡Ya estás haciendo tanto progreso! 🌸',
-                            '¡Estoy orgullosa de ti! ¡Continúa! 💖',
-                            '¡Brillas cada vez más! ✨',
-                            '¡Ve a tu ritmo, es perfecto! 🌟'
-                          ]
-                        };
-                        const langMessages = messages[language] || messages.fr;
-                        return langMessages[hour % langMessages.length];
-                      })()}
+                      {displayedMessage}
+                      {isTyping && <span className="animate-pulse">|</span>}
                     </p>
                   </div>
                 </div>
@@ -1175,7 +1229,10 @@ export default function GlowUpChallengeApp() {
             <div className="flex items-center justify-center gap-2">
               <TrialBadge theme={theme} />
               <button
-                onClick={() => setShowSubscription(true)}
+                onClick={() => {
+                  setSubscriptionSource('button');
+                  setShowSubscription(true);
+                }}
                 className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg shadow-pink-200/50 hover:shadow-xl hover:scale-105 transition-all"
               >
                 <Crown className="w-4 h-4" />
@@ -1295,18 +1352,13 @@ export default function GlowUpChallengeApp() {
                     <h3 className="text-xs font-bold text-gray-800 mb-2">
                       {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                     </h3>
-                    <div className="space-y-1.5">
-                      <button className="w-full px-2 py-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white text-[10px] font-bold rounded-full shadow-lg shadow-pink-200/50">
-                        {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
-                      </button>
-                      <div className="px-2 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
-                        {(() => {
-                          const todayTracker = getTodayTracker();
-                          const completedHabits = Object.values(todayTracker.habits).filter(Boolean).length;
-                          const totalHabits = 5 + customHabits.length;
-                          return `${completedHabits}/${totalHabits}`;
-                        })()}
-                      </div>
+                    <div className="px-2 py-1.5 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
+                      {(() => {
+                        const todayTracker = getTodayTracker();
+                        const completedHabits = Object.values(todayTracker.habits).filter(Boolean).length;
+                        const totalHabits = 5 + customHabits.length;
+                        return `${completedHabits}/${totalHabits}`;
+                      })()}
                     </div>
                   </div>
                 </CardContent>
@@ -1346,34 +1398,29 @@ export default function GlowUpChallengeApp() {
                     <h3 className="text-xs font-bold text-gray-800 mb-2 text-center">
                       {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                     </h3>
-                    <div className="space-y-1.5">
-                      <button className="w-full px-2 py-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white text-[10px] font-bold rounded-full shadow-lg shadow-pink-200/50">
-                        {language === 'fr' ? 'Voir tout' : language === 'en' ? 'View all' : 'Ver todo'}
-                      </button>
-                      <div className="px-2 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
-                        {(() => {
-                          // Calculer les dates de la semaine en cours (lundi à dimanche)
-                          const today = new Date();
-                          const dayOfWeek = today.getDay();
-                          const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                          const monday = new Date(today);
-                          monday.setDate(today.getDate() + diffToMonday);
-                          const sunday = new Date(monday);
-                          sunday.setDate(monday.getDate() + 6);
+                    <div className="px-2 py-1.5 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
+                      {(() => {
+                        // Calculer les dates de la semaine en cours (lundi à dimanche)
+                        const today = new Date();
+                        const dayOfWeek = today.getDay();
+                        const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                        const monday = new Date(today);
+                        monday.setDate(today.getDate() + diffToMonday);
+                        const sunday = new Date(monday);
+                        sunday.setDate(monday.getDate() + 6);
 
-                          // Filtrer les tâches utilisateur de la semaine
-                          const userTasksThisWeek = tasksWithDates.filter(task => {
-                            if (task.type !== 'user') return false;
-                            const taskDate = new Date(task.date);
-                            return taskDate >= monday && taskDate <= sunday;
-                          });
+                        // Filtrer les tâches utilisateur de la semaine
+                        const userTasksThisWeek = tasksWithDates.filter(task => {
+                          if (task.type !== 'user') return false;
+                          const taskDate = new Date(task.date);
+                          return taskDate >= monday && taskDate <= sunday;
+                        });
 
-                          const completedUserTasks = userTasksThisWeek.filter(task => task.completed).length;
-                          const totalUserTasks = userTasksThisWeek.length;
+                        const completedUserTasks = userTasksThisWeek.filter(task => task.completed).length;
+                        const totalUserTasks = userTasksThisWeek.length;
 
-                          return `${completedUserTasks}/${totalUserTasks}`;
-                        })()}
-                      </div>
+                        return `${completedUserTasks}/${totalUserTasks}`;
+                      })()}
                     </div>
                   </div>
                 </CardContent>
@@ -4829,7 +4876,7 @@ export default function GlowUpChallengeApp() {
       <SubscriptionPopup
         isOpen={showSubscription}
         onClose={() => setShowSubscription(false)}
-        theme={theme}
+        source={subscriptionSource}
         onOpenAuthDialog={() => {
           setShouldReopenSubscription(true);
           setShowAuthDialog(true);

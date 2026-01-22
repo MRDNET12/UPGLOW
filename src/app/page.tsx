@@ -1136,41 +1136,41 @@ export default function GlowUpChallengeApp() {
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
             {selectedChallenge === 'mind-life' && (
               <Card
-                className="border-none shadow-2xl shadow-purple-200/50 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-100 via-pink-50 to-white rounded-[2rem] overflow-hidden relative"
+                className="border-none shadow-2xl shadow-purple-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-200 via-pink-100 to-purple-50 rounded-[2rem] overflow-hidden relative"
                 onClick={() => {
                   setCurrentDay(challengeProgress.currentDay);
                   setCurrentView('challenge');
                 }}
               >
-                <CardContent className="p-6 relative z-10">
+                <CardContent className="p-4 relative z-10">
                   {/* Illustration décorative 3D */}
                   <div className="absolute -top-2 -right-2 text-6xl opacity-10 drop-shadow-lg">
                     🎯
                   </div>
 
-                  <div className="mb-3">
+                  <div className="mb-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-sm mb-2">
-                      <span className="text-xs font-bold text-purple-500">
+                      <span className="text-xs font-bold text-purple-600">
                         {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {challengeProgress.currentDay}/30
                       </span>
                     </div>
-                    <h2 className="text-lg font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
+                    <h2 className="text-base font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
                       {getCurrentDayData()?.title || (language === 'fr' ? 'Challenge du jour' : language === 'en' ? 'Challenge of the day' : 'Desafío del día')}
                     </h2>
-                    <Badge className="bg-gradient-to-r from-purple-400 to-pink-400 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-purple-200/50">
+                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-purple-300/50">
                       {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente & Vida'}
                     </Badge>
                   </div>
 
                   {/* Barre de progression avec style glassmorphism */}
-                  <div className="space-y-2 mt-4">
-                    <div className="flex items-center justify-between text-xs text-gray-600">
+                  <div className="space-y-2 mt-3">
+                    <div className="flex items-center justify-between text-xs text-gray-700">
                       <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
-                      <span className="font-bold text-purple-500">{Math.round(progressPercentage)}%</span>
+                      <span className="font-bold text-purple-600">{Math.round(progressPercentage)}%</span>
                     </div>
                     <div className="h-2 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transition-all duration-500 shadow-lg"
+                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 shadow-lg"
                         style={{ width: `${progressPercentage}%` }}
                       />
                     </div>
@@ -1182,37 +1182,37 @@ export default function GlowUpChallengeApp() {
             {/* Grande carte Beauty & Body - Style glassmorphism */}
             {selectedChallenge === 'beauty-body' && (
               <Card
-                className="border-none shadow-2xl shadow-pink-200/50 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white rounded-[2rem] overflow-hidden relative"
+                className="border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50 rounded-[2rem] overflow-hidden relative"
                 onClick={() => setCurrentView('new-me')}
               >
-                <CardContent className="p-6 relative z-10">
+                <CardContent className="p-4 relative z-10">
                   <div className="absolute -top-2 -right-2 text-6xl opacity-10 drop-shadow-lg">
                     ✨
                   </div>
 
-                  <div className="mb-3">
+                  <div className="mb-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-sm mb-2">
-                      <span className="text-xs font-bold text-pink-500">
+                      <span className="text-xs font-bold text-pink-600">
                         {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {newMeCurrentDay}/30
                       </span>
                     </div>
-                    <h2 className="text-lg font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
+                    <h2 className="text-base font-bold text-gray-800 mb-2 pr-16 line-clamp-2">
                       {t.newMe.subtitle}
                     </h2>
-                    <Badge className="bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-pink-200/50">
+                    <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs px-3 py-1 rounded-full border-0 shadow-lg shadow-pink-300/50">
                       {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>
 
                   {/* Barre de progression avec style glassmorphism */}
-                  <div className="space-y-2 mt-4">
-                    <div className="flex items-center justify-between text-xs text-gray-600">
+                  <div className="space-y-2 mt-3">
+                    <div className="flex items-center justify-between text-xs text-gray-700">
                       <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
-                      <span className="font-bold text-pink-500">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
+                      <span className="font-bold text-pink-600">{Math.round((newMeCurrentDay / 30) * 100)}%</span>
                     </div>
                     <div className="h-2 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-gradient-to-r from-pink-400 to-rose-400 rounded-full transition-all duration-500 shadow-lg"
+                        className="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full transition-all duration-500 shadow-lg"
                         style={{ width: `${(newMeCurrentDay / 30) * 100}%` }}
                       />
                     </div>
@@ -1283,7 +1283,7 @@ export default function GlowUpChallengeApp() {
               >
                 <CardContent className="p-4 relative overflow-hidden">
                   {/* Emoji chef en bas touchant la bordure */}
-                  <div className="absolute -bottom-2 right-1/2 translate-x-1/2 text-[5rem] opacity-20 drop-shadow-lg" style={{ lineHeight: '1' }}>
+                  <div className="absolute -bottom-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
                     👩‍🍳
                   </div>
                   <div className="relative z-10">

@@ -774,32 +774,32 @@ export default function GlowUpChallengeApp() {
   // Language Selection Screen - Glassmorphism Rose Pastel
   if (!hasSelectedLanguage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
-        <div className="max-w-sm w-full text-center space-y-5">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
+        <div className="max-w-md w-full text-center space-y-8">
           {/* Logo avec Glowee */}
-          <div className="space-y-4 animate-in fade-in duration-700">
+          <div className="space-y-6 animate-in fade-in duration-700">
             <div className="flex justify-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-2xl opacity-40"></div>
                 <img
                   src="/Glowee/glowee-acceuillante.webp"
                   alt="Glowee"
-                  className="w-28 h-28 object-contain relative z-10 drop-shadow-2xl"
+                  className="w-40 h-40 object-contain relative z-10 drop-shadow-2xl"
                 />
               </div>
             </div>
-            <div className="space-y-1">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent drop-shadow-lg">
+            <div className="space-y-2">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent drop-shadow-lg">
                 {t.languageSelection.title}
               </h1>
-              <p className="text-base text-gray-700 font-medium">
+              <p className="text-xl text-gray-700 font-medium">
                 {t.languageSelection.subtitle}
               </p>
             </div>
           </div>
 
           {/* Language Options - Glassmorphism Cards */}
-          <div className="space-y-2 animate-in slide-in-from-bottom duration-700 delay-200">
+          <div className="space-y-3 animate-in slide-in-from-bottom duration-700 delay-200">
             {[
               { code: 'fr' as Language, name: 'Français', flag: '🇫🇷', gradient: 'from-pink-100 to-rose-100' },
               { code: 'en' as Language, name: 'English', flag: '🇬🇧', gradient: 'from-rose-100 to-orange-100' },
@@ -808,22 +808,22 @@ export default function GlowUpChallengeApp() {
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`w-full p-3 rounded-xl transition-all duration-300 ${
+                className={`w-full p-5 rounded-[1.5rem] transition-all duration-300 ${
                   language === lang.code
-                    ? 'bg-white/90 backdrop-blur-xl border-2 border-pink-300 shadow-xl shadow-pink-200/50 scale-105'
+                    ? 'bg-white/90 backdrop-blur-xl border-2 border-pink-300 shadow-2xl shadow-pink-200/50 scale-105'
                     : `bg-white/60 backdrop-blur-md border border-pink-100/50 shadow-lg shadow-pink-100/30 hover:bg-white/80 hover:scale-102 hover:shadow-xl`
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${lang.gradient} flex items-center justify-center shadow-md`}>
-                      <span className="text-xl drop-shadow-lg">{lang.flag}</span>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${lang.gradient} flex items-center justify-center shadow-lg`}>
+                      <span className="text-3xl drop-shadow-lg">{lang.flag}</span>
                     </div>
-                    <span className="text-base font-bold text-gray-800">{lang.name}</span>
+                    <span className="text-xl font-bold text-gray-800">{lang.name}</span>
                   </div>
                   {language === lang.code && (
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center shadow-md">
-                      <Check className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center shadow-lg">
+                      <Check className="w-5 h-5 text-white" />
                     </div>
                   )}
                 </div>
@@ -834,10 +834,10 @@ export default function GlowUpChallengeApp() {
           {/* Continue Button */}
           <Button
             onClick={() => setCurrentView('presentation')}
-            className="w-full h-12 text-base bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-xl shadow-xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-400"
+            className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-400"
           >
             {t.languageSelection.continue}
-            <ChevronRight className="ml-2 w-5 h-5" />
+            <ChevronRight className="ml-2 w-6 h-6" />
           </Button>
         </div>
       </div>
@@ -876,42 +876,45 @@ export default function GlowUpChallengeApp() {
 
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
-        <div className="flex-1 overflow-y-auto p-4 pb-20">
-          <div className="max-w-sm mx-auto space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 pb-24">
+          <div className="max-w-md mx-auto space-y-6">
             {/* Header */}
-            <div className="text-center space-y-3 pt-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 shadow-xl shadow-pink-200/50">
-                <Sparkles className="w-8 h-8 text-white drop-shadow-lg" />
+            <div className="text-center space-y-4 pt-6">
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-gradient-to-br from-pink-300 to-pink-400 shadow-2xl shadow-pink-200/50">
+                <Sparkles className="w-12 h-12 text-white drop-shadow-lg" />
               </div>
-              <p className="text-sm md:text-base text-gray-600 italic font-medium">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+                {t.presentation.title}
+              </h1>
+              <p className="text-base md:text-lg text-gray-600 italic font-medium">
                 "{t.presentation.quote}"
               </p>
             </div>
 
             {/* Subtitle */}
-            <Card className="border-none shadow-lg shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-2xl">
-              <CardContent className="p-4 text-center">
-                <p className="text-base font-bold text-gray-800">
+            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+              <CardContent className="p-6 text-center">
+                <p className="text-lg font-bold text-gray-800">
                   {t.presentation.description}
                 </p>
               </CardContent>
             </Card>
 
             {/* Triangle de transformation */}
-            <div className="space-y-3">
-              <h2 className="text-base font-bold text-center flex items-center justify-center gap-2 text-gray-800">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-md shadow-purple-200/50">
-                  <Target className="w-4 h-4 text-white" />
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-center flex items-center justify-center gap-3 text-gray-800">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-lg shadow-purple-200/50">
+                  <Target className="w-6 h-6 text-white" />
                 </div>
                 {t.presentation.triangleTitle}
               </h2>
 
               {/* Pilier 1 */}
-              <Card className="border-none shadow-lg shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-rose-50 to-white rounded-xl">
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="flex items-center gap-2.5 text-gray-800 text-sm">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-md shadow-pink-200/50">
-                      <Sparkles className="w-4 h-4 text-white" />
+              <Card className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-rose-50 to-white rounded-[1.5rem]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-lg shadow-pink-200/50">
+                      <Sparkles className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar1Title}
                   </CardTitle>
@@ -919,11 +922,11 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               {/* Pilier 2 */}
-              <Card className="border-none shadow-lg shadow-purple-100/50 bg-gradient-to-br from-purple-100 via-pink-50 to-white rounded-xl">
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="flex items-center gap-2.5 text-gray-800 text-sm">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-md shadow-purple-200/50">
-                      <Heart className="w-4 h-4 text-white" />
+              <Card className="border-none shadow-xl shadow-purple-100/50 bg-gradient-to-br from-purple-100 via-pink-50 to-white rounded-[1.5rem]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-lg shadow-purple-200/50">
+                      <Heart className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar2Title}
                   </CardTitle>
@@ -931,11 +934,11 @@ export default function GlowUpChallengeApp() {
               </Card>
 
               {/* Pilier 3 */}
-              <Card className="border-none shadow-lg shadow-orange-100/50 bg-gradient-to-br from-orange-100 via-pink-50 to-white rounded-xl">
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="flex items-center gap-2.5 text-gray-800 text-sm">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-300 to-orange-400 flex items-center justify-center shadow-md shadow-orange-200/50">
-                      <TrendingUp className="w-4 h-4 text-white" />
+              <Card className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-100 via-pink-50 to-white rounded-[1.5rem]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-300 to-orange-400 flex items-center justify-center shadow-lg shadow-orange-200/50">
+                      <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar3Title}
                   </CardTitle>
@@ -943,13 +946,43 @@ export default function GlowUpChallengeApp() {
               </Card>
             </div>
 
+            {/* Règles du Challenge */}
+            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-center text-lg flex items-center justify-center gap-3 text-gray-800">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-lg shadow-pink-200/50">
+                    <Award className="w-6 h-6 text-white" />
+                  </div>
+                  {t.presentation.rulesTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  t.presentation.rule1,
+                  t.presentation.rule5
+                ].map((rule, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-pink-50 to-white shadow-lg shadow-pink-100/30"
+                  >
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-pink-200/50">
+                      {index === 0 ? '1' : '5'}
+                    </div>
+                    <p className={`flex-1 leading-relaxed text-sm text-gray-700 ${index === 1 ? 'font-bold' : 'font-medium'}`}>
+                      {rule}
+                    </p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
             {/* CTA Button */}
             <Button
               onClick={() => {
                 markPresentationSeen();
                 setCurrentView('onboarding');
               }}
-              className="w-full h-12 text-base bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold rounded-xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+              className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold rounded-[1.5rem] shadow-xl shadow-pink-200/50 hover:shadow-2xl transition-all"
             >
               {t.presentation.startChallenge}
               <ChevronRight className="ml-2 w-5 h-5" />
@@ -1043,27 +1076,27 @@ export default function GlowUpChallengeApp() {
   // Onboarding Screen - Page 1: Glowee se présente - Glassmorphism
   if (!hasStarted && onboardingPage === 1) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
-        <div className="max-w-sm w-full text-center space-y-6 animate-in fade-in duration-700">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
+        <div className="max-w-md w-full text-center space-y-10 animate-in fade-in duration-700">
           {/* Glowee Image avec effet glow */}
           <div className="flex justify-center animate-in zoom-in duration-500">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-2xl opacity-50 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
               <img
                 src="/Glowee/glowee-acceuillante.webp"
                 alt="Glowee"
-                className="w-44 h-44 object-contain relative z-10 drop-shadow-2xl"
+                className="w-72 h-72 object-contain relative z-10 drop-shadow-2xl"
               />
             </div>
           </div>
 
           {/* Greeting Card */}
-          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-300">
-            <div className="p-5 rounded-2xl bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-xl shadow-pink-200/50">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+          <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
+            <div className="p-8 rounded-[2rem] bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
                 {t.onboarding.gloweeGreeting}
               </h1>
-              <p className="text-lg text-gray-800 font-semibold whitespace-pre-line leading-relaxed">
+              <p className="text-2xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed">
                 {t.onboarding.gloweeIntro}
               </p>
             </div>
@@ -1072,9 +1105,9 @@ export default function GlowUpChallengeApp() {
           {/* Next Button */}
           <Button
             onClick={() => setOnboardingPage(2)}
-            className="w-full h-12 text-base bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-xl shadow-xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
+            className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-7 h-7" />
           </Button>
         </div>
       </div>
@@ -1084,24 +1117,24 @@ export default function GlowUpChallengeApp() {
   // Onboarding Screen - Page 2: Message de Glowee - Glassmorphism
   if (!hasStarted && onboardingPage === 2) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
-        <div className="max-w-sm w-full text-center space-y-6 animate-in fade-in duration-700">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
+        <div className="max-w-md w-full text-center space-y-10 animate-in fade-in duration-700">
           {/* Glowee Image avec effet glow */}
           <div className="flex justify-center animate-in zoom-in duration-500">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-2xl opacity-50 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
               <img
                 src="/Glowee/glowee-acceuillante.webp"
                 alt="Glowee"
-                className="w-44 h-44 object-contain relative z-10 drop-shadow-2xl"
+                className="w-72 h-72 object-contain relative z-10 drop-shadow-2xl"
               />
             </div>
           </div>
 
           {/* Message Card */}
-          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-300">
-            <div className="p-5 rounded-2xl bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-xl shadow-pink-200/50">
-              <p className="text-lg md:text-xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed">
+          <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
+            <div className="p-8 rounded-[2rem] bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50">
+              <p className="text-2xl md:text-3xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed">
                 {t.onboarding.gloweeMessage}
               </p>
             </div>
@@ -1110,10 +1143,10 @@ export default function GlowUpChallengeApp() {
           {/* Start Button */}
           <Button
             onClick={() => setCurrentView('challenge-selection')}
-            className="w-full h-12 text-base bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-xl shadow-xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
+            className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
           >
             {t.onboarding.gloweeButton}
-            <Sparkles className="ml-2 w-5 h-5" />
+            <Sparkles className="ml-2 w-6 h-6" />
           </Button>
         </div>
       </div>

@@ -109,9 +109,12 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 )}
               </div>
               {lastWin ? (
-                <p className="text-xs text-gray-600 truncate font-medium">
-                  {lastWin.text}
-                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
+                  <p className="text-xs text-gray-600 truncate font-medium">
+                    {lastWin.text}
+                  </p>
+                </div>
               ) : (
                 <p className="text-xs text-gray-500 italic">
                   {t.bonus.addSmallWin}
@@ -120,7 +123,6 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
             {isExpanded ? (
               <ChevronUp className="w-5 h-5 text-pink-500" />
             ) : (
@@ -132,7 +134,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
-        <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-pink-100/50 border border-pink-100/50 space-y-4 animate-in slide-in-from-top duration-300">
+        <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-pink-100/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
           {/* FAQ Pourquoi ? - Design compact */}
           <div>
             <button
@@ -156,7 +158,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             </button>
 
             {showWhy && (
-              <div className="mt-2 p-2.5 bg-white/80 backdrop-blur-md rounded-lg space-y-2 shadow-md shadow-pink-200/50 border border-pink-100/50 animate-in slide-in-from-top duration-300">
+              <div className="mt-2 p-2.5 bg-white/80 backdrop-blur-md rounded-lg space-y-2 shadow-md shadow-pink-200/50 border border-pink-100/50 transition-all duration-300 ease-out">
                 <div>
                   <p className="font-bold text-gray-800 mb-1 text-xs">{t.bonus.smallWinsDescription || 'Célèbre tes victoires quotidiennes !'}</p>
                   <ol className="list-decimal list-inside space-y-1 text-gray-700 font-medium text-[11px]">
@@ -210,23 +212,23 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 <span>🌟</span>
                 {language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana'}
               </p>
-              <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
                 {winsThisWeek.slice().reverse().map((win, index) => (
                   <div
                     key={win.id}
-                    className={`p-3 rounded-xl transition-all ${
+                    className={`p-2 rounded-lg transition-all ${
                       index === 0
-                        ? `bg-gradient-to-br ${rank.bgGradient} shadow-lg`
+                        ? `bg-gradient-to-br ${rank.bgGradient} shadow-md`
                         : 'bg-white/60 border border-pink-100 hover:border-pink-200'
                     }`}
                   >
-                    <div className="flex items-start gap-2">
-                      <Trophy className={`w-4 h-4 flex-shrink-0 mt-0.5 ${index === 0 ? 'text-white' : 'text-pink-500'}`} />
+                    <div className="flex items-center gap-2">
+                      <Trophy className={`w-3.5 h-3.5 flex-shrink-0 ${index === 0 ? 'text-white' : 'text-pink-500'}`} />
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-bold leading-relaxed ${index === 0 ? 'text-white' : 'text-gray-800'}`}>
+                        <p className={`text-xs font-bold leading-tight ${index === 0 ? 'text-white' : 'text-gray-800'}`}>
                           {win.text}
                         </p>
-                        <p className={`text-xs mt-1 font-medium ${index === 0 ? 'text-white/90' : 'text-gray-500'}`}>
+                        <p className={`text-[10px] font-medium ${index === 0 ? 'text-white/90' : 'text-gray-500'}`}>
                           {new Date(win.date).toLocaleDateString()}
                         </p>
                       </div>
@@ -236,23 +238,6 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
               </div>
             </div>
           )}
-
-          {/* Indicateur de progression (texte seulement) */}
-          <div className="p-3 rounded-xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200/50">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-700">
-                {winsThisWeek.length >= 5
-                  ? (language === 'fr' ? '🎉 Statut Légende !' : language === 'en' ? '🎉 Legend status!' : '¡Estado Leyenda!')
-                  : winsThisWeek.length >= 3
-                    ? (language === 'fr' ? `Plus que ${5 - winsThisWeek.length} pour Légende !` : language === 'en' ? `${5 - winsThisWeek.length} more for Legend!` : `¡${5 - winsThisWeek.length} más para Leyenda!`)
-                    : (language === 'fr' ? `Plus que ${3 - winsThisWeek.length} pour Alpha !` : language === 'en' ? `${3 - winsThisWeek.length} more for Alpha!` : `¡${3 - winsThisWeek.length} más para Alpha!`)
-                }
-              </span>
-              <span className="text-xs font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                {winsThisWeek.length}/5
-              </span>
-            </div>
-          </div>
         </div>
       )}
     </div>

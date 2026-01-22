@@ -16,6 +16,7 @@ import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Sett
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
+import '@/lib/firebase/admin-utils'; // Import admin utilities for console access
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';

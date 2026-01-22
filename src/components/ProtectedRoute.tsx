@@ -24,9 +24,18 @@ export function ProtectedRoute({
   useEffect(() => {
     if (loading) return;
 
+    // Vérifier si l'utilisateur est admin
+    const isAdmin = userData?.isAdmin === true;
+
     // Si l'authentification est requise
     if (requireAuth && !user) {
       router.push('/');
+      return;
+    }
+
+    // Les admins ont toujours accès
+    if (isAdmin) {
+      setIsChecking(false);
       return;
     }
 

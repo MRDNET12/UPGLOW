@@ -14,6 +14,7 @@ import { auth, db } from '@/lib/firebase';
 interface UserData {
   email: string;
   hasPaid: boolean;
+  isAdmin?: boolean;
   createdAt: string;
   registrationDate: string;
 }
@@ -77,10 +78,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      // Vérifier si c'est l'email administrateur
+      const isAdminEmail = email.toLowerCase() === 'miroidi40@gmail.com';
+
       // Créer le document utilisateur dans Firestore
       const userData: UserData = {
         email: user.email || email,
-        hasPaid: false,
+        hasPaid: isAdminEmail ? true : false, // Admin a accès automatique
+        isAdmin: isAdminEmail,
         createdAt: new Date().toISOString(),
         registrationDate: new Date().toISOString()
       };

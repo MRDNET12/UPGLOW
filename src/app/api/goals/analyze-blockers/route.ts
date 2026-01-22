@@ -143,7 +143,7 @@ Réponds en 1-2 phrases courtes avec la cause racine probable et une solution co
             'X-Title': 'Glowee Work - UPGLOW'
           },
           body: JSON.stringify({
-            model: 'deepseek/deepseek-r1-0528:free',
+            model: 'deepseek/deepseek-r1', // DeepSeek R1 pour analyse
             messages: [
               { role: 'user', content: aiPrompt }
             ],

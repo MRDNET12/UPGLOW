@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         'X-Title': 'Glowee - UPGLOW' // Optionnel : nom de ton app
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free', // Modèle DeepSeek gratuit
+        model: 'deepseek/deepseek-v3.2', // DeepSeek V3.2 pour Glowee Chat (agentique)
         messages: history,
         temperature: 0.7,
         max_tokens: shortResponse ? 300 : 1000 // Réponses plus courtes et rapides

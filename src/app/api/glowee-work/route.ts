@@ -132,7 +132,7 @@ Adapte la charge de travail selon l'énergie (${averageEnergy < 50 ? 'basse' : a
         'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free', // Modèle DeepSeek gratuit
+        model: 'deepseek/deepseek-v3.2', // DeepSeek V3.2 pour Glowee Work (agentique)
         messages: [
           {
             role: 'system',

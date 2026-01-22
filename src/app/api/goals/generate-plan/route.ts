@@ -175,7 +175,7 @@ Réponds UNIQUEMENT en JSON valide.`;
         'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'deepseek/deepseek-r1', // DeepSeek R1 pour génération de plan
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }

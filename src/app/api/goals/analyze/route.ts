@@ -115,7 +115,7 @@ ${goal.type === 'financial' && dailyTarget > 0 ? `
         'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-chat', // Modèle plus stable que R1
+        model: 'deepseek/deepseek-r1', // DeepSeek R1 pour analyse d'objectifs
         messages: [
           {
             role: 'system',

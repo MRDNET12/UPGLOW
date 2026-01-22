@@ -127,7 +127,7 @@ Génère des tâches qui :
         'X-Title': 'Glowee Work - UPGLOW'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'deepseek/deepseek-v3.2', // DeepSeek V3.2 pour génération de tâches (agentique)
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }

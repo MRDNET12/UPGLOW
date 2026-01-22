@@ -49,6 +49,8 @@ import { useVisitTracker, trackVisit, isFirstVisit, isFifthAppVisit, markWelcome
 import { gloweeMessages } from '@/data/gloweeMessages';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { FAQSection } from '@/components/settings/FAQSection';
+import { usePlanningSync } from '@/hooks/useFirebaseSync';
+import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion, saveUserData } from '@/lib/firebase/user-data-sync';
 
 export default function GlowUpChallengeApp() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -262,6 +264,9 @@ export default function GlowUpChallengeApp() {
     goalName?: string; // Nom de l'objectif
     goalColor?: string; // Couleur de l'objectif
   }>>([]);
+
+  // Synchronisation Firebase pour les tâches du planning
+  usePlanningSync(tasksWithDates, setTasksWithDates);
 
   // Navigation par semaine
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = semaine actuelle, 1 = semaine prochaine, etc.
@@ -2697,18 +2702,37 @@ export default function GlowUpChallengeApp() {
                               />
                             )}
                             <span
-                              onClick={() => {
+                              onClick={async () => {
+                                const newCompleted = !task.completed;
                                 setTasksWithDates(prev => prev.map(t =>
-                                  t.id === task.id ? { ...t, completed: !t.completed } : t
+                                  t.id === task.id ? { ...t, completed: newCompleted } : t
                                 ));
+
+                                // Sauvegarder dans Firebase si l'utilisateur est connecté
+                                if (user && task.id.startsWith('firebase_')) {
+                                  try {
+                                    await updateTaskCompletion(task.id, newCompleted);
+                                  } catch (error) {
+                                    console.error('Error updating task completion in Firebase:', error);
+                                  }
+                                }
                               }}
                               className={`flex-1 cursor-pointer ${task.completed ? 'line-through text-stone-500' : ''}`}
                             >
                               {task.text}
                             </span>
                             <button
-                              onClick={() => {
+                              onClick={async () => {
                                 setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
+
+                                // Supprimer de Firebase si l'utilisateur est connecté
+                                if (user && task.id.startsWith('firebase_')) {
+                                  try {
+                                    await deleteTaskFromFirebase(task.id);
+                                  } catch (error) {
+                                    console.error('Error deleting task from Firebase:', error);
+                                  }
+                                }
                               }}
                               className="text-stone-400 hover:text-red-500 transition-colors"
                             >
@@ -2763,6 +2787,23 @@ export default function GlowUpChallengeApp() {
                 }));
 
                 setTasksWithDates(prev => [...prev, ...newTasksWithDates]);
+
+                // Sauvegarder les tâches Glowee dans Firebase si l'utilisateur est connecté
+                if (user) {
+                  (async () => {
+                    try {
+                      for (const task of newTasksWithDates) {
+                        const firebaseId = await saveTask(user.uid, task);
+                        // Mettre à jour l'ID local avec l'ID Firebase
+                        setTasksWithDates(prev => prev.map(t =>
+                          t.id === task.id ? { ...t, id: firebaseId } : t
+                        ));
+                      }
+                    } catch (error) {
+                      console.error('Error saving Glowee tasks to Firebase:', error);
+                    }
+                  })();
+                }
 
                 // Ajouter l'objectif avec ses priorités
                 setGoalsWithPriorities(prev => {
@@ -4462,6 +4503,19 @@ export default function GlowUpChallengeApp() {
                     };
 
                     setTasksWithDates(prev => [...prev, newTaskWithDate]);
+
+                    // Sauvegarder dans Firebase si l'utilisateur est connecté
+                    if (user) {
+                      try {
+                        const firebaseId = await saveTask(user.uid, newTaskWithDate);
+                        // Mettre à jour l'ID local avec l'ID Firebase
+                        setTasksWithDates(prev => prev.map(t =>
+                          t.id === newTaskWithDate.id ? { ...t, id: firebaseId } : t
+                        ));
+                      } catch (error) {
+                        console.error('Error saving task to Firebase:', error);
+                      }
+                    }
                   }
 
                   setNewTaskText('');

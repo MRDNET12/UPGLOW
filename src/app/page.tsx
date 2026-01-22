@@ -414,7 +414,7 @@ export default function GlowUpChallengeApp() {
   */
 
   // Messages Glowee avec effet typing et rotation toutes les 10 minutes
-  const gloweeMessages = {
+  const gloweeHomepageMessages = {
     fr: [
       'Continue comme ça, tu es sur la bonne voie ! ✨',
       'Chaque petit pas compte, ma belle ! 💫',
@@ -445,7 +445,7 @@ export default function GlowUpChallengeApp() {
   useEffect(() => {
     if (!isHydrated) return;
 
-    const langMessages = gloweeMessages[language] || gloweeMessages.fr;
+    const langMessages = gloweeHomepageMessages[language] || gloweeHomepageMessages.fr;
     const currentMessage = langMessages[gloweeMessageIndex % langMessages.length];
 
     // Vérifier si c'est la première apparition

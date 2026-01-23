@@ -2146,32 +2146,32 @@ export default function GlowUpChallengeApp() {
               {/* Onglet Tasks - Trackers + Blocs d'habitudes */}
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
-                  {/* Trackers d'eau et sommeil */}
-                  <div className="grid grid-cols-2 gap-3">
+                  {/* Trackers d'eau et sommeil - Horizontal avec hauteur 50px */}
+                  <div className="space-y-3">
                     {/* Tracker d'eau */}
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
-                      <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-4 shadow-lg h-[50px] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
                         <Droplet className="w-5 h-5 text-blue-500" />
                         <h3 className="font-semibold text-sm text-gray-900">
                           {language === 'fr' ? 'Eau' : language === 'en' ? 'Water' : 'Agua'}
                         </h3>
                       </div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
                         <button
                           onClick={() => setWaterGlasses(Math.max(0, waterGlasses - 1))}
-                          className="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 font-bold"
+                          className="w-7 h-7 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 font-bold text-sm"
                         >
                           -
                         </button>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-gray-900">{waterGlasses}</div>
-                          <div className="text-xs text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <span className="text-lg font-bold text-gray-900">{waterGlasses}</span>
+                          <span className="text-xs text-gray-500">
                             {language === 'fr' ? 'verres' : language === 'en' ? 'glasses' : 'vasos'}
-                          </div>
+                          </span>
                         </div>
                         <button
                           onClick={() => setWaterGlasses(Math.min(12, waterGlasses + 1))}
-                          className="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center text-white font-bold"
+                          className="w-7 h-7 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center text-white font-bold text-sm"
                         >
                           +
                         </button>
@@ -2179,29 +2179,29 @@ export default function GlowUpChallengeApp() {
                     </div>
 
                     {/* Tracker de sommeil */}
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
-                      <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-4 shadow-lg h-[50px] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
                         <Moon className="w-5 h-5 text-indigo-500" />
                         <h3 className="font-semibold text-sm text-gray-900">
                           {language === 'fr' ? 'Sommeil' : language === 'en' ? 'Sleep' : 'Sueño'}
                         </h3>
                       </div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
                         <button
                           onClick={() => setSleepHours(Math.max(0, sleepHours - 0.5))}
-                          className="w-8 h-8 rounded-full bg-indigo-100 hover:bg-indigo-200 flex items-center justify-center text-indigo-600 font-bold"
+                          className="w-7 h-7 rounded-full bg-indigo-100 hover:bg-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-sm"
                         >
                           -
                         </button>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-gray-900">{sleepHours}</div>
-                          <div className="text-xs text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <span className="text-lg font-bold text-gray-900">{sleepHours}</span>
+                          <span className="text-xs text-gray-500">
                             {language === 'fr' ? 'heures' : language === 'en' ? 'hours' : 'horas'}
-                          </div>
+                          </span>
                         </div>
                         <button
                           onClick={() => setSleepHours(Math.min(12, sleepHours + 0.5))}
-                          className="w-8 h-8 rounded-full bg-indigo-500 hover:bg-indigo-600 flex items-center justify-center text-white font-bold"
+                          className="w-7 h-7 rounded-full bg-indigo-500 hover:bg-indigo-600 flex items-center justify-center text-white font-bold text-sm"
                         >
                           +
                         </button>
@@ -2209,57 +2209,78 @@ export default function GlowUpChallengeApp() {
                     </div>
                   </div>
 
-                  {/* Blocs d'habitudes thématiques - 2 par ligne */}
-                  <div className="grid grid-cols-2 gap-3">
+                  {/* Blocs d'habitudes thématiques - 2 par ligne, indépendants */}
+                  <div className="grid grid-cols-2 gap-3 items-start">
                     {habitBlocks.map((block) => (
                       <div
                         key={block.id}
                         className={`bg-gradient-to-br ${block.color} rounded-2xl p-4 shadow-lg`}
                       >
-                        {/* Header du bloc */}
-                        <button
-                          onClick={() => {
-                            setHabitBlocks(habitBlocks.map(b =>
-                              b.id === block.id ? { ...b, collapsed: !b.collapsed } : b
-                            ));
-                        }}
-                        className="w-full flex items-center justify-between mb-4"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="text-3xl">{block.icon}</div>
-                          <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
+                        {/* Header du bloc avec bouton supprimer */}
+                        <div className="flex items-center justify-between mb-4">
+                          <button
+                            onClick={() => {
+                              setHabitBlocks(habitBlocks.map(b =>
+                                b.id === block.id ? { ...b, collapsed: !b.collapsed } : b
+                              ));
+                            }}
+                            className="flex items-center gap-3 flex-1"
+                          >
+                            <div className="text-3xl">{block.icon}</div>
+                            <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
+                            <ChevronDown
+                              className={`w-5 h-5 text-gray-600 transition-transform ${
+                                block.collapsed ? '-rotate-90' : ''
+                              }`}
+                            />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setHabitBlocks(habitBlocks.filter(b => b.id !== block.id));
+                            }}
+                            className="w-6 h-6 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center ml-2"
+                          >
+                            <X className="w-4 h-4 text-red-600" />
+                          </button>
                         </div>
-                        <ChevronDown
-                          className={`w-5 h-5 text-gray-600 transition-transform ${
-                            block.collapsed ? '-rotate-90' : ''
-                          }`}
-                        />
-                      </button>
 
-                      {/* Liste des habitudes - Texte simple sans carte ni checkbox */}
+                      {/* Liste des habitudes - Texte simple avec bouton supprimer */}
                       {!block.collapsed && (
                         <div className="space-y-1">
                           {block.habits.map((habit) => (
-                            <button
-                              key={habit.id}
-                              onClick={() => {
-                                setHabitBlocks(habitBlocks.map(b =>
-                                  b.id === block.id
-                                    ? {
-                                        ...b,
-                                        habits: b.habits.map(h =>
-                                          h.id === habit.id ? { ...h, completed: !h.completed } : h
-                                        )
-                                      }
-                                    : b
-                                ));
-                              }}
-                              className="w-full text-left"
-                            >
-                              <div className={`text-sm font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
-                                {habit.label}
-                              </div>
-                            </button>
+                            <div key={habit.id} className="flex items-center gap-2 group">
+                              <button
+                                onClick={() => {
+                                  setHabitBlocks(habitBlocks.map(b =>
+                                    b.id === block.id
+                                      ? {
+                                          ...b,
+                                          habits: b.habits.map(h =>
+                                            h.id === habit.id ? { ...h, completed: !h.completed } : h
+                                          )
+                                        }
+                                      : b
+                                  ));
+                                }}
+                                className="flex-1 text-left"
+                              >
+                                <div className={`text-sm font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
+                                  {habit.label}
+                                </div>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setHabitBlocks(habitBlocks.map(b =>
+                                    b.id === block.id
+                                      ? { ...b, habits: b.habits.filter(h => h.id !== habit.id) }
+                                      : b
+                                  ));
+                                }}
+                                className="w-4 h-4 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-3 h-3 text-red-600" />
+                              </button>
+                            </div>
                           ))}
 
                           {/* Bouton ajouter une habitude au bloc */}
@@ -2285,20 +2306,21 @@ export default function GlowUpChallengeApp() {
                       )}
                     </div>
                   ))}
+                  </div>
 
-                    {/* Bouton créer un nouveau bloc */}
-                    {!showCreateBlock ? (
-                      <button
-                        onClick={() => setShowCreateBlock(true)}
-                        className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg flex items-center justify-center gap-2 col-span-2"
-                      >
-                        <Plus className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm font-semibold text-gray-700">
-                          {language === 'fr' ? 'Nouveau bloc' : language === 'en' ? 'New block' : 'Nuevo bloque'}
-                        </span>
-                      </button>
-                    ) : (
-                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4">
+                  {/* Bouton créer un nouveau bloc - En dehors de la grille */}
+                  {!showCreateBlock ? (
+                    <button
+                      onClick={() => setShowCreateBlock(true)}
+                      className="w-full flex items-center justify-center gap-3 bg-white/80 backdrop-blur-sm rounded-3xl p-6 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg"
+                    >
+                      <Plus className="w-6 h-6 text-gray-600" />
+                      <span className="text-lg font-semibold text-gray-700">
+                        {language === 'fr' ? 'Créer un nouveau bloc' : language === 'en' ? 'Create new block' : 'Crear nuevo bloque'}
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4 col-span-2">
                       <h3 className="text-xl font-bold text-gray-900">
                         {language === 'fr' ? 'Nouveau bloc d\'habitudes' : language === 'en' ? 'New habit block' : 'Nuevo bloque de hábitos'}
                       </h3>
@@ -2402,7 +2424,6 @@ export default function GlowUpChallengeApp() {
                       </div>
                     </div>
                   )}
-                  </div>
                 </div>
               )}
 

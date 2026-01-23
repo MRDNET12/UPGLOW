@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Target, Plus, Activity, Calendar, TrendingUp, Sparkles } from 'lucide-react';
+import { Target, Plus, Activity, Calendar, TrendingUp, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -11,12 +11,10 @@ import GloweePopup from '@/components/shared/GloweePopup';
 import { GoalDetailsDialog } from '@/components/goals/GoalDetailsDialog';
 import { GoalAnalysisExplanation } from '@/components/goals/GoalAnalysisExplanation';
 import { GoalConfirmationDialog } from '@/components/goals/GoalConfirmationDialog';
-import { AuthDialog } from '@/components/auth/AuthDialog';
 import { markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 import { useGoalsSync } from '@/hooks/useFirebaseSync';
 import { useAuth } from '@/contexts/AuthContext';
-import { createGoal } from '@/lib/firebase/goals-service';
 
 interface Goal {
   id: string;
@@ -33,7 +31,6 @@ interface Goal {
     completed: boolean;
   }>;
   goalColor?: string;
-  desiredFeeling?: string;
 }
 
 interface EnergyLog {
@@ -66,10 +63,11 @@ interface MyGoalsProps {
     }
   ) => void;
   onNavigateToPlanning?: (goalId: string) => void;
-  onShowGoalDetails?: (goalId: string) => void;
+  onShowGoalDetails?: (goalId: string, goal: Goal) => void;
+  onGoalsChange?: (goals: Goal[]) => void;
 }
 
-export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDetails }: MyGoalsProps = {}) {
+export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDetails, onGoalsChange }: MyGoalsProps = {}) {
   const { user } = useAuth();
   const { loadGoals } = useGoalsSync();
 
@@ -93,21 +91,7 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingGoalData, setPendingGoalData] = useState<any>(null);
 
-  // État pour la popup d'inscription (si utilisateur non connecté)
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
-
-  // Fonction pour gérer le clic sur "Créer un objectif"
-  const handleCreateGoalClick = () => {
-    if (!user) {
-      // Si l'utilisateur n'est pas connecté, afficher la popup d'inscription
-      setShowAuthDialog(true);
-    } else {
-      // Sinon, ouvrir le formulaire de création
-      setShowCreateGoal(true);
-    }
-  };
-
-  // Load data from Firebase only (goals are only for authenticated users)
+  // Load data from Firebase and localStorage
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -115,24 +99,41 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
         if (user) {
           console.log('Loading goals from Firebase...');
           const firebaseGoals = await loadGoals();
-          console.log('Loaded goals from Firebase:', firebaseGoals.length);
-          // Convertir les objectifs Firebase au format local
-          const formattedGoals = firebaseGoals.map((goal: any) => ({
-            id: goal.id,
-            name: goal.name,
-            type: goal.type,
-            description: goal.why || '',
-            deadline: goal.targetDate,
-            progress: goal.progress || 0,
-            createdAt: goal.createdAt?.toISOString?.() || new Date().toISOString(),
-            tasks: [],
-            weeklyPriorities: [],
-            goalColor: goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e'
-          }));
-          setGoals(formattedGoals);
+          if (firebaseGoals.length > 0) {
+            console.log('Loaded goals from Firebase:', firebaseGoals);
+            // Convertir les objectifs Firebase au format local
+            const formattedGoals = firebaseGoals.map((goal: any) => ({
+              id: goal.id,
+              name: goal.name,
+              type: goal.type,
+              description: goal.why || '',
+              deadline: goal.targetDate,
+              progress: goal.progress || 0,
+              createdAt: goal.createdAt?.toISOString?.() || new Date().toISOString(),
+              tasks: [],
+              weeklyPriorities: [],
+              goalColor: goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e'
+            }));
+            setGoals(formattedGoals);
+            // Sauvegarder aussi dans localStorage pour backup
+            localStorage.setItem('myGoals', JSON.stringify(formattedGoals));
+            // Notifier le parent du changement
+            if (onGoalsChange) {
+              onGoalsChange(formattedGoals);
+            }
+          } else {
+            // Si pas d'objectifs Firebase, charger depuis localStorage
+            const savedGoals = localStorage.getItem('myGoals');
+            if (savedGoals) {
+              setGoals(JSON.parse(savedGoals));
+            }
+          }
         } else {
-          // Si pas d'utilisateur connecté, pas d'objectifs
-          setGoals([]);
+          // Si pas d'utilisateur, charger depuis localStorage
+          const savedGoals = localStorage.getItem('myGoals');
+          if (savedGoals) {
+            setGoals(JSON.parse(savedGoals));
+          }
         }
 
         // Load energy logs
@@ -143,6 +144,14 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
 
         // Check if we need to show energy check-in
         checkEnergyCheckIn();
+
+        // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
+        /*
+        // Vérifier si c'est la 1ère visite de la section Objectifs
+        if (isFirstVisit('goals')) {
+          setTimeout(() => setShowGloweeWelcome(true), 1000);
+        }
+        */
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
@@ -202,17 +211,10 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
     setShowCheckIn(false);
   };
 
-  const handleGoalCreated = async (newGoal?: Goal) => {
-    // Si on reçoit directement le nouvel objectif, l'ajouter à la liste
-    if (newGoal) {
-      console.log('Adding new goal directly:', newGoal.id);
-      setGoals(prev => [...prev, newGoal]);
-      setShowCreateGoal(false);
-      return;
-    }
-
-    // Recharger depuis Firebase (uniquement pour utilisateurs connectés)
+  const handleGoalCreated = async () => {
+    // Recharger les objectifs après création
     if (user) {
+      // Utilisateur connecté: recharger depuis Firebase
       try {
         console.log('Reloading goals from Firebase after creation...');
         const firebaseGoals = await loadGoals();
@@ -229,9 +231,24 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
           goalColor: goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e'
         }));
         setGoals(formattedGoals);
+        localStorage.setItem('myGoals', JSON.stringify(formattedGoals));
         console.log('Goals reloaded successfully:', formattedGoals.length);
       } catch (error) {
         console.error('Error reloading goals:', error);
+      }
+    } else {
+      // Utilisateur non connecté: recharger depuis localStorage
+      console.log('Reloading goals from localStorage after creation...');
+      const savedGoals = localStorage.getItem('myGoals');
+      if (savedGoals) {
+        const parsedGoals = JSON.parse(savedGoals);
+        // Assigner les couleurs par défaut si manquantes
+        const goalsWithColors = parsedGoals.map((goal: any) => ({
+          ...goal,
+          goalColor: goal.goalColor || (goal.type === 'financial' ? '#10b981' : goal.type === 'project' ? '#3b82f6' : '#f43f5e')
+        }));
+        setGoals(goalsWithColors);
+        console.log('Goals reloaded from localStorage:', goalsWithColors.length);
       }
     }
     setShowCreateGoal(false);
@@ -387,7 +404,7 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
               </h2>
               {goals.length < 3 && (
                 <Button
-                  onClick={handleCreateGoalClick}
+                  onClick={() => setShowCreateGoal(true)}
                   size="sm"
                   className="bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white rounded-xl shadow-lg shadow-pink-200/50"
                 >
@@ -410,7 +427,7 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
                   Crée ton premier objectif et laisse Glowee Work t'aider à l'atteindre ! 💫
                 </p>
                 <Button
-                  onClick={handleCreateGoalClick}
+                  onClick={() => setShowCreateGoal(true)}
                   className="bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white rounded-[1.5rem] shadow-xl shadow-pink-200/50 h-12 px-6"
                 >
                   <Plus className="w-5 h-5 mr-2" />
@@ -456,7 +473,7 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
                         className="flex-1 rounded-xl border-pink-200 hover:bg-pink-50 text-sm font-medium bg-white/60 backdrop-blur-sm"
                         onClick={() => {
                           if (onShowGoalDetails) {
-                            onShowGoalDetails(goal.id);
+                            onShowGoalDetails(goal.id, goal);
                           } else {
                             setSelectedGoalForDetails(goal);
                             setShowGoalDetailsDialog(true);
@@ -503,7 +520,6 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
             onClose={() => setShowCreateGoal(false)}
             onSuccess={handleGoalCreated}
             onAddGloweeTasks={onAddGloweeTasks}
-            user={user}
           />
 
           {/* Glowee Welcome Popup - 1ère visite Objectifs */}
@@ -545,13 +561,6 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
           />
         </div>
       </div>
-
-      {/* Auth Dialog - Pour inviter à s'inscrire */}
-      <AuthDialog
-        isOpen={showAuthDialog}
-        onClose={() => setShowAuthDialog(false)}
-        defaultMode="signup"
-      />
     </>
   );
 }
@@ -790,22 +799,12 @@ function CreateGoalModal({
   isOpen,
   onClose,
   onSuccess,
-  onAddGloweeTasks,
-  user
+  onAddGloweeTasks
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (goal: Goal) => void;
-  onAddGloweeTasks?: (
-    tasks: Task[],
-    goalData: {
-      id: string;
-      name: string;
-      color: string;
-      weeklyPriorities: { id: string; text: string; completed: boolean }[];
-    }
-  ) => void;
-  user: any;
+  onAddGloweeTasks?: (tasks: Task[]) => void;
 }) {
   const [step, setStep] = useState(1);
   const [goalType, setGoalType] = useState<'financial' | 'personal'>('personal');
@@ -967,61 +966,36 @@ function CreateGoalModal({
     return colors[hash % colors.length];
   };
 
-  const confirmGoalCreation = async () => {
-    if (!pendingGoalData || !user) return;
+  const confirmGoalCreation = () => {
+    if (!pendingGoalData) return;
 
-    try {
-      // 1. Sauvegarder l'objectif dans Firebase
-      console.log('Saving goal to Firebase for user:', user.uid);
-      const goalId = await createGoal(user.uid, {
+    // Ajouter les tâches dans Glowee tâches du Planning avec dates spécifiques
+    if (onAddGloweeTasks && analyzedTasks.length > 0) {
+      const goalColor = pendingGoalData.goalColor || getGoalColor(pendingGoalData.id);
+
+      // Ajouter les dates et les infos de l'objectif aux tâches
+      const tasksWithDates = analyzedTasks.map(task => ({
+        ...task,
+        date: task.date || getNextDateForDay(task.day),
+        goalId: pendingGoalData.id,
+        goalName: pendingGoalData.name,
+        goalColor: goalColor
+      }));
+
+      // Préparer les données de l'objectif avec ses priorités
+      const goalDataForPlanning = {
+        id: pendingGoalData.id,
         name: pendingGoalData.name,
-        type: pendingGoalData.type,
-        why: pendingGoalData.description || '',
-        desiredFeeling: pendingGoalData.desiredFeeling || '',
-        targetDate: pendingGoalData.deadline,
-        progress: 0,
-        status: 'active',
-        userId: user.uid
-      });
-      console.log('Goal saved to Firebase with ID:', goalId);
-
-      // Mettre à jour le pendingGoalData avec l'ID Firebase
-      const savedGoal = {
-        ...pendingGoalData,
-        id: goalId
+        color: goalColor,
+        weeklyPriorities: pendingGoalData.weeklyPriorities || []
       };
 
-      // 2. Ajouter les tâches dans Glowee tâches du Planning avec dates spécifiques
-      if (onAddGloweeTasks && analyzedTasks.length > 0) {
-        const goalColor = savedGoal.goalColor || getGoalColor(savedGoal.id);
-
-        // Ajouter les dates et les infos de l'objectif aux tâches
-        const tasksWithDates = analyzedTasks.map(task => ({
-          ...task,
-          date: task.date || getNextDateForDay(task.day),
-          goalId: savedGoal.id,
-          goalName: savedGoal.name,
-          goalColor: goalColor
-        }));
-
-        // Préparer les données de l'objectif avec ses priorités
-        const goalDataForPlanning = {
-          id: savedGoal.id,
-          name: savedGoal.name,
-          color: goalColor,
-          weeklyPriorities: savedGoal.weeklyPriorities || []
-        };
-
-        onAddGloweeTasks(tasksWithDates, goalDataForPlanning);
-      }
-
-      // 3. Appeler onSuccess pour mettre à jour l'état parent
-      onSuccess(savedGoal);
-      resetForm();
-      setPendingGoalData(null);
-    } catch (error) {
-      console.error('Error saving goal to Firebase:', error);
+      onAddGloweeTasks(tasksWithDates, goalDataForPlanning);
     }
+
+    onSuccess(pendingGoalData);
+    resetForm();
+    setPendingGoalData(null);
   };
 
   // Fonction pour obtenir la prochaine date pour un jour donné

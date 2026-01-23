@@ -2949,9 +2949,21 @@ export default function GlowUpChallengeApp() {
                 setCurrentView('routine');
                 setPlanningTab('glowee-tasks');
               }}
-              onShowGoalDetails={(goalId: string) => {
+              onShowGoalDetails={(goalId: string, goal: any) => {
                 setSelectedGoalId(goalId);
+                // Mettre à jour l'état goals avec le goal actuel si nécessaire
+                setGoals(prev => {
+                  const existingIndex = prev.findIndex(g => g.id === goalId);
+                  if (existingIndex >= 0) {
+                    return prev;
+                  } else {
+                    return [...prev, goal];
+                  }
+                });
                 setCurrentView('goal-details');
+              }}
+              onGoalsChange={(updatedGoals: any[]) => {
+                setGoals(updatedGoals);
               }}
             />
           </div>

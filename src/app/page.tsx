@@ -237,29 +237,65 @@ export default function GlowUpChallengeApp() {
     name: string;
     icon: string;
     color: string;
+    description?: string;
     habits: Array<{id: string, label: string, completed: boolean}>;
     collapsed: boolean;
   }>>([
     {
-      id: 'morning-routine',
-      name: language === 'fr' ? 'Routine Matinale' : language === 'en' ? 'Morning Routine' : 'Rutina Matutina',
-      icon: '☀️',
-      color: 'from-orange-100 to-yellow-100',
+      id: 'body-energy',
+      name: language === 'fr' ? 'Corps & énergie' : language === 'en' ? 'Body & energy' : 'Cuerpo & energía',
+      icon: '🌱',
+      color: 'from-green-100 to-emerald-100',
+      description: language === 'fr' ? 'Prendre soin de ton corps = base du glow up.' : language === 'en' ? 'Taking care of your body = glow up foundation.' : 'Cuidar tu cuerpo = base del glow up.',
       habits: [
-        { id: 'exercise', label: language === 'fr' ? 'Exercice' : language === 'en' ? 'Exercise' : 'Ejercicio', completed: false },
-        { id: 'breakfast', label: language === 'fr' ? 'Petit-déjeuner' : language === 'en' ? 'Breakfast' : 'Desayuno', completed: false },
-        { id: 'meditation', label: language === 'fr' ? 'Méditation' : language === 'en' ? 'Meditation' : 'Meditación', completed: false }
+        { id: 'water', label: language === 'fr' ? 'Boire 1,5–2 L d\'eau par jour' : language === 'en' ? 'Drink 1.5–2 L of water per day' : 'Beber 1,5–2 L de agua por día', completed: false },
+        { id: 'move', label: language === 'fr' ? 'Bouger 20–30 min (marche, sport, étirements)' : language === 'en' ? 'Move 20–30 min (walk, sport, stretching)' : 'Moverse 20–30 min (caminar, deporte, estiramientos)', completed: false },
+        { id: 'sleep', label: language === 'fr' ? 'Dormir à heures régulières' : language === 'en' ? 'Sleep at regular hours' : 'Dormir a horas regulares', completed: false },
+        { id: 'eat', label: language === 'fr' ? 'Manger au moins 1 repas équilibré' : language === 'en' ? 'Eat at least 1 balanced meal' : 'Comer al menos 1 comida equilibrada', completed: false }
       ],
       collapsed: false
     },
     {
-      id: 'lifestyle',
-      name: 'Lifestyle',
-      icon: '🌿',
-      color: 'from-green-100 to-emerald-100',
+      id: 'mental-self-esteem',
+      name: language === 'fr' ? 'Mental & estime de soi' : language === 'en' ? 'Mental & self-esteem' : 'Mental & autoestima',
+      icon: '🧠',
+      color: 'from-blue-100 to-indigo-100',
+      description: language === 'fr' ? 'Le glow up commence à l\'intérieur.' : language === 'en' ? 'Glow up starts from within.' : 'El glow up comienza desde adentro.',
       habits: [
-        { id: 'reading', label: language === 'fr' ? 'Lecture' : language === 'en' ? 'Reading' : 'Lectura', completed: false },
-        { id: 'journaling', label: language === 'fr' ? 'Journaling' : language === 'en' ? 'Journaling' : 'Diario', completed: false }
+        { id: 'positive-thought', label: language === 'fr' ? 'Écrire 1 pensée positive sur toi par jour' : language === 'en' ? 'Write 1 positive thought about yourself per day' : 'Escribir 1 pensamiento positivo sobre ti por día', completed: false },
+        { id: 'daily-win', label: language === 'fr' ? 'Noter 1 petite victoire quotidienne' : language === 'en' ? 'Note 1 small daily win' : 'Anotar 1 pequeña victoria diaria', completed: false },
+        { id: 'limit-comparison', label: language === 'fr' ? 'Limiter les comparaisons (réseaux, autres)' : language === 'en' ? 'Limit comparisons (social media, others)' : 'Limitar comparaciones (redes, otros)', completed: false },
+        { id: 'breathe', label: language === 'fr' ? 'Respirer / faire une pause consciente 5 min' : language === 'en' ? 'Breathe / take a conscious break 5 min' : 'Respirar / hacer una pausa consciente 5 min', completed: false }
+      ],
+      collapsed: false
+    },
+    {
+      id: 'image-confidence',
+      name: language === 'fr' ? 'Image & confiance' : language === 'en' ? 'Image & confidence' : 'Imagen & confianza',
+      icon: '✨',
+      color: 'from-pink-100 to-rose-100',
+      description: language === 'fr' ? 'Pas pour les autres, pour toi.' : language === 'en' ? 'Not for others, for you.' : 'No para otros, para ti.',
+      habits: [
+        { id: 'shower', label: language === 'fr' ? 'Prendre une douche / routine soin quotidienne' : language === 'en' ? 'Take a shower / daily care routine' : 'Tomar una ducha / rutina de cuidado diaria', completed: false },
+        { id: 'outfit', label: language === 'fr' ? 'Porter une tenue qui te fait te sentir bien' : language === 'en' ? 'Wear an outfit that makes you feel good' : 'Usar un atuendo que te haga sentir bien', completed: false },
+        { id: 'posture', label: language === 'fr' ? 'Te tenir droit(e) + regarder devant toi' : language === 'en' ? 'Stand straight + look ahead' : 'Mantenerte derecho(a) + mirar adelante', completed: false },
+        { id: 'clean-space', label: language === 'fr' ? 'Ranger ton espace 5 minutes par jour' : language === 'en' ? 'Tidy your space 5 minutes per day' : 'Ordenar tu espacio 5 minutos por día', completed: false }
+      ],
+      collapsed: false
+    },
+    {
+      id: 'discipline-future',
+      name: language === 'fr' ? 'Discipline & avenir' : language === 'en' ? 'Discipline & future' : 'Disciplina & futuro',
+      icon: '🎯',
+      color: 'from-purple-100 to-violet-100',
+      description: language === 'fr' ? 'C\'est là que le vrai glow up se voit.' : language === 'en' ? 'This is where the real glow up shows.' : 'Aquí es donde se ve el verdadero glow up.',
+      habits: [
+        { id: 'future-action', label: language === 'fr' ? 'Faire 1 action utile pour ton futur par jour' : language === 'en' ? 'Do 1 useful action for your future per day' : 'Hacer 1 acción útil para tu futuro por día', completed: false },
+        { id: 'reduce-distraction', label: language === 'fr' ? 'Réduire une distraction inutile' : language === 'en' ? 'Reduce one useless distraction' : 'Reducir una distracción inútil', completed: false },
+        { id: 'daily-priority', label: language === 'fr' ? 'Définir 1 priorité du jour' : language === 'en' ? 'Define 1 priority of the day' : 'Definir 1 prioridad del día', completed: false },
+        { id: 'progress-check', label: language === 'fr' ? 'Te coucher en te disant : « J\'ai avancé. »' : language === 'en' ? 'Go to bed saying: "I made progress."' : 'Acostarte diciéndote: "Avancé."', completed: false },
+        { id: 'imperfect-task', label: language === 'fr' ? 'Accomplir une tâche même imparfaite' : language === 'en' ? 'Complete a task even if imperfect' : 'Completar una tarea aunque sea imperfecta', completed: false },
+        { id: 'prepare-tomorrow', label: language === 'fr' ? 'Préparer demain (vêtements, sac, plan)' : language === 'en' ? 'Prepare tomorrow (clothes, bag, plan)' : 'Preparar mañana (ropa, bolso, plan)', completed: false }
       ],
       collapsed: false
     }
@@ -269,10 +305,6 @@ export default function GlowUpChallengeApp() {
   const [newBlockIcon, setNewBlockIcon] = useState('📝');
   const [newBlockColor, setNewBlockColor] = useState('from-blue-100 to-indigo-100');
   const [habitTab, setHabitTab] = useState<'tasks' | 'growth'>('tasks');
-
-  // États pour trackers d'eau et sommeil
-  const [waterGlasses, setWaterGlasses] = useState(0);
-  const [sleepHours, setSleepHours] = useState(0);
 
   // États pour l'ajout de nouvelles habitudes dans les blocs
   const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
@@ -2147,72 +2179,9 @@ export default function GlowUpChallengeApp() {
 
             {/* Contenu principal */}
             <div className="px-4 max-w-2xl mx-auto space-y-3">
-              {/* Onglet Tasks - Trackers + Blocs d'habitudes */}
+              {/* Onglet Tasks - Blocs d'habitudes */}
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
-                  {/* Trackers d'eau et sommeil - Horizontal avec hauteur 50px */}
-                  <div className="space-y-3">
-                    {/* Tracker d'eau */}
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-4 shadow-lg h-[50px] flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Droplet className="w-5 h-5 text-blue-500" />
-                        <h3 className="font-semibold text-sm text-gray-900">
-                          {language === 'fr' ? 'Eau' : language === 'en' ? 'Water' : 'Agua'}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setWaterGlasses(Math.max(0, waterGlasses - 1))}
-                          className="w-7 h-7 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center text-blue-600 font-bold text-sm"
-                        >
-                          -
-                        </button>
-                        <div className="flex items-center gap-1">
-                          <span className="text-lg font-bold text-gray-900">{waterGlasses}</span>
-                          <span className="text-xs text-gray-500">
-                            {language === 'fr' ? 'verres' : language === 'en' ? 'glasses' : 'vasos'}
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => setWaterGlasses(Math.min(12, waterGlasses + 1))}
-                          className="w-7 h-7 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center text-white font-bold text-sm"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Tracker de sommeil */}
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-4 shadow-lg h-[50px] flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Moon className="w-5 h-5 text-indigo-500" />
-                        <h3 className="font-semibold text-sm text-gray-900">
-                          {language === 'fr' ? 'Sommeil' : language === 'en' ? 'Sleep' : 'Sueño'}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setSleepHours(Math.max(0, sleepHours - 0.5))}
-                          className="w-7 h-7 rounded-full bg-indigo-100 hover:bg-indigo-200 flex items-center justify-center text-indigo-600 font-bold text-sm"
-                        >
-                          -
-                        </button>
-                        <div className="flex items-center gap-1">
-                          <span className="text-lg font-bold text-gray-900">{sleepHours}</span>
-                          <span className="text-xs text-gray-500">
-                            {language === 'fr' ? 'heures' : language === 'en' ? 'hours' : 'horas'}
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => setSleepHours(Math.min(12, sleepHours + 0.5))}
-                          className="w-7 h-7 rounded-full bg-indigo-500 hover:bg-indigo-600 flex items-center justify-center text-white font-bold text-sm"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Blocs d'habitudes thématiques - 2 par ligne, indépendants */}
                   <div className="grid grid-cols-2 gap-3 items-start">
                     {habitBlocks.map((block) => (
@@ -2247,9 +2216,14 @@ export default function GlowUpChallengeApp() {
                         </div>
 
                         {/* Header du bloc */}
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="text-3xl">{block.icon}</div>
-                          <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
+                        <div className="mb-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="text-2xl">{block.icon}</div>
+                            <h3 className="text-lg font-bold text-gray-900">{block.name}</h3>
+                          </div>
+                          {block.description && (
+                            <p className="text-xs text-gray-600 italic ml-8">{block.description}</p>
+                          )}
                         </div>
 
                       {/* Liste des habitudes - Texte simple avec bouton supprimer */}

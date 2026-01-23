@@ -2086,97 +2086,77 @@ export default function GlowUpChallengeApp() {
 
         {/* Trackers View - Life Hub Design */}
         {currentView === 'trackers' && (
-          <div className="pb-20 bg-gradient-to-b from-blue-50 via-slate-50 to-blue-50/30 min-h-screen">
-            {/* Header avec météo et jours de la semaine */}
-            <div className="px-4 pt-4 pb-2">
-              <div className="flex items-center justify-between">
+          <div className="pb-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+            {/* Header moderne avec météo et profil */}
+            <div className="p-4 max-w-2xl mx-auto">
+              <div className="flex items-center justify-between mb-6">
                 {/* Météo widget */}
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-xl flex items-center justify-center shadow-md">
-                    <span className="text-lg">⛅</span>
-                  </div>
+                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg">
+                  <div className="text-4xl">☀️</div>
                   <div>
-                    <div className="text-lg font-bold text-gray-900">22°C</div>
-                    <div className="text-[10px] text-gray-500">
-                      {language === 'fr' ? 'Ma Météo' : language === 'en' ? 'My Weather' : 'Mi Clima'}
+                    <div className="text-2xl font-bold text-gray-900">22°C</div>
+                    <div className="text-xs text-gray-600">
+                      {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' })}
                     </div>
                   </div>
                 </div>
 
-                {/* Jours de la semaine horizontal */}
-                <div className="flex gap-1 overflow-x-auto">
-                  {(() => {
-                    const days = [];
-                    const today = new Date();
-                    for (let i = -3; i <= 4; i++) {
-                      const d = new Date(today);
-                      d.setDate(d.getDate() + i);
-                      const dayName = d.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'short' }).slice(0, 3);
-                      const dayNum = d.getDate();
-                      const isToday = i === 0;
-                      days.push(
-                        <div key={i} className={`flex flex-col items-center px-1.5 py-1 rounded-lg ${isToday ? 'bg-blue-500 text-white' : 'text-gray-500'}`}>
-                          <span className="text-[8px] font-medium">{dayName}</span>
-                          <span className="text-xs font-bold">{dayNum}</span>
-                        </div>
-                      );
-                    }
-                    return days;
-                  })()}
-                </div>
+                {/* Profil */}
+                <button className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                  {user?.email?.[0].toUpperCase() || 'U'}
+                </button>
+              </div>
 
-                {/* Avatar */}
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-md">
-                  <div className="w-full h-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-sm font-bold">
-                    {user?.email?.[0].toUpperCase() || 'U'}
-                  </div>
-                </div>
+              {/* Titre principal */}
+              <h1 className="text-5xl font-black text-center text-gray-900 mb-6">
+                Life Hub
+              </h1>
+
+              {/* Navigation par onglets */}
+              <div className="flex gap-6 justify-center mb-8">
+                <button
+                  onClick={() => setHabitTab('goals')}
+                  className={`text-lg font-semibold transition-all ${
+                    habitTab === 'goals'
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  Goals
+                </button>
+                <button
+                  onClick={() => setHabitTab('tasks')}
+                  className={`text-lg font-semibold transition-all ${
+                    habitTab === 'tasks'
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  Tasks
+                </button>
+                <button
+                  onClick={() => setHabitTab('growth')}
+                  className={`text-lg font-semibold transition-all ${
+                    habitTab === 'growth'
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  Growth
+                </button>
               </div>
             </div>
 
-            {/* Titre Life Hub */}
-            <h1 className="text-4xl font-black text-center text-gray-900 mt-4 mb-2">
-              Life Hub
-            </h1>
-
-            {/* Navigation par onglets */}
-            <div className="flex gap-8 justify-center mb-6">
-              <button
-                onClick={() => setHabitTab('goals')}
-                className={`text-base font-medium transition-all ${
-                  habitTab === 'goals' ? 'text-gray-900' : 'text-gray-400'
-                }`}
-              >
-                Goals
-              </button>
-              <button
-                onClick={() => setHabitTab('tasks')}
-                className={`text-base font-medium transition-all ${
-                  habitTab === 'tasks' ? 'text-gray-900' : 'text-gray-400'
-                }`}
-              >
-                Tasks
-              </button>
-              <button
-                onClick={() => setHabitTab('growth')}
-                className={`text-base font-medium transition-all ${
-                  habitTab === 'growth' ? 'text-gray-900' : 'text-gray-400'
-                }`}
-              >
-                Growth
-              </button>
-            </div>
-
-            {/* Contenu principal - Grid Layout */}
-            <div className="px-3 grid grid-cols-2 gap-3">
-              {/* Onglet Tasks - Blocs d'habitudes en grille */}
+            {/* Contenu principal */}
+            <div className="px-4 max-w-2xl mx-auto space-y-4">
+              {/* Onglet Tasks - Blocs d'habitudes */}
               {habitTab === 'tasks' && (
-                <>
+                <div className="space-y-4">
                   {/* Blocs d'habitudes thématiques */}
-                  {habitBlocks.map((block, index) => (
+                  {habitBlocks.map((block) => (
                     <div
                       key={block.id}
-                      className="bg-white rounded-2xl p-4 shadow-sm"
+                      className={`bg-gradient-to-br ${block.color} rounded-3xl p-5 shadow-xl`}
                     >
                       {/* Header du bloc */}
                       <button
@@ -2185,11 +2165,14 @@ export default function GlowUpChallengeApp() {
                             b.id === block.id ? { ...b, collapsed: !b.collapsed } : b
                           ));
                         }}
-                        className="w-full flex items-center justify-between mb-3"
+                        className="w-full flex items-center justify-between mb-4"
                       >
-                        <h3 className="text-sm font-bold text-gray-900">{block.name}</h3>
+                        <div className="flex items-center gap-3">
+                          <div className="text-3xl">{block.icon}</div>
+                          <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
+                        </div>
                         <ChevronDown
-                          className={`w-4 h-4 text-gray-400 transition-transform ${
+                          className={`w-5 h-5 text-gray-600 transition-transform ${
                             block.collapsed ? '-rotate-90' : ''
                           }`}
                         />
@@ -2213,17 +2196,22 @@ export default function GlowUpChallengeApp() {
                                     : b
                                 ));
                               }}
-                              className="w-full flex items-start gap-2 hover:bg-gray-50 rounded-lg p-1.5 transition-all"
+                              className="w-full flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl p-3 hover:bg-white/80 transition-all"
                             >
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                                index % 2 === 0 ? 'bg-blue-50' : 'bg-orange-50'
-                              }`}>
-                                <Calendar className={`w-3.5 h-3.5 ${index % 2 === 0 ? 'text-blue-500' : 'text-orange-500'}`} />
+                              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <Calendar className="w-4 h-4 text-blue-600" />
                               </div>
                               <div className="flex-1 text-left">
-                                <div className={`text-xs font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
+                                <div className={`text-sm font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
                                   {habit.label}
                                 </div>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                habit.completed
+                                  ? 'bg-green-500 border-green-500'
+                                  : 'border-gray-300'
+                              }`}>
+                                {habit.completed && <Check className="w-3 h-3 text-white" />}
                               </div>
                             </button>
                           ))}
@@ -2242,11 +2230,11 @@ export default function GlowUpChallengeApp() {
                                   : b
                               ));
                             }}
-                            className="w-full flex items-center justify-center gap-1 rounded-lg p-2 border border-dashed border-gray-200 hover:bg-gray-50 transition-all"
+                            className="w-full flex items-center justify-center gap-2 bg-white/40 backdrop-blur-sm rounded-xl p-3 border-2 border-dashed border-gray-300 hover:bg-white/60 transition-all"
                           >
-                            <Plus className="w-3 h-3 text-gray-400" />
-                            <span className="text-[10px] font-medium text-gray-400">
-                              {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}
+                            <Plus className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-600">
+                              {language === 'fr' ? 'Ajouter une habitude' : language === 'en' ? 'Add habit' : 'Agregar hábito'}
                             </span>
                           </button>
                         </div>
@@ -2258,24 +2246,80 @@ export default function GlowUpChallengeApp() {
                   {!showCreateBlock ? (
                     <button
                       onClick={() => setShowCreateBlock(true)}
-                      className="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-center gap-2 border border-dashed border-gray-200 hover:bg-gray-50 transition-all col-span-2"
+                      className="w-full flex items-center justify-center gap-3 bg-white/80 backdrop-blur-sm rounded-3xl p-6 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg"
                     >
-                      <Plus className="w-4 h-4 text-gray-400" />
-                      <span className="text-xs font-medium text-gray-500">
-                        {language === 'fr' ? 'Nouveau bloc' : language === 'en' ? 'New block' : 'Nuevo bloque'}
+                      <Plus className="w-6 h-6 text-gray-600" />
+                      <span className="text-lg font-semibold text-gray-700">
+                        {language === 'fr' ? 'Créer un nouveau bloc' : language === 'en' ? 'Create new block' : 'Crear nuevo bloque'}
                       </span>
                     </button>
                   ) : (
-                    <div className="bg-white rounded-2xl p-4 shadow-sm col-span-2 space-y-3">
-                      <h3 className="text-sm font-bold text-gray-900">
-                        {language === 'fr' ? 'Nouveau bloc' : language === 'en' ? 'New block' : 'Nuevo bloque'}
+                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {language === 'fr' ? 'Nouveau bloc d\'habitudes' : language === 'en' ? 'New habit block' : 'Nuevo bloque de hábitos'}
                       </h3>
-                      <Input
-                        value={newBlockName}
-                        onChange={(e) => setNewBlockName(e.target.value)}
-                        placeholder={language === 'fr' ? 'Nom du bloc' : language === 'en' ? 'Block name' : 'Nombre'}
-                        className="h-10 text-sm"
-                      />
+
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 mb-1 block">
+                            {language === 'fr' ? 'Nom du bloc' : language === 'en' ? 'Block name' : 'Nombre del bloque'}
+                          </label>
+                          <Input
+                            value={newBlockName}
+                            onChange={(e) => setNewBlockName(e.target.value)}
+                            placeholder={language === 'fr' ? 'Ex: Routine du soir' : language === 'en' ? 'Ex: Evening routine' : 'Ej: Rutina nocturna'}
+                            className="h-12"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 mb-1 block">
+                            {language === 'fr' ? 'Icône' : language === 'en' ? 'Icon' : 'Icono'}
+                          </label>
+                          <div className="flex gap-2 flex-wrap">
+                            {['📝', '🌙', '💪', '🧘', '📚', '🎯', '💡', '🌟'].map((icon) => (
+                              <button
+                                key={icon}
+                                onClick={() => setNewBlockIcon(icon)}
+                                className={`w-12 h-12 rounded-xl text-2xl flex items-center justify-center transition-all ${
+                                  newBlockIcon === icon
+                                    ? 'bg-blue-500 scale-110'
+                                    : 'bg-gray-100 hover:bg-gray-200'
+                                }`}
+                              >
+                                {icon}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 mb-1 block">
+                            {language === 'fr' ? 'Couleur' : language === 'en' ? 'Color' : 'Color'}
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {[
+                              { name: 'Blue', value: 'from-blue-100 to-indigo-100' },
+                              { name: 'Pink', value: 'from-pink-100 to-rose-100' },
+                              { name: 'Green', value: 'from-green-100 to-emerald-100' },
+                              { name: 'Purple', value: 'from-purple-100 to-violet-100' },
+                              { name: 'Orange', value: 'from-orange-100 to-yellow-100' },
+                              { name: 'Teal', value: 'from-teal-100 to-cyan-100' }
+                            ].map((color) => (
+                              <button
+                                key={color.value}
+                                onClick={() => setNewBlockColor(color.value)}
+                                className={`h-12 rounded-xl bg-gradient-to-br ${color.value} border-2 transition-all ${
+                                  newBlockColor === color.value
+                                    ? 'border-gray-900 scale-105'
+                                    : 'border-transparent'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="flex gap-3">
                         <Button
                           onClick={() => {
@@ -2285,17 +2329,19 @@ export default function GlowUpChallengeApp() {
                                 {
                                   id: `block_${Date.now()}`,
                                   name: newBlockName,
-                                  icon: '📝',
-                                  color: 'from-blue-100 to-indigo-100',
+                                  icon: newBlockIcon,
+                                  color: newBlockColor,
                                   habits: [],
                                   collapsed: false
                                 }
                               ]);
                               setNewBlockName('');
+                              setNewBlockIcon('📝');
+                              setNewBlockColor('from-blue-100 to-indigo-100');
                               setShowCreateBlock(false);
                             }
                           }}
-                          className="flex-1 h-9 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium"
+                          className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold"
                         >
                           {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
                         </Button>
@@ -2305,119 +2351,40 @@ export default function GlowUpChallengeApp() {
                             setShowCreateBlock(false);
                             setNewBlockName('');
                           }}
-                          className="flex-1 h-9 text-xs"
+                          className="flex-1 h-12"
                         >
                           {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
                         </Button>
                       </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
 
-              {/* Onglet Goals - Carte Goal Setting avec barres de progression */}
+              {/* Onglet Goals */}
               {habitTab === 'goals' && (
-                <>
-                  {/* Goal Setting Card */}
-                  <div className="bg-white rounded-2xl p-4 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-bold text-gray-900">Goal Setting</h3>
-                      <ChevronDown className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-blue-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 rounded-full" style={{ width: '80%' }} />
-                      </div>
-                      <div className="h-3 bg-blue-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 rounded-full" style={{ width: '60%' }} />
-                      </div>
-                      <div className="h-3 bg-blue-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-400 rounded-full" style={{ width: '45%' }} />
-                      </div>
-                      <div className="h-3 bg-blue-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-300 rounded-full" style={{ width: '30%' }} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Météo + Calendrier Card */}
-                  <div className="bg-white rounded-2xl p-4 shadow-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="text-3xl">☀️</div>
-                      <div>
-                        <div className="text-lg font-bold text-gray-900">22°C,</div>
-                        <div className="text-xs text-gray-500">Sunny</div>
-                      </div>
-                      <div className="ml-auto text-right">
-                        <div className="text-xs font-medium text-gray-900">
-                          {new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-7 gap-1 text-center">
-                      {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                        <div key={i} className="text-[8px] text-gray-400 font-medium">{d}</div>
-                      ))}
-                      {Array.from({ length: 28 }, (_, i) => (
-                        <div key={i} className={`text-[9px] py-0.5 rounded ${i + 1 === new Date().getDate() ? 'bg-blue-500 text-white' : 'text-gray-600'}`}>
-                          {i + 1}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🎯</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {language === 'fr' ? 'Objectifs' : language === 'en' ? 'Goals' : 'Objetivos'}
+                  </h3>
+                  <p className="text-gray-600">
+                    {language === 'fr' ? 'Définissez vos objectifs ici' : language === 'en' ? 'Set your goals here' : 'Establece tus objetivos aquí'}
+                  </p>
+                </div>
               )}
 
-              {/* Onglet Growth - Personal Growth avec graphique */}
+              {/* Onglet Growth */}
               {habitTab === 'growth' && (
-                <>
-                  {/* Personal Growth Card */}
-                  <div className="bg-white rounded-2xl p-4 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-bold text-gray-900">Personal Growth</h3>
-                      <ChevronDown className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div className="flex items-end gap-2 h-20 mb-2">
-                      {['M', '2', '5', 'F', '10'].map((label, i) => (
-                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                          <div
-                            className="w-full bg-blue-500 rounded-t-sm"
-                            style={{ height: `${[40, 60, 35, 80, 55][i]}%` }}
-                          />
-                          <span className="text-[8px] text-gray-500">{label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Habityle Card */}
-                  <div className="bg-white rounded-2xl p-4 shadow-sm">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-bold text-gray-900">Habityle</h3>
-                      <ChevronDown className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-start gap-2 p-2 bg-blue-50 rounded-lg">
-                        <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Calendar className="w-3 h-3 text-blue-500" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-medium text-gray-900">Wellness</div>
-                          <div className="text-[10px] text-gray-500">Wellness Tips, Meditation</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
-                        <div className="w-6 h-6 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <ListChecks className="w-3 h-3 text-gray-500" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-medium text-gray-900">Wellness Journal</div>
-                          <div className="text-[10px] text-gray-500">Journaling Tips</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📈</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {language === 'fr' ? 'Croissance' : language === 'en' ? 'Growth' : 'Crecimiento'}
+                  </h3>
+                  <p className="text-gray-600">
+                    {language === 'fr' ? 'Suivez votre progression' : language === 'en' ? 'Track your progress' : 'Sigue tu progreso'}
+                  </p>
+                </div>
               )}
             </div>
           </div>

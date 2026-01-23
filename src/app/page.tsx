@@ -231,6 +231,45 @@ export default function GlowUpChallengeApp() {
   const [newHabitLabel, setNewHabitLabel] = useState('');
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
+  // États pour les blocs d'habitudes thématiques
+  const [habitBlocks, setHabitBlocks] = useState<Array<{
+    id: string;
+    name: string;
+    icon: string;
+    color: string;
+    habits: Array<{id: string, label: string, completed: boolean}>;
+    collapsed: boolean;
+  }>>([
+    {
+      id: 'morning-routine',
+      name: language === 'fr' ? 'Routine Matinale' : language === 'en' ? 'Morning Routine' : 'Rutina Matutina',
+      icon: '☀️',
+      color: 'from-orange-100 to-yellow-100',
+      habits: [
+        { id: 'exercise', label: language === 'fr' ? 'Exercice' : language === 'en' ? 'Exercise' : 'Ejercicio', completed: false },
+        { id: 'breakfast', label: language === 'fr' ? 'Petit-déjeuner' : language === 'en' ? 'Breakfast' : 'Desayuno', completed: false },
+        { id: 'meditation', label: language === 'fr' ? 'Méditation' : language === 'en' ? 'Meditation' : 'Meditación', completed: false }
+      ],
+      collapsed: false
+    },
+    {
+      id: 'lifestyle',
+      name: 'Lifestyle',
+      icon: '🌿',
+      color: 'from-green-100 to-emerald-100',
+      habits: [
+        { id: 'reading', label: language === 'fr' ? 'Lecture' : language === 'en' ? 'Reading' : 'Lectura', completed: false },
+        { id: 'journaling', label: language === 'fr' ? 'Journaling' : language === 'en' ? 'Journaling' : 'Diario', completed: false }
+      ],
+      collapsed: false
+    }
+  ]);
+  const [showCreateBlock, setShowCreateBlock] = useState(false);
+  const [newBlockName, setNewBlockName] = useState('');
+  const [newBlockIcon, setNewBlockIcon] = useState('📝');
+  const [newBlockColor, setNewBlockColor] = useState('from-blue-100 to-indigo-100');
+  const [habitTab, setHabitTab] = useState<'goals' | 'tasks' | 'growth'>('tasks');
+
   // États pour Planning
   const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
@@ -2045,463 +2084,306 @@ export default function GlowUpChallengeApp() {
           </div>
         )}
 
-        {/* Trackers View - Design Educational Moderne */}
+        {/* Trackers View - Life Hub Design */}
         {currentView === 'trackers' && (
-          <div className="pb-20 bg-cream-100 min-h-screen">
-            {/* Header avec bouton retour */}
-            <div className="flex items-center gap-2 p-2 pb-1.5 max-w-lg mx-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full w-7 h-7 bg-white shadow-soft"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <X className="w-3.5 h-3.5 text-navy-900" />
-              </Button>
-              <h1 className="text-base font-bold text-navy-900">{t.trackers.title}</h1>
-            </div>
+          <div className="pb-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+            {/* Header moderne avec météo et profil */}
+            <div className="p-4 max-w-2xl mx-auto">
+              <div className="flex items-center justify-between mb-6">
+                {/* Météo widget */}
+                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg">
+                  <div className="text-4xl">☀️</div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">22°C</div>
+                    <div className="text-xs text-gray-600">
+                      {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' })}
+                    </div>
+                  </div>
+                </div>
 
-            {/* Sélecteur de jours - Design moderne */}
-            <div className="overflow-x-auto scrollbar-hide px-2 py-1.5">
-              <div className="flex gap-1 min-w-max">
-                {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
-                  const dayData = trackers.find(t => {
-                    if (!trackerStartDate) return false;
-                    const trackerDate = new Date(trackerStartDate);
-                    trackerDate.setDate(trackerDate.getDate() + (day - 1));
-                    return t.date === getLocalDateString(trackerDate);
-                  });
-                  const isCompleted = dayData?.completed || false;
-                  const completionPercentage = dayData ? Math.round(
-                    ((dayData.waterGlasses > 0 ? 1 : 0) +
-                    (dayData.sleepHours > 0 ? 1 : 0) +
-                    (dayData.mood > 0 ? 1 : 0) +
-                    (dayData.activityMinutes > 0 ? 1 : 0) +
-                    (dayData.skincareCompleted ? 1 : 0) +
-                    Object.values(dayData.habits).filter(Boolean).length) /
-                    (5 + Object.keys(dayData.habits).length) * 100
-                  ) : 0;
-
-                  return (
-                    <button
-                      key={day}
-                      onClick={() => setTrackerCurrentDay(day)}
-                      className={`flex-shrink-0 w-9 h-9 rounded-lg font-semibold text-xs transition-all relative shadow-soft ${
-                        trackerCurrentDay === day
-                          ? 'bg-gradient-to-br from-soft-purple-300 to-soft-purple-500 text-white scale-105'
-                          : 'bg-white text-navy-900 hover:bg-soft-purple-100'
-                      }`}
-                    >
-                      {day}
-                      {isCompleted && (
-                        <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-gradient-to-br from-soft-orange-400 to-soft-orange-500 rounded-full flex items-center justify-center">
-                          <Check className="w-1.5 h-1.5 text-white" />
-                        </div>
-                      )}
-                      {!isCompleted && completionPercentage > 0 && (
-                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[7px] font-bold text-soft-purple-500">
-                          {completionPercentage}%
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Carte de progression */}
-            <div className="mx-2 p-2 rounded-xl shadow-soft-lg bg-gradient-to-br from-soft-purple-100 to-soft-purple-200 relative overflow-hidden">
-              {/* Emoji décoratif */}
-              <div className="absolute top-0.5 right-0.5 text-3xl opacity-10">
-                🎯
+                {/* Profil */}
+                <button className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                  {user?.email?.[0].toUpperCase() || 'U'}
+                </button>
               </div>
 
-              <div className="space-y-1.5 relative z-10">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xs font-bold text-navy-900">
-                    {language === 'fr' ? `Jour ${trackerCurrentDay}` :
-                     language === 'en' ? `Day ${trackerCurrentDay}` :
-                     `Día ${trackerCurrentDay}`}
-                  </h2>
-                  <span className="text-base font-bold text-soft-purple-500">
-                    {(() => {
-                      const dayData = trackers.find(t => {
-                        if (!trackerStartDate) return false;
-                        const trackerDate = new Date(trackerStartDate);
-                        trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
-                        return t.date === getLocalDateString(trackerDate);
-                      });
-                      if (!dayData) return '0%';
-                      const completed =
-                        (dayData.waterGlasses > 0 ? 1 : 0) +
-                        (dayData.sleepHours > 0 ? 1 : 0) +
-                        (dayData.mood > 0 ? 1 : 0) +
-                        (dayData.activityMinutes > 0 ? 1 : 0) +
-                        (dayData.skincareCompleted ? 1 : 0) +
-                        Object.values(dayData.habits).filter(Boolean).length;
-                      const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
-                      return Math.round((completed / total) * 100) + '%';
-                    })()}
-                  </span>
-                </div>
-                <div className="h-1 bg-white/40 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-navy-900 transition-all duration-500 rounded-full"
-                    style={{
-                      width: (() => {
-                        const dayData = trackers.find(t => {
-                          if (!trackerStartDate) return false;
-                          const trackerDate = new Date(trackerStartDate);
-                          trackerDate.setDate(trackerDate.getDate() + (trackerCurrentDay - 1));
-                          return t.date === getLocalDateString(trackerDate);
-                        });
-                        if (!dayData) return '0%';
-                        const completed =
-                          (dayData.waterGlasses > 0 ? 1 : 0) +
-                          (dayData.sleepHours > 0 ? 1 : 0) +
-                          (dayData.mood > 0 ? 1 : 0) +
-                          (dayData.activityMinutes > 0 ? 1 : 0) +
-                          (dayData.skincareCompleted ? 1 : 0) +
-                          Object.values(dayData.habits).filter(Boolean).length;
-                        const total = 5 + Object.keys(dayData.habits).length + customHabits.length;
-                        return Math.round((completed / total) * 100) + '%';
-                      })()
-                    }}
-                  />
-                </div>
+              {/* Titre principal */}
+              <h1 className="text-5xl font-black text-center text-gray-900 mb-6">
+                Life Hub
+              </h1>
+
+              {/* Navigation par onglets */}
+              <div className="flex gap-6 justify-center mb-8">
+                <button
+                  onClick={() => setHabitTab('goals')}
+                  className={`text-lg font-semibold transition-all ${
+                    habitTab === 'goals'
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  Goals
+                </button>
+                <button
+                  onClick={() => setHabitTab('tasks')}
+                  className={`text-lg font-semibold transition-all ${
+                    habitTab === 'tasks'
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  Tasks
+                </button>
+                <button
+                  onClick={() => setHabitTab('growth')}
+                  className={`text-lg font-semibold transition-all ${
+                    habitTab === 'growth'
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  Growth
+                </button>
               </div>
             </div>
 
-            {/* Contenu des trackers */}
-            <div className="p-2 space-y-2 max-w-lg mx-auto">
-              {/* Jour et Date - Design moderne */}
-              <div className="text-center pb-1">
-                <h2 className="text-xs font-bold text-navy-900 capitalize">
-                  {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long' })}
-                </h2>
-                <p className="text-[9px] text-stone-600">
-                  {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
-                </p>
-              </div>
-
-              {/* Hydration - Design moderne */}
-              <div className="bg-white rounded-lg p-2 shadow-soft">
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <div className="w-5 h-5 rounded-lg bg-soft-purple-100 flex items-center justify-center">
-                    <Droplet className="w-2.5 h-2.5 text-soft-purple-500" />
-                  </div>
-                  <h3 className="font-semibold text-[11px] text-navy-900">{t.trackers.hydration}</h3>
-                  <span className="ml-auto text-[9px] text-navy-800 font-medium">{getTodayTracker().waterGlasses}/8</span>
-                </div>
-                <div className="flex gap-1 flex-wrap">
-                  {[...Array(8)].map((_, i) => (
-                    <Button
-                      key={i}
-                      variant={i < getTodayTracker().waterGlasses ? 'default' : 'outline'}
-                      size="icon"
-                      className={`w-7 h-7 rounded-lg text-xs ${i < getTodayTracker().waterGlasses ? 'bg-soft-purple-400 hover:bg-soft-purple-500 border-none' : 'border-soft-purple-200 hover:bg-soft-purple-100'}`}
-                      onClick={() => updateTodayTracker({ waterGlasses: i < getTodayTracker().waterGlasses ? i : i + 1 })}
+            {/* Contenu principal */}
+            <div className="px-4 max-w-2xl mx-auto space-y-4">
+              {/* Onglet Tasks - Blocs d'habitudes */}
+              {habitTab === 'tasks' && (
+                <div className="space-y-4">
+                  {/* Blocs d'habitudes thématiques */}
+                  {habitBlocks.map((block) => (
+                    <div
+                      key={block.id}
+                      className={`bg-gradient-to-br ${block.color} rounded-3xl p-5 shadow-xl`}
                     >
-                      💧
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sleep - Design moderne */}
-              <div className="bg-white rounded-lg p-2 shadow-soft">
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <div className="w-5 h-5 rounded-lg bg-peach-100 flex items-center justify-center">
-                    <Moon className="w-2.5 h-2.5 text-peach-500" />
-                  </div>
-                  <h3 className="font-semibold text-[11px] text-navy-900">{t.trackers.sleep}</h3>
-                </div>
-                <div className="flex items-center gap-2 justify-center">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="w-7 h-7 rounded-lg border-peach-200 hover:bg-peach-100"
-                    onClick={() => updateTodayTracker({ sleepHours: Math.max(0, (getTodayTracker().sleepHours || 0) - 0.5) })}
-                  >
-                    -
-                  </Button>
-                  <div className="text-xl font-bold min-w-[50px] text-center text-navy-900">
-                    {getTodayTracker().sleepHours || 0}<span className="text-sm">h</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="w-7 h-7 rounded-lg border-peach-200 hover:bg-peach-100"
-                    onClick={() => updateTodayTracker({ sleepHours: Math.min(12, (getTodayTracker().sleepHours || 0) + 0.5) })}
-                  >
-                    +
-                  </Button>
-                </div>
-              </div>
-
-              {/* Mood - Design moderne */}
-              <div className="bg-white rounded-lg p-2 shadow-soft">
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <div className="w-5 h-5 rounded-lg bg-soft-orange-100 flex items-center justify-center">
-                    <Smile className="w-2.5 h-2.5 text-soft-orange-500" />
-                  </div>
-                  <h3 className="font-semibold text-[11px] text-navy-900">{t.trackers.mood}</h3>
-                </div>
-                <div className="flex gap-1 justify-between">
-                  {['😢', '😕', '😐', '🙂', '😄'].map((emoji, i) => (
-                    <Button
-                      key={i}
-                      variant={getTodayTracker().mood === i + 1 ? 'default' : 'outline'}
-                      size="icon"
-                      className={`w-9 h-9 rounded-lg text-base ${getTodayTracker().mood === i + 1 ? 'bg-soft-orange-400 hover:bg-soft-orange-500 border-none' : 'border-soft-orange-200 hover:bg-soft-orange-100'}`}
-                      onClick={() => updateTodayTracker({ mood: i + 1 })}
-                    >
-                      {emoji}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Skincare - Design moderne */}
-              <button
-                onClick={() => updateTodayTracker({ skincareCompleted: !getTodayTracker().skincareCompleted })}
-                className="w-full flex items-center justify-between p-2 rounded-lg transition-all bg-gradient-to-br from-peach-100 to-peach-200 shadow-soft hover:scale-[1.01]"
-              >
-                <div className="flex items-center gap-1.5">
-                  <div className="w-5 h-5 rounded-lg bg-white/60 flex items-center justify-center">
-                    <Activity className="w-2.5 h-2.5 text-peach-500" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className={`font-semibold text-[11px] text-navy-900 ${getTodayTracker().skincareCompleted ? 'line-through' : ''}`}>
-                      {t.trackers.skincareCompleted}
-                    </h3>
-                    <p className="text-[9px] text-navy-800">
-                      {t.trackers.todaysRoutine}
-                    </p>
-                  </div>
-                </div>
-                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                  getTodayTracker().skincareCompleted
-                    ? 'bg-peach-500 border-peach-500'
-                    : 'border-peach-300'
-                }`}>
-                  {getTodayTracker().skincareCompleted && <Check className="w-2.5 h-2.5 text-white" />}
-                </div>
-              </button>
-
-              {/* Habits */}
-              <div className="space-y-1.5">
-                <h3 className="font-semibold text-[11px] flex items-center gap-1">
-                  <Lightbulb className="w-3.5 h-3.5 text-green-400" />
-                  {t.trackers.dailyHabits}
-                </h3>
-                <div className="space-y-1">
-                  {/* Médite sur dieu - pleine largeur */}
-                  {(() => {
-                    const habit = { key: 'meditation', label: t.trackers.meditation5min };
-                    const isCompleted = getTodayTracker().habits[habit.key] || false;
-                    return (
+                      {/* Header du bloc */}
                       <button
-                        key={habit.key}
-                        onClick={() =>
-                          updateTodayTracker({
-                            habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
-                          })
-                        }
-                        className="flex items-center justify-between p-1.5 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
+                        onClick={() => {
+                          setHabitBlocks(habitBlocks.map(b =>
+                            b.id === block.id ? { ...b, collapsed: !b.collapsed } : b
+                          ));
+                        }}
+                        className="w-full flex items-center justify-between mb-4"
                       >
-                        <span className="text-[11px]">{habit.label}</span>
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          isCompleted
-                            ? 'bg-green-600 border-green-600'
-                            : 'border-stone-300 dark:border-stone-600'
-                        }`}>
-                          {isCompleted && <Check className="w-2.5 h-2.5 text-white" />}
+                        <div className="flex items-center gap-3">
+                          <div className="text-3xl">{block.icon}</div>
+                          <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
                         </div>
+                        <ChevronDown
+                          className={`w-5 h-5 text-gray-600 transition-transform ${
+                            block.collapsed ? '-rotate-90' : ''
+                          }`}
+                        />
                       </button>
-                    );
-                  })()}
 
-                  {/* Journaling, Gratitude, Exercice, Lecture - Cases à cocher sur la même ligne */}
-                  <div className="grid grid-cols-2 gap-1">
-                    {[
-                      { key: 'journaling', label: t.trackers.journaling },
-                      { key: 'gratitude', label: t.trackers.gratitude },
-                      { key: 'exercise', label: t.trackers.exercise },
-                      { key: 'reading', label: t.trackers.reading }
-                    ].map((habit) => {
-                      const isCompleted = getTodayTracker().habits[habit.key] || false;
-                      return (
-                        <button
-                          key={habit.key}
-                          onClick={() =>
-                            updateTodayTracker({
-                              habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
-                            })
-                          }
-                          className="flex items-center justify-between p-1.5 rounded-lg transition-all bg-stone-50 dark:bg-stone-800"
-                        >
-                          <span className="text-[9px] flex-1 text-left">{habit.label}</span>
-                          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                            isCompleted
-                              ? 'bg-green-600 border-green-600'
-                              : 'border-stone-300 dark:border-stone-600'
-                          }`}>
-                            {isCompleted && <Check className="w-2 h-2 text-white" />}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                      {/* Liste des habitudes */}
+                      {!block.collapsed && (
+                        <div className="space-y-2">
+                          {block.habits.map((habit) => (
+                            <button
+                              key={habit.id}
+                              onClick={() => {
+                                setHabitBlocks(habitBlocks.map(b =>
+                                  b.id === block.id
+                                    ? {
+                                        ...b,
+                                        habits: b.habits.map(h =>
+                                          h.id === habit.id ? { ...h, completed: !h.completed } : h
+                                        )
+                                      }
+                                    : b
+                                ));
+                              }}
+                              className="w-full flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-xl p-3 hover:bg-white/80 transition-all"
+                            >
+                              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <Calendar className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <div className="flex-1 text-left">
+                                <div className={`text-sm font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
+                                  {habit.label}
+                                </div>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                habit.completed
+                                  ? 'bg-green-500 border-green-500'
+                                  : 'border-gray-300'
+                              }`}>
+                                {habit.completed && <Check className="w-3 h-3 text-white" />}
+                              </div>
+                            </button>
+                          ))}
 
-                  {/* Pas de scroll - pleine largeur */}
-                  {(() => {
-                    const habit = { key: 'noScroll', label: t.trackers.noScrollBeforeSleep };
-                    const isCompleted = getTodayTracker().habits[habit.key] || false;
-                    return (
-                      <button
-                        key={habit.key}
-                        onClick={() =>
-                          updateTodayTracker({
-                            habits: { ...getTodayTracker().habits, [habit.key]: !isCompleted }
-                          })
-                        }
-                        className="flex items-center justify-between p-1.5 rounded-lg w-full transition-all bg-stone-50 dark:bg-stone-800"
-                      >
-                        <span className="text-[11px]">{habit.label}</span>
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          isCompleted
-                            ? 'bg-green-600 border-green-600'
-                            : 'border-stone-300 dark:border-stone-600'
-                        }`}>
-                          {isCompleted && <Check className="w-2.5 h-2.5 text-white" />}
-                        </div>
-                      </button>
-                    );
-                  })()}
-
-                  {/* Habitudes personnalisées */}
-                  {customHabits.map((habit) => {
-                    const isCompleted = getTodayTracker().habits[habit.id] || false;
-                    return (
-                      <div key={habit.id} className={`flex items-center justify-between p-1.5 rounded-lg ${
-                        habit.type === 'good'
-                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                          : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-                      }`}>
-                        <div className="flex items-center gap-1 flex-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="w-5 h-5"
-                            onClick={() => setCustomHabits(customHabits.filter(h => h.id !== habit.id))}
-                          >
-                            <X className="w-2.5 h-2.5" />
-                          </Button>
+                          {/* Bouton ajouter une habitude au bloc */}
                           <button
-                            onClick={() =>
-                              updateTodayTracker({
-                                habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
-                              })
-                            }
-                            className="flex items-center gap-1 flex-1"
+                            onClick={() => {
+                              const newHabit = {
+                                id: `habit_${Date.now()}`,
+                                label: language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo hábito',
+                                completed: false
+                              };
+                              setHabitBlocks(habitBlocks.map(b =>
+                                b.id === block.id
+                                  ? { ...b, habits: [...b.habits, newHabit] }
+                                  : b
+                              ));
+                            }}
+                            className="w-full flex items-center justify-center gap-2 bg-white/40 backdrop-blur-sm rounded-xl p-3 border-2 border-dashed border-gray-300 hover:bg-white/60 transition-all"
                           >
-                            <span className="text-[11px]">{habit.label}</span>
-                            <span className="text-[9px] px-1 py-0.5 rounded-full bg-white dark:bg-stone-800">
-                              {habit.type === 'good' ? '✨' : '⚠️'}
+                            <Plus className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-600">
+                              {language === 'fr' ? 'Ajouter une habitude' : language === 'en' ? 'Add habit' : 'Agregar hábito'}
                             </span>
                           </button>
                         </div>
-                        <button
-                          onClick={() =>
-                            updateTodayTracker({
-                              habits: { ...getTodayTracker().habits, [habit.id]: !isCompleted }
-                            })
-                          }
-                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            isCompleted
-                              ? 'bg-green-600 border-green-600'
-                              : 'border-stone-300 dark:border-stone-600'
-                          }`}
-                        >
-                          {isCompleted && <Check className="w-2.5 h-2.5 text-white" />}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                      )}
+                    </div>
+                  ))}
 
-              {/* Bouton ajouter une habitude */}
-              {!showAddHabit ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full border-dashed border-2 bg-rose-500 hover:bg-rose-600 text-white border-rose-400 h-7 text-[11px]"
-                  onClick={() => setShowAddHabit(true)}
-                >
-                  <Plus className="w-3 h-3 mr-1" />
-                  {language === 'fr' ? 'Ajouter une habitude' : language === 'en' ? 'Add a habit' : 'Agregar un hábito'}
-                </Button>
-              ) : (
-                <div className={`p-2 rounded-lg border-2 border-dashed ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-300'}`}>
-                  <div className="space-y-1.5">
-                    <Input
-                      placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
-                      value={newHabitLabel}
-                      onChange={(e) => setNewHabitLabel(e.target.value)}
-                      className={`h-7 text-[11px] ${theme === 'dark' ? 'bg-stone-900 border-stone-700' : 'bg-white'}`}
-                    />
-                    <div className="flex gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`flex-1 h-6 text-[10px] ${newHabitType === 'good' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
-                        onClick={() => setNewHabitType('good')}
-                      >
-                        ✨ {language === 'fr' ? 'Bonne' : language === 'en' ? 'Good' : 'Buena'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`flex-1 h-6 text-[10px] ${newHabitType === 'bad' ? 'border-2 border-stone-900 dark:border-stone-100' : 'border-stone-300 dark:border-stone-700'}`}
-                        onClick={() => setNewHabitType('bad')}
-                      >
-                        ⚠️ {language === 'fr' ? 'Mauvaise' : language === 'en' ? 'Bad' : 'Mala'}
-                      </Button>
+                  {/* Bouton créer un nouveau bloc */}
+                  {!showCreateBlock ? (
+                    <button
+                      onClick={() => setShowCreateBlock(true)}
+                      className="w-full flex items-center justify-center gap-3 bg-white/80 backdrop-blur-sm rounded-3xl p-6 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg"
+                    >
+                      <Plus className="w-6 h-6 text-gray-600" />
+                      <span className="text-lg font-semibold text-gray-700">
+                        {language === 'fr' ? 'Créer un nouveau bloc' : language === 'en' ? 'Create new block' : 'Crear nuevo bloque'}
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {language === 'fr' ? 'Nouveau bloc d\'habitudes' : language === 'en' ? 'New habit block' : 'Nuevo bloque de hábitos'}
+                      </h3>
+
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 mb-1 block">
+                            {language === 'fr' ? 'Nom du bloc' : language === 'en' ? 'Block name' : 'Nombre del bloque'}
+                          </label>
+                          <Input
+                            value={newBlockName}
+                            onChange={(e) => setNewBlockName(e.target.value)}
+                            placeholder={language === 'fr' ? 'Ex: Routine du soir' : language === 'en' ? 'Ex: Evening routine' : 'Ej: Rutina nocturna'}
+                            className="h-12"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 mb-1 block">
+                            {language === 'fr' ? 'Icône' : language === 'en' ? 'Icon' : 'Icono'}
+                          </label>
+                          <div className="flex gap-2 flex-wrap">
+                            {['📝', '🌙', '💪', '🧘', '📚', '🎯', '💡', '🌟'].map((icon) => (
+                              <button
+                                key={icon}
+                                onClick={() => setNewBlockIcon(icon)}
+                                className={`w-12 h-12 rounded-xl text-2xl flex items-center justify-center transition-all ${
+                                  newBlockIcon === icon
+                                    ? 'bg-blue-500 scale-110'
+                                    : 'bg-gray-100 hover:bg-gray-200'
+                                }`}
+                              >
+                                {icon}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium text-gray-700 mb-1 block">
+                            {language === 'fr' ? 'Couleur' : language === 'en' ? 'Color' : 'Color'}
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {[
+                              { name: 'Blue', value: 'from-blue-100 to-indigo-100' },
+                              { name: 'Pink', value: 'from-pink-100 to-rose-100' },
+                              { name: 'Green', value: 'from-green-100 to-emerald-100' },
+                              { name: 'Purple', value: 'from-purple-100 to-violet-100' },
+                              { name: 'Orange', value: 'from-orange-100 to-yellow-100' },
+                              { name: 'Teal', value: 'from-teal-100 to-cyan-100' }
+                            ].map((color) => (
+                              <button
+                                key={color.value}
+                                onClick={() => setNewBlockColor(color.value)}
+                                className={`h-12 rounded-xl bg-gradient-to-br ${color.value} border-2 transition-all ${
+                                  newBlockColor === color.value
+                                    ? 'border-gray-900 scale-105'
+                                    : 'border-transparent'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => {
+                            if (newBlockName.trim()) {
+                              setHabitBlocks([
+                                ...habitBlocks,
+                                {
+                                  id: `block_${Date.now()}`,
+                                  name: newBlockName,
+                                  icon: newBlockIcon,
+                                  color: newBlockColor,
+                                  habits: [],
+                                  collapsed: false
+                                }
+                              ]);
+                              setNewBlockName('');
+                              setNewBlockIcon('📝');
+                              setNewBlockColor('from-blue-100 to-indigo-100');
+                              setShowCreateBlock(false);
+                            }
+                          }}
+                          className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold"
+                        >
+                          {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setShowCreateBlock(false);
+                            setNewBlockName('');
+                          }}
+                          className="flex-1 h-12"
+                        >
+                          {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="flex-1 bg-rose-500 hover:bg-rose-600 text-white border-0 h-6 text-[10px]"
-                        onClick={() => {
-                          if (newHabitLabel.trim()) {
-                            setCustomHabits([...customHabits, {
-                              id: `custom_${Date.now()}`,
-                              label: newHabitLabel,
-                              type: newHabitType
-                            }]);
-                            setNewHabitLabel('');
-                            setShowAddHabit(false);
-                          }
-                        }}
-                      >
-                        {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-6 text-[10px]"
-                        onClick={() => {
-                          setShowAddHabit(false);
-                          setNewHabitLabel('');
-                        }}
-                      >
-                        {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
-                      </Button>
-                    </div>
-                  </div>
+                  )}
+                </div>
+              )}
+
+              {/* Onglet Goals */}
+              {habitTab === 'goals' && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🎯</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {language === 'fr' ? 'Objectifs' : language === 'en' ? 'Goals' : 'Objetivos'}
+                  </h3>
+                  <p className="text-gray-600">
+                    {language === 'fr' ? 'Définissez vos objectifs ici' : language === 'en' ? 'Set your goals here' : 'Establece tus objetivos aquí'}
+                  </p>
+                </div>
+              )}
+
+              {/* Onglet Growth */}
+              {habitTab === 'growth' && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📈</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {language === 'fr' ? 'Croissance' : language === 'en' ? 'Growth' : 'Crecimiento'}
+                  </h3>
+                  <p className="text-gray-600">
+                    {language === 'fr' ? 'Suivez votre progression' : language === 'en' ? 'Track your progress' : 'Sigue tu progreso'}
+                  </p>
                 </div>
               )}
             </div>

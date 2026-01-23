@@ -274,6 +274,10 @@ export default function GlowUpChallengeApp() {
   const [waterGlasses, setWaterGlasses] = useState(0);
   const [sleepHours, setSleepHours] = useState(0);
 
+  // États pour l'ajout de nouvelles habitudes dans les blocs
+  const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
+  const [newBlockHabitLabel, setNewBlockHabitLabel] = useState('');
+
   // États pour Planning
   const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
@@ -2214,22 +2218,20 @@ export default function GlowUpChallengeApp() {
                     {habitBlocks.map((block) => (
                       <div
                         key={block.id}
-                        className={`bg-gradient-to-br ${block.color} rounded-2xl p-4 shadow-lg`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl p-4 shadow-lg`}
                       >
-                        {/* Header du bloc avec bouton supprimer */}
-                        <div className="flex items-center justify-between mb-4">
+                        {/* Boutons en superposition sur la bordure haute */}
+                        <div className="absolute -top-2 right-2 flex gap-1">
                           <button
                             onClick={() => {
                               setHabitBlocks(habitBlocks.map(b =>
                                 b.id === block.id ? { ...b, collapsed: !b.collapsed } : b
                               ));
                             }}
-                            className="flex items-center gap-3 flex-1"
+                            className="w-6 h-6 rounded-full bg-white shadow-md hover:bg-gray-100 flex items-center justify-center border border-gray-200"
                           >
-                            <div className="text-3xl">{block.icon}</div>
-                            <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
                             <ChevronDown
-                              className={`w-5 h-5 text-gray-600 transition-transform ${
+                              className={`w-4 h-4 text-gray-600 transition-transform ${
                                 block.collapsed ? '-rotate-90' : ''
                               }`}
                             />
@@ -2238,10 +2240,16 @@ export default function GlowUpChallengeApp() {
                             onClick={() => {
                               setHabitBlocks(habitBlocks.filter(b => b.id !== block.id));
                             }}
-                            className="w-6 h-6 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center ml-2"
+                            className="w-6 h-6 rounded-full bg-white shadow-md hover:bg-red-50 flex items-center justify-center border border-gray-200"
                           >
                             <X className="w-4 h-4 text-red-600" />
                           </button>
+                        </div>
+
+                        {/* Header du bloc */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="text-3xl">{block.icon}</div>
+                          <h3 className="text-xl font-bold text-gray-900">{block.name}</h3>
                         </div>
 
                       {/* Liste des habitudes - Texte simple avec bouton supprimer */}
@@ -2283,25 +2291,78 @@ export default function GlowUpChallengeApp() {
                             </div>
                           ))}
 
-                          {/* Bouton ajouter une habitude au bloc */}
-                          <button
-                            onClick={() => {
-                              const newHabit = {
-                                id: `habit_${Date.now()}`,
-                                label: language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo hábito',
-                                completed: false
-                              };
-                              setHabitBlocks(habitBlocks.map(b =>
-                                b.id === block.id
-                                  ? { ...b, habits: [...b.habits, newHabit] }
-                                  : b
-                              ));
-                            }}
-                            className="w-full flex items-center gap-1 mt-2 text-xs text-gray-600 hover:text-gray-900"
-                          >
-                            <Plus className="w-3 h-3" />
-                            <span>{language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}</span>
-                          </button>
+                          {/* Formulaire d'ajout d'habitude */}
+                          {addingHabitToBlock === block.id ? (
+                            <div className="mt-2 flex gap-1">
+                              <Input
+                                value={newBlockHabitLabel}
+                                onChange={(e) => setNewBlockHabitLabel(e.target.value)}
+                                placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
+                                className="h-7 text-xs flex-1"
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && newBlockHabitLabel.trim()) {
+                                    const newHabit = {
+                                      id: `habit_${Date.now()}`,
+                                      label: newBlockHabitLabel.trim(),
+                                      completed: false
+                                    };
+                                    setHabitBlocks(habitBlocks.map(b =>
+                                      b.id === block.id
+                                        ? { ...b, habits: [...b.habits, newHabit] }
+                                        : b
+                                    ));
+                                    setNewBlockHabitLabel('');
+                                    setAddingHabitToBlock(null);
+                                  } else if (e.key === 'Escape') {
+                                    setNewBlockHabitLabel('');
+                                    setAddingHabitToBlock(null);
+                                  }
+                                }}
+                              />
+                              <button
+                                onClick={() => {
+                                  if (newBlockHabitLabel.trim()) {
+                                    const newHabit = {
+                                      id: `habit_${Date.now()}`,
+                                      label: newBlockHabitLabel.trim(),
+                                      completed: false
+                                    };
+                                    setHabitBlocks(habitBlocks.map(b =>
+                                      b.id === block.id
+                                        ? { ...b, habits: [...b.habits, newHabit] }
+                                        : b
+                                    ));
+                                    setNewBlockHabitLabel('');
+                                    setAddingHabitToBlock(null);
+                                  }
+                                }}
+                                className="w-7 h-7 rounded bg-green-500 hover:bg-green-600 flex items-center justify-center text-white"
+                              >
+                                <Check className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setNewBlockHabitLabel('');
+                                  setAddingHabitToBlock(null);
+                                }}
+                                className="w-7 h-7 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                setAddingHabitToBlock(block.id);
+                                setNewBlockHabitLabel('');
+                              }}
+                              className="w-full flex items-center gap-1 mt-2 text-xs text-gray-600 hover:text-gray-900"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>{language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}</span>
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>

@@ -138,8 +138,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
           </div>
         </div>
 
-        {/* Flèche déplacée en bas pour laisser plus de place à l'auto-validation */}
-        <div className="flex justify-center mt-3">
+        {/* Flèche superposée sur la bordure droite vers le coin bas */}
+        <div className="absolute bottom-2 right-2">
           {isExpanded ? (
             <ChevronUp className="w-5 h-5 text-pink-500" />
           ) : (

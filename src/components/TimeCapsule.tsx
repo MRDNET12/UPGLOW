@@ -204,28 +204,20 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
           <ChevronUp className={`w-4 h-4 text-purple-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
 
-        {/* Popup centré */}
+        {/* Section expandée - Slide similaire à Petits Succès */}
         {isExpanded && (
-          <>
-            {/* Overlay */}
-            <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-              onClick={onToggle}
-            />
-
-            {/* Popup centré */}
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-purple-100 overflow-hidden z-50 max-h-[80vh] overflow-y-auto">
-              {/* Header avec onglets */}
-              <div className="sticky top-0 bg-gradient-to-r from-purple-100 via-pink-100 to-indigo-100 p-3 border-b border-purple-200">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-purple-600" />
-                    {language === 'fr' ? 'Message à moi' : language === 'en' ? 'Message to me' : 'Mensaje a mí'}
-                  </h3>
-                  <button onClick={onToggle} className="p-1 hover:bg-white/50 rounded-full">
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
-                </div>
+          <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-purple-100/50 border border-purple-100/50 space-y-4 transition-all duration-300 ease-out">
+            {/* Header avec onglets */}
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-purple-600" />
+                  {language === 'fr' ? 'Message à moi' : language === 'en' ? 'Message to me' : 'Mensaje a mí'}
+                </h3>
+                <button onClick={onToggle} className="p-1 hover:bg-white/50 rounded-full transition-all">
+                  <ChevronUp className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
               <div className="flex gap-1">
                 {[
                   { id: 'create', label: { fr: 'Écrire', en: 'Write', es: 'Escribir' }, icon: Plus },
@@ -252,10 +244,9 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
             </div>
 
             {/* Contenu des onglets */}
-            <div className="p-4">
-              {/* Onglet Créer */}
-              {activeTab === 'create' && (
-                <div className="space-y-4">
+            {/* Onglet Créer */}
+            {activeTab === 'create' && (
+              <div className="space-y-4">
                   {/* Suggestion */}
                   <div className="bg-purple-50 rounded-xl p-3">
                     <p className="text-xs text-purple-700 font-medium mb-2">
@@ -486,9 +477,7 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
                   )}
                 </div>
               )}
-            </div>
           </div>
-          </>
         )}
       </div>
     </>

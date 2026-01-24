@@ -285,6 +285,13 @@ export default function GlowUpChallengeApp() {
   const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
   const [newBlockHabitLabel, setNewBlockHabitLabel] = useState('');
 
+  // Fonction pour calculer le suivi quotidien d'un bloc
+  const getBlockProgress = (block: typeof habitBlocks[0]) => {
+    if (block.habits.length === 0) return 0;
+    const completed = block.habits.filter(h => h.completed).length;
+    return Math.round((completed / block.habits.length) * 100);
+  };
+
   // États pour "Comment je me sens ?" et "Intention du jour"
   const [dailyFeeling, setDailyFeeling] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
@@ -2272,7 +2279,15 @@ export default function GlowUpChallengeApp() {
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
                   {/* Section Intention du jour - Tout en haut */}
-                  <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 shadow-lg">
+                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 shadow-lg">
+                    {/* Badge "chaque matin" en superposition sur la bordure gauche */}
+                    <div className="absolute -top-3 left-4">
+                      <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
+                        <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
+                          {language === 'fr' ? 'chaque matin' : language === 'en' ? 'every morning' : 'cada mañana'}
+                        </span>
+                      </div>
+                    </div>
                     <h3 className="text-sm font-bold text-gray-900 mb-3">
                       {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                     </h3>
@@ -2327,7 +2342,15 @@ export default function GlowUpChallengeApp() {
                   </div>
 
                   {/* Section Comment je me sens ? */}
-                  <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 shadow-lg">
+                  <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-9 shadow-lg">
+                    {/* Badge "chaque soir" en superposition sur la bordure gauche */}
+                    <div className="absolute -top-3 left-4">
+                      <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
+                        <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
+                          {language === 'fr' ? 'chaque soir' : language === 'en' ? 'every evening' : 'cada noche'}
+                        </span>
+                      </div>
+                    </div>
                     <h3 className="text-sm font-bold text-gray-900 mb-3">
                       {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                     </h3>
@@ -2360,15 +2383,26 @@ export default function GlowUpChallengeApp() {
 
                   {/* Blocs d'habitudes thématiques - Mode liste fixe */}
                   <div className="space-y-3">
-                    {habitBlocks.map((block) => (
+                    {habitBlocks.map((block) => {
+                      const progress = getBlockProgress(block);
+                      return (
                       <div
                         key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4 pt-9' : 'py-4'}`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4 pt-9' : 'py-4 pt-9'}`}
                       >
+                        {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
+                        <div className="absolute -top-3 left-4">
+                          <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
+                            <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
+                              {progress}%
+                            </span>
+                          </div>
+                        </div>
+
                         {/* Badge "Adopte des nouvelles habitudes pour Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
                         {block.isDefault && (
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <div className="px-3 py-1 bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-md border border-gray-200">
+                            <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
                               <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                                 {language === 'fr' ? 'Adopte des nouvelles habitudes pour Glow Up' : language === 'en' ? 'Adopt new habits for Glow Up' : 'Adopta nuevos hábitos para Glow Up'}
                               </span>
@@ -2530,7 +2564,8 @@ export default function GlowUpChallengeApp() {
                         </div>
                       )}
                     </div>
-                  ))}
+                  );
+                    })}
                   </div>
 
                   {/* Bouton créer un nouveau bloc - Réduit de 40% */}

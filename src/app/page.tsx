@@ -278,13 +278,8 @@ export default function GlowUpChallengeApp() {
   const [newBlockIcon, setNewBlockIcon] = useState('📝');
   const [newBlockColor, setNewBlockColor] = useState('from-blue-100 to-indigo-100');
   const [habitTab, setHabitTab] = useState<'tasks' | 'growth'>('tasks');
-  const [habitGridMode, setHabitGridMode] = useState<'grid' | 'list'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('habitGridMode');
-      return (saved as 'grid' | 'list') || 'grid';
-    }
-    return 'grid';
-  });
+  // Mode liste fixe pour le bloc par défaut (non modifiable)
+  const habitGridMode = 'list' as const;
 
   // États pour l'ajout de nouvelles habitudes dans les blocs
   const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
@@ -316,13 +311,6 @@ export default function GlowUpChallengeApp() {
       localStorage.setItem('habitBlocks', JSON.stringify(habitBlocks));
     }
   }, [habitBlocks]);
-
-  // Sauvegarder habitGridMode dans localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('habitGridMode', habitGridMode);
-    }
-  }, [habitGridMode]);
 
   // Sauvegarder dailyFeeling dans localStorage
   useEffect(() => {
@@ -2293,8 +2281,7 @@ export default function GlowUpChallengeApp() {
                         { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
                         { fr: 'avance même lentement', en: 'moves forward even slowly', es: 'avanza aunque sea lentamente' },
                         { fr: 'prend soin de son énergie', en: 'takes care of their energy', es: 'cuida su energía' },
-                        { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' },
-                        { fr: 'fait de son mieux', en: 'does their best', es: 'hace lo mejor' }
+                        { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
                       ].map((intention) => {
                         const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
                         const isSelected = dailyIntention === label;
@@ -2371,26 +2358,23 @@ export default function GlowUpChallengeApp() {
                     </div>
                   </div>
 
-                  {/* Bouton toggle grille/liste */}
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => setHabitGridMode(habitGridMode === 'grid' ? 'list' : 'grid')}
-                      className="px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700 hover:bg-white shadow-sm"
-                    >
-                      {habitGridMode === 'grid'
-                        ? (language === 'fr' ? '📋 Liste' : language === 'en' ? '📋 List' : '📋 Lista')
-                        : (language === 'fr' ? '⊞ Grille' : language === 'en' ? '⊞ Grid' : '⊞ Cuadrícula')
-                      }
-                    </button>
-                  </div>
-
-                  {/* Blocs d'habitudes thématiques - Mode grille ou liste */}
-                  <div className={habitGridMode === 'grid' ? 'columns-2 gap-3' : 'space-y-3'}>
+                  {/* Blocs d'habitudes thématiques - Mode liste fixe */}
+                  <div className="space-y-3">
                     {habitBlocks.map((block) => (
                       <div
                         key={block.id}
                         className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 py-4 shadow-lg break-inside-avoid mb-3`}
                       >
+                        {/* Badge "habitudes pour Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
+                        {block.isDefault && (
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                            <div className="px-3 py-1 bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 rounded-full shadow-md">
+                              <span className="text-[10px] font-bold text-white whitespace-nowrap">
+                                {language === 'fr' ? 'habitudes pour Glow Up' : language === 'en' ? 'habits for Glow Up' : 'hábitos para Glow Up'}
+                              </span>
+                            </div>
+                          </div>
+                        )}
                         {/* Bouton supprimer en superposition - Seulement si ce n'est pas le bloc par défaut */}
                         {!block.isDefault && (
                           <div className="absolute -top-2 right-2">

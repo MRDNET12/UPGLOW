@@ -9,21 +9,20 @@ interface SmallWinsCompactProps {
 
 // Messages d'auto-validation qui tournent à chaque ajout
 const AUTO_VALIDATIONS = [
-  '🔥Je suis une légende.',
+  '🔥 Je suis une légende.',
   'Je grandis.',
   'Je progresse.',
   '💃 Je mérite cette victoire.',
-  '💪Ma discipline paie.',
+  '💪 Ma discipline paie.',
   'Un pas de plus.',
-  'j\'ai de la valeur.',
+  'J\'ai de la valeur.',
   'Ma constance me rend fier.',
   '😍 Merci moi.',
   'Je fais bien.',
   '♥️ Je m\'élève.',
   'Je me valide.',
   'Je suis constant.',
-  '👌Je m\'honore.',
-  'Fier de moi.'
+  '👌 Je m\'honore.'
 ];
 
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
@@ -46,9 +45,15 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   };
 
   // Déterminer le palier
+  // - 0-2 succès : auto-validation
+  // - 3 succès : Alpha
+  // - 4 succès : auto-validation
+  // - 5 succès : Légende
+  // - 6+ succès : auto-validation (tournante)
   const getRank = () => {
     const count = winsThisWeek.length;
-    if (count >= 5) {
+    if (count === 5) {
+      // Exactement 5 succès : Légende
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
         icon: Crown,
@@ -56,7 +61,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         bgGradient: 'from-purple-400 via-pink-400 to-rose-400',
         emoji: '👑'
       };
-    } else if (count >= 3) {
+    } else if (count === 3) {
+      // Exactement 3 succès : Alpha
       return {
         name: 'Alpha',
         icon: Award,
@@ -65,7 +71,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         emoji: '🏆'
       };
     }
-    // Utiliser l'auto-validation au lieu de "En route"
+    // Sinon : auto-validation (0-2, 4, 6+)
     return {
       name: getAutoValidation(),
       icon: Trophy,

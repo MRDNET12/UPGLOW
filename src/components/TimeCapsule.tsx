@@ -368,16 +368,42 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
                       <span className="text-xs text-gray-600">
                         {language === 'fr' ? 'Date personnalisée' : language === 'en' ? 'Custom date' : 'Fecha personalizada'}
                       </span>
-                      {useCustomDate && (
+                    </div>
+                    {useCustomDate && (
+                      <div className="mt-2 space-y-2">
+                        {/* Boutons 6 mois et 1 an */}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => { setSelectedDelay(180); setCustomDate(addDays(getLocalDateString(), 180)); }}
+                            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
+                              customDate === addDays(getLocalDateString(), 180)
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            {language === 'fr' ? '6 mois' : language === 'en' ? '6 months' : '6 meses'}
+                          </button>
+                          <button
+                            onClick={() => { setSelectedDelay(365); setCustomDate(addDays(getLocalDateString(), 365)); }}
+                            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
+                              customDate === addDays(getLocalDateString(), 365)
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            {language === 'fr' ? '1 an' : language === 'en' ? '1 year' : '1 año'}
+                          </button>
+                        </div>
+                        {/* Calendrier */}
                         <input
                           type="date"
                           value={customDate}
                           onChange={(e) => setCustomDate(e.target.value)}
                           min={addDays(getLocalDateString(), 1)}
-                          className="flex-1 px-2 py-1 text-xs border border-purple-200 rounded-lg"
+                          className="w-full px-2 py-1 text-xs border border-purple-200 rounded-lg"
                         />
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Bouton créer */}

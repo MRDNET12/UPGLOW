@@ -9,20 +9,20 @@ interface SmallWinsCompactProps {
 
 // Messages d'auto-validation qui tournent à chaque ajout
 const AUTO_VALIDATIONS = [
-  '🔥 Je suis une légende.',
+  'Je suis une légende.',
   'Je grandis.',
   'Je progresse.',
-  '💃 Je mérite cette victoire.',
-  '💪 Ma discipline paie.',
+  'Je mérite cette victoire.',
+  'Ma discipline paie.',
   'Un pas de plus.',
   'J\'ai de la valeur.',
   'Ma constance me rend fier.',
-  '😍 Merci moi.',
+  'Merci moi.',
   'Je fais bien.',
-  '♥️ Je m\'élève.',
+  'Je m\'élève.',
   'Je me valide.',
   'Je suis constant.',
-  '👌 Je m\'honore.'
+  'Je m\'honore.'
 ];
 
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
@@ -77,7 +77,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       icon: Trophy,
       color: 'text-pink-600',
       bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
-      emoji: '✨'
+      emoji: '🎉'
     };
   };
 
@@ -94,51 +94,50 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     <div className="w-full">
       {/* Carte compacte - Cliquable pour expand */}
       <div
-        className={`rounded-[1.5rem] p-4 shadow-xl shadow-pink-100/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden border-none ${
+        className={`rounded-[1.5rem] p-4 shadow-xl shadow-pink-100/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-visible border-none ${
           winsThisWeek.length > 0
             ? 'bg-gradient-to-br from-pink-50 via-rose-50 to-white'
             : 'bg-white/80 backdrop-blur-md'
         }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 flex-1">
-            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
-              <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm font-bold text-gray-800">
-                  {t.bonus.smallWinsTitle}
-                </h3>
-                {winsThisWeek.length > 0 && (
-                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
-                    <span className="text-xs">{rank.emoji}</span>
-                    <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
-                  </div>
-                )}
-              </div>
-              {lastWin ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
-                  <p className="text-xs text-gray-600 truncate font-medium">
-                    {lastWin.text}
-                  </p>
+        <div className="flex items-center gap-3 flex-1">
+          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+            <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-sm font-bold text-gray-800">
+                {t.bonus.smallWinsTitle}
+              </h3>
+              {winsThisWeek.length > 0 && (
+                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
+                  <span className="text-xs">{rank.emoji}</span>
+                  <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
                 </div>
-              ) : (
-                <p className="text-xs text-gray-500 italic">
-                  {t.bonus.addSmallWin}
-                </p>
               )}
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-pink-500" />
+            {lastWin ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
+                <p className="text-xs text-gray-600 truncate font-medium">
+                  {lastWin.text}
+                </p>
+              </div>
             ) : (
-              <ChevronDown className="w-5 h-5 text-pink-500" />
+              <p className="text-xs text-gray-500 italic">
+                {t.bonus.addSmallWin}
+              </p>
             )}
           </div>
+        </div>
+        {/* Flèche en superposition avec la bordure droite */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          {isExpanded ? (
+            <ChevronUp className="w-5 h-5 text-pink-500" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-pink-500" />
+          )}
         </div>
       </div>
 

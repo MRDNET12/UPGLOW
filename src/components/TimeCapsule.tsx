@@ -187,7 +187,7 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
       )}
 
       {/* Carte compacte - Hauteur +5px, Largeur +60px */}
-      <div className="relative">
+      <div className="w-full flex flex-col items-center">
         <div
           className="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 rounded-full px-11 py-2.5 shadow-lg cursor-pointer hover:scale-105 transition-all flex items-center gap-2 min-h-[42px]"
           onClick={onToggle}
@@ -206,7 +206,7 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
 
       {/* Section expandée - Slide similaire à Petits Succès */}
       {isExpanded && (
-        <div className="mt-3 p-5 bg-white/95 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-purple-100/50 border border-purple-100/50 space-y-4 transition-all duration-300 ease-out">
+        <div className="mt-3 p-5 bg-white/95 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-purple-100/50 border border-purple-100/50 space-y-4 transition-all duration-300 ease-out w-full max-w-md">
             {/* Header avec onglets */}
             <div className="mb-3">
               <div className="flex items-center justify-between mb-2">

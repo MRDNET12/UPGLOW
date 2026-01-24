@@ -2363,14 +2363,14 @@ export default function GlowUpChallengeApp() {
                     {habitBlocks.map((block) => (
                       <div
                         key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 py-4 shadow-lg break-inside-avoid mb-3`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4 pt-9' : 'py-4'}`}
                       >
-                        {/* Badge "habitudes pour Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
+                        {/* Badge "Adopte des nouvelles habitudes pour Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
                         {block.isDefault && (
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <div className="px-3 py-1 bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 rounded-full shadow-md">
-                              <span className="text-[10px] font-bold text-white whitespace-nowrap">
-                                {language === 'fr' ? 'habitudes pour Glow Up' : language === 'en' ? 'habits for Glow Up' : 'hábitos para Glow Up'}
+                            <div className="px-3 py-1 bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-md border border-gray-200">
+                              <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
+                                {language === 'fr' ? 'Adopte des nouvelles habitudes pour Glow Up' : language === 'en' ? 'Adopt new habits for Glow Up' : 'Adopta nuevos hábitos para Glow Up'}
                               </span>
                             </div>
                           </div>
@@ -2403,8 +2403,20 @@ export default function GlowUpChallengeApp() {
                       {/* Liste des habitudes - Avec bouton - à gauche seulement si ce n'est pas le bloc par défaut */}
                       {!block.collapsed && (
                         <div className="space-y-1">
-                          {block.habits.map((habit) => (
-                            <div key={habit.id} className="flex items-center gap-1">
+                          {/* Trier les habitudes : non complétées en haut, complétées en bas */}
+                          {[...block.habits].sort((a, b) => {
+                            if (a.completed === b.completed) return 0;
+                            return a.completed ? 1 : -1;
+                          }).map((habit) => (
+                            <div
+                              key={habit.id}
+                              className={`flex items-center gap-1 transition-all duration-500 ease-in-out ${
+                                habit.completed ? 'opacity-0 animate-fade-out' : 'opacity-100'
+                              }`}
+                              style={{
+                                animation: habit.completed ? 'fadeOut 2s ease-in-out forwards' : 'none'
+                              }}
+                            >
                               {!block.isDefault && (
                                 <button
                                   onClick={() => {
@@ -2434,7 +2446,7 @@ export default function GlowUpChallengeApp() {
                                 }}
                                 className="flex-1 text-left"
                               >
-                                <div className={`text-sm font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
+                                <div className={`text-sm font-medium text-gray-900 transition-all duration-500 ${habit.completed ? 'line-through opacity-50' : ''}`}>
                                   {habit.label}
                                 </div>
                               </button>
@@ -5193,6 +5205,18 @@ export default function GlowUpChallengeApp() {
         onClose={() => setShowAuthDialog(false)}
         defaultMode={user ? 'signin' : 'signup'}
       />
+
+      {/* Animation CSS pour fade out des habitudes complétées */}
+      <style jsx global>{`
+        @keyframes fadeOut {
+          0% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0.5;
+          }
+        }
+      `}</style>
     </div>
   );
 }

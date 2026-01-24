@@ -186,10 +186,10 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
         </div>
       )}
 
-      {/* Carte compacte */}
+      {/* Carte compacte - Hauteur +5px, Largeur +60px */}
       <div className="relative">
         <div
-          className="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 rounded-full px-4 py-2 shadow-lg cursor-pointer hover:scale-105 transition-all flex items-center gap-2"
+          className="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 rounded-full px-11 py-2.5 shadow-lg cursor-pointer hover:scale-105 transition-all flex items-center gap-2 min-h-[42px]"
           onClick={onToggle}
         >
           <Mail className="w-4 h-4 text-purple-600" />

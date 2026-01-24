@@ -1372,9 +1372,9 @@ export default function GlowUpChallengeApp() {
             </div>
 
             {/* Trial Badge, Plan Pro Button, Message à moi et Challenge Switch Button */}
-            <div className="flex items-center justify-center gap-2 relative">
-              {/* Container avec animation de switch */}
-              <div className="relative flex-1 flex justify-center items-center">
+            <div className="relative flex items-center justify-center">
+              {/* Container avec animation de switch - Centré */}
+              <div className="w-full flex justify-center items-center">
                 {/* Cartes normales (Trial + Plan Pro) */}
                 <div
                   className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${
@@ -1412,10 +1412,10 @@ export default function GlowUpChallengeApp() {
                 </div>
               </div>
 
-              {/* Bouton Challenge Switch - toujours visible */}
+              {/* Bouton Challenge Switch - Position absolue fixe à droite */}
               <button
                 onClick={() => setShowChallengeDrawer(true)}
-                className="p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all flex-shrink-0"
+                className="absolute right-0 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all"
               >
                 <ChevronRight className="w-5 h-5 rotate-180 text-pink-400" />
               </button>

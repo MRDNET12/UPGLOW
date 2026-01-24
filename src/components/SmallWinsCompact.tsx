@@ -48,37 +48,31 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   // Déterminer le palier
   const getRank = () => {
     const count = winsThisWeek.length;
-    if (count === 5) {
-      // À 5 succès : afficher le badge Légende
+    if (count >= 5) {
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
         icon: Crown,
         color: 'text-purple-600',
         bgGradient: 'from-purple-400 via-pink-400 to-rose-400',
-        emoji: '👑',
-        showBadge: true
+        emoji: '👑'
       };
-    } else if (count === 3) {
-      // À 3 succès : afficher le badge Alpha
+    } else if (count >= 3) {
       return {
         name: 'Alpha',
         icon: Award,
         color: 'text-amber-600',
         bgGradient: 'from-amber-400 via-orange-400 to-rose-400',
-        emoji: '🏆',
-        showBadge: true
-      };
-    } else {
-      // Sinon : afficher l'auto-validation (0-2, 4, et 6+)
-      return {
-        name: getAutoValidation(),
-        icon: Trophy,
-        color: 'text-pink-600',
-        bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
-        emoji: '✨',
-        showBadge: false
+        emoji: '🏆'
       };
     }
+    // Utiliser l'auto-validation au lieu de "En route"
+    return {
+      name: getAutoValidation(),
+      icon: Trophy,
+      color: 'text-pink-600',
+      bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
+      emoji: '✨'
+    };
   };
 
   const rank = getRank();
@@ -111,19 +105,13 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 <h3 className="text-sm font-bold text-gray-800">
                   {t.bonus.smallWinsTitle}
                 </h3>
-                {winsThisWeek.length > 0 && rank.showBadge && (
+                {winsThisWeek.length > 0 && (
                   <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
                     <span className="text-xs">{rank.emoji}</span>
                     <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
                   </div>
                 )}
               </div>
-              {/* Afficher l'auto-validation en dessous du titre si pas de badge */}
-              {winsThisWeek.length > 0 && !rank.showBadge && (
-                <p className="text-xs font-bold text-pink-600 mb-1">
-                  {rank.name}
-                </p>
-              )}
               {lastWin ? (
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>

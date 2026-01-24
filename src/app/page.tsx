@@ -1342,14 +1342,14 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Message Glowee - Style glassmorphism - Hauteur réduite 50% + Glowee débordante en bas */}
+            {/* Message Glowee - Style glassmorphism - Taille réduite + Glowee agrandie */}
             <div className="relative">
               <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                 <CardContent className="p-0">
-                  <div className="flex items-center gap-1.5 py-1 px-2.5 pl-16 min-h-[32px]">
+                  <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
                     {/* Message avec rotation et effet typing - sans mention Glowee */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] text-gray-700 leading-snug font-medium">
+                      <p className="text-[10px] text-gray-700 leading-tight font-medium">
                         {displayedMessage}
                         {isTyping && <span className="animate-pulse">|</span>}
                       </p>
@@ -1358,14 +1358,14 @@ export default function GlowUpChallengeApp() {
                 </CardContent>
               </Card>
 
-              {/* Image Glowee débordante en bas - positionnée à l'extérieur de la carte */}
-              <div className="absolute left-1 top-1/2 -translate-y-1/4 w-14 h-16 z-10">
+              {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl blur-md opacity-40"></div>
                 <Image
                   src="/Glowee/glowee.webp"
                   alt="Glowee"
-                  width={56}
-                  height={64}
+                  width={96}
+                  height={104}
                   className="object-contain relative z-10 drop-shadow-2xl"
                 />
               </div>
@@ -4196,79 +4196,78 @@ export default function GlowUpChallengeApp() {
         )}
       </main>
 
-      {/* Bottom Navigation - Glassmorphism Rose Pastel */}
+      {/* Bottom Navigation - Glassmorphism Rose Pastel - Taille réduite */}
       {currentView !== 'goal-details' && (
         <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md z-50">
-          <div className="bg-white/80 backdrop-blur-md rounded-[2rem] shadow-2xl shadow-pink-200/50 px-3 py-3 border border-pink-100/50">
+          <div className="bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-2xl shadow-pink-200/50 px-2 py-1.5 border border-pink-100/50">
             <div className="flex items-center justify-around">
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
+                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
                   currentView === 'dashboard'
                     ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
                     : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('dashboard')}
               >
-                <Home className="w-5 h-5" />
-                <span className="text-[10px] font-semibold">{t.nav.home}</span>
+                <Home className="w-4 h-4" />
+                <span className="text-[9px] font-semibold">{t.nav.home}</span>
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
+                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
+                  currentView === 'journal'
+                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
+                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
+                }`}
+                onClick={() => setCurrentView('journal')}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span className="text-[9px] font-semibold">
+                  {language === 'fr' ? 'Journal' : language === 'en' ? 'Journal' : 'Diario'}
+                </span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
                   currentView === 'routine'
                     ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
                     : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('routine')}
               >
-                <Layers className="w-5 h-5" />
-                <span className="text-[10px] font-semibold">
-                  {language === 'fr' ? 'Planning' : language === 'en' ? 'Planning' : 'Plan'}
+                <Calendar className="w-4 h-4" />
+                <span className="text-[9px] font-semibold">
+                  {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
                 </span>
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex items-center justify-center rounded-xl transition-all duration-200 ${
-                  showGloweeChat
-                    ? 'bg-gradient-to-br from-pink-100 to-rose-100'
-                    : 'hover:bg-pink-50/50'
-                }`}
-                onClick={() => setShowGloweeChat(!showGloweeChat)}
-              >
-                <img
-                  src="/Glowee/glowee-nav-bar.webp"
-                  alt="Glowee"
-                  className="w-13 h-13 object-contain drop-shadow-lg"
-                />
-              </Button>
-
-              <Button
-                variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
+                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
                   currentView === 'trackers'
                     ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
                     : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('trackers')}
               >
-                <Target className="w-5 h-5" />
-                <span className="text-[10px] font-semibold">{t.nav.trackers}</span>
+                <Target className="w-4 h-4" />
+                <span className="text-[9px] font-semibold">{t.nav.trackers}</span>
               </Button>
 
               <Button
                 variant="ghost"
-                className={`flex-1 h-14 flex-col gap-1 rounded-xl transition-all duration-200 ${
+                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
                   currentView === 'settings'
                     ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
                     : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
                 }`}
                 onClick={() => setCurrentView('settings')}
               >
-                <Settings className="w-5 h-5" />
-                <span className="text-[10px] font-semibold">{t.nav.settings}</span>
+                <Settings className="w-4 h-4" />
+                <span className="text-[9px] font-semibold">{t.nav.settings}</span>
               </Button>
             </div>
           </div>

@@ -1372,7 +1372,7 @@ export default function GlowUpChallengeApp() {
             {/* Trial Badge, Plan Pro Button, Message à moi et Challenge Switch Button */}
             <div className="flex items-center justify-center gap-2 relative">
               {/* Container avec animation de switch */}
-              <div className="relative overflow-hidden flex-1 flex justify-center">
+              <div className="relative flex-1 flex justify-center">
                 {/* Cartes normales (Trial + Plan Pro) */}
                 <div
                   className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${

@@ -48,6 +48,7 @@ import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
+import { TimeCapsule } from '@/components/TimeCapsule';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
@@ -341,6 +342,10 @@ export default function GlowUpChallengeApp() {
   const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
 
+  // États pour TimeCapsule (Message à moi)
+  const [showTimeCapsuleCard, setShowTimeCapsuleCard] = useState(false);
+  const [timeCapsuleExpanded, setTimeCapsuleExpanded] = useState(false);
+
   // Mes tâches (manuelles)
   const [myWeekPriorities, setMyWeekPriorities] = useState<Array<{id: string, text: string, completed: boolean}>>([]);
   const [myWeeklyTasks, setMyWeeklyTasks] = useState<Record<string, Array<{id: string, text: string, completed: boolean}>>>({
@@ -487,6 +492,38 @@ export default function GlowUpChallengeApp() {
       setShowSubscription(true);
     }
   }, [user, shouldReopenSubscription]);
+
+  // Animation de switch pour TimeCapsule (Message à moi)
+  // 3s cartes normales, 10s Message à moi - s'arrête si premium
+  useEffect(() => {
+    if (subscription.isSubscribed) {
+      // Si premium, afficher toujours la carte Message à moi (statique)
+      setShowTimeCapsuleCard(true);
+      return;
+    }
+
+    // Animation de switch pour les non-premium
+    let timeoutId: NodeJS.Timeout;
+
+    const runAnimation = () => {
+      // Afficher les cartes normales pendant 3s
+      setShowTimeCapsuleCard(false);
+      timeoutId = setTimeout(() => {
+        // Afficher Message à moi pendant 10s
+        setShowTimeCapsuleCard(true);
+        timeoutId = setTimeout(() => {
+          // Recommencer le cycle
+          runAnimation();
+        }, 10000);
+      }, 3000);
+    };
+
+    runAnimation();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [subscription.isSubscribed]);
 
   // Tracker les visites et afficher les popups Glowee
   // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
@@ -1331,22 +1368,51 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Trial Badge, Plan Pro Button et Challenge Switch Button */}
-            <div className="flex items-center justify-center gap-2">
-              <TrialBadge theme={theme} />
-              <button
-                onClick={() => {
-                  setSubscriptionSource('button');
-                  setShowSubscription(true);
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg shadow-pink-200/50 hover:shadow-xl hover:scale-105 transition-all"
-              >
-                <Crown className="w-4 h-4" />
-                <span>Plan Pro</span>
-              </button>
+            {/* Trial Badge, Plan Pro Button, Message à moi et Challenge Switch Button */}
+            <div className="flex items-center justify-center gap-2 relative">
+              {/* Container avec animation de switch */}
+              <div className="relative overflow-hidden flex-1 flex justify-center">
+                {/* Cartes normales (Trial + Plan Pro) */}
+                <div
+                  className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${
+                    showTimeCapsuleCard
+                      ? 'opacity-0 -translate-y-full absolute'
+                      : 'opacity-100 translate-y-0'
+                  }`}
+                >
+                  <TrialBadge theme={theme} />
+                  <button
+                    onClick={() => {
+                      setSubscriptionSource('button');
+                      setShowSubscription(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg shadow-pink-200/50 hover:shadow-xl hover:scale-105 transition-all"
+                  >
+                    <Crown className="w-4 h-4" />
+                    <span>Plan Pro</span>
+                  </button>
+                </div>
+
+                {/* Carte Message à moi */}
+                <div
+                  className={`transition-all duration-500 ease-in-out ${
+                    showTimeCapsuleCard
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-full absolute'
+                  }`}
+                >
+                  <TimeCapsule
+                    theme={theme}
+                    isExpanded={timeCapsuleExpanded}
+                    onToggle={() => setTimeCapsuleExpanded(!timeCapsuleExpanded)}
+                  />
+                </div>
+              </div>
+
+              {/* Bouton Challenge Switch - toujours visible */}
               <button
                 onClick={() => setShowChallengeDrawer(true)}
-                className="p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all"
+                className="p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all flex-shrink-0"
               >
                 <ChevronRight className="w-5 h-5 rotate-180 text-pink-400" />
               </button>

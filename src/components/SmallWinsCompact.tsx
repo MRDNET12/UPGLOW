@@ -101,50 +101,50 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
-            <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-sm font-bold text-gray-800">
-                {t.bonus.smallWinsTitle}
-              </h3>
-              {winsThisWeek.length > 0 && rank.showBadge && (
-                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
-                  <span className="text-xs">{rank.emoji}</span>
-                  <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1">
+            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+              <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-bold text-gray-800">
+                  {t.bonus.smallWinsTitle}
+                </h3>
+                {winsThisWeek.length > 0 && rank.showBadge && (
+                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
+                    <span className="text-xs">{rank.emoji}</span>
+                    <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
+                  </div>
+                )}
+              </div>
+              {/* Afficher l'auto-validation en dessous du titre si pas de badge */}
+              {winsThisWeek.length > 0 && !rank.showBadge && (
+                <p className="text-xs font-bold text-pink-600 mb-1">
+                  {rank.name}
+                </p>
+              )}
+              {lastWin ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
+                  <p className="text-xs text-gray-600 truncate font-medium">
+                    {lastWin.text}
+                  </p>
                 </div>
+              ) : (
+                <p className="text-xs text-gray-500 italic">
+                  {t.bonus.addSmallWin}
+                </p>
               )}
             </div>
-            {/* Afficher l'auto-validation en dessous du titre si pas de badge */}
-            {winsThisWeek.length > 0 && !rank.showBadge && (
-              <p className="text-xs font-bold text-pink-600 mb-1">
-                {rank.name}
-              </p>
-            )}
-            {lastWin ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
-                <p className="text-xs text-gray-600 truncate font-medium">
-                  {lastWin.text}
-                </p>
-              </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {isExpanded ? (
+              <ChevronUp className="w-5 h-5 text-pink-500" />
             ) : (
-              <p className="text-xs text-gray-500 italic">
-                {t.bonus.addSmallWin}
-              </p>
+              <ChevronDown className="w-5 h-5 text-pink-500" />
             )}
           </div>
-        </div>
-
-        {/* Flèche superposée sur la bordure droite vers le coin bas */}
-        <div className="absolute bottom-2 right-2">
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-pink-500" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-pink-500" />
-          )}
         </div>
       </div>
 

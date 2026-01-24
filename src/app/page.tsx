@@ -494,11 +494,16 @@ export default function GlowUpChallengeApp() {
   }, [user, shouldReopenSubscription]);
 
   // Animation de switch pour TimeCapsule (Message à moi)
-  // 3s cartes normales, 10s Message à moi - s'arrête si premium
+  // 3s cartes normales, 20s Message à moi - s'arrête si premium ou si expanded
   useEffect(() => {
     if (subscription.isSubscribed) {
       // Si premium, afficher toujours la carte Message à moi (statique)
       setShowTimeCapsuleCard(true);
+      return;
+    }
+
+    // Si le slide est ouvert, ne pas faire de switch
+    if (timeCapsuleExpanded) {
       return;
     }
 
@@ -509,12 +514,14 @@ export default function GlowUpChallengeApp() {
       // Afficher les cartes normales pendant 3s
       setShowTimeCapsuleCard(false);
       timeoutId = setTimeout(() => {
-        // Afficher Message à moi pendant 10s
+        // Afficher Message à moi pendant 20s (10s de plus qu'avant)
         setShowTimeCapsuleCard(true);
         timeoutId = setTimeout(() => {
-          // Recommencer le cycle
-          runAnimation();
-        }, 10000);
+          // Recommencer le cycle seulement si pas expanded
+          if (!timeCapsuleExpanded) {
+            runAnimation();
+          }
+        }, 20000);
       }, 3000);
     };
 
@@ -523,7 +530,7 @@ export default function GlowUpChallengeApp() {
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [subscription.isSubscribed]);
+  }, [subscription.isSubscribed, timeCapsuleExpanded]);
 
   // Tracker les visites et afficher les popups Glowee
   // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
@@ -1372,7 +1379,7 @@ export default function GlowUpChallengeApp() {
             {/* Trial Badge, Plan Pro Button, Message à moi et Challenge Switch Button */}
             <div className="flex items-center justify-center gap-2 relative">
               {/* Container avec animation de switch */}
-              <div className="relative flex-1 flex justify-center">
+              <div className="relative flex-1 flex justify-center items-center">
                 {/* Cartes normales (Trial + Plan Pro) */}
                 <div
                   className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${
@@ -1394,9 +1401,9 @@ export default function GlowUpChallengeApp() {
                   </button>
                 </div>
 
-                {/* Carte Message à moi */}
+                {/* Carte Message à moi - Centré */}
                 <div
-                  className={`transition-all duration-500 ease-in-out ${
+                  className={`w-full flex justify-center transition-all duration-500 ease-in-out ${
                     showTimeCapsuleCard
                       ? 'opacity-100 translate-y-0'
                       : 'opacity-0 translate-y-full absolute'

@@ -163,7 +163,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
               <div className="flex items-center gap-1.5">
                 <span className="text-sm">💡</span>
                 <span className="font-bold text-gray-800 text-xs">
-                  {t.bonus.why || 'Pourquoi ?'}
+                  {language === 'fr' ? 'Ma fierté du jour ?' : language === 'en' ? 'My pride of the day?' : '¿Mi orgullo del día?'}
                 </span>
               </div>
               {showWhy ? (
@@ -180,11 +180,11 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                     {language === 'fr' ? 'Tu avances. Et ça compte.' : language === 'en' ? 'You\'re moving forward. And it counts.' : 'Avanzas. Y eso cuenta.'}
                   </p>
                   <p className="font-bold text-gray-800 mb-2 text-xs">
-                    {language === 'fr' ? 'Célèbre tes victoires quotidiennes !' : language === 'en' ? 'Celebrate your daily victories!' : '¡Celebra tus victorias diarias!'}
+                    {language === 'fr' ? 'Célèbre tes victoires quotidiennes 🎉!' : language === 'en' ? 'Celebrate your daily victories 🎉!' : '¡Celebra tus victorias diarias 🎉!'}
                   </p>
                   <p className="text-gray-700 font-medium text-[11px] leading-relaxed mb-2">
                     {language === 'fr'
-                      ? 'Chaque victoire, même minuscule, renforce la personne que tu es en train de devenir.\nPrends l\'habitude de reconnaître tes efforts et de bâtir une fierté saine, sans comparaison\nValide tes progrès et construis ta fierté.'
+                      ? 'Chaque victoire, même minuscule, renforce la personne que tu es en train de devenir.\nPrends l\'habitude de reconnaître tes efforts et de bâtir une fierté saine, sans comparaison.\nValide tes progrès et construis ta fierté.'
                       : language === 'en'
                       ? 'Every victory, even tiny, strengthens the person you\'re becoming.\nGet in the habit of recognizing your efforts and building healthy pride, without comparison.\nValidate your progress and build your pride.'
                       : 'Cada victoria, incluso minúscula, fortalece la persona que estás llegando a ser.\nAcostúmbrate a reconocer tus esfuerzos y construir un orgullo sano, sin comparación.\nValida tu progreso y construye tu orgullo.'
@@ -192,10 +192,10 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                   </p>
                   <p className="text-gray-700 font-medium text-[11px] leading-relaxed mb-2">
                     {language === 'fr'
-                      ? 'Note tes petits accomplissements réalisés cette semaine (même les plus minimes).'
+                      ? 'Note tes petits accomplissements réalisés cette semaine (même les plus minimes).\n« J\'ai commencé ... » « Je n\'ai pas abandonné ... » « J\'ai essayé ... » « J\'ai réussi ... »'
                       : language === 'en'
-                      ? 'Note your small accomplishments achieved this week (even the smallest ones).'
-                      : 'Anota tus pequeños logros realizados esta semana (incluso los más mínimos).'
+                      ? 'Note your small accomplishments achieved this week (even the smallest ones).\n"I started ..." "I didn\'t give up ..." "I tried ..." "I succeeded ..."'
+                      : 'Anota tus pequeños logros realizados esta semana (incluso los más mínimos).\n"Empecé ..." "No abandoné ..." "Intenté ..." "Logré ..."'
                     }
                   </p>
                 </div>

@@ -1340,33 +1340,34 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Message Glowee - Style glassmorphism - Hauteur réduite 30% + Glowee agrandie et débordante */}
-            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible relative">
-              <CardContent className="p-0">
-                <div className="flex items-center gap-1.5 p-1 pr-2.5 relative">
-                  {/* Image Glowee agrandie et débordante en bas */}
-                  <div className="relative w-20 h-24 flex-shrink-0 -mb-6">
-                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-2xl blur-md opacity-40"></div>
-                    <Image
-                      src="/Glowee/glowee.webp"
-                      alt="Glowee"
-                      width={80}
-                      height={96}
-                      className="object-contain relative z-10 drop-shadow-2xl"
-                    />
+            {/* Message Glowee - Style glassmorphism - Hauteur réduite 50% + Glowee débordante en bas */}
+            <div className="relative">
+              <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                <CardContent className="p-0">
+                  <div className="flex items-center gap-1.5 py-1 px-2.5 pl-16 min-h-[32px]">
+                    {/* Message avec rotation et effet typing - sans mention Glowee */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] text-gray-700 leading-snug font-medium">
+                        {displayedMessage}
+                        {isTyping && <span className="animate-pulse">|</span>}
+                      </p>
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  {/* Message avec rotation et effet typing */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold text-pink-400">Glowee</p>
-                    <p className="text-[11px] text-gray-700 leading-snug font-medium">
-                      {displayedMessage}
-                      {isTyping && <span className="animate-pulse">|</span>}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              {/* Image Glowee débordante en bas - positionnée à l'extérieur de la carte */}
+              <div className="absolute left-1 top-1/2 -translate-y-1/4 w-14 h-16 z-10">
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl blur-md opacity-40"></div>
+                <Image
+                  src="/Glowee/glowee.webp"
+                  alt="Glowee"
+                  width={56}
+                  height={64}
+                  className="object-contain relative z-10 drop-shadow-2xl"
+                />
+              </div>
+            </div>
 
             {/* Trial Badge, Plan Pro Button, Message à moi et Challenge Switch Button */}
             <div className="flex items-center justify-center gap-2 relative">

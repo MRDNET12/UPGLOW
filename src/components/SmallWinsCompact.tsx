@@ -9,17 +9,20 @@ interface SmallWinsCompactProps {
 
 // Messages d'auto-validation qui tournent à chaque ajout
 const AUTO_VALIDATIONS = [
-  'Je suis une légende.',
-  'Encore une victoire.',
-  'La discipline paie.',
-  'Un pas de plus.',
-  'Personne ne m\'arrête.',
-  'Je mérite cette victoire.',
-  'Ce que je fais a de la valeur.',
-  'Je progresse honnêtement.',
+  '🔥Je suis une légende.',
   'Je grandis.',
+  'Je progresse.',
+  '💃 Je mérite cette victoire.',
+  '💪Ma discipline paie.',
+  'Un pas de plus.',
+  'j\'ai de la valeur.',
   'Ma constance me rend fier.',
-  'Merci moi.'
+  '😍 Merci moi.',
+  'Je fais bien.',
+  '♥️ Je m\'élève.',
+  'Je me valide.',
+  'Je suis constant.',
+  '👌Je m\'honore.'
 ];
 
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
@@ -44,31 +47,37 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   // Déterminer le palier
   const getRank = () => {
     const count = winsThisWeek.length;
-    if (count >= 5) {
+    if (count === 5) {
+      // À 5 succès : afficher le badge Légende
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
         icon: Crown,
         color: 'text-purple-600',
         bgGradient: 'from-purple-400 via-pink-400 to-rose-400',
-        emoji: '👑'
+        emoji: '👑',
+        showBadge: true
       };
-    } else if (count >= 3) {
+    } else if (count === 3) {
+      // À 3 succès : afficher le badge Alpha
       return {
         name: 'Alpha',
         icon: Award,
         color: 'text-amber-600',
         bgGradient: 'from-amber-400 via-orange-400 to-rose-400',
-        emoji: '🏆'
+        emoji: '🏆',
+        showBadge: true
+      };
+    } else {
+      // Sinon : afficher l'auto-validation (0-2, 4, et 6+)
+      return {
+        name: getAutoValidation(),
+        icon: Trophy,
+        color: 'text-pink-600',
+        bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
+        emoji: '✨',
+        showBadge: false
       };
     }
-    // Utiliser l'auto-validation au lieu de "En route"
-    return {
-      name: getAutoValidation(),
-      icon: Trophy,
-      color: 'text-pink-600',
-      bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
-      emoji: '✨'
-    };
   };
 
   const rank = getRank();
@@ -91,44 +100,50 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 flex-1">
-            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
-              <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm font-bold text-gray-800">
-                  {t.bonus.smallWinsTitle}
-                </h3>
-                {winsThisWeek.length > 0 && (
-                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
-                    <span className="text-xs">{rank.emoji}</span>
-                    <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
-                  </div>
-                )}
-              </div>
-              {lastWin ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
-                  <p className="text-xs text-gray-600 truncate font-medium">
-                    {lastWin.text}
-                  </p>
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+            <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-sm font-bold text-gray-800">
+                {t.bonus.smallWinsTitle}
+              </h3>
+              {winsThisWeek.length > 0 && rank.showBadge && (
+                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
+                  <span className="text-xs">{rank.emoji}</span>
+                  <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
                 </div>
-              ) : (
-                <p className="text-xs text-gray-500 italic">
-                  {t.bonus.addSmallWin}
-                </p>
               )}
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-pink-500" />
+            {/* Afficher l'auto-validation en dessous du titre si pas de badge */}
+            {winsThisWeek.length > 0 && !rank.showBadge && (
+              <p className="text-xs font-bold text-pink-600 mb-1">
+                {rank.name}
+              </p>
+            )}
+            {lastWin ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
+                <p className="text-xs text-gray-600 truncate font-medium">
+                  {lastWin.text}
+                </p>
+              </div>
             ) : (
-              <ChevronDown className="w-5 h-5 text-pink-500" />
+              <p className="text-xs text-gray-500 italic">
+                {t.bonus.addSmallWin}
+              </p>
             )}
           </div>
+        </div>
+
+        {/* Flèche déplacée en bas pour laisser plus de place à l'auto-validation */}
+        <div className="flex justify-center mt-3">
+          {isExpanded ? (
+            <ChevronUp className="w-5 h-5 text-pink-500" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-pink-500" />
+          )}
         </div>
       </div>
 
@@ -160,17 +175,40 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             {showWhy && (
               <div className="mt-2 p-2.5 bg-white/80 backdrop-blur-md rounded-lg space-y-2 shadow-md shadow-pink-200/50 border border-pink-100/50 transition-all duration-300 ease-out">
                 <div>
-                  <p className="font-bold text-gray-800 mb-1 text-xs">{t.bonus.smallWinsDescription || 'Célèbre tes victoires quotidiennes !'}</p>
-                  <ol className="list-decimal list-inside space-y-1 text-gray-700 font-medium text-[11px]">
-                    <li>{t.bonus.smallWinsStep1 || 'Note trois petits accomplissements réalisés cette semaine (même les plus minimes).'}</li>
-                    <li>{t.bonus.smallWinsStep2 || 'Décris pourquoi ces accomplissements sont importants pour toi.'}</li>
-                    <li>{t.bonus.smallWinsStep3 || 'Relis cette liste chaque matin pour te rappeler que tu es capable.'}</li>
-                  </ol>
+                  <p className="font-bold text-gray-800 mb-2 text-xs">
+                    {language === 'fr' ? 'Tu avances. Et ça compte.' : language === 'en' ? 'You\'re moving forward. And it counts.' : 'Avanzas. Y eso cuenta.'}
+                  </p>
+                  <p className="font-bold text-gray-800 mb-2 text-xs">
+                    {language === 'fr' ? 'Célèbre tes victoires quotidiennes !' : language === 'en' ? 'Celebrate your daily victories!' : '¡Celebra tus victorias diarias!'}
+                  </p>
+                  <p className="text-gray-700 font-medium text-[11px] leading-relaxed mb-2">
+                    {language === 'fr'
+                      ? 'Chaque victoire, même minuscule, renforce la personne que tu es en train de devenir.\nPrends l\'habitude de reconnaître tes efforts et de bâtir une fierté saine, sans comparaison\nValide tes progrès et construis ta fierté.'
+                      : language === 'en'
+                      ? 'Every victory, even tiny, strengthens the person you\'re becoming.\nGet in the habit of recognizing your efforts and building healthy pride, without comparison.\nValidate your progress and build your pride.'
+                      : 'Cada victoria, incluso minúscula, fortalece la persona que estás llegando a ser.\nAcostúmbrate a reconocer tus esfuerzos y construir un orgullo sano, sin comparación.\nValida tu progreso y construye tu orgullo.'
+                    }
+                  </p>
+                  <p className="text-gray-700 font-medium text-[11px] leading-relaxed mb-2">
+                    {language === 'fr'
+                      ? 'Note tes petits accomplissements réalisés cette semaine (même les plus minimes).'
+                      : language === 'en'
+                      ? 'Note your small accomplishments achieved this week (even the smallest ones).'
+                      : 'Anota tus pequeños logros realizados esta semana (incluso los más mínimos).'
+                    }
+                  </p>
                 </div>
                 <div className="pt-2 border-t border-pink-200">
-                  <p className="font-bold text-gray-800 mb-1 text-xs">{t.bonus.whyItWorks || 'Pourquoi ça marche ?'}</p>
+                  <p className="font-bold text-gray-800 mb-1 text-xs">
+                    {language === 'fr' ? 'Pourquoi ça marche ?' : language === 'en' ? 'Why does it work?' : '¿Por qué funciona?'}
+                  </p>
                   <p className="text-gray-700 font-medium text-[11px] leading-relaxed">
-                    {t.bonus.smallWinsExplanation || "L'auto-valorisation aide à renforcer la confiance et réduire le sentiment d'échec."}
+                    {language === 'fr'
+                      ? 'L\'auto-valorisation aide à renforcer la confiance et réduire le sentiment d\'échec.'
+                      : language === 'en'
+                      ? 'Self-appreciation helps strengthen confidence and reduce feelings of failure.'
+                      : 'La autovaloración ayuda a fortalecer la confianza y reducir el sentimiento de fracaso.'
+                    }
                   </p>
                 </div>
               </div>

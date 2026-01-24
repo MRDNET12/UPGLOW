@@ -12,7 +12,7 @@ import {
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -231,19 +231,11 @@ export default function GlowUpChallengeApp() {
   const [newHabitLabel, setNewHabitLabel] = useState('');
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
-  // États pour les blocs d'habitudes thématiques
-  const [habitBlocks, setHabitBlocks] = useState<Array<{
-    id: string;
-    name: string;
-    icon: string;
-    color: string;
-    description?: string;
-    habits: Array<{id: string, label: string, completed: boolean}>;
-    collapsed: boolean;
-  }>>([
+  // États pour les blocs d'habitudes thématiques avec localStorage
+  const getDefaultHabitBlocks = () => [
     {
       id: 'body-energy',
-      name: language === 'fr' ? 'Corps & énergie' : language === 'en' ? 'Body & energy' : 'Cuerpo & energía',
+      name: language === 'fr' ? 'Corps et énergie' : language === 'en' ? 'Body and energy' : 'Cuerpo y energía',
       icon: '🌱',
       color: 'from-green-100 to-emerald-100',
       description: language === 'fr' ? 'Prendre soin de ton corps = base du glow up.' : language === 'en' ? 'Taking care of your body = glow up foundation.' : 'Cuidar tu cuerpo = base del glow up.',
@@ -257,7 +249,7 @@ export default function GlowUpChallengeApp() {
     },
     {
       id: 'mental-self-esteem',
-      name: language === 'fr' ? 'Mental & estime de soi' : language === 'en' ? 'Mental & self-esteem' : 'Mental & autoestima',
+      name: language === 'fr' ? 'Mental et estime de soi' : language === 'en' ? 'Mental and self-esteem' : 'Mental y autoestima',
       icon: '🧠',
       color: 'from-blue-100 to-indigo-100',
       description: language === 'fr' ? 'Le glow up commence à l\'intérieur.' : language === 'en' ? 'Glow up starts from within.' : 'El glow up comienza desde adentro.',
@@ -271,7 +263,7 @@ export default function GlowUpChallengeApp() {
     },
     {
       id: 'image-confidence',
-      name: language === 'fr' ? 'Image & confiance' : language === 'en' ? 'Image & confidence' : 'Imagen & confianza',
+      name: language === 'fr' ? 'Image et confiance' : language === 'en' ? 'Image and confidence' : 'Imagen y confianza',
       icon: '✨',
       color: 'from-pink-100 to-rose-100',
       description: language === 'fr' ? 'Pas pour les autres, pour toi.' : language === 'en' ? 'Not for others, for you.' : 'No para otros, para ti.',
@@ -285,7 +277,7 @@ export default function GlowUpChallengeApp() {
     },
     {
       id: 'discipline-future',
-      name: language === 'fr' ? 'Discipline & avenir' : language === 'en' ? 'Discipline & future' : 'Disciplina & futuro',
+      name: language === 'fr' ? 'Discipline et avenir' : language === 'en' ? 'Discipline and future' : 'Disciplina y futuro',
       icon: '🎯',
       color: 'from-purple-100 to-violet-100',
       description: language === 'fr' ? 'C\'est là que le vrai glow up se voit.' : language === 'en' ? 'This is where the real glow up shows.' : 'Aquí es donde se ve el verdadero glow up.',
@@ -299,16 +291,54 @@ export default function GlowUpChallengeApp() {
       ],
       collapsed: false
     }
-  ]);
+  ];
+
+  const [habitBlocks, setHabitBlocks] = useState<Array<{
+    id: string;
+    name: string;
+    icon: string;
+    color: string;
+    description?: string;
+    habits: Array<{id: string, label: string, completed: boolean}>;
+    collapsed: boolean;
+  }>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('habitBlocks');
+      return saved ? JSON.parse(saved) : getDefaultHabitBlocks();
+    }
+    return getDefaultHabitBlocks();
+  });
+
   const [showCreateBlock, setShowCreateBlock] = useState(false);
   const [newBlockName, setNewBlockName] = useState('');
   const [newBlockIcon, setNewBlockIcon] = useState('📝');
   const [newBlockColor, setNewBlockColor] = useState('from-blue-100 to-indigo-100');
   const [habitTab, setHabitTab] = useState<'tasks' | 'growth'>('tasks');
+  const [habitGridMode, setHabitGridMode] = useState<'grid' | 'list'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('habitGridMode');
+      return (saved as 'grid' | 'list') || 'grid';
+    }
+    return 'grid';
+  });
 
   // États pour l'ajout de nouvelles habitudes dans les blocs
   const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
   const [newBlockHabitLabel, setNewBlockHabitLabel] = useState('');
+
+  // Sauvegarder habitBlocks dans localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('habitBlocks', JSON.stringify(habitBlocks));
+    }
+  }, [habitBlocks]);
+
+  // Sauvegarder habitGridMode dans localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('habitGridMode', habitGridMode);
+    }
+  }, [habitGridMode]);
 
   // États pour Planning
   const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
@@ -2182,36 +2212,35 @@ export default function GlowUpChallengeApp() {
               {/* Onglet Tasks - Blocs d'habitudes */}
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
-                  {/* Blocs d'habitudes thématiques - 2 par ligne, indépendants */}
-                  <div className="grid grid-cols-2 gap-3 items-start">
+                  {/* Bouton toggle grille/liste */}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => setHabitGridMode(habitGridMode === 'grid' ? 'list' : 'grid')}
+                      className="px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700 hover:bg-white shadow-sm"
+                    >
+                      {habitGridMode === 'grid'
+                        ? (language === 'fr' ? '📋 Liste' : language === 'en' ? '📋 List' : '📋 Lista')
+                        : (language === 'fr' ? '⊞ Grille' : language === 'en' ? '⊞ Grid' : '⊞ Cuadrícula')
+                      }
+                    </button>
+                  </div>
+
+                  {/* Blocs d'habitudes thématiques - Mode grille ou liste */}
+                  <div className={habitGridMode === 'grid' ? 'columns-2 gap-3' : 'space-y-3'}>
                     {habitBlocks.map((block) => (
                       <div
                         key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl p-4 shadow-lg`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 py-4 shadow-lg break-inside-avoid mb-3`}
                       >
-                        {/* Boutons en superposition sur la bordure haute */}
-                        <div className="absolute -top-2 right-2 flex gap-1">
-                          <button
-                            onClick={() => {
-                              setHabitBlocks(habitBlocks.map(b =>
-                                b.id === block.id ? { ...b, collapsed: !b.collapsed } : b
-                              ));
-                            }}
-                            className="w-6 h-6 rounded-full bg-white shadow-md hover:bg-gray-100 flex items-center justify-center border border-gray-200"
-                          >
-                            <ChevronDown
-                              className={`w-4 h-4 text-gray-600 transition-transform ${
-                                block.collapsed ? '-rotate-90' : ''
-                              }`}
-                            />
-                          </button>
+                        {/* Bouton supprimer en superposition */}
+                        <div className="absolute -top-2 right-2">
                           <button
                             onClick={() => {
                               setHabitBlocks(habitBlocks.filter(b => b.id !== block.id));
                             }}
-                            className="w-6 h-6 rounded-full bg-white shadow-md hover:bg-red-50 flex items-center justify-center border border-gray-200"
+                            className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 shadow-md hover:shadow-lg flex items-center justify-center border border-gray-200"
                           >
-                            <X className="w-4 h-4 text-red-600" />
+                            <X className="w-4 h-4 text-gray-900" />
                           </button>
                         </div>
 
@@ -2226,11 +2255,23 @@ export default function GlowUpChallengeApp() {
                           )}
                         </div>
 
-                      {/* Liste des habitudes - Texte simple avec bouton supprimer */}
+                      {/* Liste des habitudes - Avec bouton - à gauche */}
                       {!block.collapsed && (
                         <div className="space-y-1">
                           {block.habits.map((habit) => (
-                            <div key={habit.id} className="flex items-center gap-2 group">
+                            <div key={habit.id} className="flex items-center gap-1">
+                              <button
+                                onClick={() => {
+                                  setHabitBlocks(habitBlocks.map(b =>
+                                    b.id === block.id
+                                      ? { ...b, habits: b.habits.filter(h => h.id !== habit.id) }
+                                      : b
+                                  ));
+                                }}
+                                className="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-gray-900 flex-shrink-0"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
                               <button
                                 onClick={() => {
                                   setHabitBlocks(habitBlocks.map(b =>
@@ -2249,18 +2290,6 @@ export default function GlowUpChallengeApp() {
                                 <div className={`text-sm font-medium text-gray-900 ${habit.completed ? 'line-through opacity-50' : ''}`}>
                                   {habit.label}
                                 </div>
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setHabitBlocks(habitBlocks.map(b =>
-                                    b.id === block.id
-                                      ? { ...b, habits: b.habits.filter(h => h.id !== habit.id) }
-                                      : b
-                                  ));
-                                }}
-                                className="w-4 h-4 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <X className="w-3 h-3 text-red-600" />
                               </button>
                             </div>
                           ))}
@@ -2343,19 +2372,21 @@ export default function GlowUpChallengeApp() {
                   ))}
                   </div>
 
-                  {/* Bouton créer un nouveau bloc - En dehors de la grille */}
+                  {/* Bouton créer un nouveau bloc - Réduit de 40% */}
                   {!showCreateBlock ? (
-                    <button
-                      onClick={() => setShowCreateBlock(true)}
-                      className="w-full flex items-center justify-center gap-3 bg-white/80 backdrop-blur-sm rounded-3xl p-6 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg"
-                    >
-                      <Plus className="w-6 h-6 text-gray-600" />
-                      <span className="text-lg font-semibold text-gray-700">
-                        {language === 'fr' ? 'Créer un nouveau bloc' : language === 'en' ? 'Create new block' : 'Crear nuevo bloque'}
-                      </span>
-                    </button>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => setShowCreateBlock(true)}
+                        className="flex items-center justify-center gap-2 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg"
+                      >
+                        <Plus className="w-4 h-4 text-gray-600" />
+                        <span className="text-sm font-semibold text-gray-700">
+                          {language === 'fr' ? 'Créer un nouveau bloc' : language === 'en' ? 'Create new block' : 'Crear nuevo bloque'}
+                        </span>
+                      </button>
+                    </div>
                   ) : (
-                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4 col-span-2">
+                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4">
                       <h3 className="text-xl font-bold text-gray-900">
                         {language === 'fr' ? 'Nouveau bloc d\'habitudes' : language === 'en' ? 'New habit block' : 'Nuevo bloque de hábitos'}
                       </h3>

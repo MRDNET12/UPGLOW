@@ -22,7 +22,8 @@ const AUTO_VALIDATIONS = [
   '♥️ Je m\'élève.',
   'Je me valide.',
   'Je suis constant.',
-  '👌Je m\'honore.'
+  '👌Je m\'honore.',
+  'Fier de moi.'
 ];
 
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {

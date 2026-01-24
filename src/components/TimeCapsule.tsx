@@ -204,9 +204,9 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
           <ChevronUp className={`w-4 h-4 text-purple-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
 
-        {/* Section expandée - Slide similaire à Petits Succès - Centré */}
-        {isExpanded && (
-          <div className="fixed left-1/2 -translate-x-1/2 mt-3 p-5 bg-white/95 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-purple-100/50 border border-purple-100/50 space-y-4 transition-all duration-300 ease-out w-[90vw] max-w-md z-50" style={{ top: 'auto' }}>
+      {/* Section expandée - Slide similaire à Petits Succès */}
+      {isExpanded && (
+        <div className="mt-3 p-5 bg-white/95 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-purple-100/50 border border-purple-100/50 space-y-4 transition-all duration-300 ease-out">
             {/* Header avec onglets */}
             <div className="mb-3">
               <div className="flex items-center justify-between mb-2">

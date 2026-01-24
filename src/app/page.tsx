@@ -2223,24 +2223,35 @@ export default function GlowUpChallengeApp() {
         {/* Trackers View - Life Hub Design */}
         {currentView === 'trackers' && (
           <div className="pb-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
-            {/* Header moderne avec météo et profil */}
+            {/* Header moderne avec dates */}
             <div className="p-4 max-w-2xl mx-auto">
-              <div className="flex items-center justify-between mb-6">
-                {/* Météo widget */}
-                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg">
-                  <div className="text-4xl">☀️</div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">22°C</div>
-                    <div className="text-xs text-gray-600">
-                      {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Profil */}
-                <button className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                  {user?.email?.[0].toUpperCase() || 'U'}
-                </button>
+              {/* Barre de dates horizontale */}
+              <div className="flex justify-between items-center mb-6 px-2">
+                {(() => {
+                  const today = new Date();
+                  const dates: Date[] = [];
+                  // Générer 9 jours (4 avant, aujourd'hui, 4 après)
+                  for (let i = -4; i <= 4; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    dates.push(date);
+                  }
+                  return dates.map((date, index) => {
+                    const isToday = index === 4;
+                    const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
+                    const dayNumber = date.getDate();
+                    return (
+                      <div key={index} className="flex flex-col items-center">
+                        <span className={`text-[10px] uppercase ${isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                          {dayName}
+                        </span>
+                        <span className={`text-lg font-bold ${isToday ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {dayNumber}
+                        </span>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
 
               {/* Titre principal */}
@@ -2342,7 +2353,7 @@ export default function GlowUpChallengeApp() {
                   </div>
 
                   {/* Section Comment je me sens ? */}
-                  <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-9 shadow-lg">
+                  <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-11 shadow-lg">
                     {/* Badge "chaque soir" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
                       <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
@@ -2388,7 +2399,7 @@ export default function GlowUpChallengeApp() {
                       return (
                       <div
                         key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4 pt-9' : 'py-4 pt-9'}`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4 pt-11' : 'py-4 pt-9'}`}
                       >
                         {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
                         <div className="absolute -top-3 left-4">
@@ -2399,12 +2410,12 @@ export default function GlowUpChallengeApp() {
                           </div>
                         </div>
 
-                        {/* Badge "Adopte des nouvelles habitudes pour Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
+                        {/* Badge "Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
                         {block.isDefault && (
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                             <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
                               <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
-                                {language === 'fr' ? 'Adopte des nouvelles habitudes pour Glow Up' : language === 'en' ? 'Adopt new habits for Glow Up' : 'Adopta nuevos hábitos para Glow Up'}
+                                Glow Up
                               </span>
                             </div>
                           </div>
@@ -2427,10 +2438,10 @@ export default function GlowUpChallengeApp() {
                         <div className="mb-3">
                           <div className="flex items-center gap-2 mb-1">
                             <div className="text-2xl">{block.icon}</div>
-                            <h3 className="text-lg font-bold text-gray-900">{block.name}</h3>
+                            <h3 className={`text-lg font-bold ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-white' : 'text-gray-900'}`}>{block.name}</h3>
                           </div>
                           {block.description && (
-                            <p className="text-xs text-gray-600 italic ml-8">{block.description}</p>
+                            <p className={`text-xs italic ml-8 ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-gray-300' : 'text-gray-600'}`}>{block.description}</p>
                           )}
                         </div>
 
@@ -2460,7 +2471,7 @@ export default function GlowUpChallengeApp() {
                                         : b
                                     ));
                                   }}
-                                  className="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-gray-900 flex-shrink-0"
+                                  className={`w-4 h-4 flex items-center justify-center flex-shrink-0 ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
@@ -2480,7 +2491,7 @@ export default function GlowUpChallengeApp() {
                                 }}
                                 className="flex-1 text-left"
                               >
-                                <div className={`text-sm font-medium text-gray-900 transition-all duration-500 ${habit.completed ? 'line-through opacity-50' : ''}`}>
+                                <div className={`text-sm font-medium transition-all duration-500 ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-white' : 'text-gray-900'} ${habit.completed ? 'line-through opacity-50' : ''}`}>
                                   {habit.label}
                                 </div>
                               </button>

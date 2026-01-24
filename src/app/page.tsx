@@ -231,65 +231,27 @@ export default function GlowUpChallengeApp() {
   const [newHabitLabel, setNewHabitLabel] = useState('');
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
-  // États pour les blocs d'habitudes thématiques avec localStorage
+  // Bloc par défaut unique et non-modifiable
   const getDefaultHabitBlocks = () => [
     {
-      id: 'body-energy',
-      name: language === 'fr' ? 'Corps et énergie' : language === 'en' ? 'Body and energy' : 'Cuerpo y energía',
-      icon: '🌱',
-      color: 'from-green-100 to-emerald-100',
-      description: language === 'fr' ? 'Prendre soin de ton corps = base du glow up.' : language === 'en' ? 'Taking care of your body = glow up foundation.' : 'Cuidar tu cuerpo = base del glow up.',
-      habits: [
-        { id: 'water', label: language === 'fr' ? 'Boire 1,5–2 L d\'eau par jour' : language === 'en' ? 'Drink 1.5–2 L of water per day' : 'Beber 1,5–2 L de agua por día', completed: false },
-        { id: 'move', label: language === 'fr' ? 'Bouger 20–30 min (marche, sport, étirements)' : language === 'en' ? 'Move 20–30 min (walk, sport, stretching)' : 'Moverse 20–30 min (caminar, deporte, estiramientos)', completed: false },
-        { id: 'sleep', label: language === 'fr' ? 'Dormir à heures régulières' : language === 'en' ? 'Sleep at regular hours' : 'Dormir a horas regulares', completed: false },
-        { id: 'eat', label: language === 'fr' ? 'Manger au moins 1 repas équilibré' : language === 'en' ? 'Eat at least 1 balanced meal' : 'Comer al menos 1 comida equilibrada', completed: false }
-      ],
-      collapsed: false
-    },
-    {
-      id: 'mental-self-esteem',
-      name: language === 'fr' ? 'Mental et estime de soi' : language === 'en' ? 'Mental and self-esteem' : 'Mental y autoestima',
-      icon: '🧠',
-      color: 'from-blue-100 to-indigo-100',
-      description: language === 'fr' ? 'Le glow up commence à l\'intérieur.' : language === 'en' ? 'Glow up starts from within.' : 'El glow up comienza desde adentro.',
-      habits: [
-        { id: 'positive-thought', label: language === 'fr' ? 'Écrire 1 pensée positive sur toi par jour' : language === 'en' ? 'Write 1 positive thought about yourself per day' : 'Escribir 1 pensamiento positivo sobre ti por día', completed: false },
-        { id: 'daily-win', label: language === 'fr' ? 'Noter 1 petite victoire quotidienne' : language === 'en' ? 'Note 1 small daily win' : 'Anotar 1 pequeña victoria diaria', completed: false },
-        { id: 'limit-comparison', label: language === 'fr' ? 'Limiter les comparaisons (réseaux, autres)' : language === 'en' ? 'Limit comparisons (social media, others)' : 'Limitar comparaciones (redes, otros)', completed: false },
-        { id: 'breathe', label: language === 'fr' ? 'Respirer / faire une pause consciente 5 min' : language === 'en' ? 'Breathe / take a conscious break 5 min' : 'Respirar / hacer una pausa consciente 5 min', completed: false }
-      ],
-      collapsed: false
-    },
-    {
-      id: 'image-confidence',
-      name: language === 'fr' ? 'Image et confiance' : language === 'en' ? 'Image and confidence' : 'Imagen y confianza',
+      id: 'essential-today',
+      name: language === 'fr' ? 'Ce qui compte aujourd\'hui.' : language === 'en' ? 'What matters today.' : 'Lo que importa hoy.',
       icon: '✨',
-      color: 'from-pink-100 to-rose-100',
-      description: language === 'fr' ? 'Pas pour les autres, pour toi.' : language === 'en' ? 'Not for others, for you.' : 'No para otros, para ti.',
+      color: 'from-white to-gray-50',
+      description: '',
       habits: [
-        { id: 'shower', label: language === 'fr' ? 'Prendre une douche / routine soin quotidienne' : language === 'en' ? 'Take a shower / daily care routine' : 'Tomar una ducha / rutina de cuidado diaria', completed: false },
-        { id: 'outfit', label: language === 'fr' ? 'Porter une tenue qui te fait te sentir bien' : language === 'en' ? 'Wear an outfit that makes you feel good' : 'Usar un atuendo que te haga sentir bien', completed: false },
-        { id: 'posture', label: language === 'fr' ? 'Te tenir droit(e) + regarder devant toi' : language === 'en' ? 'Stand straight + look ahead' : 'Mantenerte derecho(a) + mirar adelante', completed: false },
-        { id: 'clean-space', label: language === 'fr' ? 'Ranger ton espace 5 minutes par jour' : language === 'en' ? 'Tidy your space 5 minutes per day' : 'Ordenar tu espacio 5 minutos por día', completed: false }
-      ],
-      collapsed: false
-    },
-    {
-      id: 'discipline-future',
-      name: language === 'fr' ? 'Discipline et avenir' : language === 'en' ? 'Discipline and future' : 'Disciplina y futuro',
-      icon: '🎯',
-      color: 'from-purple-100 to-violet-100',
-      description: language === 'fr' ? 'C\'est là que le vrai glow up se voit.' : language === 'en' ? 'This is where the real glow up shows.' : 'Aquí es donde se ve el verdadero glow up.',
-      habits: [
-        { id: 'future-action', label: language === 'fr' ? 'Faire 1 action utile pour ton futur par jour' : language === 'en' ? 'Do 1 useful action for your future per day' : 'Hacer 1 acción útil para tu futuro por día', completed: false },
-        { id: 'reduce-distraction', label: language === 'fr' ? 'Réduire une distraction inutile' : language === 'en' ? 'Reduce one useless distraction' : 'Reducir una distracción inútil', completed: false },
-        { id: 'daily-priority', label: language === 'fr' ? 'Définir 1 priorité du jour' : language === 'en' ? 'Define 1 priority of the day' : 'Definir 1 prioridad del día', completed: false },
-        { id: 'progress-check', label: language === 'fr' ? 'Te coucher en te disant : « J\'ai avancé. »' : language === 'en' ? 'Go to bed saying: "I made progress."' : 'Acostarte diciéndote: "Avancé."', completed: false },
+        { id: 'water', label: language === 'fr' ? 'Boire 1,5–2 L d\'eau' : language === 'en' ? 'Drink 1.5–2 L of water' : 'Beber 1,5–2 L de agua', completed: false },
+        { id: 'move', label: language === 'fr' ? 'Bouger 20–30 min (marche, sport, étirements)' : language === 'en' ? 'Move 20–30 min (walk, sport, stretching)' : 'Moverse 20–30 min (caminar, deporte, estiramientos)', completed: false },
+        { id: 'positive-thought', label: language === 'fr' ? 'Écrire une pensée positive sur moi' : language === 'en' ? 'Write a positive thought about myself' : 'Escribir un pensamiento positivo sobre mí', completed: false },
+        { id: 'daily-win', label: language === 'fr' ? 'Noter une petite victoire' : language === 'en' ? 'Note a small win' : 'Anotar una pequeña victoria', completed: false },
+        { id: 'clean-space', label: language === 'fr' ? 'Ranger mon espace 5 minutes' : language === 'en' ? 'Tidy my space 5 minutes' : 'Ordenar mi espacio 5 minutos', completed: false },
+        { id: 'future-action', label: language === 'fr' ? 'Faire une action utile pour mon futur' : language === 'en' ? 'Do a useful action for my future' : 'Hacer una acción útil para mi futuro', completed: false },
+        { id: 'daily-priority', label: language === 'fr' ? 'Définir une priorité du jour' : language === 'en' ? 'Define a priority of the day' : 'Definir una prioridad del día', completed: false },
         { id: 'imperfect-task', label: language === 'fr' ? 'Accomplir une tâche même imparfaite' : language === 'en' ? 'Complete a task even if imperfect' : 'Completar una tarea aunque sea imperfecta', completed: false },
-        { id: 'prepare-tomorrow', label: language === 'fr' ? 'Préparer demain (vêtements, sac, plan)' : language === 'en' ? 'Prepare tomorrow (clothes, bag, plan)' : 'Preparar mañana (ropa, bolso, plan)', completed: false }
+        { id: 'progress-check', label: language === 'fr' ? 'Me coucher en me disant : « J\'ai avancé. »' : language === 'en' ? 'Go to bed saying: "I made progress."' : 'Acostarme diciéndome: "Avancé."', completed: false }
       ],
-      collapsed: false
+      collapsed: false,
+      isDefault: true // Marquer comme bloc par défaut non-supprimable
     }
   ];
 
@@ -301,6 +263,7 @@ export default function GlowUpChallengeApp() {
     description?: string;
     habits: Array<{id: string, label: string, completed: boolean}>;
     collapsed: boolean;
+    isDefault?: boolean; // Marquer les blocs non-supprimables
   }>>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('habitBlocks');
@@ -326,6 +289,26 @@ export default function GlowUpChallengeApp() {
   const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
   const [newBlockHabitLabel, setNewBlockHabitLabel] = useState('');
 
+  // États pour "Comment je me sens ?" et "Intention du jour"
+  const [dailyFeeling, setDailyFeeling] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`dailyFeeling_${getLocalDateString()}`);
+      return saved || null;
+    }
+    return null;
+  });
+
+  const [dailyIntention, setDailyIntention] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`dailyIntention_${getLocalDateString()}`);
+      return saved || null;
+    }
+    return null;
+  });
+
+  const [showIntentionFeedback, setShowIntentionFeedback] = useState(false);
+  const [intentionFeedbackMessage, setIntentionFeedbackMessage] = useState('');
+
   // Sauvegarder habitBlocks dans localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -339,6 +322,20 @@ export default function GlowUpChallengeApp() {
       localStorage.setItem('habitGridMode', habitGridMode);
     }
   }, [habitGridMode]);
+
+  // Sauvegarder dailyFeeling dans localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && dailyFeeling) {
+      localStorage.setItem(`dailyFeeling_${getLocalDateString()}`, dailyFeeling);
+    }
+  }, [dailyFeeling]);
+
+  // Sauvegarder dailyIntention dans localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && dailyIntention) {
+      localStorage.setItem(`dailyIntention_${getLocalDateString()}`, dailyIntention);
+    }
+  }, [dailyIntention]);
 
   // États pour Planning
   const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
@@ -2212,6 +2209,94 @@ export default function GlowUpChallengeApp() {
               {/* Onglet Tasks - Blocs d'habitudes */}
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
+                  {/* Section Intention du jour - Tout en haut */}
+                  <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 shadow-lg">
+                    <h3 className="text-sm font-bold text-gray-900 mb-3">
+                      {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
+                        { fr: 'avance même lentement', en: 'moves forward even slowly', es: 'avanza aunque sea lentamente' },
+                        { fr: 'prend soin de son énergie', en: 'takes care of their energy', es: 'cuida su energía' },
+                        { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' },
+                        { fr: 'fait de son mieux', en: 'does their best', es: 'hace lo mejor' }
+                      ].map((intention) => {
+                        const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
+                        const isSelected = dailyIntention === label;
+                        return (
+                          <button
+                            key={label}
+                            onClick={() => {
+                              if (!dailyIntention) {
+                                setDailyIntention(label);
+                                const messages = [
+                                  language === 'fr' ? 'C\'est noté.' : language === 'en' ? 'Noted.' : 'Anotado.',
+                                  language === 'fr' ? 'Tu t\'engages envers toi.' : language === 'en' ? 'You commit to yourself.' : 'Te comprometes contigo.',
+                                  language === 'fr' ? 'Tu honores cette intention.' : language === 'en' ? 'You honor this intention.' : 'Honras esta intención.',
+                                  language === 'fr' ? 'Alignement confirmé.' : language === 'en' ? 'Alignment confirmed.' : 'Alineación confirmada.',
+                                  language === 'fr' ? 'C\'est assumé.' : language === 'en' ? 'It\'s owned.' : 'Está asumido.',
+                                  language === 'fr' ? 'Tu avances avec ça.' : language === 'en' ? 'You move forward with this.' : 'Avanzas con esto.'
+                                ];
+                                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                                setIntentionFeedbackMessage(randomMessage);
+                                setShowIntentionFeedback(true);
+                                setTimeout(() => setShowIntentionFeedback(false), 3000);
+                              }
+                            }}
+                            disabled={!!dailyIntention}
+                            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                              isSelected
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                                : dailyIntention
+                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {showIntentionFeedback && (
+                      <p className="mt-3 text-xs font-medium text-purple-600 italic animate-pulse">
+                        {intentionFeedbackMessage}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Section Comment je me sens ? */}
+                  <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 shadow-lg">
+                    <h3 className="text-sm font-bold text-gray-900 mb-3">
+                      {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '😌' },
+                        { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '😴' },
+                        { fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '😊' },
+                        { fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😔' },
+                        { fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐' }
+                      ].map((feeling) => {
+                        const label = language === 'fr' ? feeling.fr : language === 'en' ? feeling.en : feeling.es;
+                        const isSelected = dailyFeeling === label;
+                        return (
+                          <button
+                            key={label}
+                            onClick={() => setDailyFeeling(label)}
+                            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                              isSelected
+                                ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-md'
+                                : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
+                            }`}
+                          >
+                            {feeling.emoji} {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {/* Bouton toggle grille/liste */}
                   <div className="flex justify-end">
                     <button
@@ -2232,17 +2317,19 @@ export default function GlowUpChallengeApp() {
                         key={block.id}
                         className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 py-4 shadow-lg break-inside-avoid mb-3`}
                       >
-                        {/* Bouton supprimer en superposition */}
-                        <div className="absolute -top-2 right-2">
-                          <button
-                            onClick={() => {
-                              setHabitBlocks(habitBlocks.filter(b => b.id !== block.id));
-                            }}
-                            className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 shadow-md hover:shadow-lg flex items-center justify-center border border-gray-200"
-                          >
-                            <X className="w-4 h-4 text-gray-900" />
-                          </button>
-                        </div>
+                        {/* Bouton supprimer en superposition - Seulement si ce n'est pas le bloc par défaut */}
+                        {!block.isDefault && (
+                          <div className="absolute -top-2 right-2">
+                            <button
+                              onClick={() => {
+                                setHabitBlocks(habitBlocks.filter(b => b.id !== block.id));
+                              }}
+                              className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 shadow-md hover:shadow-lg flex items-center justify-center border border-gray-200"
+                            >
+                              <X className="w-4 h-4 text-gray-900" />
+                            </button>
+                          </div>
+                        )}
 
                         {/* Header du bloc */}
                         <div className="mb-3">
@@ -2255,23 +2342,25 @@ export default function GlowUpChallengeApp() {
                           )}
                         </div>
 
-                      {/* Liste des habitudes - Avec bouton - à gauche */}
+                      {/* Liste des habitudes - Avec bouton - à gauche seulement si ce n'est pas le bloc par défaut */}
                       {!block.collapsed && (
                         <div className="space-y-1">
                           {block.habits.map((habit) => (
                             <div key={habit.id} className="flex items-center gap-1">
-                              <button
-                                onClick={() => {
-                                  setHabitBlocks(habitBlocks.map(b =>
-                                    b.id === block.id
-                                      ? { ...b, habits: b.habits.filter(h => h.id !== habit.id) }
-                                      : b
-                                  ));
-                                }}
-                                className="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-gray-900 flex-shrink-0"
-                              >
-                                <Minus className="w-3 h-3" />
-                              </button>
+                              {!block.isDefault && (
+                                <button
+                                  onClick={() => {
+                                    setHabitBlocks(habitBlocks.map(b =>
+                                      b.id === block.id
+                                        ? { ...b, habits: b.habits.filter(h => h.id !== habit.id) }
+                                        : b
+                                    ));
+                                  }}
+                                  className="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-gray-900 flex-shrink-0"
+                                >
+                                  <Minus className="w-3 h-3" />
+                                </button>
+                              )}
                               <button
                                 onClick={() => {
                                   setHabitBlocks(habitBlocks.map(b =>
@@ -2355,16 +2444,18 @@ export default function GlowUpChallengeApp() {
                               </button>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => {
-                                setAddingHabitToBlock(block.id);
-                                setNewBlockHabitLabel('');
-                              }}
-                              className="w-full flex items-center gap-1 mt-2 text-xs text-gray-600 hover:text-gray-900"
-                            >
-                              <Plus className="w-3 h-3" />
-                              <span>{language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}</span>
-                            </button>
+                            !block.isDefault && (
+                              <button
+                                onClick={() => {
+                                  setAddingHabitToBlock(block.id);
+                                  setNewBlockHabitLabel('');
+                                }}
+                                className="w-full flex items-center gap-1 mt-2 text-xs text-gray-600 hover:text-gray-900"
+                              >
+                                <Plus className="w-3 h-3" />
+                                <span>{language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}</span>
+                              </button>
+                            )
                           )}
                         </div>
                       )}
@@ -2429,14 +2520,16 @@ export default function GlowUpChallengeApp() {
                           <label className="text-sm font-medium text-gray-700 mb-1 block">
                             {language === 'fr' ? 'Couleur' : language === 'en' ? 'Color' : 'Color'}
                           </label>
-                          <div className="grid grid-cols-3 gap-2">
+                          <div className="grid grid-cols-4 gap-2">
                             {[
                               { name: 'Blue', value: 'from-blue-100 to-indigo-100' },
                               { name: 'Pink', value: 'from-pink-100 to-rose-100' },
                               { name: 'Green', value: 'from-green-100 to-emerald-100' },
                               { name: 'Purple', value: 'from-purple-100 to-violet-100' },
                               { name: 'Orange', value: 'from-orange-100 to-yellow-100' },
-                              { name: 'Teal', value: 'from-teal-100 to-cyan-100' }
+                              { name: 'Teal', value: 'from-teal-100 to-cyan-100' },
+                              { name: 'White', value: 'from-white to-gray-50' },
+                              { name: 'Black', value: 'from-gray-800 to-gray-900' }
                             ].map((color) => (
                               <button
                                 key={color.value}
@@ -2444,7 +2537,7 @@ export default function GlowUpChallengeApp() {
                                 className={`h-12 rounded-xl bg-gradient-to-br ${color.value} border-2 transition-all ${
                                   newBlockColor === color.value
                                     ? 'border-gray-900 scale-105'
-                                    : 'border-transparent'
+                                    : color.name === 'White' ? 'border-gray-300' : 'border-transparent'
                                 }`}
                               />
                             ))}

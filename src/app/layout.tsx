@@ -64,6 +64,20 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="UPGLOW" />
         <link rel="apple-touch-icon" href="/icon.svg" />
+        {/* OneSignal Push Notifications */}
+        <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.OneSignalDeferred = window.OneSignalDeferred || [];
+              OneSignalDeferred.push(async function(OneSignal) {
+                await OneSignal.init({
+                  appId: "4a54972c-98c5-4cb7-b2d7-8c9cf318e2b1",
+                });
+              });
+            `,
+          }}
+        />
       </head>
       <body
         className={`${playfairDisplay.variable} ${inter.variable} antialiased bg-background text-foreground`}

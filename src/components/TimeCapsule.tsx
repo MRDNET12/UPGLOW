@@ -443,7 +443,16 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle }: TimeCapsu
                         <div className="flex items-start gap-2">
                           <span className="text-2xl">{capsule.emoji}</span>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-gray-800 line-clamp-2">{capsule.text}</p>
+                            {/* Message masqué avec cadenas */}
+                            <div className="flex items-center gap-2 mb-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                              </svg>
+                              <p className="text-xs text-gray-800 font-medium italic">
+                                {language === 'fr' ? 'Je me suis engagé' : language === 'en' ? 'I committed' : 'Me comprometí'}
+                              </p>
+                            </div>
                             <div className="flex items-center gap-2 mt-2">
                               <span className="text-[10px] text-gray-600 flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />

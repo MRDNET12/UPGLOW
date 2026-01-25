@@ -160,6 +160,9 @@ export default function GlowUpChallengeApp() {
   // État pour le dialogue d'authentification
   const [showAuthDialog, setShowAuthDialog] = useState(false);
 
+  // État pour les actions en cours de disparition (effet avant tri)
+  const [fadingActions, setFadingActions] = useState<Set<string>>(new Set());
+
   // État pour les objectifs
   const [goals, setGoals] = useState<any[]>([]);
 
@@ -236,7 +239,7 @@ export default function GlowUpChallengeApp() {
   const getDefaultHabitBlocks = () => [
     {
       id: 'essential-today',
-      name: language === 'fr' ? 'Ce qui compte aujourd\'hui.' : language === 'en' ? 'What matters today.' : 'Lo que importa hoy.',
+      name: language === 'fr' ? 'Habitudes - Glow Up' : language === 'en' ? 'Habits - Glow Up' : 'Hábitos - Glow Up',
       icon: '✨',
       color: 'from-white to-gray-50',
       description: '',
@@ -1824,26 +1827,57 @@ export default function GlowUpChallengeApp() {
                               getCurrentDayData()?.actions.apparence && { key: 'apparence', label: 'Apparence', icon: '👗', value: getCurrentDayData()?.actions.apparence },
                               getCurrentDayData()?.actions.vision && { key: 'vision', label: 'Vision', icon: '🔮', value: getCurrentDayData()?.actions.vision }
                             ].filter(Boolean)
-                            // Trier: tâches non complétées en haut, complétées en bas
+                            // Trier: tâches non complétées en haut, complétées en bas (sauf celles en cours de disparition)
                             .sort((a, b) => {
                               const aCompleted = isActionCompleted(currentDay, a.key);
                               const bCompleted = isActionCompleted(currentDay, b.key);
+                              const aFading = fadingActions.has(`${currentDay}-${a.key}`);
+                              const bFading = fadingActions.has(`${currentDay}-${b.key}`);
+                              // Les actions en cours de disparition restent à leur place
+                              if (aFading || bFading) return 0;
                               if (aCompleted === bCompleted) return 0;
                               return aCompleted ? 1 : -1;
                             })
                             .map((action, index) => {
                               const isCompleted = isActionCompleted(currentDay, action.key);
+                              const actionKey = `${currentDay}-${action.key}`;
+                              const isFading = fadingActions.has(actionKey);
+
+                              // Fonction pour gérer le clic avec effet de disparition
+                              const handleActionClick = () => {
+                                const wasCompleted = isActionCompleted(currentDay, action.key);
+
+                                // Si on coche (pas encore complété), ajouter l'effet de disparition
+                                if (!wasCompleted) {
+                                  // Marquer comme complété immédiatement
+                                  toggleActionCompletion(currentDay, action.key);
+
+                                  // Ajouter à la liste des actions en cours de disparition
+                                  setFadingActions(prev => new Set(prev).add(actionKey));
+
+                                  // Après 2 secondes, retirer de la liste pour permettre le tri
+                                  setTimeout(() => {
+                                    setFadingActions(prev => {
+                                      const newSet = new Set(prev);
+                                      newSet.delete(actionKey);
+                                      return newSet;
+                                    });
+                                  }, 2000);
+                                } else {
+                                  // Si on décoche, pas d'effet spécial
+                                  toggleActionCompletion(currentDay, action.key);
+                                }
+                              };
 
                               // Cas spécial pour l'action "vision" avec lien cliquable
                               if (action.key === 'vision' && (action.value === 'OBJECTIF_LINK' || action.value === 'OBJECTIF_LINK_DAY2')) {
                                 return (
                                   <div
-                                    key={index}
-                                    className={`p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
-                                    onClick={() => toggleActionCompletion(currentDay, action.key)}
+                                    key={action.key}
+                                    className={`p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''} ${isFading ? 'animate-pulse scale-[0.98]' : ''}`}
+                                    onClick={handleActionClick}
                                     style={{
-                                      transform: isCompleted ? 'translateY(0)' : 'translateY(0)',
-                                      transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                                      transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-in-out'
                                     }}
                                   >
                                     <div className="flex items-start gap-3">
@@ -1891,12 +1925,11 @@ export default function GlowUpChallengeApp() {
                               // Rendu normal pour les autres actions
                               return (
                                 <div
-                                  key={index}
-                                  className={`p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''}`}
-                                  onClick={() => toggleActionCompletion(currentDay, action.key)}
+                                  key={action.key}
+                                  className={`p-4 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out hover:scale-[1.02] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''} ${isFading ? 'animate-pulse scale-[0.98]' : ''}`}
+                                  onClick={handleActionClick}
                                   style={{
-                                    transform: isCompleted ? 'translateY(0)' : 'translateY(0)',
-                                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-in-out'
                                   }}
                                 >
                                   <div className="flex items-start gap-3">
@@ -2290,7 +2323,7 @@ export default function GlowUpChallengeApp() {
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
                   {/* Section Intention du jour - Tout en haut */}
-                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 shadow-lg">
+                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 pt-[76px] shadow-lg">
                     {/* Badge "chaque matin" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
                       <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
@@ -2353,7 +2386,7 @@ export default function GlowUpChallengeApp() {
                   </div>
 
                   {/* Section Comment je me sens ? */}
-                  <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-11 shadow-lg">
+                  <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-6 shadow-lg">
                     {/* Badge "chaque soir" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
                       <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
@@ -2399,7 +2432,7 @@ export default function GlowUpChallengeApp() {
                       return (
                       <div
                         key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4 pt-11' : 'py-4 pt-9'}`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4' : 'py-4 pt-9'}`}
                       >
                         {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
                         <div className="absolute -top-3 left-4">
@@ -2409,17 +2442,6 @@ export default function GlowUpChallengeApp() {
                             </span>
                           </div>
                         </div>
-
-                        {/* Badge "Glow Up" en superposition sur la bordure haut - Seulement pour le bloc par défaut */}
-                        {block.isDefault && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
-                              <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
-                                Glow Up
-                              </span>
-                            </div>
-                          </div>
-                        )}
                         {/* Bouton supprimer en superposition - Seulement si ce n'est pas le bloc par défaut */}
                         {!block.isDefault && (
                           <div className="absolute -top-2 right-2">
@@ -3984,6 +4006,35 @@ export default function GlowUpChallengeApp() {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Boundaries View - 8 Limites */}
+        {currentView === 'boundaries' && (
+          <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 min-h-screen">
+            {/* Header élégant */}
+            <div className="flex items-center gap-3 p-5 pb-4 max-w-3xl mx-auto">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-pink-100/50 hover:bg-white"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <X className="w-5 h-5 text-gray-800" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-purple-400 bg-clip-text text-transparent">
+                  {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
+                </h1>
+                <p className="text-xs text-gray-600 font-medium">
+                  {language === 'fr' ? 'Pour ta paix intérieure' : language === 'en' ? 'For your inner peace' : 'Para tu paz interior'}
+                </p>
+              </div>
+            </div>
+
+            <div className="px-5 space-y-5 max-w-3xl mx-auto">
+              <BoundariesTracker />
             </div>
           </div>
         )}

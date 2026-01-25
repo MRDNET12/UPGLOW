@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Target, Plus, Activity, Calendar, Clock, Pause, Sparkles } from 'lucide-react';
+import { Target, Plus, Activity, Calendar, Clock, Pause, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -9,10 +9,12 @@ import { Textarea } from '@/components/ui/textarea';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GoalAnalysisExplanation } from '@/components/goals/GoalAnalysisExplanation';
 import { GoalConfirmationDialog } from '@/components/goals/GoalConfirmationDialog';
+import { DeleteGoalDialog } from '@/components/goals/DeleteGoalDialog';
 import { markWelcomeSeen } from '@/utils/visitTracker';
 import { gloweeMessages } from '@/data/gloweeMessages';
 import { useGoalsSync } from '@/hooks/useFirebaseSync';
 import { useAuth } from '@/contexts/AuthContext';
+import { deleteGoalWithTasks } from '@/lib/firebase/goals-service';
 
 interface Goal {
   id: string;
@@ -78,6 +80,11 @@ export function MyGoals({ onAddGloweeTasks, onShowGoalDetails, onGoalsChange }: 
   // États pour les popups Glowee
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
   const [showGloweeCheckInWelcome, setShowGloweeCheckInWelcome] = useState(false);
+
+  // États pour la suppression d'objectif
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [goalToDelete, setGoalToDelete] = useState<Goal | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Load data from Firebase and localStorage
   useEffect(() => {
@@ -242,6 +249,52 @@ export function MyGoals({ onAddGloweeTasks, onShowGoalDetails, onGoalsChange }: 
     setShowCreateGoal(false);
   };
 
+  // Fonction pour ouvrir le dialogue de suppression
+  const handleDeleteClick = (e: React.MouseEvent, goal: Goal) => {
+    e.stopPropagation(); // Empêcher l'ouverture de l'espace de travail
+    setGoalToDelete(goal);
+    setShowDeleteDialog(true);
+  };
+
+  // Fonction pour confirmer la suppression
+  const handleDeleteConfirm = async (reason: 'achieved' | 'difficult' | 'hard_to_follow' | 'incoherent' | 'other_goal') => {
+    if (!goalToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      // Supprimer dans Firebase si l'utilisateur est connecté
+      if (user) {
+        await deleteGoalWithTasks(goalToDelete.id, { reason });
+      }
+
+      // Supprimer du localStorage
+      const updatedGoals = goals.filter(g => g.id !== goalToDelete.id);
+      setGoals(updatedGoals);
+      localStorage.setItem('myGoals', JSON.stringify(updatedGoals));
+
+      // Supprimer les tâches liées dans gloweeWeeklyTasks
+      const storedTasks = localStorage.getItem('gloweeWeeklyTasks');
+      if (storedTasks) {
+        const tasks = JSON.parse(storedTasks);
+        const filteredTasks = tasks.filter((task: any) => task.goalId !== goalToDelete.id);
+        localStorage.setItem('gloweeWeeklyTasks', JSON.stringify(filteredTasks));
+      }
+
+      // Notifier le parent
+      if (onGoalsChange) {
+        onGoalsChange(updatedGoals);
+      }
+
+      console.log(`Goal ${goalToDelete.id} deleted with reason: ${reason}`);
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      setGoalToDelete(null);
+    }
+  };
+
   const getGoalIcon = (type: string) => {
     switch (type) {
       case 'financial': return '💰';
@@ -356,9 +409,18 @@ export function MyGoals({ onAddGloweeTasks, onShowGoalDetails, onGoalsChange }: 
                             <p className="text-xs text-gray-500 capitalize font-medium">{goal.type === 'financial' ? 'Financier' : goal.type === 'project' ? 'Projet' : 'Personnel'}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-pink-600">{goal.progress}%</div>
-                          <div className="text-xs text-gray-500 font-medium">progression</div>
+                        <div className="flex items-start gap-3">
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-pink-600">{goal.progress}%</div>
+                            <div className="text-xs text-gray-500 font-medium">progression</div>
+                          </div>
+                          <button
+                            onClick={(e) => handleDeleteClick(e, goal)}
+                            className="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors opacity-0 group-hover:opacity-100"
+                            title="Supprimer l'objectif"
+                          >
+                            <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" />
+                          </button>
                         </div>
                       </div>
 
@@ -455,6 +517,19 @@ export function MyGoals({ onAddGloweeTasks, onShowGoalDetails, onGoalsChange }: 
             position="top"
           />
 
+          {/* Delete Goal Dialog */}
+          {goalToDelete && (
+            <DeleteGoalDialog
+              isOpen={showDeleteDialog}
+              onClose={() => {
+                setShowDeleteDialog(false);
+                setGoalToDelete(null);
+              }}
+              onConfirm={handleDeleteConfirm}
+              goalName={goalToDelete.name}
+              language="fr"
+            />
+          )}
 
         </div>
       </div>

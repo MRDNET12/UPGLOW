@@ -95,6 +95,60 @@ export async function archiveGoal(goalId: string): Promise<void> {
   await updateGoal(goalId, { status: 'archived' as GoalStatus });
 }
 
+// Supprimer un objectif et toutes ses tâches associées
+export async function deleteGoalWithTasks(goalId: string, deletionReason?: {
+  reason: 'achieved' | 'difficult' | 'hard_to_follow' | 'incoherent' | 'other_goal';
+  feedback?: string;
+}): Promise<void> {
+  if (!db) {
+    console.warn('Firebase not configured');
+    return;
+  }
+
+  try {
+    // 1. Supprimer toutes les tâches liées à cet objectif
+    const tasksRef = collection(db, 'tasks');
+    const tasksQuery = query(tasksRef, where('goalId', '==', goalId));
+    const tasksSnapshot = await getDocs(tasksQuery);
+
+    const deletePromises = tasksSnapshot.docs.map(taskDoc =>
+      deleteDoc(doc(db, 'tasks', taskDoc.id))
+    );
+    await Promise.all(deletePromises);
+    console.log(`Deleted ${tasksSnapshot.docs.length} tasks for goal ${goalId}`);
+
+    // 2. Supprimer les breakdowns liés
+    const breakdownRef = collection(db, 'goal_breakdown');
+    const breakdownQuery = query(breakdownRef, where('goalId', '==', goalId));
+    const breakdownSnapshot = await getDocs(breakdownQuery);
+
+    const breakdownDeletePromises = breakdownSnapshot.docs.map(breakdownDoc =>
+      deleteDoc(doc(db, 'goal_breakdown', breakdownDoc.id))
+    );
+    await Promise.all(breakdownDeletePromises);
+
+    // 3. Sauvegarder le feedback de suppression (optionnel, pour analytics)
+    if (deletionReason) {
+      const feedbackRef = collection(db, 'goal_deletion_feedback');
+      await addDoc(feedbackRef, {
+        goalId,
+        reason: deletionReason.reason,
+        feedback: deletionReason.feedback || '',
+        deletedAt: Timestamp.now()
+      });
+    }
+
+    // 4. Supprimer l'objectif lui-même
+    const goalRef = doc(db, 'goals', goalId);
+    await deleteDoc(goalRef);
+
+    console.log(`Goal ${goalId} deleted successfully`);
+  } catch (error) {
+    console.error('Error deleting goal:', error);
+    throw error;
+  }
+}
+
 // ==================== ENERGY LOGS ====================
 
 export async function createEnergyLog(

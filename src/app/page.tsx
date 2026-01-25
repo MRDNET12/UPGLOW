@@ -3208,6 +3208,13 @@ export default function GlowUpChallengeApp() {
               setCurrentView('routine');
               setPlanningTab('glowee-tasks');
             }}
+            onGoalDeleted={() => {
+              // Rafraîchir la liste des objectifs après suppression
+              const savedGoals = localStorage.getItem('myGoals');
+              if (savedGoals) {
+                setGoals(JSON.parse(savedGoals));
+              }
+            }}
             theme={theme}
             language={language}
           />

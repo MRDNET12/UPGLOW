@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Target, Calendar, TrendingUp, CheckCircle2, Circle, Clock, Play, History, Sparkles, Lock, Plus, Heart, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Target, Calendar, TrendingUp, CheckCircle2, Circle, Clock, Play, History, Sparkles, Lock, Plus, Heart, Copy, Check, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { DeleteGoalDialog } from '@/components/goals/DeleteGoalDialog';
+import { deleteGoalWithTasks } from '@/lib/firebase/goals-service';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface GoalAction {
   id: string;
@@ -38,6 +41,7 @@ interface GoalWorkspacePageProps {
   onBack: () => void;
   onNavigateToPlanning?: () => void;
   onUpdateGoal?: (goal: Goal) => void;
+  onGoalDeleted?: () => void;
   theme?: 'light' | 'dark';
   language?: 'fr' | 'en' | 'es';
 }
@@ -384,7 +388,8 @@ Ayúdame a entender qué está pasando y sugiere una acción muy simple para hoy
 Sé amable y sin juzgar.`
 });
 
-export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdateGoal: _onUpdateGoal, theme = 'light', language = 'fr' }: GoalWorkspacePageProps) {
+export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdateGoal: _onUpdateGoal, onGoalDeleted, theme = 'light', language = 'fr' }: GoalWorkspacePageProps) {
+  const { user } = useAuth();
   const t = translations[language];
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [actions, setActions] = useState<GoalAction[]>(goal?.actions || []);
@@ -392,6 +397,8 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
   const [newActionText, setNewActionText] = useState('');
   const [showAddAction, setShowAddAction] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Unused for now but kept for future enhancement
   void _onUpdateGoal;
@@ -414,6 +421,48 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
   // Ouvrir ChatGPT
   const openChatGPT = () => {
     window.open('https://chat.openai.com', '_blank');
+  };
+
+  // Supprimer l'objectif
+  const handleDeleteConfirm = async (reason: 'achieved' | 'difficult' | 'hard_to_follow' | 'incoherent' | 'other_goal') => {
+    if (!goal) return;
+
+    setIsDeleting(true);
+    try {
+      // Supprimer dans Firebase si l'utilisateur est connecté
+      if (user) {
+        await deleteGoalWithTasks(goal.id, { reason });
+      }
+
+      // Supprimer du localStorage
+      const savedGoals = localStorage.getItem('myGoals');
+      if (savedGoals) {
+        const goals = JSON.parse(savedGoals);
+        const updatedGoals = goals.filter((g: any) => g.id !== goal.id);
+        localStorage.setItem('myGoals', JSON.stringify(updatedGoals));
+      }
+
+      // Supprimer les tâches liées dans gloweeWeeklyTasks
+      const storedTasks = localStorage.getItem('gloweeWeeklyTasks');
+      if (storedTasks) {
+        const tasks = JSON.parse(storedTasks);
+        const filteredTasks = tasks.filter((task: any) => task.goalId !== goal.id);
+        localStorage.setItem('gloweeWeeklyTasks', JSON.stringify(filteredTasks));
+      }
+
+      console.log(`Goal ${goal.id} deleted with reason: ${reason}`);
+
+      // Retourner à la liste et notifier le parent
+      if (onGoalDeleted) {
+        onGoalDeleted();
+      }
+      onBack();
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
   };
 
   // Charger les tâches d'aujourd'hui liées à cet objectif depuis Glowee tâches
@@ -1059,8 +1108,19 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
               {new Date(goal.deadline).toLocaleDateString()}
             </p>
           </div>
-          <div className="flex items-center gap-1 px-3 py-1 bg-pink-100 dark:bg-pink-900/30 rounded-full">
-            <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">{progressPercentage}%</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 px-3 py-1 bg-pink-100 dark:bg-pink-900/30 rounded-full">
+              <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">{progressPercentage}%</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowDeleteDialog(true)}
+              className="rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+              title={language === 'fr' ? 'Supprimer l\'objectif' : language === 'en' ? 'Delete goal' : 'Eliminar objetivo'}
+            >
+              <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" />
+            </Button>
           </div>
         </div>
 
@@ -1089,6 +1149,15 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
       <div className="p-4 pb-24 max-w-lg mx-auto">
         {renderTabContent()}
       </div>
+
+      {/* Delete Goal Dialog */}
+      <DeleteGoalDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        goalName={goal.name}
+        language={language}
+      />
     </div>
   );
 }

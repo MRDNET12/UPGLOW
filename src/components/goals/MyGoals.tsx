@@ -1,14 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Target, Plus, Activity, Calendar, TrendingUp, X, Sparkles } from 'lucide-react';
+import { Target, Plus, Activity, Calendar, Clock, Pause, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import GloweePopup from '@/components/shared/GloweePopup';
-import { GoalDetailsDialog } from '@/components/goals/GoalDetailsDialog';
 import { GoalAnalysisExplanation } from '@/components/goals/GoalAnalysisExplanation';
 import { GoalConfirmationDialog } from '@/components/goals/GoalConfirmationDialog';
 import { markWelcomeSeen } from '@/utils/visitTracker';
@@ -19,7 +17,7 @@ import { useAuth } from '@/contexts/AuthContext';
 interface Goal {
   id: string;
   name: string;
-  type: 'financial' | 'personal';
+  type: 'financial' | 'personal' | 'project';
   description: string;
   deadline: string;
   progress: number;
@@ -62,19 +60,17 @@ interface MyGoalsProps {
       weeklyPriorities: Array<{id: string, text: string, completed: boolean}>;
     }
   ) => void;
-  onNavigateToPlanning?: (goalId: string) => void;
   onShowGoalDetails?: (goalId: string, goal: Goal) => void;
   onGoalsChange?: (goals: Goal[]) => void;
 }
 
-export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDetails, onGoalsChange }: MyGoalsProps = {}) {
+export function MyGoals({ onAddGloweeTasks, onShowGoalDetails, onGoalsChange }: MyGoalsProps = {}) {
   const { user } = useAuth();
   const { loadGoals } = useGoalsSync();
 
   const [goals, setGoals] = useState<Goal[]>([]);
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [showCreateGoal, setShowCreateGoal] = useState(false);
-  const [showEnergyHistory, setShowEnergyHistory] = useState(false);
   const [loading, setLoading] = useState(true);
   const [energyLevel, setEnergyLevel] = useState(5);
   const [energyLogs, setEnergyLogs] = useState<EnergyLog[]>([]);
@@ -82,14 +78,6 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
   // États pour les popups Glowee
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
   const [showGloweeCheckInWelcome, setShowGloweeCheckInWelcome] = useState(false);
-
-  // État pour le dialogue de détails
-  const [selectedGoalForDetails, setSelectedGoalForDetails] = useState<Goal | null>(null);
-  const [showGoalDetailsDialog, setShowGoalDetailsDialog] = useState(false);
-
-  // État pour le dialogue de confirmation
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [pendingGoalData, setPendingGoalData] = useState<any>(null);
 
   // Load data from Firebase and localStorage
   useEffect(() => {
@@ -279,124 +267,18 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
     <>
       <div className="pb-20 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 min-h-screen">
         <div className="p-5 space-y-5 max-w-3xl mx-auto">
-          {/* Header glassmorphism */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-xl shadow-pink-200/50">
-                <Target className="w-7 h-7 text-white drop-shadow-lg" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">Mes Objectifs</h1>
-                <p className="text-sm text-gray-600">Transforme tes rêves en réalité 🎯</p>
-              </div>
+          {/* Header */}
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-14 rounded-[1.5rem] bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-xl shadow-pink-200/50">
+              <Target className="w-7 h-7 text-white drop-shadow-lg" />
             </div>
-            <Button
-              onClick={() => setShowEnergyHistory(!showEnergyHistory)}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 rounded-xl border-pink-200 hover:bg-pink-50 bg-white/80 backdrop-blur-sm shadow-lg shadow-pink-100/50"
-            >
-              <Activity className="w-4 h-4 text-pink-500" />
-              <span className="text-sm font-medium">Énergie</span>
-            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">Mes Objectifs</h1>
+              <p className="text-sm text-gray-600">Clique sur un objectif pour ouvrir ton espace de travail 🎯</p>
+            </div>
           </div>
 
-          {/* Historique d'énergie (collapsible) - Glassmorphism */}
-          {showEnergyHistory && energyLogs.length > 0 && (
-            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between mb-5">
-                  <h3 className="font-bold text-gray-800 text-base flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-pink-500" />
-                    Historique d'énergie
-                  </h3>
-                  <span className="text-xs font-semibold text-pink-500 bg-pink-50 px-3 py-1 rounded-full">
-                    {energyLogs.length} check-in{energyLogs.length > 1 ? 's' : ''}
-                  </span>
-                </div>
-
-                {/* Graphique glassmorphism */}
-                <div className="mb-6">
-                  <div className="h-32 flex items-end gap-2 mb-3">
-                    {energyLogs.slice(-7).map((log, index) => {
-                      const height = (log.level * 10);
-                      return (
-                        <div key={index} className="flex-1 flex flex-col items-center gap-2">
-                          <div
-                            className="w-full bg-gradient-to-t from-pink-400 to-pink-300 rounded-t-2xl transition-all hover:opacity-80 cursor-pointer relative group shadow-lg shadow-pink-200/50"
-                            style={{ height: `${height}%` }}
-                            title={`${log.level * 10}%`}
-                          >
-                            <div className="absolute -top-9 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
-                              {log.level * 10}%
-                            </div>
-                          </div>
-                          <div className="text-xs text-gray-600 font-medium">
-                            {new Date(log.timestamp).toLocaleDateString('fr-FR', { weekday: 'short' })}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Moyenne */}
-                  {energyLogs.length > 0 && (
-                    <div className="flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-pink-50 to-rose-50 p-3 rounded-xl">
-                      <TrendingUp className="w-5 h-5 text-pink-500" />
-                      <span className="text-gray-700">
-                        Moyenne : <span className="font-bold text-pink-600">
-                          {Math.round((energyLogs.reduce((sum, log) => sum + log.level, 0) / energyLogs.length) * 10)}%
-                        </span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Liste détaillée */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-bold text-gray-800">Derniers check-ins</h4>
-                  {energyLogs.slice(-5).reverse().map((log, index) => (
-                    <div key={index} className="bg-gradient-to-br from-white to-pink-50 rounded-2xl p-4 space-y-2 shadow-md">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-600 font-medium">
-                          {new Date(log.timestamp).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                        <span className="text-base font-bold text-pink-600">
-                          {log.level * 10}%
-                        </span>
-                      </div>
-
-                      {log.mentalState && log.physicalState && !log.skipped && (
-                        <div className="flex gap-2 text-xs flex-wrap">
-                          <span className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full font-medium">
-                            🧠 {log.mentalState === 'calm' ? 'Calme' :
-                                log.mentalState === 'stressed' ? 'Stressée' :
-                                log.mentalState === 'motivated' ? 'Motivée' : 'Fatiguée'}
-                          </span>
-                          <span className="px-3 py-1.5 bg-pink-100 text-pink-700 rounded-full font-medium">
-                            💪 {log.physicalState === 'energetic' ? 'Énergique' :
-                                log.physicalState === 'fit' ? 'En forme' :
-                                log.physicalState === 'tired' ? 'Fatiguée' : 'Malade'}
-                          </span>
-                        </div>
-                      )}
-
-                      {log.skipped && (
-                        <span className="text-xs text-gray-400 italic">Check-in passé</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Liste des objectifs - Glassmorphism */}
+          {/* Liste des objectifs */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-gray-800">
@@ -436,71 +318,94 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {goals.map((goal) => (
-                  <div
-                    key={goal.id}
-                    className="bg-white/80 backdrop-blur-md rounded-[2rem] p-5 shadow-xl shadow-pink-100/50 border-none hover:scale-[1.02] transition-transform"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <span className="text-4xl drop-shadow-lg">{getGoalIcon(goal.type)}</span>
-                        <div>
-                          <h3 className="font-bold text-gray-800 text-base">{goal.name}</h3>
-                          <p className="text-xs text-gray-500 capitalize font-medium">{goal.type}</p>
+                {goals.map((goal) => {
+                  // Calcul du statut: objectif en pause si pas d'actions planifiées
+                  const hasPlannedActions = goal.tasks && goal.tasks.length > 0;
+                  const isPaused = !hasPlannedActions && goal.progress < 100;
+
+                  // Calcul de la durée restante
+                  const now = new Date();
+                  const deadline = new Date(goal.deadline);
+                  const daysRemaining = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+                  return (
+                    <div
+                      key={goal.id}
+                      onClick={() => {
+                        if (onShowGoalDetails) {
+                          onShowGoalDetails(goal.id, goal);
+                        }
+                      }}
+                      className={`bg-white/80 backdrop-blur-md rounded-[2rem] p-5 shadow-xl shadow-pink-100/50 border-none hover:scale-[1.02] transition-all cursor-pointer group ${
+                        isPaused ? 'opacity-70' : ''
+                      }`}
+                    >
+                      {/* Badge de statut */}
+                      {isPaused && (
+                        <div className="mb-3 flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full w-fit">
+                          <Pause className="w-3 h-3 text-gray-500" />
+                          <span className="text-xs text-gray-600 font-medium">En pause</span>
+                        </div>
+                      )}
+
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-4xl drop-shadow-lg">{getGoalIcon(goal.type)}</span>
+                          <div>
+                            <h3 className="font-bold text-gray-800 text-base group-hover:text-pink-600 transition-colors">{goal.name}</h3>
+                            <p className="text-xs text-gray-500 capitalize font-medium">{goal.type === 'financial' ? 'Financier' : goal.type === 'project' ? 'Projet' : 'Personnel'}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-pink-600">{goal.progress}%</div>
+                          <div className="text-xs text-gray-500 font-medium">progression</div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-pink-600">{goal.progress}%</div>
-                        <div className="text-xs text-gray-500 font-medium">progression</div>
+
+                      {/* Barre de progression */}
+                      <div className="mb-4">
+                        <div className="h-2 bg-pink-100 rounded-full overflow-hidden shadow-inner">
+                          <div
+                            className={`h-full transition-all duration-500 shadow-lg ${
+                              isPaused
+                                ? 'bg-gradient-to-r from-gray-300 to-gray-400'
+                                : 'bg-gradient-to-r from-pink-400 to-rose-400'
+                            }`}
+                            style={{ width: `${goal.progress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Infos: durée et date */}
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{daysRemaining > 0 ? `${daysRemaining} jours restants` : 'Échéance dépassée'}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>{new Date(goal.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
+                        </div>
+                      </div>
+
+                      {/* Message pour objectif en pause */}
+                      {isPaused && (
+                        <div className="mt-3 p-2.5 bg-amber-50 rounded-xl border border-amber-200">
+                          <p className="text-xs text-amber-700 font-medium text-center">
+                            💡 Pour avancer, planifie au moins une action
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Flèche indicateur de clic */}
+                      <div className="mt-3 flex items-center justify-end">
+                        <span className="text-xs text-pink-400 font-medium group-hover:text-pink-600 transition-colors">
+                          Ouvrir l'espace de travail →
+                        </span>
                       </div>
                     </div>
-
-                    {/* Barre de progression glassmorphism */}
-                    <div className="mb-4">
-                      <div className="h-2 bg-pink-100 rounded-full overflow-hidden shadow-inner">
-                        <div
-                          className="h-full bg-gradient-to-r from-pink-400 to-rose-400 transition-all duration-500 shadow-lg"
-                          style={{ width: `${goal.progress}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Actions glassmorphism */}
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 rounded-xl border-pink-200 hover:bg-pink-50 text-sm font-medium bg-white/60 backdrop-blur-sm"
-                        onClick={() => {
-                          if (onShowGoalDetails) {
-                            onShowGoalDetails(goal.id, goal);
-                          } else {
-                            setSelectedGoalForDetails(goal);
-                            setShowGoalDetailsDialog(true);
-                          }
-                        }}
-                      >
-                        <TrendingUp className="w-4 h-4 mr-1 text-pink-500" />
-                        Avancer
-                      </Button>
-                        <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 rounded-xl border-pink-200 hover:bg-pink-50 text-sm font-medium bg-white/60 backdrop-blur-sm"
-                        onClick={() => {
-                          if (onNavigateToPlanning) {
-                            onNavigateToPlanning(goal.id);
-                          } else {
-                            alert('Fonctionnalité à venir !');
-                          }
-                        }}
-                      >
-                        <Calendar className="w-4 h-4 mr-1 text-pink-500" />
-                        Planning
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -550,15 +455,7 @@ export function MyGoals({ onAddGloweeTasks, onNavigateToPlanning, onShowGoalDeta
             position="top"
           />
 
-          {/* Dialogue de détails de l'objectif */}
-          <GoalDetailsDialog
-            goal={selectedGoalForDetails}
-            isOpen={showGoalDetailsDialog}
-            onClose={() => {
-              setShowGoalDetailsDialog(false);
-              setSelectedGoalForDetails(null);
-            }}
-          />
+
         </div>
       </div>
     </>
@@ -804,7 +701,15 @@ function CreateGoalModal({
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (goal: Goal) => void;
-  onAddGloweeTasks?: (tasks: Task[]) => void;
+  onAddGloweeTasks?: (
+    tasks: Task[],
+    goalData: {
+      id: string;
+      name: string;
+      color: string;
+      weeklyPriorities: Array<{id: string, text: string, completed: boolean}>;
+    }
+  ) => void;
 }) {
   const [step, setStep] = useState(1);
   const [goalType, setGoalType] = useState<'financial' | 'personal'>('personal');

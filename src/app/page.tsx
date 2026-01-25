@@ -2323,10 +2323,10 @@ export default function GlowUpChallengeApp() {
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
                   {/* Section Intention du jour - Tout en haut */}
-                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 pt-[76px] shadow-lg">
+                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 pt-[56px] shadow-lg">
                     {/* Badge "chaque matin" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
-                      <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
+                      <div className="px-2.5 py-0.5 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-md border border-gray-200">
                         <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                           {language === 'fr' ? 'chaque matin' : language === 'en' ? 'every morning' : 'cada mañana'}
                         </span>
@@ -2389,7 +2389,7 @@ export default function GlowUpChallengeApp() {
                   <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-6 shadow-lg">
                     {/* Badge "chaque soir" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
-                      <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
+                      <div className="px-2.5 py-0.5 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-md border border-gray-200">
                         <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                           {language === 'fr' ? 'chaque soir' : language === 'en' ? 'every evening' : 'cada noche'}
                         </span>
@@ -2436,7 +2436,7 @@ export default function GlowUpChallengeApp() {
                       >
                         {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
                         <div className="absolute -top-3 left-4">
-                          <div className="px-3 py-1 bg-white rounded-full shadow-md border border-gray-200">
+                          <div className="px-2.5 py-0.5 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-md border border-gray-200">
                             <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                               {progress}%
                             </span>
@@ -3176,11 +3176,6 @@ export default function GlowUpChallengeApp() {
                 setCurrentView('routine');
                 setPlanningTab('glowee-tasks');
               }}
-              onNavigateToPlanning={(goalId: string) => {
-                // Rediriger vers la page Planning avec l'onglet Glowee tâches
-                setCurrentView('routine');
-                setPlanningTab('glowee-tasks');
-              }}
               onShowGoalDetails={(goalId: string, goal: any) => {
                 setSelectedGoalId(goalId);
                 // Mettre à jour l'état goals avec le goal actuel si nécessaire
@@ -3208,6 +3203,10 @@ export default function GlowUpChallengeApp() {
             onBack={() => {
               setCurrentView('my-goals');
               setSelectedGoalId(null);
+            }}
+            onNavigateToPlanning={() => {
+              setCurrentView('routine');
+              setPlanningTab('glowee-tasks');
             }}
             theme={theme}
             language={language}

@@ -72,7 +72,7 @@ export default function RootLayout({
               window.OneSignalDeferred = window.OneSignalDeferred || [];
               OneSignalDeferred.push(async function(OneSignal) {
                 await OneSignal.init({
-                  appId: "4a54972c-98c5-4cb7-b2d7-8c9cf318e2b1",
+                  appId: "${process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID || '4a54972c-98c5-4cb7-b2d7-8c9cf318e2b1'}",
                 });
               });
             `,

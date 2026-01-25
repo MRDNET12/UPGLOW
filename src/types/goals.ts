@@ -4,6 +4,12 @@ export type GoalType = 'financial' | 'project' | 'personal';
 
 export type GoalStatus = 'active' | 'completed' | 'archived';
 
+export type GoalDuration = 1 | 3 | 6 | 12; // En mois
+
+export type GoalRhythm = 'doux' | 'equilibre' | 'intense';
+
+export type GoalColor = '#f43f5e' | '#3b82f6' | '#10b981'; // rose, bleu, vert
+
 export type MentalState = 'calm' | 'stressed' | 'motivated' | 'tired';
 
 export type PhysicalState = 'fit' | 'tired' | 'sick' | 'energetic';
@@ -36,11 +42,15 @@ export interface Goal {
   // Questions spécifiques selon le type
   targetAmount?: number; // Pour type: financial
   targetDate: string; // YYYY-MM-DD
-  timeframe?: number; // En mois
+  timeframe?: number; // En mois (durée: 1, 3, 6, 12)
   competencies?: string[]; // Pour type: project
 
   why: string; // Pourquoi cet objectif
-  desiredFeeling: string; // Ressenti recherché
+  desiredFeeling?: string; // Ressenti recherché (optionnel)
+
+  // Nouveau système de rythme et couleur
+  rhythm?: GoalRhythm; // doux, equilibre, intense
+  color?: GoalColor; // Couleur pour identifier les tâches
 
   status: GoalStatus;
   progress: number; // 0-100
@@ -49,8 +59,21 @@ export interface Goal {
   breakdown?: TimeBreakdownItem[];
   breakdownGeneratedAt?: Date;
 
+  // Actions de l'objectif
+  actions?: GoalAction[];
+
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Action liée à un objectif
+export interface GoalAction {
+  id: string;
+  title: string;
+  status: 'to_plan' | 'planned' | 'completed';
+  plannedDate?: string; // YYYY-MM-DD
+  completedAt?: string;
+  createdAt: string;
 }
 
 // Energy Log (Check-in Énergie)

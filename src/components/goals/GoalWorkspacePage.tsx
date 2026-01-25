@@ -586,17 +586,73 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
     return Math.max(0, weeksElapsed);
   };
 
+  // Calculer le max actions par jour selon le rythme
+  const getMaxActionsPerDay = () => {
+    const rhythm = goal.rhythm || 'equilibre';
+    return rhythm === 'doux' ? 1 : rhythm === 'equilibre' ? 2 : 3;
+  };
+
   // Calculer le découpage temporel basé sur la durée
+  // Règles fixées (pas d'IA) :
+  // - 1 mois : Mois → Semaine → Jour
+  // - 3 mois : Mois → Semaine → Jour
+  // - 6 mois : Mois → Semaine → Jour
+  // - 1 an : Trimestre → Mois → Semaine → Jour
   const getTemporalBreakdown = () => {
     const timeframe = goal.timeframe || 3;
+    const maxPerDay = getMaxActionsPerDay();
+    const maxPerWeek = maxPerDay * 7; // Estimation semaine
+
     if (timeframe === 1) {
-      return { periods: ['Semaine 1', 'Semaine 2', 'Semaine 3', 'Semaine 4'], maxPerPeriod: 7 };
+      // 1 mois : 4 semaines
+      return {
+        structure: 'Mois → Semaine → Jour',
+        periods: [
+          { name: 'Semaine 1', maxActions: maxPerWeek },
+          { name: 'Semaine 2', maxActions: maxPerWeek },
+          { name: 'Semaine 3', maxActions: maxPerWeek },
+          { name: 'Semaine 4', maxActions: maxPerWeek },
+        ],
+        totalWeeks: 4,
+        maxPerPeriod: maxPerWeek
+      };
     } else if (timeframe === 3) {
-      return { periods: ['Mois 1', 'Mois 2', 'Mois 3'], maxPerPeriod: 10 };
+      // 3 mois : 12 semaines, affichées par mois
+      return {
+        structure: 'Mois → Semaine → Jour',
+        periods: [
+          { name: 'Mois 1', maxActions: maxPerWeek * 4, subPeriods: ['Sem 1-4'] },
+          { name: 'Mois 2', maxActions: maxPerWeek * 4, subPeriods: ['Sem 5-8'] },
+          { name: 'Mois 3', maxActions: maxPerWeek * 4, subPeriods: ['Sem 9-12'] },
+        ],
+        totalWeeks: 12,
+        maxPerPeriod: maxPerWeek * 4
+      };
     } else if (timeframe === 6) {
-      return { periods: ['Mois 1-2', 'Mois 3-4', 'Mois 5-6'], maxPerPeriod: 15 };
+      // 6 mois : regroupés par 2 mois
+      return {
+        structure: 'Bimestre → Mois → Semaine → Jour',
+        periods: [
+          { name: 'Mois 1-2', maxActions: maxPerWeek * 8 },
+          { name: 'Mois 3-4', maxActions: maxPerWeek * 8 },
+          { name: 'Mois 5-6', maxActions: maxPerWeek * 8 },
+        ],
+        totalWeeks: 24,
+        maxPerPeriod: maxPerWeek * 8
+      };
     } else {
-      return { periods: ['Trimestre 1', 'Trimestre 2', 'Trimestre 3', 'Trimestre 4'], maxPerPeriod: 20 };
+      // 1 an : par trimestre
+      return {
+        structure: 'Trimestre → Mois → Semaine → Jour',
+        periods: [
+          { name: 'Trimestre 1', maxActions: maxPerWeek * 12 },
+          { name: 'Trimestre 2', maxActions: maxPerWeek * 12 },
+          { name: 'Trimestre 3', maxActions: maxPerWeek * 12 },
+          { name: 'Trimestre 4', maxActions: maxPerWeek * 12 },
+        ],
+        totalWeeks: 52,
+        maxPerPeriod: maxPerWeek * 12
+      };
     }
   };
 
@@ -642,22 +698,38 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
               </div>
             )}
 
-            {/* Durée + Rythme */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+            {/* Durée + Rythme + Couleur */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-1">
                   <Clock className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{t.duration}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{t.duration}</span>
                 </div>
-                <p className="font-semibold">{formatDuration()}</p>
+                <p className="font-semibold text-sm">{formatDuration()}</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{t.rhythm}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{t.rhythm}</span>
                 </div>
-                <p className="font-semibold">{formatRhythm()}</p>
+                <p className="font-semibold text-sm">{formatRhythm()}</p>
               </div>
+              {goal.color && (
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div
+                      className="w-4 h-4 rounded-full"
+                      style={{ backgroundColor: goal.color }}
+                    />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Couleur</span>
+                  </div>
+                  <p className="font-semibold text-sm">
+                    {goal.color === '#f43f5e' ? '🌹 Rose' :
+                     goal.color === '#3b82f6' ? '💙 Bleu' :
+                     goal.color === '#10b981' ? '💚 Vert' : 'Personnalisé'}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Statistiques des actions */}
@@ -814,14 +886,21 @@ export function GoalWorkspacePage({ goal, onBack, onNavigateToPlanning, onUpdate
 
             {/* Découpage temporel */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-3">{t.temporalBreakdown}</h4>
+              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">{t.temporalBreakdown}</h4>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 italic">{getTemporalBreakdown().structure}</p>
               <div className="space-y-2">
                 {getTemporalBreakdown().periods.map((period, index) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <span className="text-sm">{period}</span>
-                    <span className="text-xs text-gray-500">max {getTemporalBreakdown().maxPerPeriod} actions</span>
+                    <span className="text-sm font-medium">{period.name}</span>
+                    <span className="text-xs text-gray-500">max {period.maxActions} actions</span>
                   </div>
                 ))}
+              </div>
+              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+                  <span>Rythme : {goal.rhythm === 'doux' ? '🔋 Doux (1/jour)' : goal.rhythm === 'intense' ? '🔥 Intense (3/jour)' : '⚖️ Équilibré (2/jour)'}</span>
+                  <span>{getTemporalBreakdown().totalWeeks} semaines</span>
+                </div>
               </div>
             </div>
 

@@ -44,6 +44,7 @@ import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import { MyGoals } from '@/components/goals/MyGoals';
 import { GoalWorkspacePage } from '@/components/goals/GoalWorkspacePage';
+import { BlockagePopup } from '@/components/goals/BlockagePopup';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
@@ -150,6 +151,7 @@ export default function GlowUpChallengeApp() {
   const [showGloweeFifthVisit, setShowGloweeFifthVisit] = useState(false);
   const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
   const [showGloweeJournalWelcome, setShowGloweeJournalWelcome] = useState(false);
+  const [showBlockagePopup, setShowBlockagePopup] = useState(false);
 
   // États pour le message Glowee avec effet typing et rotation toutes les 10 minutes
   const [gloweeMessageIndex, setGloweeMessageIndex] = useState(0);
@@ -400,6 +402,8 @@ export default function GlowUpChallengeApp() {
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDestination, setNewTaskDestination] = useState<'priority' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'>('priority');
+  const [newTaskColor, setNewTaskColor] = useState<string | null>(null); // Couleur associée à un objectif
+  const [newTaskGoalId, setNewTaskGoalId] = useState<string | null>(null); // ID de l'objectif associé
   const [showCalendar, setShowCalendar] = useState(false);
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
@@ -773,6 +777,49 @@ export default function GlowUpChallengeApp() {
       setCurrentView('dashboard');
     }
   }, [hasStarted, setCurrentView, isHydrated]);
+
+  // Détecter le blocage et afficher la popup si l'utilisateur n'a pas complété de tâches depuis 3 jours
+  useEffect(() => {
+    if (!isHydrated || !hasStarted) return;
+
+    // Vérifier si déjà montré aujourd'hui
+    const today = getLocalDateString();
+    const lastShown = localStorage.getItem('blockagePopupLastShown');
+    if (lastShown === today) return;
+
+    // Vérifier si l'utilisateur a des objectifs actifs
+    if (goalsWithPriorities.length === 0) return;
+
+    // Vérifier la dernière tâche complétée
+    const completedTasks = tasksWithDates.filter(t => t.completed);
+
+    const checkBlockage = () => {
+      if (completedTasks.length === 0) {
+        // Pas de tâches complétées, vérifier depuis combien de temps l'app a été ouverte
+        const firstOpen = localStorage.getItem('firstOpenDate');
+        if (firstOpen) {
+          const daysSinceFirst = Math.floor((Date.now() - new Date(firstOpen).getTime()) / (1000 * 60 * 60 * 24));
+          if (daysSinceFirst >= 3) {
+            setTimeout(() => setShowBlockagePopup(true), 2000);
+          }
+        }
+      } else {
+        // Trouver la date de la dernière tâche complétée
+        const lastCompletedDate = completedTasks.reduce((latest, task) => {
+          return task.date > latest ? task.date : latest;
+        }, '');
+
+        if (lastCompletedDate) {
+          const daysSinceLastCompletion = Math.floor((Date.now() - new Date(lastCompletedDate).getTime()) / (1000 * 60 * 60 * 24));
+          if (daysSinceLastCompletion >= 3) {
+            setTimeout(() => setShowBlockagePopup(true), 2000);
+          }
+        }
+      }
+    };
+
+    checkBlockage();
+  }, [isHydrated, hasStarted, goalsWithPriorities.length, tasksWithDates]);
 
   // Scroll to top quand on accède à la page Glow Up (bonus)
   useEffect(() => {
@@ -3046,12 +3093,20 @@ export default function GlowUpChallengeApp() {
                           return (
                           <div
                             key={task.id}
-                            className={`relative p-1.5 pr-5 rounded-md text-[10px] ${
+                            className={`relative p-1.5 pr-5 rounded-md text-[10px] flex items-start gap-1.5 ${
                               task.type === 'glowee' && taskGradient
                                 ? `bg-gradient-to-r ${taskGradient}`
                                 : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                             }`}
                           >
+                            {/* Indicateur de couleur de l'objectif */}
+                            {task.goalColor && (
+                              <div
+                                className="w-2 h-2 rounded-full flex-shrink-0 mt-0.5"
+                                style={{ backgroundColor: task.goalColor }}
+                                title={task.goalName || ''}
+                              />
+                            )}
                             {/* Bouton supprimer - coin supérieur droit */}
                             <button
                               onClick={async () => {
@@ -3082,7 +3137,7 @@ export default function GlowUpChallengeApp() {
                                   }
                                 }
                               }}
-                              className={`cursor-pointer block leading-tight ${task.completed ? 'line-through text-stone-500' : ''}`}
+                              className={`cursor-pointer block leading-tight flex-1 ${task.completed ? 'line-through text-stone-500' : ''}`}
                             >
                               {task.text}
                             </span>
@@ -4741,6 +4796,63 @@ export default function GlowUpChallengeApp() {
               />
             </div>
 
+            {/* Sélection de la couleur (lié à un objectif) */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold">
+                {language === 'fr' ? 'Couleur (objectif associé)' : language === 'en' ? 'Color (linked goal)' : 'Color (objetivo asociado)'}
+              </label>
+              <p className="text-xs text-stone-500 dark:text-stone-400">
+                {language === 'fr' ? 'Sélectionnez une couleur pour identifier cette tâche dans votre planning' : language === 'en' ? 'Select a color to identify this task in your planning' : 'Selecciona un color para identificar esta tarea en tu planificación'}
+              </p>
+              <div className="flex gap-3 justify-center py-2">
+                {([
+                  { value: '#f43f5e', label: language === 'fr' ? '🌹 Rose' : language === 'en' ? '🌹 Rose' : '🌹 Rosa', ring: 'ring-rose-400' },
+                  { value: '#3b82f6', label: language === 'fr' ? '💙 Bleu' : language === 'en' ? '💙 Blue' : '💙 Azul', ring: 'ring-blue-400' },
+                  { value: '#10b981', label: language === 'fr' ? '💚 Vert' : language === 'en' ? '💚 Green' : '💚 Verde', ring: 'ring-emerald-400' },
+                ] as const).map((colorOpt) => {
+                  // Trouver l'objectif associé à cette couleur
+                  const associatedGoal = goalsWithPriorities.find(g => g.color === colorOpt.value);
+                  return (
+                    <button
+                      key={colorOpt.value}
+                      onClick={() => {
+                        if (newTaskColor === colorOpt.value) {
+                          setNewTaskColor(null);
+                          setNewTaskGoalId(null);
+                        } else {
+                          setNewTaskColor(colorOpt.value);
+                          setNewTaskGoalId(associatedGoal?.id || null);
+                        }
+                      }}
+                      className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all ${
+                        newTaskColor === colorOpt.value
+                          ? `ring-2 ${colorOpt.ring} ring-offset-2 bg-white dark:bg-stone-800`
+                          : 'hover:bg-stone-100 dark:hover:bg-stone-800'
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-full transition-transform ${
+                          newTaskColor === colorOpt.value ? 'scale-110' : ''
+                        }`}
+                        style={{ backgroundColor: colorOpt.value }}
+                      />
+                      <span className="text-xs font-medium">{colorOpt.label}</span>
+                      {associatedGoal && (
+                        <span className="text-[10px] text-stone-500 dark:text-stone-400 max-w-[80px] truncate">
+                          {associatedGoal.name}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              {!newTaskColor && (
+                <p className="text-xs text-amber-600 dark:text-amber-400 text-center italic">
+                  {language === 'fr' ? '⚠️ Choisissez une couleur pour lier à un objectif' : language === 'en' ? '⚠️ Choose a color to link to a goal' : '⚠️ Elige un color para vincular a un objetivo'}
+                </p>
+              )}
+            </div>
+
             {/* Sélection de la destination */}
             <div className="space-y-3">
               <label className="text-sm font-semibold">
@@ -4905,7 +5017,9 @@ export default function GlowUpChallengeApp() {
                       text: newTaskText,
                       date: targetDate,
                       completed: false,
-                      type: 'user' as const
+                      type: 'user' as const,
+                      goalColor: newTaskColor || undefined,
+                      goalId: newTaskGoalId || undefined
                     };
 
                     setTasksWithDates(prev => [...prev, newTaskWithDate]);
@@ -4926,6 +5040,8 @@ export default function GlowUpChallengeApp() {
 
                   setNewTaskText('');
                   setNewTaskDestination('priority');
+                  setNewTaskColor(null);
+                  setNewTaskGoalId(null);
                   setShowAddTask(false);
                 }
               }}
@@ -5203,7 +5319,20 @@ export default function GlowUpChallengeApp() {
         language={language}
       />
 
-
+      {/* Blockage Popup - Affiché si l'utilisateur n'a pas complété de tâches depuis 3 jours */}
+      <BlockagePopup
+        isOpen={showBlockagePopup}
+        onClose={() => {
+          setShowBlockagePopup(false);
+          localStorage.setItem('blockagePopupLastShown', getLocalDateString());
+        }}
+        goals={goalsWithPriorities.map(g => ({
+          id: g.id,
+          name: g.name,
+          progress: g.progress || 0
+        }))}
+        language={language}
+      />
 
       {/* Challenge Switch Drawer - Design moderne */}
       <Drawer open={showChallengeDrawer} onOpenChange={setShowChallengeDrawer}>

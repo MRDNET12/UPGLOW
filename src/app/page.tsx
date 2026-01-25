@@ -2370,10 +2370,10 @@ export default function GlowUpChallengeApp() {
               {habitTab === 'tasks' && (
                 <div className="space-y-3">
                   {/* Section Intention du jour - Tout en haut */}
-                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 pt-[56px] shadow-lg">
+                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 pt-[36px] shadow-lg">
                     {/* Badge "chaque matin" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
-                      <div className="px-2.5 py-0.5 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-md border border-gray-200">
+                      <div className="px-2.5 py-[3px] bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-lg border border-white/50" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%)' }}>
                         <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                           {language === 'fr' ? 'chaque matin' : language === 'en' ? 'every morning' : 'cada mañana'}
                         </span>
@@ -2436,7 +2436,7 @@ export default function GlowUpChallengeApp() {
                   <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-6 shadow-lg">
                     {/* Badge "chaque soir" en superposition sur la bordure gauche */}
                     <div className="absolute -top-3 left-4">
-                      <div className="px-2.5 py-0.5 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-md border border-gray-200">
+                      <div className="px-2.5 py-[3px] bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-lg border border-white/50" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%)' }}>
                         <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                           {language === 'fr' ? 'chaque soir' : language === 'en' ? 'every evening' : 'cada noche'}
                         </span>
@@ -2483,7 +2483,7 @@ export default function GlowUpChallengeApp() {
                       >
                         {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
                         <div className="absolute -top-3 left-4">
-                          <div className="px-2.5 py-0.5 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-md border border-gray-200">
+                          <div className="px-2.5 py-[3px] bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-lg border border-white/50" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%)' }}>
                             <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
                               {progress}%
                             </span>

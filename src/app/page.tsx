@@ -12,6 +12,7 @@ import {
   getLocalizedFiftyThingsAlone
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
+import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
@@ -117,7 +118,13 @@ export default function GlowUpChallengeApp() {
     initializeFirstOpen,
     getRemainingFreeDays,
     isTrialExpired,
-    canAccessApp
+    canAccessApp,
+    // Beauty Pillars
+    beautyPillarsProgress,
+    toggleBeautyPillar,
+    selectBeautyChoice,
+    toggleBeautySubtask,
+    getBeautyProgressForDate
   } = useStore();
 
   const { t } = useTranslation();
@@ -208,6 +215,10 @@ export default function GlowUpChallengeApp() {
   const [newMeProgress, setNewMeProgress] = useState<Record<number, Record<string, boolean>>>({});
   const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
   const [newMeStartDate, setNewMeStartDate] = useState<string | null>(null);
+
+  // États pour Beauty Pillars (Challenge Beauté et Corps)
+  const [beautySelectedDate, setBeautySelectedDate] = useState<string>(getLocalDateString(new Date()));
+  const [beautyChoiceExpanded, setBeautyChoiceExpanded] = useState(false);
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
@@ -3229,196 +3240,197 @@ export default function GlowUpChallengeApp() {
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Barre de progression en haut */}
-                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                    <CardContent className="p-4 space-y-3">
-                      {/* Message de bienvenue */}
-                      <p className="text-base font-semibold text-rose-400">
-                        {t.newMe.helloReady} {newMeCurrentDay} !
-                      </p>
+                  {/* Date Selector - Like Mes Habitudes */}
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                    {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() + offset);
+                      const dateString = getLocalDateString(date);
+                      const isSelected = dateString === beautySelectedDate;
+                      const isToday = offset === 0;
 
-                      {/* Stats */}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">
-                          {t.newMe.day} {newMeCurrentDay} / 30
-                        </span>
-                        <span className="font-medium">
-                          {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length} / 13 {t.newMe.habits}
-                        </span>
-                      </div>
+                      return (
+                        <Button
+                          key={offset}
+                          variant={isSelected ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setBeautySelectedDate(dateString)}
+                          className={`min-w-[60px] flex-shrink-0 rounded-xl font-semibold ${
+                            isSelected
+                              ? 'bg-gradient-to-br from-pink-400 to-rose-400 text-white shadow-lg shadow-pink-200/50'
+                              : 'bg-white/80 backdrop-blur-sm border-pink-200 hover:bg-pink-50'
+                          }`}
+                        >
+                          <div className="flex flex-col items-center">
+                            <span className="text-[10px] uppercase">
+                              {isToday
+                                ? (language === 'fr' ? 'Auj.' : language === 'en' ? 'Today' : 'Hoy')
+                                : date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' })
+                              }
+                            </span>
+                            <span className="text-sm font-bold">{date.getDate()}</span>
+                          </div>
+                        </Button>
+                      );
+                    })}
+                  </div>
 
-                      {/* Progression */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{t.newMe.dayProgress}</span>
-                          <span className="text-lg font-bold text-rose-400">
-                            {Math.round((Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100)}%
-                          </span>
-                        </div>
-                        <div className="h-3 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
+                  {/* Header with progress */}
+                  <div className="text-center space-y-2">
+                    <h2 className="text-xl font-bold text-gray-800">🌱 3 PILIERS QUOTIDIENS</h2>
+                    <p className="text-sm text-gray-600 font-medium">
+                      {(() => {
+                        const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                        const completedCount = dayProgress ?
+                          [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+                        return `${completedCount} / 3 ${language === 'fr' ? 'piliers complétés' : language === 'en' ? 'pillars completed' : 'pilares completados'}`;
+                      })()}
+                    </p>
+                  </div>
+
+                  {/* Liste des 3 piliers beauté */}
+                  <div className="space-y-4">
+                    {beautyPillars.map((pillar) => {
+                      const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                      const isCompleted = dayProgress?.[pillar.id as keyof typeof dayProgress] || false;
+                      const isChoicePillar = pillar.type === 'choice';
+
+                      return (
+                        <div key={pillar.id}>
+                          {/* Pillar Card */}
                           <div
-                            className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500 rounded-full"
-                            style={{ width: `${(Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length / 13) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Liste des 13 habitudes pour le jour sélectionné */}
-                  <div className="space-y-3">
-                    <h2 className="text-lg font-bold">
-                      {t.newMe.the13Pillars}
-                    </h2>
-                    {(() => {
-                      // Combiner les piliers normaux avec le pilier spécial si applicable
-                      const allPillars = [...newMePillars];
-                      if (specialNewMePillars[newMeCurrentDay]) {
-                        allPillars.push(specialNewMePillars[newMeCurrentDay]);
-                      }
-
-                      // Trier: tâches non complétées en haut, complétées en bas
-                      const sortedPillars = allPillars.sort((a, b) => {
-                        const aChecked = newMeProgress[newMeCurrentDay]?.[a.id.toString()] || false;
-                        const bChecked = newMeProgress[newMeCurrentDay]?.[b.id.toString()] || false;
-
-                        // Les non cochées d'abord (false < true)
-                        if (aChecked === bChecked) return 0;
-                        return aChecked ? 1 : -1;
-                      });
-
-                      return sortedPillars.map((habit) => {
-                        const isChecked = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
-                        const isSpecialPillar = habit.shortDescription[language] === 'OBJECTIF_LINK_DAY1' || habit.shortDescription[language] === 'OBJECTIF_LINK_DAY2';
-
-                        return (
-                          <div
-                            key={habit.id}
-                            className={`p-4 rounded-2xl cursor-pointer bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isChecked ? 'opacity-60' : ''}`}
-                            style={{
-                              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            }}
+                            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${
+                              isCompleted ? 'opacity-60' : ''
+                            }`}
                             onClick={() => {
-                              if (isSpecialPillar) return; // Ne pas cocher automatiquement les piliers spéciaux
-                              // Clic sur la carte = valider l'habitude
-                              setNewMeProgress(prev => ({
-                                ...prev,
-                                [newMeCurrentDay]: {
-                                  ...(prev[newMeCurrentDay] || {}),
-                                  [habit.id.toString()]: !isChecked
-                                }
-                              }));
+                              if (isChoicePillar) {
+                                setBeautyChoiceExpanded(!beautyChoiceExpanded);
+                              } else {
+                                toggleBeautyPillar(beautySelectedDate, pillar.id);
+                              }
                             }}
                           >
-                            {isSpecialPillar ? (
-                              // Affichage spécial pour les piliers avec lien
-                              <div className="flex items-start gap-3">
-                                <span className="text-3xl drop-shadow-lg">{habit.icon}</span>
-                                <div className="flex-1">
-                                  <h4 className="font-bold text-sm mb-1 text-gray-800">{habit.title[language]}</h4>
-                                  <p className="text-sm text-gray-600">
-                                    {habit.shortDescription[language] === 'OBJECTIF_LINK_DAY1' ? (
-                                      <>
-                                        {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
-                                        <span
-                                          className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setCurrentView('my-goals');
-                                          }}
-                                        >
-                                          {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
-                                        </span>
-                                        {language === 'fr' ? ' et crée ton premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {language === 'fr' ? 'Pour avancer dans ton ' : language === 'en' ? 'To progress on your ' : 'Para avanzar en tu '}
-                                        <span
-                                          className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setCurrentView('my-goals');
-                                          }}
-                                        >
-                                          {language === 'fr' ? 'objectif' : language === 'en' ? 'goal' : 'objetivo'}
-                                        </span>
-                                        {language === 'fr' ? ', rends-toi sur la page Objectifs.' : language === 'en' ? ', go to the Goals page.' : ', ve a la página de Objetivos.'}
-                                      </>
-                                    )}
-                                  </p>
-                                </div>
+                            <div className="flex items-start gap-3">
+                              <span className="text-3xl drop-shadow-lg">{pillar.icon}</span>
+                              <div className="flex-1">
+                                <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted && !isChoicePillar ? 'line-through' : ''}`}>
+                                  {pillar.title[language]}
+                                </h4>
+                                <p className={`text-sm ${isCompleted && !isChoicePillar ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                                  {pillar.description[language]}
+                                </p>
                               </div>
-                            ) : (
-                              // Affichage normal pour les piliers réguliers - Style glassmorphism comme Challenge Esprit
-                              <div className="flex items-start gap-3">
-                                <span className="text-3xl drop-shadow-lg">{habit.icon}</span>
-                                <div className="flex-1">
-                                  <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isChecked ? 'line-through' : ''}`}>{habit.title[language]}</h4>
-                                  <p className={`text-sm ${isChecked ? 'line-through text-gray-400' : 'text-gray-600'}`}>{habit.shortDescription[language]}</p>
-                                </div>
-                                <div className="flex items-center gap-2 flex-shrink-0">
-                                  {isChecked && <Check className="w-6 h-6 text-green-500 drop-shadow-lg" />}
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedHabit(habit);
-                                    }}
-                                    className="p-1.5 rounded-full transition-colors hover:bg-pink-100"
-                                  >
-                                    <ChevronRight className="w-5 h-5 text-pink-400" />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
+                              {isCompleted && !isChoicePillar && (
+                                <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />
+                              )}
+                              {isChoicePillar && (
+                                <ChevronDown className={`w-5 h-5 text-pink-400 flex-shrink-0 transition-transform duration-300 ${beautyChoiceExpanded ? 'rotate-180' : ''}`} />
+                              )}
+                            </div>
                           </div>
-                        );
-                      });
-                    })()}
+
+                          {/* Slide content for choice pillar */}
+                          {isChoicePillar && (
+                            <div
+                              className={`overflow-hidden transition-all duration-300 ease-out ${
+                                beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                              }`}
+                            >
+                              <div className="space-y-3">
+                                {/* Glowee Message Card */}
+                                <Card className="border-none shadow-lg bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+                                  <CardContent className="p-4">
+                                    <div className="flex items-start gap-3">
+                                      <div className="relative w-10 h-10 flex-shrink-0">
+                                        <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
+                                      </div>
+                                      <div className="flex-1">
+                                        <p className="text-sm font-medium text-gray-700 italic">
+                                          {(() => {
+                                            const messages = beautyGloweeMessages[language];
+                                            const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+                                            return messages[dayOfYear % messages.length];
+                                          })()}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+
+                                {/* Barre verticale */}
+                                <div className="flex justify-center">
+                                  <div className="w-0.5 h-8 bg-gradient-to-b from-pink-300 to-transparent"></div>
+                                </div>
+
+                                {/* Beauty Choices */}
+                                {beautyChoices.map((choice) => {
+                                  const isSelected = dayProgress?.selectedChoice === choice.id;
+                                  const hasSubtasks = choice.subtasks && choice.subtasks.length > 0;
+
+                                  return (
+                                    <div key={choice.id}>
+                                      <div
+                                        className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
+                                          isSelected
+                                            ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
+                                            : 'bg-white shadow-md hover:shadow-lg'
+                                        }`}
+                                        onClick={() => selectBeautyChoice(beautySelectedDate, choice.id)}
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <span className="text-2xl">{choice.icon}</span>
+                                          <div className="flex-1">
+                                            <h5 className="font-bold text-sm text-gray-800">{choice.title[language]}</h5>
+                                            {choice.description && (
+                                              <p className="text-xs text-gray-600">{choice.description[language]}</p>
+                                            )}
+                                          </div>
+                                          {isSelected && <Check className="w-5 h-5 text-green-600 flex-shrink-0" />}
+                                        </div>
+                                      </div>
+
+                                      {/* Subtasks for this choice */}
+                                      {hasSubtasks && isSelected && (
+                                        <div className="ml-8 mt-2 space-y-2">
+                                          {choice.subtasks!.map((subtask) => {
+                                            const isSubtaskCompleted = dayProgress?.subtasks?.[subtask.id] || false;
+
+                                            return (
+                                              <div
+                                                key={subtask.id}
+                                                className={`p-3 rounded-xl cursor-pointer transition-all duration-300 ${
+                                                  isSubtaskCompleted
+                                                    ? 'bg-green-50 opacity-60'
+                                                    : 'bg-pink-50 hover:bg-pink-100'
+                                                }`}
+                                                onClick={() => toggleBeautySubtask(beautySelectedDate, subtask.id)}
+                                              >
+                                                <div className="flex items-center gap-2">
+                                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                                                    isSubtaskCompleted ? 'bg-green-500 border-green-500' : 'border-pink-300'
+                                                  }`}>
+                                                    {isSubtaskCompleted && <Check className="w-3 h-3 text-white" />}
+                                                  </div>
+                                                  <span className={`text-xs font-medium ${isSubtaskCompleted ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                                                    {subtask.title[language]}
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
-                  {/* Bouton "J'ai complété ce jour" */}
-                  <div className="pt-4 pb-6">
-                    <Button
-                      className={`w-full font-semibold py-6 text-base shadow-lg ${
-                        Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13
-                          ? 'bg-green-500 hover:bg-green-600 text-white'
-                          : 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white'
-                      }`}
-                      onClick={() => {
-                        const allCompleted = Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13;
-                        if (allCompleted) {
-                          // Si déjà complété, on peut décocher
-                          setNewMeProgress(prev => ({
-                            ...prev,
-                            [newMeCurrentDay]: {}
-                          }));
-                        } else {
-                          // Sinon, on coche tout (seulement les piliers normaux, pas les spéciaux)
-                          const allHabits: Record<string, boolean> = {};
-                          newMePillars.forEach(habit => {
-                            allHabits[habit.id.toString()] = true;
-                          });
-                          setNewMeProgress(prev => ({
-                            ...prev,
-                            [newMeCurrentDay]: allHabits
-                          }));
-                        }
-                      }}
-                    >
-                      {Object.values(newMeProgress[newMeCurrentDay] || {}).filter(Boolean).length === 13 ? (
-                        <>
-                          <Check className="w-5 h-5 mr-2" />
-                          {t.newMe.completedDay.replace('{day}', newMeCurrentDay.toString())}
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-5 h-5 mr-2" />
-                          {t.newMe.completeThisDay}
-                        </>
-                      )}
-                    </Button>
-                  </div>
                 </>
               )}
 

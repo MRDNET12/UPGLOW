@@ -90,6 +90,19 @@ interface BonusProgress {
   boundaryEntries: BoundaryEntry[]; // Entrées de limites
 }
 
+// Beauty Pillars Progress (for Challenge Beauté et Corps)
+export interface BeautyPillarsProgress {
+  [date: string]: { // YYYY-MM-DD
+    'walk-sport': boolean;
+    'water': boolean;
+    'self-care-choice': boolean;
+    selectedChoice?: string; // ID du choix sélectionné pour 'self-care-choice'
+    subtasks?: {
+      [subtaskId: string]: boolean; // Pour les sous-tâches comme "lash-serum", "protective-hairstyle"
+    };
+  };
+}
+
 // Subscription & Trial
 interface SubscriptionState {
   firstOpenDate: string | null; // Date de première ouverture de l'app (YYYY-MM-DD)
@@ -200,6 +213,13 @@ interface AppState {
   isTrialExpired: () => boolean;
   canAccessApp: () => boolean;
   markTrialPopupSeen: () => void;
+
+  // Beauty Pillars (Challenge Beauté et Corps)
+  beautyPillarsProgress: BeautyPillarsProgress;
+  toggleBeautyPillar: (date: string, pillarId: string) => void;
+  selectBeautyChoice: (date: string, choiceId: string) => void;
+  toggleBeautySubtask: (date: string, subtaskId: string) => void;
+  getBeautyProgressForDate: (date: string) => BeautyPillarsProgress[string] | undefined;
 }
 
 // Helper function to get week number
@@ -795,6 +815,75 @@ export const useStore = create<AppState>()(
             hasSeenTrialPopup: true
           }
         });
+      },
+
+      // Beauty Pillars (Challenge Beauté et Corps)
+      beautyPillarsProgress: {},
+
+      toggleBeautyPillar: (date, pillarId) => {
+        const { beautyPillarsProgress } = get();
+        const dayProgress = beautyPillarsProgress[date] || {
+          'walk-sport': false,
+          'water': false,
+          'self-care-choice': false
+        };
+
+        set({
+          beautyPillarsProgress: {
+            ...beautyPillarsProgress,
+            [date]: {
+              ...dayProgress,
+              [pillarId]: !dayProgress[pillarId as keyof typeof dayProgress]
+            }
+          }
+        });
+      },
+
+      selectBeautyChoice: (date, choiceId) => {
+        const { beautyPillarsProgress } = get();
+        const dayProgress = beautyPillarsProgress[date] || {
+          'walk-sport': false,
+          'water': false,
+          'self-care-choice': false
+        };
+
+        set({
+          beautyPillarsProgress: {
+            ...beautyPillarsProgress,
+            [date]: {
+              ...dayProgress,
+              'self-care-choice': true, // Auto-complete when selecting a choice
+              selectedChoice: choiceId
+            }
+          }
+        });
+      },
+
+      toggleBeautySubtask: (date, subtaskId) => {
+        const { beautyPillarsProgress } = get();
+        const dayProgress = beautyPillarsProgress[date] || {
+          'walk-sport': false,
+          'water': false,
+          'self-care-choice': false
+        };
+        const subtasks = dayProgress.subtasks || {};
+
+        set({
+          beautyPillarsProgress: {
+            ...beautyPillarsProgress,
+            [date]: {
+              ...dayProgress,
+              subtasks: {
+                ...subtasks,
+                [subtaskId]: !subtasks[subtaskId]
+              }
+            }
+          }
+        });
+      },
+
+      getBeautyProgressForDate: (date) => {
+        return get().beautyPillarsProgress[date];
       }
     }),
     {

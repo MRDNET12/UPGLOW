@@ -3240,39 +3240,39 @@ export default function GlowUpChallengeApp() {
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Date Selector - Like Mes Habitudes */}
-                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
-                    {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
-                      const date = new Date();
-                      date.setDate(date.getDate() + offset);
-                      const dateString = getLocalDateString(date);
-                      const isSelected = dateString === beautySelectedDate;
-                      const isToday = offset === 0;
-
-                      return (
-                        <Button
-                          key={offset}
-                          variant={isSelected ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setBeautySelectedDate(dateString)}
-                          className={`min-w-[60px] flex-shrink-0 rounded-xl font-semibold ${
-                            isSelected
-                              ? 'bg-gradient-to-br from-pink-400 to-rose-400 text-white shadow-lg shadow-pink-200/50'
-                              : 'bg-white/80 backdrop-blur-sm border-pink-200 hover:bg-pink-50'
-                          }`}
-                        >
-                          <div className="flex flex-col items-center">
-                            <span className="text-[10px] uppercase">
-                              {isToday
-                                ? (language === 'fr' ? 'Auj.' : language === 'en' ? 'Today' : 'Hoy')
-                                : date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' })
-                              }
+                  {/* Date Selector - Exact copy from Mes Habitudes */}
+                  <div className="flex justify-between items-center mb-6 px-2">
+                    {(() => {
+                      const today = new Date();
+                      const dates: Date[] = [];
+                      // Générer 9 jours (4 avant, aujourd'hui, 4 après)
+                      for (let i = -4; i <= 4; i++) {
+                        const date = new Date(today);
+                        date.setDate(today.getDate() + i);
+                        dates.push(date);
+                      }
+                      return dates.map((date, index) => {
+                        const isToday = index === 4;
+                        const dateString = getLocalDateString(date);
+                        const isSelected = dateString === beautySelectedDate;
+                        const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
+                        const dayNumber = date.getDate();
+                        return (
+                          <div
+                            key={index}
+                            className={`flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}
+                            onClick={() => setBeautySelectedDate(dateString)}
+                          >
+                            <span className={`text-[10px] uppercase ${isSelected || isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                              {dayName}
                             </span>
-                            <span className="text-sm font-bold">{date.getDate()}</span>
+                            <span className={`text-lg font-bold ${isSelected || isToday ? 'text-gray-900' : 'text-gray-400'}`}>
+                              {dayNumber}
+                            </span>
                           </div>
-                        </Button>
-                      );
-                    })}
+                        );
+                      });
+                    })()}
                   </div>
 
                   {/* Header with progress */}
@@ -3320,12 +3320,24 @@ export default function GlowUpChallengeApp() {
                                   {pillar.description[language]}
                                 </p>
                               </div>
-                              {isCompleted && !isChoicePillar && (
-                                <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />
-                              )}
-                              {isChoicePillar && (
-                                <ChevronDown className={`w-5 h-5 text-pink-400 flex-shrink-0 transition-transform duration-300 ${beautyChoiceExpanded ? 'rotate-180' : ''}`} />
-                              )}
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                {isCompleted && !isChoicePillar && (
+                                  <Check className="w-6 h-6 text-green-500 drop-shadow-lg" />
+                                )}
+                                {isChoicePillar ? (
+                                  <ChevronDown className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${beautyChoiceExpanded ? 'rotate-180' : ''}`} />
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedHabit(pillar as any);
+                                    }}
+                                    className="p-1.5 rounded-full transition-colors hover:bg-pink-100"
+                                  >
+                                    <ChevronRight className="w-5 h-5 text-pink-400" />
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -3336,26 +3348,31 @@ export default function GlowUpChallengeApp() {
                                 beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                               }`}
                             >
-                              <div className="space-y-3">
-                                {/* Glowee Message Card */}
-                                <Card className="border-none shadow-lg bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
-                                  <CardContent className="p-4">
-                                    <div className="flex items-start gap-3">
-                                      <div className="relative w-10 h-10 flex-shrink-0">
-                                        <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
-                                      </div>
-                                      <div className="flex-1">
-                                        <p className="text-sm font-medium text-gray-700 italic">
-                                          {(() => {
-                                            const messages = beautyGloweeMessages[language];
-                                            const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-                                            return messages[dayOfYear % messages.length];
-                                          })()}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </CardContent>
-                                </Card>
+                              <div className="space-y-6">
+                                {/* Glowee Image avec effet glow - Exact copy from onboarding */}
+                                <div className="flex justify-center animate-in zoom-in duration-500">
+                                  <div className="relative">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+                                    <img
+                                      src="/Glowee/glowee-acceuillante.webp"
+                                      alt="Glowee"
+                                      className="w-72 h-72 object-contain relative z-10 drop-shadow-2xl"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Message Card - Exact copy from onboarding */}
+                                <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
+                                  <div className="p-8 rounded-[2rem] bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50">
+                                    <p className="text-2xl md:text-3xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed text-center">
+                                      {(() => {
+                                        const messages = beautyGloweeMessages[language];
+                                        const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+                                        return messages[dayOfYear % messages.length];
+                                      })()}
+                                    </p>
+                                  </div>
+                                </div>
 
                                 {/* Barre verticale */}
                                 <div className="flex justify-center">

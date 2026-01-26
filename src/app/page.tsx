@@ -223,6 +223,9 @@ export default function GlowUpChallengeApp() {
   const [beautyGloweeDisplayedMessage, setBeautyGloweeDisplayedMessage] = useState('');
   const [beautyGloweeIsTyping, setBeautyGloweeIsTyping] = useState(true);
   const [beautyHasShownFirstMessage, setBeautyHasShownFirstMessage] = useState(false);
+  const [showBeautyStreakPopup, setShowBeautyStreakPopup] = useState(false);
+  const [showBeautyIncompletePopup, setShowBeautyIncompletePopup] = useState(false);
+  const [beautyValidatedDates, setBeautyValidatedDates] = useState<Set<string>>(new Set());
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
@@ -3197,12 +3200,13 @@ export default function GlowUpChallengeApp() {
                     const isToday = index === 4;
                     const dateString = getLocalDateString(date);
                     const isSelected = dateString === beautySelectedDate;
+                    const isValidated = beautyValidatedDates.has(dateString);
                     const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
                     const dayNumber = date.getDate();
                     return (
                       <div
                         key={index}
-                        className={`flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}
+                        className={`relative flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}
                         onClick={() => setBeautySelectedDate(dateString)}
                       >
                         <span className={`text-[10px] uppercase ${isSelected || isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
@@ -3211,6 +3215,12 @@ export default function GlowUpChallengeApp() {
                         <span className={`text-lg font-bold ${isSelected || isToday ? 'text-gray-900' : 'text-gray-400'}`}>
                           {dayNumber}
                         </span>
+                        {/* Croix de validation */}
+                        {isValidated && (
+                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-in zoom-in duration-500">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
                       </div>
                     );
                   });
@@ -3276,17 +3286,55 @@ export default function GlowUpChallengeApp() {
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Header with progress */}
-                  <div className="text-center space-y-2">
-                    <h2 className="text-xl font-bold text-gray-800">🌱 3 PILIERS QUOTIDIENS</h2>
-                    <p className="text-sm text-gray-600 font-medium">
-                      {(() => {
-                        const dayProgress = getBeautyProgressForDate(beautySelectedDate);
-                        const completedCount = dayProgress ?
-                          [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
-                        return `${completedCount} / 3 ${language === 'fr' ? 'piliers complétés' : language === 'en' ? 'pillars completed' : 'pilares completados'}`;
-                      })()}
-                    </p>
+                  {/* Carte Glowee avec message et progression */}
+                  <div className="relative mb-6">
+                    <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                      <CardContent className="p-6 pl-24">
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium mb-4">
+                          {language === 'fr' ? 'Pendant 30 jours, 3 gestes simples par jour suffisent pour créer un vrai glow up.' :
+                           language === 'en' ? 'For 30 days, 3 simple gestures a day are enough to create a real glow up.' :
+                           'Durante 30 días, 3 gestos simples al día son suficientes para crear un verdadero glow up.'}
+                        </p>
+                        {/* Barre de progression en bas à droite */}
+                        <div className="flex items-center gap-2 justify-end">
+                          <div className="flex-1 max-w-[200px]">
+                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
+                                style={{
+                                  width: `${(() => {
+                                    const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                                    const completedCount = dayProgress ?
+                                      [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+                                    return (completedCount / 3) * 100;
+                                  })()}%`
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <span className="text-xs font-bold text-gray-600">
+                            {(() => {
+                              const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                              const completedCount = dayProgress ?
+                                [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+                              return `${completedCount}/3`;
+                            })()}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Image Glowee */}
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-[80px] h-[86px] z-10">
+                      <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
+                      <Image
+                        src="/Glowee/glowee.webp"
+                        alt="Glowee"
+                        width={80}
+                        height={86}
+                        className="object-contain relative z-10 drop-shadow-2xl"
+                      />
+                    </div>
                   </div>
 
                   {/* Liste des 3 piliers beauté */}
@@ -3355,7 +3403,7 @@ export default function GlowUpChallengeApp() {
 
                                    {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
                                    <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
-                                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-40"></div>
+                                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
                                      <Image
                                        src="/Glowee/glowee.webp"
                                        alt="Glowee"
@@ -3438,6 +3486,27 @@ export default function GlowUpChallengeApp() {
                         </div>
                       );
                     })}
+                  </div>
+
+                  {/* Bouton Valider */}
+                  <div className="flex justify-center mt-8">
+                    <button
+                      onClick={() => {
+                        const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                        const completedCount = dayProgress ?
+                          [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+                        
+                        if (completedCount === 3) {
+                          setShowBeautyStreakPopup(true);
+                          setBeautyValidatedDates(prev => new Set(prev).add(beautySelectedDate));
+                        } else {
+                          setShowBeautyIncompletePopup(true);
+                        }
+                      }}
+                      className="px-8 py-3 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                    >
+                      {language === 'fr' ? 'Valider' : language === 'en' ? 'Validate' : 'Validar'}
+                    </button>
                   </div>
 
                 </>
@@ -5113,6 +5182,122 @@ export default function GlowUpChallengeApp() {
         onClose={() => setShowAuthDialog(false)}
         defaultMode={user ? 'signin' : 'signup'}
       />
+
+      {/* Popup de série - Beauty Challenge */}
+      {showBeautyStreakPopup && (
+        <div className="fixed top-0 left-0 right-0 z-50 animate-in slide-in-from-top duration-500">
+          <div className="max-w-md mx-auto mt-4 px-4">
+            <Card className="border-none shadow-2xl bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-3xl overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  {/* Icône flamme */}
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 flex items-center justify-center shadow-lg">
+                      <span className="text-3xl">🔥</span>
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg font-bold shadow-md animate-in zoom-in duration-700">
+                      1
+                    </div>
+                  </div>
+
+                  {/* Texte et jours de la semaine */}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                      {language === 'fr' ? 'Votre série' : language === 'en' ? 'Your streak' : 'Tu serie'}
+                    </h3>
+                    <div className="flex gap-1.5">
+                      {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => {
+                        const isToday = index === 0; // Premier jour pour la démonstration
+                        return (
+                          <div
+                            key={day}
+                            className={`flex flex-col items-center ${isToday ? 'animate-in zoom-in duration-700' : ''}`}
+                          >
+                            <span className="text-[9px] text-gray-500 mb-1">{day.slice(0, 3)}</span>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              isToday 
+                                ? 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-lg' 
+                                : 'bg-gray-200'
+                            }`}>
+                              {isToday && <Check className="w-4 h-4 text-white animate-in zoom-in duration-1000" />}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Bouton fermer */}
+                  <button
+                    onClick={() => setShowBeautyStreakPopup(false)}
+                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/50 transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Popup Glowee déçu - Journée incomplète */}
+      {showBeautyIncompletePopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="border-none shadow-2xl bg-white rounded-3xl max-w-md w-full overflow-hidden animate-in zoom-in duration-300">
+            <CardContent className="p-6">
+              <div className="text-center space-y-4">
+                {/* Glowee déçu */}
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full blur-xl opacity-40"></div>
+                    <Image
+                      src="/Glowee/glowee.webp"
+                      alt="Glowee"
+                      width={120}
+                      height={130}
+                      className="object-contain relative z-10 drop-shadow-2xl grayscale"
+                    />
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {language === 'fr' ? 'Hmm...' : language === 'en' ? 'Hmm...' : 'Hmm...'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'fr' 
+                      ? 'Es-tu sûr·e de vouloir valider cette journée incomplète ?' 
+                      : language === 'en' 
+                      ? 'Are you sure you want to validate this incomplete day?' 
+                      : '¿Estás seguro de que quieres validar este día incompleto?'}
+                  </p>
+                </div>
+
+                {/* Boutons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowBeautyIncompletePopup(false)}
+                    className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition-all"
+                  >
+                    {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowBeautyIncompletePopup(false);
+                      // Pas d'ajout de croix ni de popup de série
+                    }}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+                  >
+                    {language === 'fr' ? 'Valider quand même' : language === 'en' ? 'Validate anyway' : 'Validar de todos modos'}
+                  </button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Animation CSS pour fade out des habitudes complétées */}
       <style jsx global>{`

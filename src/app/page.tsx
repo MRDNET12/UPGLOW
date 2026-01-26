@@ -672,6 +672,16 @@ export default function GlowUpChallengeApp() {
     }
   }, [isHydrated, beautyGloweeMessageIndex, language, beautyHasShownFirstMessage]);
 
+  // Auto-fermer la popup de série après 5 secondes
+  useEffect(() => {
+    if (showBeautyStreakPopup) {
+      const timer = setTimeout(() => {
+        setShowBeautyStreakPopup(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showBeautyStreakPopup]);
+
   // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
     if (isHydrated) {
@@ -2129,7 +2139,7 @@ export default function GlowUpChallengeApp() {
                       : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
-                  {language === 'fr' ? 'Croissance' : language === 'en' ? 'Growth' : 'Crecimiento'}
+                  {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
                 </button>
               </div>
             </div>
@@ -2546,7 +2556,7 @@ export default function GlowUpChallengeApp() {
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">📈</div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    {language === 'fr' ? 'Croissance' : language === 'en' ? 'Growth' : 'Crecimiento'}
+                    {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
                   </h3>
                   <p className="text-gray-600">
                     {language === 'fr' ? 'Suivez votre progression' : language === 'en' ? 'Track your progress' : 'Sigue tu progreso'}
@@ -3289,15 +3299,15 @@ export default function GlowUpChallengeApp() {
                   {/* Carte Glowee avec message et progression */}
                   <div className="relative mb-6">
                     <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
-                      <CardContent className="p-6 pl-24">
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium mb-4">
-                          {language === 'fr' ? 'Pendant 30 jours, 3 gestes simples par jour suffisent pour créer un vrai glow up.' :
-                           language === 'en' ? 'For 30 days, 3 simple gestures a day are enough to create a real glow up.' :
-                           'Durante 30 días, 3 gestos simples al día son suficientes para crear un verdadero glow up.'}
+                      <CardContent className="p-4 pl-20">
+                        <p className="text-xs text-gray-700 leading-relaxed font-medium mb-3">
+                          {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
+                           language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
+                           '30 días. 3 gestos al día. Para un verdadero glow up.'}
                         </p>
                         {/* Barre de progression en bas à droite */}
                         <div className="flex items-center gap-2 justify-end">
-                          <div className="flex-1 max-w-[200px]">
+                          <div className="flex-1 max-w-[150px]">
                             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
@@ -3325,13 +3335,13 @@ export default function GlowUpChallengeApp() {
                     </Card>
 
                     {/* Image Glowee */}
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-[80px] h-[86px] z-10">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[60px] h-[64px] z-10">
                       <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
                       <Image
                         src="/Glowee/glowee.webp"
                         alt="Glowee"
-                        width={80}
-                        height={86}
+                        width={60}
+                        height={64}
                         className="object-contain relative z-10 drop-shadow-2xl"
                       />
                     </div>
@@ -5252,11 +5262,11 @@ export default function GlowUpChallengeApp() {
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full blur-xl opacity-40"></div>
                     <Image
-                      src="/Glowee/glowee.webp"
-                      alt="Glowee"
+                      src="/Glowee/glowee-decu.webp"
+                      alt="Glowee déçu"
                       width={120}
                       height={130}
-                      className="object-contain relative z-10 drop-shadow-2xl grayscale"
+                      className="object-contain relative z-10 drop-shadow-2xl"
                     />
                   </div>
                 </div>
@@ -5276,10 +5286,10 @@ export default function GlowUpChallengeApp() {
                 </div>
 
                 {/* Boutons */}
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     onClick={() => setShowBeautyIncompletePopup(false)}
-                    className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition-all"
+                    className="flex-1 px-3 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition-all"
                   >
                     {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
                   </button>
@@ -5288,7 +5298,7 @@ export default function GlowUpChallengeApp() {
                       setShowBeautyIncompletePopup(false);
                       // Pas d'ajout de croix ni de popup de série
                     }}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+                    className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
                   >
                     {language === 'fr' ? 'Valider quand même' : language === 'en' ? 'Validate anyway' : 'Validar de todos modos'}
                   </button>

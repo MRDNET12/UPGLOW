@@ -47,9 +47,9 @@ export const beautyPillars: BeautyPillar[] = [
       es: 'Caminar 30 min O deporte'
     },
     description: {
-      fr: '🪢 Corde à sauter OU 🚶‍♀️ Marche rapide pour des résultat visible en 30 jours',
-      en: '🪢 Jump rope OR 🚶‍♀️ Brisk walk for visible results in 30 days',
-      es: '🪢 Saltar la cuerda O 🚶‍♀️ Caminata rápida para resultados visibles en 30 días'
+      fr: 'Corde à sauter ou marche rapide pour des résultat visible en 30 jours',
+      en: 'Jump rope or brisk walk for visible results in 30 days',
+      es: 'Saltar la cuerda o caminata rápida para resultados visibles en 30 días'
     },
     type: 'mandatory'
   },

@@ -1573,8 +1573,8 @@ export default function GlowUpChallengeApp() {
                 </CardContent>
               </Card>
 
-              {/* Carte Objectifs */}
-              <Card
+              {/* Carte Objectifs - MASQUÉE */}
+              {/* <Card
                 className="border-none shadow-xl shadow-gray-200/50 bg-gradient-to-br from-gray-700 via-gray-600 to-gray-700 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('my-goals')}
               >
@@ -1593,7 +1593,7 @@ export default function GlowUpChallengeApp() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Ma semaine */}
               <Card
@@ -1638,8 +1638,8 @@ export default function GlowUpChallengeApp() {
               </Card>
             </div>
 
-            {/* Carte Glow Up (Bonus) */}
-            <Card
+            {/* Carte Glow Up (Bonus) - MASQUÉE */}
+            {/* <Card
               className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-purple-50 to-orange-50 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
               onClick={() => setCurrentView('bonus')}
             >
@@ -1657,7 +1657,7 @@ export default function GlowUpChallengeApp() {
                   <ChevronRight className="w-5 h-5 text-pink-400" />
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Carte 8 Limites */}
             <Card
@@ -1682,8 +1682,8 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card>
 
-            {/* Carte 50 choses à faire seule */}
-            <Card
+            {/* Carte 50 choses à faire seule - MASQUÉE */}
+            {/* <Card
               onClick={() => {
                 const fiftyThingsSection = bonusSections.find(s => s.id === '50-choses-seule');
                 if (fiftyThingsSection) {
@@ -1707,7 +1707,7 @@ export default function GlowUpChallengeApp() {
                   <ChevronRight className="w-5 h-5 text-purple-400" />
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         )}
 
@@ -3144,41 +3144,40 @@ export default function GlowUpChallengeApp() {
               </div>
             </div>
 
-            {/* Sélecteur de jours - Scrollable horizontal sans barre */}
-            <div className="overflow-x-auto scrollbar-hide px-4 py-2">
-              <div className="flex gap-1.5 min-w-max">
-                {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
-                  const isCompleted = newMeProgress[day] && Object.values(newMeProgress[day]).filter(Boolean).length === 13;
-                  const completionPercentage = newMeProgress[day]
-                    ? Math.round((Object.values(newMeProgress[day]).filter(Boolean).length / 13) * 100)
-                    : 0;
-
-                  return (
-                    <button
-                      key={day}
-                      onClick={() => setNewMeCurrentDay(day)}
-                      className={`flex-shrink-0 w-11 h-11 rounded-lg text-sm font-semibold transition-all relative ${
-                        newMeCurrentDay === day
-                          ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg scale-105'
-                          : theme === 'dark'
-                            ? 'bg-stone-800 text-stone-300 hover:bg-stone-700'
-                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                      }`}
-                    >
-                      {day}
-                      {isCompleted && (
-                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-full flex items-center justify-center">
-                          <Check className="w-2.5 h-2.5 text-white" />
-                        </div>
-                      )}
-                      {!isCompleted && completionPercentage > 0 && (
-                        <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[9px] font-bold text-rose-400">
-                          {completionPercentage}%
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
+            {/* Sélecteur de dates - Exact copy from Mes Habitudes */}
+            <div className="px-4 py-2">
+              <div className="flex justify-between items-center px-2">
+                {(() => {
+                  const today = new Date();
+                  const dates: Date[] = [];
+                  // Générer 9 jours (4 avant, aujourd'hui, 4 après)
+                  for (let i = -4; i <= 4; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    dates.push(date);
+                  }
+                  return dates.map((date, index) => {
+                    const isToday = index === 4;
+                    const dateString = getLocalDateString(date);
+                    const isSelected = dateString === beautySelectedDate;
+                    const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
+                    const dayNumber = date.getDate();
+                    return (
+                      <div
+                        key={index}
+                        className={`flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}
+                        onClick={() => setBeautySelectedDate(dateString)}
+                      >
+                        <span className={`text-[10px] uppercase ${isSelected || isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                          {dayName}
+                        </span>
+                        <span className={`text-lg font-bold ${isSelected || isToday ? 'text-gray-900' : 'text-gray-400'}`}>
+                          {dayNumber}
+                        </span>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </div>
 
@@ -3320,24 +3319,12 @@ export default function GlowUpChallengeApp() {
                                   {pillar.description[language]}
                                 </p>
                               </div>
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                {isCompleted && !isChoicePillar && (
-                                  <Check className="w-6 h-6 text-green-500 drop-shadow-lg" />
-                                )}
-                                {isChoicePillar ? (
-                                  <ChevronDown className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${beautyChoiceExpanded ? 'rotate-180' : ''}`} />
-                                ) : (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedHabit(pillar as any);
-                                    }}
-                                    className="p-1.5 rounded-full transition-colors hover:bg-pink-100"
-                                  >
-                                    <ChevronRight className="w-5 h-5 text-pink-400" />
-                                  </button>
-                                )}
-                              </div>
+                              {isCompleted && !isChoicePillar && (
+                                <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />
+                              )}
+                              {isChoicePillar && (
+                                <ChevronDown className={`w-5 h-5 text-pink-400 flex-shrink-0 transition-transform duration-300 ${beautyChoiceExpanded ? 'rotate-180' : ''}`} />
+                              )}
                             </div>
                           </div>
 
@@ -3348,29 +3335,36 @@ export default function GlowUpChallengeApp() {
                                 beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                               }`}
                             >
-                              <div className="space-y-6">
-                                {/* Glowee Image avec effet glow - Exact copy from onboarding */}
-                                <div className="flex justify-center animate-in zoom-in duration-500">
-                                  <div className="relative">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-                                    <img
-                                      src="/Glowee/glowee-acceuillante.webp"
-                                      alt="Glowee"
-                                      className="w-72 h-72 object-contain relative z-10 drop-shadow-2xl"
-                                    />
-                                  </div>
-                                </div>
+                              <div className="space-y-3">
+                                {/* Message Glowee - Exact copy from home page */}
+                                <div className="relative">
+                                  <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                                    <CardContent className="p-0">
+                                      <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
+                                        {/* Message avec rotation */}
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-[10px] text-gray-700 leading-tight font-medium">
+                                            {(() => {
+                                              const messages = beautyGloweeMessages[language];
+                                              const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+                                              return messages[dayOfYear % messages.length];
+                                            })()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
 
-                                {/* Message Card - Exact copy from onboarding */}
-                                <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
-                                  <div className="p-8 rounded-[2rem] bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50">
-                                    <p className="text-2xl md:text-3xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed text-center">
-                                      {(() => {
-                                        const messages = beautyGloweeMessages[language];
-                                        const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-                                        return messages[dayOfYear % messages.length];
-                                      })()}
-                                    </p>
+                                  {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
+                                  <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl blur-md opacity-40"></div>
+                                    <Image
+                                      src="/Glowee/glowee.webp"
+                                      alt="Glowee"
+                                      width={96}
+                                      height={104}
+                                      className="object-contain relative z-10 drop-shadow-2xl"
+                                    />
                                   </div>
                                 </div>
 

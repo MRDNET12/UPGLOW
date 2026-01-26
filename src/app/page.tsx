@@ -3529,46 +3529,139 @@ export default function GlowUpChallengeApp() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Target className="w-5 h-5 text-rose-400" />
-                        {t.newMe.progressOn30Days}
+                        {language === 'fr' ? 'Progression sur 30 jours' : language === 'en' ? 'Progress over 30 days' : 'Progreso en 30 días'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {/* Calendrier des 30 jours */}
-                      <div className="grid grid-cols-7 gap-2">
-                        {Array.from({ length: 30 }, (_, i) => {
-                          const day = i + 1;
-                          const dayProgress = newMeProgress[day] || {};
-                          const completedCount = Object.values(dayProgress).filter(Boolean).length;
-                          const isFullyCompleted = completedCount === 13;
-                          const isToday = day === newMeCurrentDay;
-
-                          return (
-                            <div
-                              key={day}
-                              onClick={() => {
-                                setNewMeCurrentDay(day);
-                                setNewMeActiveTab('daily');
-                              }}
-                              className={`
-                                aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all
-                                ${isToday ? 'ring-2 ring-rose-400' : ''}
-                                ${isFullyCompleted
-                                  ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white'
-                                  : completedCount > 0
-                                    ? theme === 'dark'
-                                      ? 'bg-rose-400/30 text-rose-400'
-                                      : 'bg-rose-400/20 text-rose-400'
-                                    : theme === 'dark'
-                                      ? 'bg-stone-800 text-stone-400'
-                                      : 'bg-stone-100 text-stone-600'
+                      {/* Statistiques globales */}
+                      <div className="grid grid-cols-3 gap-3 mb-6">
+                        <div className="text-center p-3 rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
+                          <div className="text-2xl font-bold text-rose-500">
+                            {(() => {
+                              const allDates = Object.keys(beautyPillarsProgress);
+                              return allDates.filter(date => {
+                                const dayProgress = beautyPillarsProgress[date];
+                                return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
+                              }).length;
+                            })()}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            {language === 'fr' ? 'Jours parfaits' : language === 'en' ? 'Perfect days' : 'Días perfectos'}
+                          </div>
+                        </div>
+                        <div className="text-center p-3 rounded-lg bg-gradient-to-br from-orange-50 to-pink-50">
+                          <div className="text-2xl font-bold text-orange-500">
+                            {(() => {
+                              const validatedDates = Array.from(beautyValidatedDates);
+                              return validatedDates.length;
+                            })()}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            {language === 'fr' ? 'Jours validés' : language === 'en' ? 'Validated days' : 'Días validados'}
+                          </div>
+                        </div>
+                        <div className="text-center p-3 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50">
+                          <div className="text-2xl font-bold text-purple-500">
+                            {(() => {
+                              const validatedDates = Array.from(beautyValidatedDates).sort();
+                              let maxStreak = 0;
+                              let currentStreak = 0;
+                              
+                              for (let i = 0; i < validatedDates.length; i++) {
+                                if (i === 0) {
+                                  currentStreak = 1;
+                                } else {
+                                  const prevDate = new Date(validatedDates[i - 1]);
+                                  const currDate = new Date(validatedDates[i]);
+                                  const diffDays = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
+                                  
+                                  if (diffDays === 1) {
+                                    currentStreak++;
+                                  } else {
+                                    maxStreak = Math.max(maxStreak, currentStreak);
+                                    currentStreak = 1;
+                                  }
                                 }
-                                hover:scale-110
-                              `}
-                            >
-                              <span className="text-xs font-semibold">{day}</span>
-                              {completedCount > 0 && (
-                                <span className="text-[8px] mt-0.5">{completedCount}/13</span>
-                              )}
+                              }
+                              return Math.max(maxStreak, currentStreak);
+                            })()}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            {language === 'fr' ? 'Meilleure série' : language === 'en' ? 'Best streak' : 'Mejor racha'}
+                          </div>
+                        </div>
+                      </div>
+                      {/* Calendrier des 30 jours */}
+                      <div className="space-y-2 mb-6">
+                        <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                          {language === 'fr' ? 'Calendrier de validation' : language === 'en' ? 'Validation calendar' : 'Calendario de validación'}
+                        </h3>
+                        <div className="grid grid-cols-7 gap-2">
+                          {Array.from({ length: 30 }, (_, i) => {
+                            const dayIndex = i + 1;
+                            // Créer une date fictive pour chaque jour
+                            const today = new Date();
+                            const startDate = new Date(today);
+                            startDate.setDate(today.getDate() - 15); // Commencer 15 jours avant aujourd'hui
+                            const thisDate = new Date(startDate);
+                            thisDate.setDate(startDate.getDate() + dayIndex - 1);
+                            const dateString = getLocalDateString(thisDate);
+                            
+                            const isValidated = beautyValidatedDates.has(dateString);
+                            const dayProgress = beautyPillarsProgress[dateString];
+                            const hasProgress = dayProgress && (dayProgress['walk-sport'] || dayProgress['water'] || dayProgress['self-care-choice']);
+                            const isToday = getLocalDateString(new Date()) === dateString;
+
+                            return (
+                              <div
+                                key={dayIndex}
+                                className={`
+                                  aspect-square rounded-lg flex items-center justify-center cursor-pointer transition-all text-xs font-semibold
+                                  ${isToday ? 'ring-2 ring-rose-400' : ''}
+                                  ${isValidated
+                                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-md'
+                                    : hasProgress
+                                      ? 'bg-rose-100 text-rose-500'
+                                      : 'bg-gray-100 text-gray-400'
+                                  }
+                                  hover:scale-110
+                                `}
+                              >
+                                {isValidated && <Check className="w-4 h-4" />}
+                                {!isValidated && dayIndex}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Détail par pilier */}
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold text-gray-700">
+                          {language === 'fr' ? 'Détail par pilier' : language === 'en' ? 'Details by pillar' : 'Detalles por pilar'}
+                        </h3>
+                        
+                        {beautyPillars.map(pillar => {
+                          const completedDays = Object.keys(beautyPillarsProgress).filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress[pillar.id];
+                          }).length;
+                          
+                          return (
+                            <div key={pillar.id} className="p-3 rounded-lg bg-gradient-to-r from-pink-50 to-rose-50">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-2xl">{pillar.icon}</span>
+                                <div className="flex-1">
+                                  <h4 className="text-sm font-semibold text-gray-800">{pillar.title[language]}</h4>
+                                  <p className="text-xs text-gray-600">{completedDays} / 30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}</p>
+                                </div>
+                              </div>
+                              <div className="h-2 bg-white rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
+                                  style={{ width: `${(completedDays / 30) * 100}%` }}
+                                />
+                              </div>
                             </div>
                           );
                         })}
@@ -3612,15 +3705,53 @@ export default function GlowUpChallengeApp() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Award className="w-5 h-5 text-rose-400" />
-                        {t.newMe.badges}
+                        {language === 'fr' ? 'Badges' : language === 'en' ? 'Badges' : 'Insignias'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {(() => {
-                        const completedDays = Object.keys(newMeProgress).filter(day => {
-                          const dayProgress = newMeProgress[parseInt(day)];
-                          return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                        // Calculs pour le challenge beauté
+                        const validatedDays = Array.from(beautyValidatedDates).length;
+                        const allDates = Object.keys(beautyPillarsProgress);
+                        
+                        const perfectDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
                         }).length;
+
+                        const walkSportDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress['walk-sport'];
+                        }).length;
+
+                        const waterDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress['water'];
+                        }).length;
+
+                        const selfCareDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress['self-care-choice'];
+                        }).length;
+
+                        // Calcul de la série actuelle
+                        const sortedDates = Array.from(beautyValidatedDates).sort();
+                        let currentStreak = 0;
+                        const today = getLocalDateString(new Date());
+                        
+                        for (let i = 0; i >= -29; i--) {
+                          const checkDate = new Date();
+                          checkDate.setDate(checkDate.getDate() + i);
+                          const checkDateString = getLocalDateString(checkDate);
+                          
+                          if (beautyValidatedDates.has(checkDateString)) {
+                            currentStreak++;
+                          } else {
+                            break;
+                          }
+                        }
+
+                        const hasStarted = allDates.length > 0;
 
                         // Calcul des jours avec habitude spécifique complétée
                         const waterDays = Object.keys(newMeProgress).filter(day => {
@@ -3649,14 +3780,78 @@ export default function GlowUpChallengeApp() {
                         });
 
                         const badges = [
-                          { condition: anyDayStarted, icon: '🌱', title: t.newMe.badgeFirstDay, desc: t.newMe.badgeFirstDayDesc },
-                          { condition: completedDays >= 7, icon: '🌿', title: t.newMe.badgeFirstWeek, desc: t.newMe.badgeFirstWeekDesc },
-                          { condition: hasPerfectDay, icon: '✨', title: t.newMe.badgePerfectDay, desc: t.newMe.badgePerfectDayDesc },
-                          { condition: waterDays >= 7, icon: '💧', title: t.newMe.badgeWaterMaster, desc: t.newMe.badgeWaterMasterDesc },
-                          { condition: walkingDays >= 7, icon: '🚶‍♀️', title: t.newMe.badgeWalkingStar, desc: t.newMe.badgeWalkingStarDesc },
-                          { condition: skincareDays >= 7, icon: '👑', title: t.newMe.badgeSkincareQueen, desc: t.newMe.badgeSkincareQueenDesc },
-                          { condition: completedDays >= 14, icon: '🌸', title: t.newMe.badgeTwoWeeks, desc: t.newMe.badgeTwoWeeksDesc },
-                          { condition: completedDays >= 30, icon: '✨', title: t.newMe.badgeComplete, desc: t.newMe.badgeCompleteDesc },
+                          {
+                            condition: hasStarted,
+                            icon: '🌱',
+                            title: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso',
+                            desc: language === 'fr' ? 'Tu as commencé ton glow up !' : language === 'en' ? 'You started your glow up!' : '¡Comenzaste tu glow up!'
+                          },
+                          {
+                            condition: perfectDays >= 1,
+                            icon: '✨',
+                            title: language === 'fr' ? 'Journée Parfaite' : language === 'en' ? 'Perfect Day' : 'Día Perfecto',
+                            desc: language === 'fr' ? '3 piliers complétés en un jour' : language === 'en' ? '3 pillars completed in one day' : '3 pilares completados en un día'
+                          },
+                          {
+                            condition: currentStreak >= 3,
+                            icon: '🔥',
+                            title: language === 'fr' ? 'Série de 3' : language === 'en' ? 'Streak of 3' : 'Racha de 3',
+                            desc: language === 'fr' ? '3 jours consécutifs validés' : language === 'en' ? '3 consecutive days validated' : '3 días consecutivos validados'
+                          },
+                          {
+                            condition: waterDays >= 7,
+                            icon: '💧',
+                            title: language === 'fr' ? 'Hydratation Pro' : language === 'en' ? 'Hydration Pro' : 'Hidratación Pro',
+                            desc: language === 'fr' ? '7 jours d\'hydratation parfaite' : language === 'en' ? '7 days of perfect hydration' : '7 días de hidratación perfecta'
+                          },
+                          {
+                            condition: walkSportDays >= 7,
+                            icon: '🚶‍♀️',
+                            title: language === 'fr' ? 'Active Queen' : language === 'en' ? 'Active Queen' : 'Reina Activa',
+                            desc: language === 'fr' ? '7 jours de sport ou marche' : language === 'en' ? '7 days of sport or walk' : '7 días de deporte o caminata'
+                          },
+                          {
+                            condition: selfCareDays >= 7,
+                            icon: '💆‍♀️',
+                            title: language === 'fr' ? 'Self-Care Star' : language === 'en' ? 'Self-Care Star' : 'Estrella del Autocuidado',
+                            desc: language === 'fr' ? '7 gestes beauté pour toi' : language === 'en' ? '7 beauty gestures for you' : '7 gestos de belleza para ti'
+                          },
+                          {
+                            condition: currentStreak >= 7,
+                            icon: '🌟',
+                            title: language === 'fr' ? 'Semaine d\'Or' : language === 'en' ? 'Golden Week' : 'Semana de Oro',
+                            desc: language === 'fr' ? '7 jours consécutifs validés' : language === 'en' ? '7 consecutive days validated' : '7 días consecutivos validados'
+                          },
+                          {
+                            condition: perfectDays >= 14,
+                            icon: '🌸',
+                            title: language === 'fr' ? 'Glow Up en Vue' : language === 'en' ? 'Glow Up in Sight' : 'Glow Up a la Vista',
+                            desc: language === 'fr' ? '14 journées parfaites' : language === 'en' ? '14 perfect days' : '14 días perfectos'
+                          },
+                          {
+                            condition: currentStreak >= 14,
+                            icon: '💎',
+                            title: language === 'fr' ? 'Détermination Diamant' : language === 'en' ? 'Diamond Determination' : 'Determinación Diamante',
+                            desc: language === 'fr' ? '14 jours consécutifs validés' : language === 'en' ? '14 consecutive days validated' : '14 días consecutivos validados'
+                          },
+                          {
+                            condition: validatedDays >= 21,
+                            icon: '👑',
+                            title: language === 'fr' ? 'Reine du Glow Up' : language === 'en' ? 'Glow Up Queen' : 'Reina del Glow Up',
+                            desc: language === 'fr' ? '21 jours validés - nouvelle habitude !' : language === 'en' ? '21 days validated - new habit!' : '21 días validados - ¡nuevo hábito!'
+                          },
+                          {
+                            condition: currentStreak >= 30,
+                            icon: '🏆',
+                            title: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
+                            desc: language === 'fr' ? '30 jours consécutifs - transformation complète !' : language === 'en' ? '30 consecutive days - complete transformation!' : '30 días consecutivos - ¡transformación completa!'
+                          },
+                          {
+                            condition: perfectDays >= 30,
+                            icon: '✨',
+                            title: language === 'fr' ? 'Perfection Absolue' : language === 'en' ? 'Absolute Perfection' : 'Perfección Absoluta',
+                            desc: language === 'fr' ? '30 journées parfaites - tu es incroyable !' : language === 'en' ? '30 perfect days - you\'re incredible!' : '30 días perfectos - ¡eres increíble!'
+                          }
                         ];
 
                         return badges.map((badge, index) => {
@@ -3688,20 +3883,37 @@ export default function GlowUpChallengeApp() {
                       {/* Message d'encouragement de Glowee */}
                       <div className={`p-4 rounded-lg mt-4 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/20 to-pink-900/20' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
                         <div className="flex items-start gap-3">
-                          <div className="relative w-10 h-10 flex-shrink-0">
-                            <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
+                          <div className="relative w-12 h-12 flex-shrink-0">
+                            <Image src="/Glowee/glowee-felicite.webp" alt="Glowee" fill className="object-contain" />
                           </div>
-                          <p className="text-sm italic text-stone-700 dark:text-stone-300">
+                          <p className="text-sm italic text-gray-700 dark:text-stone-300">
                             {(() => {
-                              const completedDays = Object.keys(newMeProgress).filter(day => {
-                                const dayProgress = newMeProgress[parseInt(day)];
-                                return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
-                              }).length;
-
-                              if (completedDays >= 20) return t.newMe.encouragement4;
-                              if (completedDays >= 10) return t.newMe.encouragement3;
-                              if (completedDays >= 5) return t.newMe.encouragement2;
-                              return t.newMe.encouragement1;
+                              if (perfectDays >= 20) {
+                                return language === 'fr' 
+                                  ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨" 
+                                  : language === 'en'
+                                  ? "You're a real inspiration! Keep up this incredible pace ✨"
+                                  : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
+                              }
+                              if (perfectDays >= 10) {
+                                return language === 'fr'
+                                  ? "Wow ! Tu brilles déjà tellement plus 🌟"
+                                  : language === 'en'
+                                  ? "Wow! You're already shining so much brighter 🌟"
+                                  : "¡Wow! Ya brillas mucho más 🌟";
+                              }
+                              if (perfectDays >= 3) {
+                                return language === 'fr'
+                                  ? "Je suis fière de toi ! Chaque jour compte 💖"
+                                  : language === 'en'
+                                  ? "I'm proud of you! Every day counts 💖"
+                                  : "¡Estoy orgullosa de ti! Cada día cuenta 💖";
+                              }
+                              return language === 'fr'
+                                ? "Tu es au début d'un parcours magnifique. Je suis là pour toi ! 🌸"
+                                : language === 'en'
+                                ? "You're at the start of a beautiful journey. I'm here for you! 🌸"
+                                : "Estás al comienzo de un hermoso viaje. ¡Estoy aquí para ti! 🌸";
                             })()}
                           </p>
                         </div>

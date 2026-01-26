@@ -3918,21 +3918,26 @@ export default function GlowUpChallengeApp() {
                           </div>
                           <p className="text-sm italic text-gray-700 dark:text-stone-300">
                             {(() => {
-                              if (perfectDays >= 20) {
+                              const perfectDaysCount = allDates.filter(date => {
+                                const dayProgress = beautyPillarsProgress[date];
+                                return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
+                              }).length;
+                              
+                              if (perfectDaysCount >= 20) {
                                 return language === 'fr' 
                                   ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨" 
                                   : language === 'en'
                                   ? "You're a real inspiration! Keep up this incredible pace ✨"
                                   : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
                               }
-                              if (perfectDays >= 10) {
+                              if (perfectDaysCount >= 10) {
                                 return language === 'fr'
                                   ? "Wow ! Tu brilles déjà tellement plus 🌟"
                                   : language === 'en'
                                   ? "Wow! You're already shining so much brighter 🌟"
                                   : "¡Wow! Ya brillas mucho más 🌟";
                               }
-                              if (perfectDays >= 3) {
+                              if (perfectDaysCount >= 3) {
                                 return language === 'fr'
                                   ? "Je suis fière de toi ! Chaque jour compte 💖"
                                   : language === 'en'

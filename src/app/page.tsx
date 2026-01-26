@@ -2260,7 +2260,7 @@ export default function GlowUpChallengeApp() {
                       return (
                       <div
                         key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-4' : 'py-4 pt-9'}`}
+                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-6' : 'py-6 pt-11'}`}
                       >
                         {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
                         <div className="absolute -top-3 left-4">
@@ -2554,14 +2554,90 @@ export default function GlowUpChallengeApp() {
 
               {/* Onglet Growth */}
               {habitTab === 'growth' && (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">📈</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
-                  </h3>
-                  <p className="text-gray-600">
-                    {language === 'fr' ? 'Suivez votre progression' : language === 'en' ? 'Track your progress' : 'Sigue tu progreso'}
-                  </p>
+                <div className="space-y-4">
+                  {getDefaultHabitBlocks().map((block) => (
+                    <div key={block.id} className="bg-white rounded-xl p-4 shadow-md">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-2xl">{block.icon}</span>
+                        <h3 className="text-sm font-bold text-gray-800">{block.name}</h3>
+                      </div>
+                      
+                      {/* Afficher chaque habitude du bloc */}
+                      {block.habits.map((habit) => {
+                        const habitId = habit.id;
+                        
+                        return (
+                          <div key={habitId} className="mb-4 last:mb-0">
+                            <p className="text-xs font-medium text-gray-700 mb-2">{habit.label}</p>
+                            
+                            {/* 30 cases sur 2 lignes */}
+                            <div className="grid grid-cols-15 gap-1">
+                              {Array.from({ length: 30 }, (_, dayIndex) => {
+                                const day = dayIndex + 1;
+                                const dayData = trackerProgress[day];
+                                const isCompleted = dayData?.[habitId] || false;
+                                
+                                return (
+                                  <div
+                                    key={day}
+                                    className={`aspect-square rounded-sm transition-all ${
+                                      isCompleted
+                                        ? 'bg-gradient-to-br from-green-400 to-green-500'
+                                        : 'bg-gray-200'
+                                    }`}
+                                    title={`Jour ${day}`}
+                                  />
+                                );
+                              })}
+                            </div>
+                            
+                            {/* Statistique */}
+                            <p className="text-xs text-gray-500 mt-1">
+                              {Object.keys(trackerProgress).filter(day => trackerProgress[parseInt(day)]?.[habitId]).length} / 30 jours
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                  
+                  {/* Habitudes personnalisées */}
+                  {customHabits.map((habit) => (
+                    <div key={habit.id} className="bg-white rounded-xl p-4 shadow-md">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-2xl">{habit.type === 'good' ? '✅' : '🚫'}</span>
+                        <h3 className="text-sm font-bold text-gray-800">{habit.label}</h3>
+                      </div>
+                      
+                      {/* 30 cases sur 2 lignes */}
+                      <div className="grid grid-cols-15 gap-1">
+                        {Array.from({ length: 30 }, (_, dayIndex) => {
+                          const day = dayIndex + 1;
+                          const dayData = trackerProgress[day];
+                          const isCompleted = dayData?.[habit.id] || false;
+                          
+                          return (
+                            <div
+                              key={day}
+                              className={`aspect-square rounded-sm transition-all ${
+                                isCompleted
+                                  ? habit.type === 'good'
+                                    ? 'bg-gradient-to-br from-green-400 to-green-500'
+                                    : 'bg-gradient-to-br from-red-400 to-red-500'
+                                  : 'bg-gray-200'
+                              }`}
+                              title={`Jour ${day}`}
+                            />
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Statistique */}
+                      <p className="text-xs text-gray-500 mt-1">
+                        {Object.keys(trackerProgress).filter(day => trackerProgress[parseInt(day)]?.[habit.id]).length} / 30 jours
+                      </p>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -2591,16 +2667,28 @@ export default function GlowUpChallengeApp() {
             <div className="px-4 pb-2">
               <div className="flex gap-2 max-w-lg mx-auto">
                 <button
-                  onClick={() => setPlanningTab('my-tasks')}
-                  className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                    planningTab === 'my-tasks'
+                  onClick={() => setHabitTab('tasks')}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    habitTab === 'tasks'
                       ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
                       : theme === 'dark'
                         ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
                   }`}
                 >
-                  {language === 'fr' ? 'Mes tâches' : language === 'en' ? 'My tasks' : 'Mis tareas'}
+                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
+                </button>
+                <button
+                  onClick={() => setHabitTab('growth')}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    habitTab === 'growth'
+                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                  }`}
+                >
+                  {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
                 </button>
                 <button
                   onClick={() => setPlanningTab('glowee-tasks')}

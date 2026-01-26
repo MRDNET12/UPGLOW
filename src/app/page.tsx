@@ -1597,93 +1597,44 @@ export default function GlowUpChallengeApp() {
             {/* Petits Succès Compact */}
             <SmallWinsCompact theme={theme} />
 
-            {/* Grille de cartes - 3 colonnes pour les 3 premières cartes */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* Grille de cartes - 2 colonnes pour Mes Habitudes et Ma semaine */}
+            <div className="grid grid-cols-2 gap-3">
               {/* Carte Mes Habitudes */}
               <Card
                 className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('trackers')}
               >
-                <CardContent className="p-3 relative overflow-hidden">
-                  <div className="absolute -top-1 -right-1 text-3xl opacity-10 drop-shadow-lg">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
                     📚
                   </div>
-                  <div className="relative z-10">
-                    <h3 className="text-xs font-bold text-gray-800 mb-2">
+                  <div className="relative z-10 flex flex-col items-center justify-center gap-2">
+                    <div className="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <span className="text-2xl">📝</span>
+                    </div>
+                    <h3 className="text-sm font-bold text-gray-800 text-center">
                       {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                     </h3>
-                    <div className="px-2 py-1.5 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
-                      {(() => {
-                        const todayTracker = getTodayTracker();
-                        const completedHabits = Object.values(todayTracker.habits).filter(Boolean).length;
-                        const totalHabits = 5 + customHabits.length;
-                        return `${completedHabits}/${totalHabits}`;
-                      })()}
-                    </div>
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Carte Objectifs - MASQUÉE */}
-              {/* <Card
-                className="border-none shadow-xl shadow-gray-200/50 bg-gradient-to-br from-gray-700 via-gray-600 to-gray-700 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
-                onClick={() => setCurrentView('my-goals')}
-              >
-                <CardContent className="p-3 relative overflow-hidden">
-                  <div className="absolute -top-1 -right-1 text-3xl opacity-10 drop-shadow-lg">
-                    🎯
-                  </div>
-                  <div className="relative z-10">
-                    <div className="flex flex-col items-center gap-1.5">
-                      <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <Target className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="font-bold text-xs text-white text-center">
-                        {language === 'fr' ? 'Objectifs' : language === 'en' ? 'Goals' : 'Objetivos'}
-                      </h3>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card> */}
 
               {/* Ma semaine */}
               <Card
                 className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
                 onClick={() => setCurrentView('routine')}
               >
-                <CardContent className="p-3 relative overflow-hidden">
-                  {/* Emoji chef en bas touchant la bordure */}
-                  <div className="absolute -bottom-1 -right-1 text-3xl opacity-10 drop-shadow-lg">
+                <CardContent className="p-4 relative overflow-hidden">
+                  <div className="absolute -bottom-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
                     👩‍🍳
                   </div>
-                  <div className="relative z-10">
-                    <h3 className="text-xs font-bold text-gray-800 mb-2 text-center">
+                  <div className="relative z-10 flex flex-col items-center justify-center gap-2">
+                    <div className="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <Calendar className="w-6 h-6 text-pink-400" />
+                    </div>
+                    <h3 className="text-sm font-bold text-gray-800 text-center">
                       {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                     </h3>
-                    <div className="px-2 py-1.5 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-medium rounded-full text-center">
-                      {(() => {
-                        // Calculer les dates de la semaine en cours (lundi à dimanche)
-                        const today = new Date();
-                        const dayOfWeek = today.getDay();
-                        const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                        const monday = new Date(today);
-                        monday.setDate(today.getDate() + diffToMonday);
-                        const sunday = new Date(monday);
-                        sunday.setDate(monday.getDate() + 6);
-
-                        // Filtrer les tâches utilisateur de la semaine
-                        const userTasksThisWeek = tasksWithDates.filter(task => {
-                          if (task.type !== 'user') return false;
-                          const taskDate = new Date(task.date);
-                          return taskDate >= monday && taskDate <= sunday;
-                        });
-
-                        const completedUserTasks = userTasksThisWeek.filter(task => task.completed).length;
-                        const totalUserTasks = userTasksThisWeek.length;
-
-                        return `${completedUserTasks}/${totalUserTasks}`;
-                      })()}
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -1710,25 +1661,25 @@ export default function GlowUpChallengeApp() {
               </CardContent>
             </Card> */}
 
-            {/* Carte 8 Limites */}
+            {/* Carte 8 Limites - Réduite de 40% */}
             <Card
-              className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+              className="border-none shadow-lg shadow-purple-100/50 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
               onClick={() => setCurrentView('boundaries')}
             >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center shadow-lg">
-                    <span className="text-xl drop-shadow-sm">🛡️</span>
+              <CardContent className="p-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-md">
+                    <Shield className="w-3.5 h-3.5 text-purple-400" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-sm text-gray-800">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-xs text-gray-800 truncate">
                       {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
                     </h3>
-                    <p className="text-[10px] text-gray-500 font-medium">
-                      {language === 'fr' ? 'Pour ta paix intérieure' : language === 'en' ? 'For your inner peace' : 'Para tu paz interior'}
+                    <p className="text-[9px] text-gray-500 font-medium truncate">
+                      {language === 'fr' ? 'Pour ta paix' : language === 'en' ? 'For your peace' : 'Para tu paz'}
                     </p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-pink-400" />
+                  <ChevronRight className="w-4 h-4 text-purple-400 flex-shrink-0" />
                 </div>
               </CardContent>
             </Card>

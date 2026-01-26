@@ -3753,31 +3753,31 @@ export default function GlowUpChallengeApp() {
 
                         const hasStarted = allDates.length > 0;
 
-                        // Calcul des jours avec habitude spécifique complétée
-                        const waterDays = Object.keys(newMeProgress).filter(day => {
-                          const dayProgress = newMeProgress[parseInt(day)];
-                          return dayProgress && dayProgress['1']; // ID 1 = Eau 2L
+                        // Calcul des jours avec choix spécifiques de beauté
+                        const skincareDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress.selectedChoice === 'skincare';
                         }).length;
 
-                        const walkingDays = Object.keys(newMeProgress).filter(day => {
-                          const dayProgress = newMeProgress[parseInt(day)];
-                          return dayProgress && dayProgress['3']; // ID 3 = Marche 30 min
+                        const faceMassageDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress.selectedChoice === 'face-massage';
                         }).length;
 
-                        const skincareDays = Object.keys(newMeProgress).filter(day => {
-                          const dayProgress = newMeProgress[parseInt(day)];
-                          return dayProgress && dayProgress['6']; // ID 6 = Skincare
+                        const bodyCreamDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress.selectedChoice === 'body-cream';
                         }).length;
 
-                        const anyDayStarted = Object.keys(newMeProgress).some(day => {
-                          const dayProgress = newMeProgress[parseInt(day)];
-                          return dayProgress && Object.values(dayProgress).some(Boolean);
-                        });
+                        const lashesHairDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress.selectedChoice === 'lashes-hair';
+                        }).length;
 
-                        const hasPerfectDay = Object.keys(newMeProgress).some(day => {
-                          const dayProgress = newMeProgress[parseInt(day)];
-                          return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
-                        });
+                        const dryBrushingDays = allDates.filter(date => {
+                          const dayProgress = beautyPillarsProgress[date];
+                          return dayProgress && dayProgress.selectedChoice === 'dry-brushing';
+                        }).length;
 
                         const badges = [
                           {
@@ -3851,6 +3851,36 @@ export default function GlowUpChallengeApp() {
                             icon: '✨',
                             title: language === 'fr' ? 'Perfection Absolue' : language === 'en' ? 'Absolute Perfection' : 'Perfección Absoluta',
                             desc: language === 'fr' ? '30 journées parfaites - tu es incroyable !' : language === 'en' ? '30 perfect days - you\'re incredible!' : '30 días perfectos - ¡eres increíble!'
+                          },
+                          {
+                            condition: skincareDays >= 8,
+                            icon: '🧼',
+                            title: language === 'fr' ? 'Expert Skincare' : language === 'en' ? 'Skincare Expert' : 'Experta en Skincare',
+                            desc: language === 'fr' ? '8 jours de routine skincare parfaite' : language === 'en' ? '8 days of perfect skincare routine' : '8 días de rutina skincare perfecta'
+                          },
+                          {
+                            condition: faceMassageDays >= 5,
+                            icon: '💆‍♀️',
+                            title: language === 'fr' ? 'Massage Pro' : language === 'en' ? 'Massage Pro' : 'Pro del Masaje',
+                            desc: language === 'fr' ? '5 jours de massage visage' : language === 'en' ? '5 days of face massage' : '5 días de masaje facial'
+                          },
+                          {
+                            condition: bodyCreamDays >= 5,
+                            icon: '🧴',
+                            title: language === 'fr' ? 'Peau Douce' : language === 'en' ? 'Soft Skin' : 'Piel Suave',
+                            desc: language === 'fr' ? '5 jours de crème corps' : language === 'en' ? '5 days of body cream' : '5 días de crema corporal'
+                          },
+                          {
+                            condition: lashesHairDays >= 4,
+                            icon: '👁️',
+                            title: language === 'fr' ? 'Cils & Cheveux Parfaits' : language === 'en' ? 'Perfect Lashes & Hair' : 'Pestañas y Cabello Perfectos',
+                            desc: language === 'fr' ? '4 jours de soins cils/cheveux' : language === 'en' ? '4 days of lashes/hair care' : '4 días de cuidado pestañas/cabello'
+                          },
+                          {
+                            condition: dryBrushingDays >= 3,
+                            icon: '🪥',
+                            title: language === 'fr' ? 'Brossage Expert' : language === 'en' ? 'Brushing Expert' : 'Experta en Cepillado',
+                            desc: language === 'fr' ? '3 jours de brossage à sec' : language === 'en' ? '3 days of dry brushing' : '3 días de cepillado en seco'
                           }
                         ];
 

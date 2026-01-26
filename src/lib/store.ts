@@ -216,10 +216,12 @@ interface AppState {
 
   // Beauty Pillars (Challenge Beauté et Corps)
   beautyPillarsProgress: BeautyPillarsProgress;
+  beautyValidatedDates: string[];
   toggleBeautyPillar: (date: string, pillarId: string) => void;
   selectBeautyChoice: (date: string, choiceId: string) => void;
   toggleBeautySubtask: (date: string, subtaskId: string) => void;
   getBeautyProgressForDate: (date: string) => BeautyPillarsProgress[string] | undefined;
+  validateBeautyDate: (date: string) => void;
 }
 
 // Helper function to get week number
@@ -819,6 +821,16 @@ export const useStore = create<AppState>()(
 
       // Beauty Pillars (Challenge Beauté et Corps)
       beautyPillarsProgress: {},
+      beautyValidatedDates: [],
+
+      validateBeautyDate: (date) => {
+        const { beautyValidatedDates } = get();
+        if (!beautyValidatedDates.includes(date)) {
+          set({
+            beautyValidatedDates: [...beautyValidatedDates, date]
+          });
+        }
+      },
 
       toggleBeautyPillar: (date, pillarId) => {
         const { beautyPillarsProgress } = get();

@@ -121,10 +121,12 @@ export default function GlowUpChallengeApp() {
     canAccessApp,
     // Beauty Pillars
     beautyPillarsProgress,
+    beautyValidatedDates,
     toggleBeautyPillar,
     selectBeautyChoice,
     toggleBeautySubtask,
-    getBeautyProgressForDate
+    getBeautyProgressForDate,
+    validateBeautyDate
   } = useStore();
 
   const { t } = useTranslation();
@@ -225,7 +227,6 @@ export default function GlowUpChallengeApp() {
   const [beautyHasShownFirstMessage, setBeautyHasShownFirstMessage] = useState(false);
   const [showBeautyStreakPopup, setShowBeautyStreakPopup] = useState(false);
   const [showBeautyIncompletePopup, setShowBeautyIncompletePopup] = useState(false);
-  const [beautyValidatedDates, setBeautyValidatedDates] = useState<Set<string>>(new Set());
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
@@ -3210,7 +3211,7 @@ export default function GlowUpChallengeApp() {
                     const isToday = index === 4;
                     const dateString = getLocalDateString(date);
                     const isSelected = dateString === beautySelectedDate;
-                    const isValidated = beautyValidatedDates.has(dateString);
+                    const isValidated = beautyValidatedDates.includes(dateString);
                     const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
                     const dayNumber = date.getDate();
                     return (
@@ -3508,7 +3509,7 @@ export default function GlowUpChallengeApp() {
                         
                         if (completedCount === 3) {
                           setShowBeautyStreakPopup(true);
-                          setBeautyValidatedDates(prev => new Set(prev).add(beautySelectedDate));
+                          validateBeautyDate(beautySelectedDate);
                         } else {
                           setShowBeautyIncompletePopup(true);
                         }
@@ -3552,7 +3553,7 @@ export default function GlowUpChallengeApp() {
                         <div className="text-center p-3 rounded-lg bg-gradient-to-br from-orange-50 to-pink-50">
                           <div className="text-2xl font-bold text-orange-500">
                             {(() => {
-                              const validatedDates = Array.from(beautyValidatedDates);
+                              const validatedDates = beautyValidatedDates;
                               return validatedDates.length;
                             })()}
                           </div>
@@ -3607,7 +3608,7 @@ export default function GlowUpChallengeApp() {
                             thisDate.setDate(startDate.getDate() + dayIndex - 1);
                             const dateString = getLocalDateString(thisDate);
                             
-                            const isValidated = beautyValidatedDates.has(dateString);
+                            const isValidated = beautyValidatedDates.includes(dateString);
                             const dayProgress = beautyPillarsProgress[dateString];
                             const hasProgress = dayProgress && (dayProgress['walk-sport'] || dayProgress['water'] || dayProgress['self-care-choice']);
                             const isToday = getLocalDateString(new Date()) === dateString;
@@ -3711,7 +3712,7 @@ export default function GlowUpChallengeApp() {
                     <CardContent className="space-y-3">
                       {(() => {
                         // Calculs pour le challenge beauté
-                        const validatedDays = Array.from(beautyValidatedDates).length;
+                        const validatedDays = beautyValidatedDates.length;
                         const allDates = Object.keys(beautyPillarsProgress);
                         
                         const perfectDays = allDates.filter(date => {
@@ -3735,7 +3736,7 @@ export default function GlowUpChallengeApp() {
                         }).length;
 
                         // Calcul de la série actuelle
-                        const sortedDates = Array.from(beautyValidatedDates).sort();
+                        const sortedDates = beautyValidatedDates.sort();
                         let currentStreak = 0;
                         const today = getLocalDateString(new Date());
                         
@@ -3918,7 +3919,8 @@ export default function GlowUpChallengeApp() {
                           </div>
                           <p className="text-sm italic text-gray-700 dark:text-stone-300">
                             {(() => {
-                              const perfectDaysCount = allDates.filter(date => {
+                              const allDatesForMessage = Object.keys(beautyPillarsProgress);
+                              const perfectDaysCount = allDatesForMessage.filter(date => {
                                 const dayProgress = beautyPillarsProgress[date];
                                 return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
                               }).length;

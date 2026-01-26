@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
@@ -219,6 +219,10 @@ export default function GlowUpChallengeApp() {
   // États pour Beauty Pillars (Challenge Beauté et Corps)
   const [beautySelectedDate, setBeautySelectedDate] = useState<string>(getLocalDateString(new Date()));
   const [beautyChoiceExpanded, setBeautyChoiceExpanded] = useState(false);
+  const [beautyGloweeMessageIndex, setBeautyGloweeMessageIndex] = useState(0);
+  const [beautyGloweeDisplayedMessage, setBeautyGloweeDisplayedMessage] = useState('');
+  const [beautyGloweeIsTyping, setBeautyGloweeIsTyping] = useState(true);
+  const [beautyHasShownFirstMessage, setBeautyHasShownFirstMessage] = useState(false);
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
@@ -631,6 +635,39 @@ export default function GlowUpChallengeApp() {
 
     return () => clearInterval(interval);
   }, [isHydrated]);
+
+  // Effet typing pour la Glowee du challenge beauté
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const langMessages = beautyGloweeMessages[language] || beautyGloweeMessages.fr;
+    const currentMessage = langMessages[beautyGloweeMessageIndex % langMessages.length];
+
+    const hasShownTyping = localStorage.getItem('beautyGloweeTypingShown');
+
+    if (!hasShownTyping && !beautyHasShownFirstMessage) {
+      setBeautyGloweeIsTyping(true);
+      let charIndex = 0;
+      setBeautyGloweeDisplayedMessage('');
+
+      const typingInterval = setInterval(() => {
+        if (charIndex < currentMessage.length) {
+          setBeautyGloweeDisplayedMessage(currentMessage.slice(0, charIndex + 1));
+          charIndex++;
+        } else {
+          clearInterval(typingInterval);
+          setBeautyGloweeIsTyping(false);
+          setBeautyHasShownFirstMessage(true);
+          localStorage.setItem('beautyGloweeTypingShown', 'true');
+        }
+      }, 30);
+
+      return () => clearInterval(typingInterval);
+    } else {
+      setBeautyGloweeDisplayedMessage(currentMessage);
+      setBeautyGloweeIsTyping(false);
+    }
+  }, [isHydrated, beautyGloweeMessageIndex, language, beautyHasShownFirstMessage]);
 
   // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
@@ -3239,41 +3276,6 @@ export default function GlowUpChallengeApp() {
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Date Selector - Exact copy from Mes Habitudes */}
-                  <div className="flex justify-between items-center mb-6 px-2">
-                    {(() => {
-                      const today = new Date();
-                      const dates: Date[] = [];
-                      // Générer 9 jours (4 avant, aujourd'hui, 4 après)
-                      for (let i = -4; i <= 4; i++) {
-                        const date = new Date(today);
-                        date.setDate(today.getDate() + i);
-                        dates.push(date);
-                      }
-                      return dates.map((date, index) => {
-                        const isToday = index === 4;
-                        const dateString = getLocalDateString(date);
-                        const isSelected = dateString === beautySelectedDate;
-                        const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
-                        const dayNumber = date.getDate();
-                        return (
-                          <div
-                            key={index}
-                            className={`flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}
-                            onClick={() => setBeautySelectedDate(dateString)}
-                          >
-                            <span className={`text-[10px] uppercase ${isSelected || isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
-                              {dayName}
-                            </span>
-                            <span className={`text-lg font-bold ${isSelected || isToday ? 'text-gray-900' : 'text-gray-400'}`}>
-                              {dayNumber}
-                            </span>
-                          </div>
-                        );
-                      });
-                    })()}
-                  </div>
-
                   {/* Header with progress */}
                   <div className="text-center space-y-2">
                     <h2 className="text-xl font-bold text-gray-800">🌱 3 PILIERS QUOTIDIENS</h2>
@@ -3335,38 +3337,34 @@ export default function GlowUpChallengeApp() {
                                 beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
                               }`}
                             >
-                              <div className="space-y-3">
-                                {/* Message Glowee - Exact copy from home page */}
-                                <div className="relative">
-                                  <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
-                                    <CardContent className="p-0">
-                                      <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
-                                        {/* Message avec rotation */}
-                                        <div className="flex-1 min-w-0">
-                                          <p className="text-[10px] text-gray-700 leading-tight font-medium">
-                                            {(() => {
-                                              const messages = beautyGloweeMessages[language];
-                                              const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-                                              return messages[dayOfYear % messages.length];
-                                            })()}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
+                                <div className="space-y-3">
+                                 {/* Message Glowee - With typing effect */}
+                                 <div className="relative">
+                                   <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                                     <CardContent className="p-0">
+                                       <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
+                                         <div className="flex-1 min-w-0">
+                                           <p className="text-[10px] text-gray-700 leading-tight font-medium">
+                                             {beautyGloweeDisplayedMessage}
+                                             {beautyGloweeIsTyping && <span className="animate-pulse">|</span>}
+                                           </p>
+                                         </div>
+                                       </div>
+                                     </CardContent>
+                                   </Card>
 
-                                  {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
-                                  <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl blur-md opacity-40"></div>
-                                    <Image
-                                      src="/Glowee/glowee.webp"
-                                      alt="Glowee"
-                                      width={96}
-                                      height={104}
-                                      className="object-contain relative z-10 drop-shadow-2xl"
-                                    />
-                                  </div>
-                                </div>
+                                   {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
+                                   <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
+                                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-40"></div>
+                                     <Image
+                                       src="/Glowee/glowee.webp"
+                                       alt="Glowee"
+                                       width={96}
+                                       height={104}
+                                       className="object-contain relative z-10 drop-shadow-2xl"
+                                     />
+                                   </div>
+                                 </div>
 
                                 {/* Barre verticale */}
                                 <div className="flex justify-center">

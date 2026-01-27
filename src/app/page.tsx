@@ -83,10 +83,7 @@ export default function GlowUpChallengeApp() {
     toggleDayCompletion,
     updateDayNotes,
     toggleActionCompletion,
-    isActionCompleted,
-    trackers,
-    updateTracker,
-    getTrackerByDate,
+isActionCompleted,
     routine,
     updateRoutine,
     routineCompletedDates,
@@ -126,7 +123,11 @@ export default function GlowUpChallengeApp() {
     selectBeautyChoice,
     toggleBeautySubtask,
     getBeautyProgressForDate,
-    validateBeautyDate
+    validateBeautyDate,
+    // Trackers
+    trackers,
+    updateTracker,
+    getTrackerByDate
   } = useStore();
 
   const { t } = useTranslation();
@@ -2504,7 +2505,17 @@ export default function GlowUpChallengeApp() {
               )}
 
               {/* Onglet Growth */}
-              {habitTab === 'growth' && (
+              {habitTab === 'growth' && (() => {
+                // Convertir les trackers en trackerProgress (format attendu)
+                const trackerProgress: Record<number, { [key: string]: boolean }> = {};
+                trackers.forEach(tracker => {
+                  const day = parseInt(tracker.date.split('-').slice(1).join(''));
+                  if (!isNaN(day) && day >= 1 && day <= 30) {
+                    trackerProgress[day] = tracker.habits || {};
+                  }
+                });
+
+                return (
                 <div className="space-y-4">
                   {getDefaultHabitBlocks().map((block) => (
                     <div key={block.id} className="bg-white rounded-xl p-4 shadow-md">
@@ -2589,8 +2600,9 @@ export default function GlowUpChallengeApp() {
                       </p>
                     </div>
                   ))}
-                </div>
-              )}
+</div>
+                );
+              })()()}
             </div>
           </div>
         )}

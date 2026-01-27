@@ -3735,7 +3735,7 @@ isActionCompleted,
                           checkDate.setDate(checkDate.getDate() + i);
                           const checkDateString = getLocalDateString(checkDate);
                           
-                          if (beautyValidatedDates.has(checkDateString)) {
+                          if (beautyValidatedDates.includes(checkDateString)) {
                             currentStreak++;
                           } else {
                             break;

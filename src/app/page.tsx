@@ -2412,10 +2412,334 @@ isActionCompleted,
             </div>
 
             <div className="px-4 space-y-3">
-              {/* Simple placeholder content for now */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-                <p className="text-gray-600">Page de progression des habitudes</p>
+              {/* Global Stats Section */}
+              <div className="grid grid-cols-3 gap-3">
+                {/* Total Habits Card */}
+                <div className="bg-white rounded-2xl p-4 shadow-sm">
+                  <div className="flex flex-col items-center">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
+                      <Target className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {newMeHabits.length + customHabits.length}
+                    </p>
+                    <p className="text-xs text-gray-500 text-center">
+                      Total Habitudes
+                    </p>
+                  </div>
+                </div>
+
+                {/* Completed Today Card */}
+                <div className="bg-white rounded-2xl p-4 shadow-sm">
+                  <div className="flex flex-col items-center">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                      <CheckSquare className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {(() => {
+                        const today = getLocalDateString();
+                        const completedNewMe = newMeHabits.filter(h => h.completed).length;
+                        const completedCustom = customHabits.filter(h => {
+                          const tracker = trackers.find(t => t.date === today);
+                          return tracker?.habits?.[h.id] || false;
+                        }).length;
+                        return completedNewMe + completedCustom;
+                      })()}
+                    </p>
+                    <p className="text-xs text-gray-500 text-center">
+                      Complétées Aujourd'hui
+                    </p>
+                  </div>
+                </div>
+
+                {/* Current Streak Card */}
+                <div className="bg-white rounded-2xl p-4 shadow-sm">
+                  <div className="flex flex-col items-center">
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-2">
+                      <Zap className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {(() => {
+                        // Calculate streak: consecutive days with at least 50% completion
+                        let streak = 0;
+                        const today = new Date();
+                        const totalHabits = newMeHabits.length + customHabits.length;
+                        
+                        for (let i = 0; i < 365; i++) {
+                          const checkDate = new Date(today);
+                          checkDate.setDate(today.getDate() - i);
+                          const dateStr = getLocalDateString(checkDate);
+                          
+                          const tracker = trackers.find(t => t.date === dateStr);
+                          const completedCustom = customHabits.filter(h => 
+                            tracker?.habits?.[h.id] || false
+                          ).length;
+                          
+                          // For newMe habits, check current state for today, localStorage for past
+                          let completedNewMe = 0;
+                          if (i === 0) {
+                            completedNewMe = newMeHabits.filter(h => h.completed).length;
+                          } else {
+                            // For past days, we don't have historical New Me data
+                            // So we assume they were completed if we have tracker data
+                            completedNewMe = newMeHabits.filter(h => {
+                              const saved = localStorage.getItem(`newme_${h.id}_${dateStr}`);
+                              return saved === 'true';
+                            }).length;
+                          }
+                          
+                          const totalCompleted = completedNewMe + completedCustom;
+                          const completionRate = totalHabits > 0 ? totalCompleted / totalHabits : 0;
+                          
+                          if (completionRate >= 0.5) {
+                            streak++;
+                          } else if (i > 0) {
+                            break;
+                          }
+                        }
+                        return streak;
+                      })()}
+                    </p>
+                    <p className="text-xs text-gray-500 text-center">
+                      Jours de Série
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {/* 30-Day Calendar Overview */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-emerald-600" />
+                  Vue des 30 Derniers Jours
+                </h2>
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                  {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, idx) => (
+                    <div key={idx} className="text-center text-xs text-gray-400 font-medium">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-1">
+                  {(() => {
+                    const days = [];
+                    const today = new Date();
+                    const totalHabits = newMeHabits.length + customHabits.length;
+                    
+                    // Generate last 30 days
+                    for (let i = 29; i >= 0; i--) {
+                      const date = new Date(today);
+                      date.setDate(today.getDate() - i);
+                      const dateStr = getLocalDateString(date);
+                      const isToday = i === 0;
+                      
+                      // Calculate completion for this date
+                      const tracker = trackers.find(t => t.date === dateStr);
+                      const completedCustom = customHabits.filter(h => 
+                        tracker?.habits?.[h.id] || false
+                      ).length;
+                      
+                      let completedNewMe = 0;
+                      if (isToday) {
+                        completedNewMe = newMeHabits.filter(h => h.completed).length;
+                      } else {
+                        completedNewMe = newMeHabits.filter(h => {
+                          const saved = localStorage.getItem(`newme_${h.id}_${dateStr}`);
+                          return saved === 'true';
+                        }).length;
+                      }
+                      
+                      const totalCompleted = completedNewMe + completedCustom;
+                      const isCompleted = totalHabits > 0 && totalCompleted >= totalHabits / 2;
+                      
+                      days.push(
+                        <div
+                          key={dateStr}
+                          className={`
+                            aspect-square rounded-md flex items-center justify-center text-xs font-medium
+                            ${isCompleted ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500'}
+                            ${isToday ? 'ring-2 ring-orange-400 ring-offset-1' : ''}
+                          `}
+                          title={`${date.toLocaleDateString('fr-FR')}: ${totalCompleted}/${totalHabits}`}
+                        >
+                          {date.getDate()}
+                        </div>
+                      );
+                    }
+                    return days;
+                  })()}
+                </div>
+                <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-emerald-500"></div>
+                    <span>50%+ complété</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-gray-200"></div>
+                    <span>Moins de 50%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* New Me Habits Section */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  Mes Habitudes New Me
+                </h2>
+                <div className="space-y-3">
+                  {newMeHabits.map((habit) => {
+                    // Calculate 30-day completion rate for this habit
+                    let completedDays = 0;
+                    const today = new Date();
+                    
+                    for (let i = 0; i < 30; i++) {
+                      const checkDate = new Date(today);
+                      checkDate.setDate(today.getDate() - i);
+                      const dateStr = getLocalDateString(checkDate);
+                      
+                      if (i === 0) {
+                        if (habit.completed) completedDays++;
+                      } else {
+                        const saved = localStorage.getItem(`newme_${habit.id}_${dateStr}`);
+                        if (saved === 'true') completedDays++;
+                      }
+                    }
+                    
+                    const completionRate = Math.round((completedDays / 30) * 100);
+                    
+                    // Generate 10-day mini progress bar
+                    const miniProgress = [];
+                    for (let i = 9; i >= 0; i--) {
+                      const date = new Date(today);
+                      date.setDate(today.getDate() - i);
+                      const dateStr = getLocalDateString(date);
+                      
+                      let wasCompleted = false;
+                      if (i === 0) {
+                        wasCompleted = habit.completed;
+                      } else {
+                        const saved = localStorage.getItem(`newme_${habit.id}_${dateStr}`);
+                        wasCompleted = saved === 'true';
+                      }
+                      
+                      miniProgress.push(wasCompleted);
+                    }
+                    
+                    return (
+                      <div key={habit.id} className="flex items-center gap-3 p-2 rounded-xl bg-gray-50">
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl shadow-sm">
+                          {habit.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">
+                            {habit.label}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex gap-0.5">
+                              {miniProgress.map((completed, idx) => (
+                                <div
+                                  key={idx}
+                                  className={`w-2 h-2 rounded-full ${completed ? 'bg-emerald-500' : 'bg-gray-300'}`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-emerald-600">{completionRate}%</p>
+                          <p className="text-xs text-gray-400">30 jours</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Custom Habits Section */}
+              {customHabits.length > 0 && (
+                <div className="bg-white rounded-2xl p-4 shadow-sm">
+                  <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-blue-600" />
+                    Mes Habitudes Personnalisées
+                  </h2>
+                  <div className="space-y-3">
+                    {customHabits.map((habit) => {
+                      // Calculate 30-day completion rate from trackers
+                      let completedDays = 0;
+                      const today = new Date();
+                      
+                      for (let i = 0; i < 30; i++) {
+                        const checkDate = new Date(today);
+                        checkDate.setDate(today.getDate() - i);
+                        const dateStr = getLocalDateString(checkDate);
+                        
+                        const tracker = trackers.find(t => t.date === dateStr);
+                        if (tracker?.habits?.[habit.id]) {
+                          completedDays++;
+                        }
+                      }
+                      
+                      const completionRate = Math.round((completedDays / 30) * 100);
+                      
+                      // Generate 10-day mini progress bar from trackers
+                      const miniProgress = [];
+                      for (let i = 9; i >= 0; i--) {
+                        const date = new Date(today);
+                        date.setDate(today.getDate() - i);
+                        const dateStr = getLocalDateString(date);
+                        
+                        const tracker = trackers.find(t => t.date === dateStr);
+                        miniProgress.push(tracker?.habits?.[habit.id] || false);
+                      }
+                      
+                      return (
+                        <div key={habit.id} className="flex items-center gap-3 p-2 rounded-xl bg-gray-50">
+                          <div className={`
+                            w-10 h-10 rounded-full flex items-center justify-center shadow-sm
+                            ${habit.type === 'good' ? 'bg-emerald-100' : 'bg-rose-100'}
+                          `}>
+                            {habit.type === 'good' ? (
+                              <Check className="w-5 h-5 text-emerald-600" />
+                            ) : (
+                              <Minus className="w-5 h-5 text-rose-600" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800 truncate">
+                              {habit.label}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="flex gap-0.5">
+                                {miniProgress.map((completed, idx) => (
+                                  <div
+                                    key={idx}
+                                    className={`w-2 h-2 rounded-full ${completed ? 'bg-emerald-500' : 'bg-gray-300'}`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-emerald-600">{completionRate}%</p>
+                            <p className="text-xs text-gray-400">30 jours</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state if no custom habits */}
+              {customHabits.length === 0 && (
+                <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+                  <Layers className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-500 text-sm">
+                    Ajoutez des habitudes personnalisées pour voir leur progression ici
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}

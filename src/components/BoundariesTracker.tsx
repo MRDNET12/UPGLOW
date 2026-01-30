@@ -90,7 +90,7 @@ export function BoundariesTracker() {
                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 sm:mb-2 line-clamp-2 lg:line-clamp-1">
                       {getBoundaryDescription(boundary.key, language)}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 hidden sm:block">
+                    <p className="text-xs text-gray-500 dark:text-gray-500">
                       {t.bonus.idealFrequency}: {boundary.idealFrequency.min}-{boundary.idealFrequency.max} {t.bonus.timesPerWeek}
                     </p>
                   </div>

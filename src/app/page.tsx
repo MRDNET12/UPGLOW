@@ -2186,7 +2186,7 @@ isActionCompleted,
 
               {/* SECTION INTENTION */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
                   <span>🎯</span>
                   {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                 </h3>
@@ -2228,7 +2228,7 @@ isActionCompleted,
 
               {/* SECTION HUMEUR - Icônes grises quand non sélectionnées, couleur quand sélectionnées */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
                   <span>😊</span>
                   {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>

@@ -347,11 +347,11 @@ isActionCompleted,
   ];
 
   const MOODS_DATA = [
-    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', icon: Sun, color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700' },
-    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', icon: Moon, color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700' },
-    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', icon: Sparkles, color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
-    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', icon: Frown, color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
-    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', icon: Meh, color: '#14b8a6', bgColor: 'bg-teal-100', textColor: 'text-teal-700' },
+    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', icon: Sun, color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700', gradient: 'from-sky-400 to-cyan-400', iconColor: '#0ea5e9' },
+    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', icon: Moon, color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700', gradient: 'from-gray-400 to-gray-500', iconColor: '#6b7280' },
+    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', icon: Sparkles, color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700', gradient: 'from-amber-400 to-orange-400', iconColor: '#f59e0b' },
+    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', icon: Frown, color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700', gradient: 'from-indigo-400 to-purple-400', iconColor: '#6366f1' },
+    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', icon: Meh, color: '#14b8a6', bgColor: 'bg-teal-100', textColor: 'text-teal-700', gradient: 'from-teal-400 to-emerald-400', iconColor: '#14b8a6' },
   ];
 
   // États pour "Comment je me sens ?" et "Intention du jour"
@@ -2099,7 +2099,7 @@ isActionCompleted,
 
               {/* SECTION INTENTION */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 font-sans">
                   <span>🎯</span>
                   {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                 </h3>
@@ -2141,7 +2141,7 @@ isActionCompleted,
 
               {/* SECTION HUMEUR - Icônes grises quand non sélectionnées, couleur quand sélectionnées */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 font-sans">
                   <span>😊</span>
                   {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>
@@ -2154,14 +2154,16 @@ isActionCompleted,
                         key={mood.id}
                         onClick={() => setDailyFeeling(label)}
                         className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all active:scale-95 ${
-                          isSelected ? `${mood.bgColor} shadow-sm` : 'bg-gray-50'
+                          isSelected ? `bg-gradient-to-br ${mood.gradient} shadow-sm` : 'bg-gray-50'
                         }`}
                       >
                         <mood.icon 
-                          className="w-5 h-5 transition-all duration-200"
+                          className={`w-5 h-5 transition-all duration-200 ${isSelected ? "drop-shadow-sm" : ""}`}
                           style={{ 
-                            filter: isSelected ? 'none' : 'grayscale(100%) brightness(1.2)',
-                            opacity: isSelected ? 1 : 0.6,
+                            color: isSelected ? mood.iconColor : undefined,
+                            filter: isSelected ? "none" : "grayscale(100%) brightness(1.3)",
+                            opacity: isSelected ? 1 : 0.5,
+                            transform: isSelected ? "scale(1.1)" : "scale(1)",
                           }}
                         />
                         <span className={`text-[10px] font-medium ${isSelected ? mood.textColor : 'text-gray-500'}`}>
@@ -2177,7 +2179,7 @@ isActionCompleted,
               <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <div className="p-4 pb-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 font-sans">
                       <span style={{ color: '#fb7185' }}>✨</span>
                       New Me
                     </h3>
@@ -2239,7 +2241,7 @@ isActionCompleted,
               <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <div className="p-4 pb-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-800">
+                    <h3 className="text-sm font-bold text-gray-800 font-sans">
                       {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'}
                     </h3>
                     <span className="text-xs font-bold text-gray-600">

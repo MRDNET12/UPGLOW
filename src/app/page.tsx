@@ -351,11 +351,11 @@ isActionCompleted,
   ];
 
   const MOODS_DATA = [
-    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', gradient: 'from-sky-400 to-cyan-400' },
-    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', gradient: 'from-gray-400 to-gray-500' },
-    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', gradient: 'from-amber-400 to-orange-400' },
-    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', gradient: 'from-indigo-400 to-purple-400' },
-    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', gradient: 'from-teal-400 to-emerald-400' },
+    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700' },
+    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700' },
+    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
+    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
+    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', color: '#14b8a6', bgColor: 'bg-teal-100', textColor: 'text-teal-700' },
   ];
 
   // États pour "Comment je me sens ?" et "Intention du jour"
@@ -2187,18 +2187,18 @@ isActionCompleted,
               {/* SECTION INTENTION */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <span className="text-violet-500">🎯</span>
+                  <span>🎯</span>
                   {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                 </h3>
                 
                 {dailyIntention ? (
-                  <div className="bg-gradient-to-r from-violet-100 to-purple-100 rounded-xl p-3">
+                  <div className="bg-violet-50 rounded-xl p-3">
                     <p className="text-sm font-semibold text-violet-700">
                       {dailyIntention}
                     </p>
                     {showIntentionFeedback && (
-                      <p className="text-xs text-violet-500 mt-1 animate-fade-in">
-                        ✨ {intentionFeedbackMessage}
+                      <p className="text-xs text-violet-500 mt-1">
+                        {intentionFeedbackMessage}
                       </p>
                     )}
                   </div>
@@ -2216,7 +2216,7 @@ isActionCompleted,
                             setShowIntentionFeedback(true);
                             setTimeout(() => setShowIntentionFeedback(false), 3000);
                           }}
-                          className="px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-600 transition-colors active:scale-95"
+                          className="px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-600 active:scale-95 transition-all"
                         >
                           {label}
                         </button>
@@ -2226,10 +2226,10 @@ isActionCompleted,
                 )}
               </div>
 
-              {/* SECTION HUMEUR */}
+              {/* SECTION HUMEUR - Icônes grises quand non sélectionnées, couleur quand sélectionnées */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <span className="text-amber-500">😊</span>
+                  <span>😊</span>
                   {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>
                 <div className="flex gap-2">
@@ -2241,13 +2241,21 @@ isActionCompleted,
                         key={mood.id}
                         onClick={() => setDailyFeeling(label)}
                         className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all active:scale-95 ${
-                          isSelected
-                            ? `bg-gradient-to-br ${mood.gradient} text-white shadow-md`
-                            : 'bg-gray-100 text-gray-600'
+                          isSelected ? `${mood.bgColor} shadow-sm` : 'bg-gray-50'
                         }`}
                       >
-                        <span className="text-lg">{mood.emoji}</span>
-                        <span className="text-[10px] font-medium">{label}</span>
+                        <span 
+                          className="text-lg transition-all duration-200"
+                          style={{ 
+                            filter: isSelected ? 'none' : 'grayscale(100%) brightness(1.2)',
+                            opacity: isSelected ? 1 : 0.6,
+                          }}
+                        >
+                          {mood.emoji}
+                        </span>
+                        <span className={`text-[10px] font-medium ${isSelected ? mood.textColor : 'text-gray-500'}`}>
+                          {label}
+                        </span>
                       </button>
                     );
                   })}

@@ -446,8 +446,7 @@ isActionCompleted,
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDestination, setNewTaskDestination] = useState<'priority' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'>('priority');
-  const [newTaskColor, setNewTaskColor] = useState<string | null>(null); // Couleur associée à un objectif
-  const [newTaskGoalId, setNewTaskGoalId] = useState<string | null>(null); // ID de l'objectif associé
+
   const [showCalendar, setShowCalendar] = useState(false);
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
@@ -4684,63 +4683,6 @@ isActionCompleted,
               />
             </div>
 
-            {/* Sélection de la couleur (lié à un objectif) */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">
-                {language === 'fr' ? 'Couleur (objectif associé)' : language === 'en' ? 'Color (linked goal)' : 'Color (objetivo asociado)'}
-              </label>
-              <p className="text-xs text-stone-500 dark:text-stone-400">
-                {language === 'fr' ? 'Sélectionnez une couleur pour identifier cette tâche dans votre planning' : language === 'en' ? 'Select a color to identify this task in your planning' : 'Selecciona un color para identificar esta tarea en tu planificación'}
-              </p>
-              <div className="flex gap-3 justify-center py-2">
-                {([
-                  { value: '#f43f5e', label: language === 'fr' ? '🌹 Rose' : language === 'en' ? '🌹 Rose' : '🌹 Rosa', ring: 'ring-rose-400' },
-                  { value: '#3b82f6', label: language === 'fr' ? '💙 Bleu' : language === 'en' ? '💙 Blue' : '💙 Azul', ring: 'ring-blue-400' },
-                  { value: '#10b981', label: language === 'fr' ? '💚 Vert' : language === 'en' ? '💚 Green' : '💚 Verde', ring: 'ring-emerald-400' },
-                ] as const).map((colorOpt) => {
-                  // Trouver l'objectif associé à cette couleur
-                  const associatedGoal = goalsWithPriorities.find(g => g.color === colorOpt.value);
-                  return (
-                    <button
-                      key={colorOpt.value}
-                      onClick={() => {
-                        if (newTaskColor === colorOpt.value) {
-                          setNewTaskColor(null);
-                          setNewTaskGoalId(null);
-                        } else {
-                          setNewTaskColor(colorOpt.value);
-                          setNewTaskGoalId(associatedGoal?.id || null);
-                        }
-                      }}
-                      className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all ${
-                        newTaskColor === colorOpt.value
-                          ? `ring-2 ${colorOpt.ring} ring-offset-2 bg-white dark:bg-stone-800`
-                          : 'hover:bg-stone-100 dark:hover:bg-stone-800'
-                      }`}
-                    >
-                      <div
-                        className={`w-10 h-10 rounded-full transition-transform ${
-                          newTaskColor === colorOpt.value ? 'scale-110' : ''
-                        }`}
-                        style={{ backgroundColor: colorOpt.value }}
-                      />
-                      <span className="text-xs font-medium">{colorOpt.label}</span>
-                      {associatedGoal && (
-                        <span className="text-[10px] text-stone-500 dark:text-stone-400 max-w-[80px] truncate">
-                          {associatedGoal.name}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              {!newTaskColor && (
-                <p className="text-xs text-amber-600 dark:text-amber-400 text-center italic">
-                  {language === 'fr' ? '⚠️ Choisissez une couleur pour lier à un objectif' : language === 'en' ? '⚠️ Choose a color to link to a goal' : '⚠️ Elige un color para vincular a un objetivo'}
-                </p>
-              )}
-            </div>
-
             {/* Sélection de la destination */}
             <div className="space-y-3">
               <label className="text-sm font-semibold">
@@ -4905,9 +4847,7 @@ isActionCompleted,
                       text: newTaskText,
                       date: targetDate,
                       completed: false,
-                      type: 'user' as const,
-                      goalColor: newTaskColor || undefined,
-                      goalId: newTaskGoalId || undefined
+                      type: 'user' as const
                     };
 
                     setTasksWithDates(prev => [...prev, newTaskWithDate]);
@@ -4928,8 +4868,6 @@ isActionCompleted,
 
                   setNewTaskText('');
                   setNewTaskDestination('priority');
-                  setNewTaskColor(null);
-                  setNewTaskGoalId(null);
                   setShowAddTask(false);
                 }
               }}

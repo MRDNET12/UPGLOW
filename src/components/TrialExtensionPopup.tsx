@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Mail, Lock } from 'lucide-react';
+import { Sparkles, Mail, Lock, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useStore } from '@/lib/store';
@@ -13,7 +13,7 @@ interface TrialExtensionPopupProps {
   theme?: 'light' | 'dark';
 }
 
-export function TrialExtensionPopup({ isOpen, theme = 'light' }: TrialExtensionPopupProps) {
+export function TrialExtensionPopup({ isOpen, onClose, theme = 'light' }: TrialExtensionPopupProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +44,7 @@ export function TrialExtensionPopup({ isOpen, theme = 'light' }: TrialExtensionP
       markTrialPopupSeen();
 
       // Rediriger vers Stripe avec 3 jours d'essai gratuit
-      // TODO: Remplacer par votre lien Stripe avec trial period de 3 jours
-      const stripeUrlWithTrial = `https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
+      const stripeUrlWithTrial = `https://buy.stripe.com/9B69AT178gDybddgqNf3a02?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
       window.location.href = stripeUrlWithTrial;
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -65,6 +64,15 @@ export function TrialExtensionPopup({ isOpen, theme = 'light' }: TrialExtensionP
           animate-in zoom-in-95 duration-300
         `}
       >
+        {/* Close Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 rounded-full hover:bg-pink-100 w-8 h-8"
+        >
+          <X className="w-5 h-5 text-gray-500" />
+        </Button>
         {/* Content */}
         <div className="p-8 space-y-6">
           {/* Glowee Image */}
@@ -88,7 +96,7 @@ export function TrialExtensionPopup({ isOpen, theme = 'light' }: TrialExtensionP
               <span className="font-bold text-rose-500">Inscris-toi maintenant</span> et profite de <span className="font-bold text-rose-500">3 jours supplémentaires gratuits</span> avant que ton abonnement ne démarre ! ✨
             </p>
             <p className={`text-sm ${theme === 'dark' ? 'text-stone-400' : 'text-stone-600'}`}>
-              Seulement 6,99€/mois après l'essai. Annule quand tu veux ! 💖
+              Seulement 3,99€/mois après l'essai. Annule quand tu veux ! 💖
             </p>
           </div>
 

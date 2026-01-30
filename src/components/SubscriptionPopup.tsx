@@ -14,10 +14,8 @@ interface SubscriptionPopupProps {
   source?: 'button' | 'trial_expired'; // 'button' = Plan Pro button, 'trial_expired' = trial ended
 }
 
-// Nouveau lien Stripe pour le premier popup
-const STRIPE_LINK_POPUP_1 = 'https://buy.stripe.com/eVq3cv5nocni1CDfmJf3a01';
-// Ancien lien Stripe pour le deuxième popup (non fermable)
-const STRIPE_LINK_POPUP_2 = 'https://buy.stripe.com/bJeaEX4jkevq0yz6Qdf3a00';
+// Nouveau lien Stripe unifié pour tous les popups
+const STRIPE_LINK = 'https://buy.stripe.com/9B69AT178gDybddgqNf3a02';
 
 export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }: SubscriptionPopupProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,17 +28,14 @@ export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }:
   const { registerUser, markTrialPopupSeen } = useStore();
 
   const handleSubscribe = () => {
-    // Utiliser le nouveau lien pour le premier popup
-    const baseUrl = STRIPE_LINK_POPUP_1;
-
     if (!user || !user.email) {
-      // Rediriger vers Stripe sans email
-      window.location.href = baseUrl;
+      // Rediriger vers Stripe avec email d'exemple
+      window.location.href = STRIPE_LINK;
       return;
     }
 
-    // Si l'utilisateur est connecté, rediriger vers Stripe avec email
-    const stripeUrl = `${baseUrl}?prefilled_email=${encodeURIComponent(user.email)}`;
+    // Si l'utilisateur est connecté, rediriger vers Stripe avec son email
+    const stripeUrl = `${STRIPE_LINK.split('?')[0]}?prefilled_email=${encodeURIComponent(user.email)}`;
     window.location.href = stripeUrl;
   };
 
@@ -73,8 +68,8 @@ export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }:
       registerUser();
       markTrialPopupSeen();
 
-      // Rediriger vers Stripe avec 3 jours d'essai (utilise le lien du popup 2)
-      const stripeUrlWithTrial = `${STRIPE_LINK_POPUP_2}?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
+      // Rediriger vers Stripe avec 3 jours d'essai
+      const stripeUrlWithTrial = `${STRIPE_LINK.split('?')[0]}?prefilled_email=${encodeURIComponent(email)}&trial_from_plan=true`;
       window.location.href = stripeUrlWithTrial;
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -86,11 +81,8 @@ export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }:
   if (!isOpen) return null;
 
   const features = [
-    'Suivi personnalisé avec Glowee, ton coach IA',
-    'Journal intime et suivi d\'habitudes quotidiennes',
-    'Planning hebdomadaire et atteindre tes objectifs',
-    'Glowee te crée ton planning personnalisé',
-    'Accès illimité à tous les bonus et contenus'
+    'Accéder à toutes les fonctionnalités',
+    'Aider nous à améliorer l\'app'
   ];
 
   // Popup d'extension de trial (3 jours gratuits) - NON FERMABLE
@@ -121,7 +113,7 @@ export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }:
                 Inscris-toi et profite de <span className="font-bold text-pink-500">3 jours supplémentaires gratuits</span> avant que ton abonnement ne démarre !
               </p>
               <p className="text-[10px] text-gray-500 mt-1">
-                Seulement 6,99€/mois après. Annule quand tu veux !
+                Seulement 3,99€/mois après. Annule quand tu veux !
               </p>
             </div>
 
@@ -220,7 +212,7 @@ export function SubscriptionPopup({ isOpen, onClose, source = 'trial_expired' }:
           <div className="p-2.5 rounded-xl text-center bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-100/50 mb-3">
             <div className="flex items-baseline justify-center gap-1">
               <span className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                6,99€
+                3,99€
               </span>
               <span className="text-sm text-gray-700 font-bold">
                 /mois

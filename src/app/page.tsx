@@ -999,8 +999,10 @@ isActionCompleted,
   const progressPercentage = getProgressPercentage();
 
   // Bloquer l'accès si l'essai est expiré et pas d'abonnement
-  // Cette vérification s'applique à toutes les vues sauf language-selection
-  const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed;
+  // Cette vérification s'applique à toutes les vues sauf language-selection et challenge
+  // Les challenges (Beauté et Corps, Esprit et Vie) sont toujours accessibles
+  const isChallengeView = currentView === 'challenge-selection' || currentView === 'dashboard' || currentView === 'challenge';
+  const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView;
 
   // Language Selection Screen - Glassmorphism Rose Pastel
   if (!hasSelectedLanguage) {
@@ -1916,17 +1918,24 @@ isActionCompleted,
                                         <p className={`text-sm transition-all duration-300 ${isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
                                           {action.value === 'OBJECTIF_LINK' ? (
                                             <>
-                                              {language === 'fr' ? 'Rends-toi dans la section ' : language === 'en' ? 'Go to the section ' : 'Ve a la sección '}
+                                              {language === 'fr' ? 'Vision : Rends-toi à la section ' : language === 'en' ? 'Vision: Go to the section ' : 'Visión: Ve a la sección '}
                                               <span
                                                 className="font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
                                                 onClick={(e) => {
                                                   e.stopPropagation();
-                                                  setCurrentView('my-goals');
+                                                  setCurrentView('dashboard');
+                                                  // Scroll to TimeCapsule section after a short delay
+                                                  setTimeout(() => {
+                                                    const timeCapsuleElement = document.getElementById('time-capsule-section');
+                                                    if (timeCapsuleElement) {
+                                                      timeCapsuleElement.scrollIntoView({ behavior: 'smooth' });
+                                                    }
+                                                  }, 100);
                                                 }}
                                               >
-                                                {language === 'fr' ? 'Atteindre mes rêves' : language === 'en' ? 'Achieve my dreams' : 'Alcanzar mis sueños'}
+                                                {language === 'fr' ? 'message à moi' : language === 'en' ? 'message to myself' : 'mensaje a mí misma'}
                                               </span>
-                                              {language === 'fr' ? ' et crée ton premier objectif !' : language === 'en' ? ' and create your first goal!' : ' y crea tu primer objetivo!'}
+                                              {language === 'fr' ? ' et envoie-toi ton premier message !' : language === 'en' ? ' and send your first message!' : ' ¡y envía tu primer mensaje!'}
                                             </>
                                           ) : (
                                             <>

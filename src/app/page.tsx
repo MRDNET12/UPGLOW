@@ -2073,41 +2073,63 @@ isActionCompleted,
           </div>
         )}
 
-        {/* Trackers View - Nouveau Design Mes Habitudes */}
+        {/* Trackers View - Project Glow Design System */}
         {currentView === 'trackers' && (
-          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
             {/* Header */}
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-2">
+            <div className="px-4 pt-4 pb-3">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setCurrentView('dashboard')}
-                    className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-105 transition-transform active:scale-95"
+                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
+                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                   >
-                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                    <ChevronLeft className="w-5 h-5 text-gray-800" />
                   </button>
-                  <h1 className="text-lg font-bold text-gray-800">
-                    {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
-                  </h1>
+                  <div>
+                    <h1 className="text-lg font-bold text-gray-800">
+                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
+                    </h1>
+                    {(() => {
+                      const completedNewMe = newMeHabits.filter(h => h.completed).length;
+                      const completedCustom = customHabits.filter(h => {
+                        const today = getLocalDateString();
+                        const tracker = trackers.find(t => t.date === today);
+                        return tracker?.habits?.[h.id] || false;
+                      }).length;
+                      const completedCount = completedNewMe + completedCustom;
+                      const totalCount = newMeHabits.length + customHabits.length;
+                      return (
+                        <p className="text-xs font-medium text-gray-500">
+                          {completedCount}/{totalCount} {language === 'fr' ? 'aujourd\'hui' : language === 'en' ? 'today' : 'hoy'}
+                        </p>
+                      );
+                    })()}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setHabitTab('growth')}
-                    className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-105 transition-transform active:scale-95"
+                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
+                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                   >
                     <span className="text-lg">📊</span>
                   </button>
                   <button
                     onClick={() => setShowAddHabit(true)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform active:scale-95"
-                    style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)' }}
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
+                    style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}
                   >
                     <Plus className="w-5 h-5 text-white" />
                   </button>
                 </div>
               </div>
-              
-              {/* Compteur et progression */}
+            </div>
+
+            {/* Contenu principal */}
+            <div className="px-4 space-y-3">
+              {/* Barre de progression */}
               {(() => {
                 const completedNewMe = newMeHabits.filter(h => h.completed).length;
                 const completedCustom = customHabits.filter(h => {
@@ -2120,46 +2142,38 @@ isActionCompleted,
                 const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
                 
                 return (
-                  <>
-                    <p className="text-sm font-semibold text-gray-700 mb-3">
-                      {completedCount}/{totalCount} {language === 'fr' ? 'aujourd\'hui' : language === 'en' ? 'today' : 'hoy'}
-                    </p>
-                    
-                    {/* Barre de progression avec pourcentage */}
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{ 
-                            width: `${progressPercent}%`,
-                            background: 'linear-gradient(90deg, #34d399, #14b8a6)'
-                          }}
-                        />
-                      </div>
-                      <span className="text-sm font-bold text-gray-700 min-w-[3rem]">{progressPercent}%</span>
+                  <div className="bg-white rounded-2xl p-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-gray-500">Progression du jour</span>
+                      <span className="text-xs font-bold" style={{ color: '#10b981' }}>{progressPercent}%</span>
                     </div>
-                    <p className="text-xs font-medium text-gray-500 -mt-5 mb-6">Progression du jour</p>
-                  </>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${progressPercent}%`,
+                          background: 'linear-gradient(90deg, #34d399, #14b8a6)'
+                        }}
+                      />
+                    </div>
+                  </div>
                 );
               })()}
-            </div>
 
-            {/* Contenu principal */}
-            <div className="px-4 space-y-3">
               {/* Intention du jour */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-800 mb-3">
-                  {language === 'fr' ? '🎯 Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? '🎯 Today, I am someone who…' : '🎯 Hoy, soy alguien que…'}
+              <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <span style={{ color: '#8b5cf6' }}>🎯</span>
+                  {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : '🎯 Hoy, soy alguien que…'}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { fr: 'se respecte', en: 'respects themselves', es: 'se respeta', short: true },
-                    { fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza lentamente', short: false },
-                    { fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía', short: false },
-                    { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra', short: true }
+                    { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
+                    { fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
+                    { fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
+                    { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
                   ].map((intention) => {
                     const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
-                    const displayLabel = intention.short ? label : (language === 'fr' ? label.substring(0, 12) + '...' : label);
                     const isSelected = dailyIntention === label;
                     return (
                       <button
@@ -2181,33 +2195,34 @@ isActionCompleted,
                           }
                         }}
                         disabled={!!dailyIntention && !isSelected}
-                        className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                        className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 ${
                           isSelected
                             ? 'text-white shadow-md'
                             : dailyIntention
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
-                        style={isSelected ? { background: 'linear-gradient(135deg, #34d399, #14b8a6)' } : {}}
+                        style={isSelected ? { background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' } : {}}
                       >
-                        {displayLabel}
+                        {label}
                       </button>
                     );
                   })}
                 </div>
                 {showIntentionFeedback && (
-                  <p className="mt-3 text-xs font-medium italic animate-pulse" style={{ color: '#10b981' }}>
-                    {intentionFeedbackMessage}
+                  <p className="mt-3 text-xs font-medium italic" style={{ color: '#8b5cf6' }}>
+                    ✨ {intentionFeedbackMessage}
                   </p>
                 )}
               </div>
 
               {/* Humeur du jour */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-800 mb-3">
-                  {language === 'fr' ? '😊 Comment je me sens ?' : language === 'en' ? '😊 How do I feel?' : '😊 ¿Cómo me siento?'}
+              <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <span style={{ color: '#f59e0b' }}>😊</span>
+                  {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2">
                   {[
                     { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', colors: ['#60a5fa', '#22d3ee'] },
                     { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', colors: ['#9ca3af', '#6b7280'] },
@@ -2221,14 +2236,15 @@ isActionCompleted,
                       <button
                         key={label}
                         onClick={() => setDailyFeeling(label)}
-                        className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                        className={`flex-1 flex flex-col items-center gap-1 p-2 rounded-xl text-xs font-medium transition-all duration-200 ${
                           isSelected
                             ? 'text-white shadow-md'
-                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                         style={isSelected ? { background: `linear-gradient(135deg, ${feeling.colors[0]}, ${feeling.colors[1]})` } : {}}
                       >
-                        {feeling.emoji} {label}
+                        <span className="text-xl">{feeling.emoji}</span>
+                        <span className="text-[10px]">{label}</span>
                       </button>
                     );
                   })}
@@ -2236,15 +2252,21 @@ isActionCompleted,
               </div>
 
               {/* New Me Habits */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-base font-bold text-gray-800">✨ New Me</h3>
-                  <span className="text-sm font-semibold text-gray-600">
-                    {newMeHabits.filter(h => h.completed).length}/{newMeHabits.length}
-                  </span>
+              <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <div className="p-4 pb-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                      <span style={{ color: '#fb7185' }}>✨</span>
+                      New Me
+                    </h3>
+                    <span className="text-xs font-bold text-gray-600">
+                      {newMeHabits.filter(h => h.completed).length}/{newMeHabits.length}
+                    </span>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {newMeHabits.map((habit, index) => (
+                <div className="h-px bg-gray-200 mx-4" />
+                <div className="p-4 space-y-1">
+                  {newMeHabits.map((habit) => (
                     <button
                       key={habit.id}
                       onClick={() => {
@@ -2256,63 +2278,74 @@ isActionCompleted,
                         e.preventDefault();
                         // TODO: Ouvrir la vue détail 30 jours
                       }}
-                      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300 ${
+                      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
                         habit.completed
                           ? 'bg-emerald-50'
                           : 'hover:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{habit.icon}</span>
-                        <span className={`text-sm font-medium ${
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-xl">{habit.icon}</span>
+                        <span className={`text-sm font-medium flex-1 text-left ${
                           habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
                         }`}>
                           {habit.label}
                         </span>
                       </div>
-                      {habit.completed && (
-                        <div 
-                          className="w-6 h-6 rounded-full flex items-center justify-center animate-pulse"
-                          style={{ background: '#34d399' }}
-                        >
+                      <div 
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                          habit.completed 
+                            ? 'bg-emerald-400' 
+                            : 'bg-gray-200'
+                        }`}
+                      >
+                        {habit.completed ? (
                           <Check className="w-4 h-4 text-white" />
-                        </div>
-                      )}
+                        ) : (
+                          <Check className="w-4 h-4 text-gray-400" />
+                        )}
+                      </div>
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 mt-3 text-center">
+                <p className="text-xs text-gray-400 pb-4 text-center">
                   {language === 'fr' ? '(Appuie longtemps pour le suivi)' : language === 'en' ? '(Long press for tracking)' : '(Mantén presionado para seguimiento)'}
                 </p>
               </div>
 
               {/* Custom Habits */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-base font-bold text-gray-800">
-                    {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'}
-                  </h3>
-                  <span className="text-sm font-semibold text-gray-600">
-                    {customHabits.filter(h => {
-                      const today = getLocalDateString();
-                      const tracker = trackers.find(t => t.date === today);
-                      return tracker?.habits?.[h.id] || false;
-                    }).length}/{customHabits.length}
-                  </span>
+              <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <div className="p-4 pb-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-gray-800">
+                      {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'}
+                    </h3>
+                    <span className="text-xs font-bold text-gray-600">
+                      {customHabits.filter(h => {
+                        const today = getLocalDateString();
+                        const tracker = trackers.find(t => t.date === today);
+                        return tracker?.habits?.[h.id] || false;
+                      }).length}/{customHabits.length}
+                    </span>
+                  </div>
                 </div>
+                <div className="h-px bg-gray-200 mx-4" />
                 
                 {customHabits.length === 0 ? (
-                  <button
-                    onClick={() => setShowAddHabit(true)}
-                    className="w-full py-4 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-emerald-400 hover:text-emerald-600 transition-all active:scale-95"
-                  >
-                    <span className="text-sm font-medium">
-                      {language === 'fr' ? '+ Créer ma première habitude' : language === 'en' ? '+ Create my first habit' : '+ Crear mi primer hábito'}
-                    </span>
-                  </button>
+                  <div className="p-4">
+                    <button
+                      onClick={() => setShowAddHabit(true)}
+                      className="w-full py-4 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-emerald-400 hover:text-emerald-600 transition-all duration-200 active:scale-98 flex items-center justify-center gap-2"
+                    >
+                      <Plus className="w-5 h-5" />
+                      <span className="text-sm font-bold">
+                        {language === 'fr' ? 'Créer ma première habitude' : language === 'en' ? 'Create my first habit' : 'Crear mi primer hábito'}
+                      </span>
+                    </button>
+                  </div>
                 ) : (
-                  <div className="space-y-2">
-                    {customHabits.map((habit, index) => {
+                  <div className="p-4 space-y-1">
+                    {customHabits.map((habit) => {
                       const today = getLocalDateString();
                       const tracker = trackers.find(t => t.date === today);
                       const isCompleted = tracker?.habits?.[habit.id] || false;
@@ -2322,7 +2355,7 @@ isActionCompleted,
                           key={habit.id}
                           className="flex items-center justify-between p-3 rounded-xl bg-gray-50"
                         >
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-1">
                             <button
                               onClick={() => {
                                 const today = getLocalDateString();
@@ -2340,16 +2373,17 @@ isActionCompleted,
                                   });
                                 }
                               }}
-                              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
                                 isCompleted
-                                  ? 'bg-emerald-400 border-emerald-400'
-                                  : 'border-gray-300 hover:border-emerald-400'
+                                  ? 'text-white'
+                                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                               }`}
+                              style={isCompleted ? { background: 'linear-gradient(135deg, #34d399, #14b8a6)' } : {}}
                             >
-                              {isCompleted && <Check className="w-4 h-4 text-white" />}
+                              {isCompleted && <Check className="w-5 h-5" />}
                             </button>
-                            <div className="flex flex-col">
-                              <span className={`text-sm font-medium ${
+                            <div className="flex flex-col flex-1">
+                              <span className={`text-sm font-bold ${
                                 isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'
                               }`}>
                                 {habit.label}
@@ -2362,8 +2396,8 @@ isActionCompleted,
                               </span>
                             </div>
                           </div>
-                          <button className="text-gray-400 hover:text-gray-600 p-1">
-                            <span className="text-lg">⋯</span>
+                          <button className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-all">
+                            <span className="text-lg leading-none">⋯</span>
                           </button>
                         </div>
                       );
@@ -2371,12 +2405,24 @@ isActionCompleted,
                   </div>
                 )}
               </div>
+
+              {/* Bouton créer - si des habitudes existent */}
+              {customHabits.length > 0 && (
+                <button
+                  onClick={() => setShowAddHabit(true)}
+                  className="w-full py-4 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:scale-102 active:scale-98"
+                  style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)', boxShadow: '0 2px 8px rgba(52, 211, 153, 0.3)' }}
+                >
+                  <Plus className="w-5 h-5" />
+                  {language === 'fr' ? 'Créer une habitude' : language === 'en' ? 'Create a habit' : 'Crear un hábito'}
+                </button>
+              )}
             </div>
 
             {/* Modal Ajouter une habitude */}
             {showAddHabit && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-                <div className="bg-white rounded-2xl p-6 w-full max-w-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white rounded-2xl p-6 w-full max-w-sm" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
                   <h3 className="text-base font-bold text-gray-800 mb-4">
                     {language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo hábito'}
                   </h3>
@@ -2384,7 +2430,7 @@ isActionCompleted,
                     value={newHabitLabel}
                     onChange={(e) => setNewHabitLabel(e.target.value)}
                     placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
-                    className="mb-4 rounded-xl"
+                    className="mb-4 rounded-xl border-gray-200 focus:border-emerald-400 focus:ring-emerald-400"
                   />
                   <div className="flex gap-3">
                     <Button
@@ -2399,7 +2445,7 @@ isActionCompleted,
                           setShowAddHabit(false);
                         }
                       }}
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-xl text-white font-semibold py-3"
                       style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)' }}
                     >
                       {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
@@ -2410,7 +2456,7 @@ isActionCompleted,
                         setNewHabitLabel('');
                         setShowAddHabit(false);
                       }}
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-xl py-3"
                     >
                       {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
                     </Button>
@@ -2418,7 +2464,6 @@ isActionCompleted,
                 </div>
               </div>
             )}
-
           </div>
         )}
 

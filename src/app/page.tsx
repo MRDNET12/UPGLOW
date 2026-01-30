@@ -243,6 +243,37 @@ isActionCompleted,
   const [newHabitLabel, setNewHabitLabel] = useState('');
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
+  // New Me habits - 9 predefined habits with completion tracking
+  const [newMeHabits, setNewMeHabits] = useState<Array<{
+    id: string;
+    icon: string;
+    label: string;
+    completed: boolean;
+  }>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`newMeHabits_${getLocalDateString()}`);
+      if (saved) return JSON.parse(saved);
+    }
+    return [
+      { id: 'water', icon: '💧', label: 'Boire 1,5–2 L d\'eau', completed: false },
+      { id: 'move', icon: '🏃', label: 'Bouger 20–30 min', completed: false },
+      { id: 'positive', icon: '✍️', label: 'Écrire une pensée positive', completed: false },
+      { id: 'win', icon: '🏆', label: 'Noter une petite victoire', completed: false },
+      { id: 'tidy', icon: '🧹', label: 'Ranger mon espace 5 min', completed: false },
+      { id: 'future', icon: '🚀', label: 'Faire une action pour mon futur', completed: false },
+      { id: 'priority', icon: '🎯', label: 'Définir une priorité du jour', completed: false },
+      { id: 'imperfect', icon: '✓', label: 'Accomplir une tâche imparfaite', completed: false },
+      { id: 'bed', icon: '🌙', label: 'Me coucher en me disant : « J\'ai avancé. »', completed: false }
+    ];
+  });
+
+  // Save New Me habits to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`newMeHabits_${getLocalDateString()}`, JSON.stringify(newMeHabits));
+    }
+  }, [newMeHabits]);
+
   // Bloc par défaut unique et non-modifiable
   const getDefaultHabitBlocks = () => [
     {
@@ -2042,577 +2073,337 @@ isActionCompleted,
           </div>
         )}
 
-        {/* Trackers View - Life Hub Design */}
+        {/* Trackers View - New Design */}
         {currentView === 'trackers' && (
-          <div className="pb-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
-            {/* Header moderne avec dates */}
-            <div className="p-4 max-w-2xl mx-auto">
-              {/* Barre de dates horizontale */}
-              <div className="flex justify-between items-center mb-6 px-2">
-                {(() => {
-                  const today = new Date();
-                  const dates: Date[] = [];
-                  // Générer 9 jours (4 avant, aujourd'hui, 4 après)
-                  for (let i = -4; i <= 4; i++) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() + i);
-                    dates.push(date);
-                  }
-                  return dates.map((date, index) => {
-                    const isToday = index === 4;
-                    const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
-                    const dayNumber = date.getDate();
-                    return (
-                      <div key={index} className="flex flex-col items-center">
-                        <span className={`text-[10px] uppercase ${isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
-                          {dayName}
-                        </span>
-                        <span className={`text-lg font-bold ${isToday ? 'text-gray-900' : 'text-gray-400'}`}>
-                          {dayNumber}
-                        </span>
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-
-              {/* Titre principal */}
-              <h1 className="text-5xl font-black text-center text-gray-900 mb-6">
-                Life Hub
-              </h1>
-
-              {/* Navigation par onglets - Sans Goals */}
-              <div className="flex gap-6 justify-center mb-8">
-                <button
-                  onClick={() => setHabitTab('tasks')}
-                  className={`text-lg font-semibold transition-all ${
-                    habitTab === 'tasks'
-                      ? 'text-gray-900 border-b-2 border-gray-900'
-                      : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                >
-                  {language === 'fr' ? 'Tâches' : language === 'en' ? 'Tasks' : 'Tareas'}
-                </button>
-                <button
-                  onClick={() => setHabitTab('growth')}
-                  className={`text-lg font-semibold transition-all ${
-                    habitTab === 'growth'
-                      ? 'text-gray-900 border-b-2 border-gray-900'
-                      : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                >
-                  {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
-                </button>
-              </div>
-            </div>
-
-            {/* Contenu principal */}
-            <div className="px-4 max-w-2xl mx-auto space-y-3">
-              {/* Onglet Tasks - Blocs d'habitudes */}
-              {habitTab === 'tasks' && (
-                <div className="space-y-3">
-                  {/* Section Intention du jour - Tout en haut */}
-                  <div className="relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-2xl p-4 pt-[36px] shadow-lg">
-                    {/* Badge "chaque matin" en superposition sur la bordure gauche */}
-                    <div className="absolute -top-3 left-4">
-                      <div className="px-2.5 py-[3px] bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-lg border border-white/50" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%)' }}>
-                        <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
-                          {language === 'fr' ? 'chaque matin' : language === 'en' ? 'every morning' : 'cada mañana'}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-gray-900 mb-3">
-                      {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
-                        { fr: 'avance même lentement', en: 'moves forward even slowly', es: 'avanza aunque sea lentamente' },
-                        { fr: 'prend soin de son énergie', en: 'takes care of their energy', es: 'cuida su energía' },
-                        { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
-                      ].map((intention) => {
-                        const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
-                        const isSelected = dailyIntention === label;
-                        return (
-                          <button
-                            key={label}
-                            onClick={() => {
-                              if (!dailyIntention) {
-                                setDailyIntention(label);
-                                const messages = [
-                                  language === 'fr' ? 'C\'est noté.' : language === 'en' ? 'Noted.' : 'Anotado.',
-                                  language === 'fr' ? 'Tu t\'engages envers toi.' : language === 'en' ? 'You commit to yourself.' : 'Te comprometes contigo.',
-                                  language === 'fr' ? 'Tu honores cette intention.' : language === 'en' ? 'You honor this intention.' : 'Honras esta intención.',
-                                  language === 'fr' ? 'Alignement confirmé.' : language === 'en' ? 'Alignment confirmed.' : 'Alineación confirmada.',
-                                  language === 'fr' ? 'C\'est assumé.' : language === 'en' ? 'It\'s owned.' : 'Está asumido.',
-                                  language === 'fr' ? 'Tu avances avec ça.' : language === 'en' ? 'You move forward with this.' : 'Avanzas con esto.'
-                                ];
-                                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                                setIntentionFeedbackMessage(randomMessage);
-                                setShowIntentionFeedback(true);
-                                setTimeout(() => setShowIntentionFeedback(false), 3000);
-                              }
-                            }}
-                            disabled={!!dailyIntention}
-                            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                              isSelected
-                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                                : dailyIntention
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
-                            }`}
-                          >
-                            {label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {showIntentionFeedback && (
-                      <p className="mt-3 text-xs font-medium text-purple-600 italic animate-pulse">
-                        {intentionFeedbackMessage}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Section Comment je me sens ? */}
-                  <div className="relative bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-4 pt-6 shadow-lg">
-                    {/* Badge "chaque soir" en superposition sur la bordure gauche */}
-                    <div className="absolute -top-3 left-4">
-                      <div className="px-2.5 py-[3px] bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-lg border border-white/50" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%)' }}>
-                        <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
-                          {language === 'fr' ? 'chaque soir' : language === 'en' ? 'every evening' : 'cada noche'}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-gray-900 mb-3">
-                      {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '😌' },
-                        { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '😴' },
-                        { fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '😊' },
-                        { fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😔' },
-                        { fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐' }
-                      ].map((feeling) => {
-                        const label = language === 'fr' ? feeling.fr : language === 'en' ? feeling.en : feeling.es;
-                        const isSelected = dailyFeeling === label;
-                        return (
-                          <button
-                            key={label}
-                            onClick={() => setDailyFeeling(label)}
-                            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                              isSelected
-                                ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-md'
-                                : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
-                            }`}
-                          >
-                            {feeling.emoji} {label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Blocs d'habitudes thématiques - Mode liste fixe */}
-                  <div className="space-y-3">
-                    {habitBlocks.map((block) => {
-                      const progress = getBlockProgress(block);
-                      return (
-                      <div
-                        key={block.id}
-                        className={`relative bg-gradient-to-br ${block.color} rounded-2xl pl-4 pr-2 shadow-lg break-inside-avoid mb-3 ${block.isDefault ? 'py-6 pt-9' : 'py-6 pt-14'}`}
-                      >
-                        {/* Badge de suivi quotidien en superposition sur la bordure haut - Pour tous les blocs */}
-                        <div className="absolute -top-3 left-4">
-                          <div className="px-2.5 py-[3px] bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-full shadow-lg border border-white/50" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%)' }}>
-                            <span className="text-[10px] font-bold text-gray-700 whitespace-nowrap">
-                              {progress}%
-                            </span>
-                          </div>
-                        </div>
-                        {/* Bouton supprimer en superposition - Seulement si ce n'est pas le bloc par défaut */}
-                        {!block.isDefault && (
-                          <div className="absolute -top-2 right-2">
-                            <button
-                              onClick={() => {
-                                setHabitBlocks(habitBlocks.filter(b => b.id !== block.id));
-                              }}
-                              className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 shadow-md hover:shadow-lg flex items-center justify-center border border-gray-200"
-                            >
-                              <X className="w-4 h-4 text-gray-900" />
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Header du bloc */}
-                        <div className="mb-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <div className="text-2xl">{block.icon}</div>
-                            <h3 className={`text-lg font-bold ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-white' : 'text-gray-900'}`}>{block.name}</h3>
-                          </div>
-                          {block.description && (
-                            <p className={`text-xs italic ml-8 ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-gray-300' : 'text-gray-600'}`}>{block.description}</p>
-                          )}
-                        </div>
-
-                      {/* Liste des habitudes - Avec bouton - à gauche seulement si ce n'est pas le bloc par défaut */}
-                      {!block.collapsed && (
-                        <div className="space-y-1">
-                          {/* Trier les habitudes : non complétées en haut, complétées en bas */}
-                          {[...block.habits].sort((a, b) => {
-                            if (a.completed === b.completed) return 0;
-                            return a.completed ? 1 : -1;
-                          }).map((habit) => (
-                            <div
-                              key={habit.id}
-                              className={`flex items-center gap-1 transition-all duration-500 ease-in-out ${
-                                habit.completed ? 'opacity-0 animate-fade-out' : 'opacity-100'
-                              }`}
-                              style={{
-                                animation: habit.completed ? 'fadeOut 2s ease-in-out forwards' : 'none'
-                              }}
-                            >
-                              {!block.isDefault && (
-                                <button
-                                  onClick={() => {
-                                    setHabitBlocks(habitBlocks.map(b =>
-                                      b.id === block.id
-                                        ? { ...b, habits: b.habits.filter(h => h.id !== habit.id) }
-                                        : b
-                                    ));
-                                  }}
-                                  className={`w-4 h-4 flex items-center justify-center flex-shrink-0 ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                                >
-                                  <Minus className="w-3 h-3" />
-                                </button>
-                              )}
-                              <button
-                                onClick={() => {
-                                  setHabitBlocks(habitBlocks.map(b =>
-                                    b.id === block.id
-                                      ? {
-                                          ...b,
-                                          habits: b.habits.map(h =>
-                                            h.id === habit.id ? { ...h, completed: !h.completed } : h
-                                          )
-                                        }
-                                      : b
-                                  ));
-                                }}
-                                className="flex-1 text-left"
-                              >
-                                <div className={`text-sm font-medium transition-all duration-500 ${block.color.includes('gray-800') || block.color.includes('gray-900') ? 'text-white' : 'text-gray-900'} ${habit.completed ? 'line-through opacity-50' : ''}`}>
-                                  {habit.label}
-                                </div>
-                              </button>
-                            </div>
-                          ))}
-
-                          {/* Formulaire d'ajout d'habitude */}
-                          {addingHabitToBlock === block.id ? (
-                            <div className="mt-2 flex gap-1">
-                              <Input
-                                value={newBlockHabitLabel}
-                                onChange={(e) => setNewBlockHabitLabel(e.target.value)}
-                                placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
-                                className="h-7 text-xs flex-1"
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' && newBlockHabitLabel.trim()) {
-                                    const newHabit = {
-                                      id: `habit_${Date.now()}`,
-                                      label: newBlockHabitLabel.trim(),
-                                      completed: false
-                                    };
-                                    setHabitBlocks(habitBlocks.map(b =>
-                                      b.id === block.id
-                                        ? { ...b, habits: [...b.habits, newHabit] }
-                                        : b
-                                    ));
-                                    setNewBlockHabitLabel('');
-                                    setAddingHabitToBlock(null);
-                                  } else if (e.key === 'Escape') {
-                                    setNewBlockHabitLabel('');
-                                    setAddingHabitToBlock(null);
-                                  }
-                                }}
-                              />
-                              <button
-                                onClick={() => {
-                                  if (newBlockHabitLabel.trim()) {
-                                    const newHabit = {
-                                      id: `habit_${Date.now()}`,
-                                      label: newBlockHabitLabel.trim(),
-                                      completed: false
-                                    };
-                                    setHabitBlocks(habitBlocks.map(b =>
-                                      b.id === block.id
-                                        ? { ...b, habits: [...b.habits, newHabit] }
-                                        : b
-                                    ));
-                                    setNewBlockHabitLabel('');
-                                    setAddingHabitToBlock(null);
-                                  }
-                                }}
-                                className="w-7 h-7 rounded bg-green-500 hover:bg-green-600 flex items-center justify-center text-white"
-                              >
-                                <Check className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setNewBlockHabitLabel('');
-                                  setAddingHabitToBlock(null);
-                                }}
-                                className="w-7 h-7 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ) : (
-                            !block.isDefault && (
-                              <button
-                                onClick={() => {
-                                  setAddingHabitToBlock(block.id);
-                                  setNewBlockHabitLabel('');
-                                }}
-                                className="w-full flex items-center gap-1 mt-2 text-xs text-gray-600 hover:text-gray-900"
-                              >
-                                <Plus className="w-3 h-3" />
-                                <span>{language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Agregar'}</span>
-                              </button>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                    })}
-                  </div>
-
-                  {/* Bouton créer un nouveau bloc - Réduit de 40% */}
-                  {!showCreateBlock ? (
-                    <div className="flex justify-center">
-                      <button
-                        onClick={() => setShowCreateBlock(true)}
-                        className="flex items-center justify-center gap-2 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-2 border-2 border-dashed border-gray-300 hover:bg-white transition-all shadow-lg"
-                      >
-                        <Plus className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm font-semibold text-gray-700">
-                          {language === 'fr' ? 'Créer un nouveau bloc' : language === 'en' ? 'Create new block' : 'Crear nuevo bloque'}
-                        </span>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="bg-white rounded-3xl p-6 shadow-xl space-y-4">
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {language === 'fr' ? 'Nouveau bloc d\'habitudes' : language === 'en' ? 'New habit block' : 'Nuevo bloque de hábitos'}
-                      </h3>
-
-                      <div className="space-y-3">
-                        <div>
-                          <label className="text-sm font-medium text-gray-700 mb-1 block">
-                            {language === 'fr' ? 'Nom du bloc' : language === 'en' ? 'Block name' : 'Nombre del bloque'}
-                          </label>
-                          <Input
-                            value={newBlockName}
-                            onChange={(e) => setNewBlockName(e.target.value)}
-                            placeholder={language === 'fr' ? 'Ex: Routine du soir' : language === 'en' ? 'Ex: Evening routine' : 'Ej: Rutina nocturna'}
-                            className="h-12"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-sm font-medium text-gray-700 mb-1 block">
-                            {language === 'fr' ? 'Icône' : language === 'en' ? 'Icon' : 'Icono'}
-                          </label>
-                          <div className="flex gap-2 flex-wrap">
-                            {['📝', '🌙', '💪', '🧘', '📚', '🎯', '💡', '🌟'].map((icon) => (
-                              <button
-                                key={icon}
-                                onClick={() => setNewBlockIcon(icon)}
-                                className={`w-12 h-12 rounded-xl text-2xl flex items-center justify-center transition-all ${
-                                  newBlockIcon === icon
-                                    ? 'bg-blue-500 scale-110'
-                                    : 'bg-gray-100 hover:bg-gray-200'
-                                }`}
-                              >
-                                {icon}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="text-sm font-medium text-gray-700 mb-1 block">
-                            {language === 'fr' ? 'Couleur' : language === 'en' ? 'Color' : 'Color'}
-                          </label>
-                          <div className="grid grid-cols-4 gap-2">
-                            {[
-                              { name: 'Blue', value: 'from-blue-100 to-indigo-100' },
-                              { name: 'Pink', value: 'from-pink-100 to-rose-100' },
-                              { name: 'Green', value: 'from-green-100 to-emerald-100' },
-                              { name: 'Purple', value: 'from-purple-100 to-violet-100' },
-                              { name: 'Orange', value: 'from-orange-100 to-yellow-100' },
-                              { name: 'Teal', value: 'from-teal-100 to-cyan-100' },
-                              { name: 'White', value: 'from-white to-gray-50' },
-                              { name: 'Black', value: 'from-gray-800 to-gray-900' }
-                            ].map((color) => (
-                              <button
-                                key={color.value}
-                                onClick={() => setNewBlockColor(color.value)}
-                                className={`h-12 rounded-xl bg-gradient-to-br ${color.value} border-2 transition-all ${
-                                  newBlockColor === color.value
-                                    ? 'border-gray-900 scale-105'
-                                    : color.name === 'White' ? 'border-gray-300' : 'border-transparent'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={() => {
-                            if (newBlockName.trim()) {
-                              setHabitBlocks([
-                                ...habitBlocks,
-                                {
-                                  id: `block_${Date.now()}`,
-                                  name: newBlockName,
-                                  icon: newBlockIcon,
-                                  color: newBlockColor,
-                                  habits: [],
-                                  collapsed: false
-                                }
-                              ]);
-                              setNewBlockName('');
-                              setNewBlockIcon('📝');
-                              setNewBlockColor('from-blue-100 to-indigo-100');
-                              setShowCreateBlock(false);
-                            }
-                          }}
-                          className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold"
-                        >
-                          {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setShowCreateBlock(false);
-                            setNewBlockName('');
-                          }}
-                          className="flex-1 h-12"
-                        >
-                          {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+            {/* Header */}
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCurrentView('dashboard')}
+                    className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-105 transition-transform"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <h1 className="text-xl font-bold text-gray-800">
+                    {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
+                  </h1>
                 </div>
-              )}
-
-              {/* Onglet Growth */}
-              {habitTab === 'growth' && (() => {
-                // Convertir les trackers en trackerProgress (format attendu)
-                const trackerProgress: Record<number, { [key: string]: boolean }> = {};
-                trackers.forEach(tracker => {
-                  const day = parseInt(tracker.date.split('-').slice(1).join(''));
-                  if (!isNaN(day) && day >= 1 && day <= 30) {
-                    trackerProgress[day] = tracker.habits || {};
-                  }
-                });
-
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setHabitTab('growth')}
+                    className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-105 transition-transform"
+                  >
+                    <span className="text-lg">📊</span>
+                  </button>
+                  <button
+                    onClick={() => setShowAddHabit(true)}
+                    className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform"
+                    style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)' }}
+                  >
+                    <Plus className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Progress count */}
+              {(() => {
+                const completedCount = newMeHabits.filter(h => h.completed).length + customHabits.filter(h => {
+                  const today = getLocalDateString();
+                  const tracker = trackers.find(t => t.date === today);
+                  return tracker?.habits?.[h.id] || false;
+                }).length;
+                const totalCount = newMeHabits.length + customHabits.length;
+                const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+                
                 return (
-                <div className="space-y-4">
-                  {getDefaultHabitBlocks().map((block) => (
-                    <div key={block.id} className="bg-white rounded-xl p-4 shadow-md">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-2xl">{block.icon}</span>
-                        <h3 className="text-sm font-bold text-gray-800">{block.name}</h3>
-                      </div>
-                      
-                      {/* Afficher chaque habitude du bloc */}
-                      {block.habits.map((habit) => {
-                        const habitId = habit.id;
-                        
-                        return (
-                          <div key={habitId} className="mb-4 last:mb-0">
-                            <p className="text-xs font-medium text-gray-700 mb-2">{habit.label}</p>
-                            
-                            {/* 30 cases sur 2 lignes */}
-                            <div className="grid grid-cols-15 gap-1">
-                              {Array.from({ length: 30 }, (_, dayIndex) => {
-                                const day = dayIndex + 1;
-                                const dayData = trackerProgress[day];
-                                const isCompleted = dayData?.[habitId] || false;
-                                
-                                return (
-                                  <div
-                                    key={day}
-                                    className={`aspect-square rounded-sm transition-all ${
-                                      isCompleted
-                                        ? 'bg-gradient-to-br from-green-400 to-green-500'
-                                        : 'bg-gray-200'
-                                    }`}
-                                    title={`Jour ${day}`}
-                                  />
-                                );
-                              })}
-                            </div>
-                            
-                            {/* Statistique */}
-                            <p className="text-xs text-gray-500 mt-1">
-                              {Object.keys(trackerProgress).filter(day => trackerProgress[parseInt(day)]?.[habitId]).length} / 30 jours
-                            </p>
-                          </div>
-                        );
-                      })}
+                  <>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {completedCount}/{totalCount} {language === 'fr' ? 'aujourd\'hui' : language === 'en' ? 'today' : 'hoy'}
+                    </p>
+                    
+                    {/* Progress bar */}
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-6">
+                      <div 
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${progressPercent}%`,
+                          background: 'linear-gradient(90deg, #34d399, #14b8a6)'
+                        }}
+                      />
                     </div>
-                  ))}
-                  
-                  {/* Habitudes personnalisées */}
-                  {customHabits.map((habit) => (
-                    <div key={habit.id} className="bg-white rounded-xl p-4 shadow-md">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-2xl">{habit.type === 'good' ? '✅' : '🚫'}</span>
-                        <h3 className="text-sm font-bold text-gray-800">{habit.label}</h3>
-                      </div>
-                      
-                      {/* 30 cases sur 2 lignes */}
-                      <div className="grid grid-cols-15 gap-1">
-                        {Array.from({ length: 30 }, (_, dayIndex) => {
-                          const day = dayIndex + 1;
-                          const dayData = trackerProgress[day];
-                          const isCompleted = dayData?.[habit.id] || false;
-                          
-                          return (
-                            <div
-                              key={day}
-                              className={`aspect-square rounded-sm transition-all ${
-                                isCompleted
-                                  ? habit.type === 'good'
-                                    ? 'bg-gradient-to-br from-green-400 to-green-500'
-                                    : 'bg-gradient-to-br from-red-400 to-red-500'
-                                  : 'bg-gray-200'
-                              }`}
-                              title={`Jour ${day}`}
-                            />
-                          );
-                        })}
-                      </div>
-                      
-                      {/* Statistique */}
-                      <p className="text-xs text-gray-500 mt-1">
-                        {Object.keys(trackerProgress).filter(day => trackerProgress[parseInt(day)]?.[habit.id]).length} / 30 jours
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                    <p className="text-xs text-gray-500 -mt-5 mb-6">{progressPercent}% Progression du jour</p>
+                  </>
                 );
               })()}
             </div>
+
+            {/* Main content */}
+            <div className="px-4 space-y-4">
+              {/* Intention du jour */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <h3 className="text-sm font-bold text-gray-800 mb-3">
+                  {language === 'fr' ? '🎯 Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? '🎯 Today, I am someone who…' : '🎯 Hoy, soy alguien que…'}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
+                    { fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
+                    { fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
+                    { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
+                  ].map((intention) => {
+                    const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
+                    const isSelected = dailyIntention === label;
+                    return (
+                      <button
+                        key={label}
+                        onClick={() => {
+                          if (!dailyIntention) {
+                            setDailyIntention(label);
+                            const messages = [
+                              language === 'fr' ? 'Tu t\'engages envers toi.' : language === 'en' ? 'You commit to yourself.' : 'Te comprometes contigo.',
+                              language === 'fr' ? 'Tu honores cette intention.' : language === 'en' ? 'You honor this intention.' : 'Honras esta intención.',
+                              language === 'fr' ? 'Alignement confirmé.' : language === 'en' ? 'Alignment confirmed.' : 'Alineación confirmada.',
+                              language === 'fr' ? 'C\'est assumé.' : language === 'en' ? 'It\'s owned.' : 'Está asumido.',
+                              language === 'fr' ? 'Tu avances avec ça.' : language === 'en' ? 'You move forward with this.' : 'Avanzas con esto.'
+                            ];
+                            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                            setIntentionFeedbackMessage(randomMessage);
+                            setShowIntentionFeedback(true);
+                            setTimeout(() => setShowIntentionFeedback(false), 3000);
+                          }
+                        }}
+                        disabled={!!dailyIntention}
+                        className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                          isSelected
+                            ? 'text-white shadow-md'
+                            : dailyIntention
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        }`}
+                        style={isSelected ? { background: 'linear-gradient(135deg, #34d399, #14b8a6)' } : {}}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {showIntentionFeedback && (
+                  <p className="mt-3 text-xs font-medium italic animate-pulse" style={{ color: '#10b981' }}>
+                    {intentionFeedbackMessage}
+                  </p>
+                )}
+              </div>
+
+              {/* Mood tracker */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <h3 className="text-sm font-bold text-gray-800 mb-3">
+                  {language === 'fr' ? '😊 Comment je me sens ?' : language === 'en' ? '😊 How do I feel?' : '😊 ¿Cómo me siento?'}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', colors: ['#60a5fa', '#22d3ee'] },
+                    { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', colors: ['#9ca3af', '#6b7280'] },
+                    { fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', colors: ['#fbbf24', '#f59e0b'] },
+                    { fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', colors: ['#818cf8', '#a78bfa'] },
+                    { fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', colors: ['#2dd4bf', '#34d399'] }
+                  ].map((feeling) => {
+                    const label = language === 'fr' ? feeling.fr : language === 'en' ? feeling.en : feeling.es;
+                    const isSelected = dailyFeeling === label;
+                    return (
+                      <button
+                        key={label}
+                        onClick={() => setDailyFeeling(label)}
+                        className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                          isSelected
+                            ? 'text-white shadow-md'
+                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        }`}
+                        style={isSelected ? { background: `linear-gradient(135deg, ${feeling.colors[0]}, ${feeling.colors[1]})` } : {}}
+                      >
+                        {feeling.emoji} {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* New Me Habits */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-gray-800">✨ New Me</h3>
+                  <span className="text-xs font-medium text-gray-500">
+                    {newMeHabits.filter(h => h.completed).length}/{newMeHabits.length}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {newMeHabits.map((habit) => (
+                    <button
+                      key={habit.id}
+                      onClick={() => {
+                        setNewMeHabits(newMeHabits.map(h =>
+                          h.id === habit.id ? { ...h, completed: !h.completed } : h
+                        ));
+                      }}
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        // TODO: Open 30-day detail view
+                      }}
+                      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
+                        habit.completed
+                          ? 'bg-emerald-50'
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{habit.icon}</span>
+                        <span className={`text-sm font-medium ${
+                          habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
+                        }`}>
+                          {habit.label}
+                        </span>
+                      </div>
+                      {habit.completed && (
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center"
+                          style={{ background: '#34d399' }}
+                        >
+                          <Check className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-3 text-center">
+                  {language === 'fr' ? '(Appuie longtemps pour le suivi)' : language === 'en' ? '(Long press for tracking)' : '(Mantén presionado para seguimiento)'}
+                </p>
+              </div>
+
+              {/* Custom Habits */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-gray-800">
+                    {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'}
+                  </h3>
+                  <span className="text-xs font-medium text-gray-500">
+                    {customHabits.filter(h => {
+                      const today = getLocalDateString();
+                      const tracker = trackers.find(t => t.date === today);
+                      return tracker?.habits?.[h.id] || false;
+                    }).length}/{customHabits.length}
+                  </span>
+                </div>
+                
+                {customHabits.length === 0 ? (
+                  <button
+                    onClick={() => setShowAddHabit(true)}
+                    className="w-full py-4 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-emerald-400 hover:text-emerald-600 transition-all"
+                  >
+                    <span className="text-sm font-medium">
+                      {language === 'fr' ? '+ Créer ma première habitude' : language === 'en' ? '+ Create my first habit' : '+ Crear mi primer hábito'}
+                    </span>
+                  </button>
+                ) : (
+                  <div className="space-y-2">
+                    {customHabits.map((habit) => {
+                      const today = getLocalDateString();
+                      const tracker = trackers.find(t => t.date === today);
+                      const isCompleted = tracker?.habits?.[habit.id] || false;
+                      
+                      return (
+                        <div
+                          key={habit.id}
+                          className="flex items-center justify-between p-3 rounded-xl bg-gray-50"
+                        >
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => {
+                                const today = getLocalDateString();
+                                const existingTracker = trackers.find(t => t.date === today);
+                                if (existingTracker) {
+                                  updateTracker(today, {
+                                    habits: {
+                                      ...existingTracker.habits,
+                                      [habit.id]: !isCompleted
+                                    }
+                                  });
+                                } else {
+                                  updateTracker(today, {
+                                    habits: { [habit.id]: true }
+                                  });
+                                }
+                              }}
+                              className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                                isCompleted
+                                  ? 'bg-emerald-400 border-emerald-400'
+                                  : 'border-gray-300 hover:border-emerald-400'
+                              }`}
+                            >
+                              {isCompleted && <Check className="w-3 h-3 text-white" />}
+                            </button>
+                            <span className={`text-sm font-medium ${
+                              isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'
+                            }`}>
+                              {habit.label}
+                            </span>
+                          </div>
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <span className="text-lg">⋯</span>
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Add Habit Modal */}
+            {showAddHabit && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">
+                    {language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo hábito'}
+                  </h3>
+                  <Input
+                    value={newHabitLabel}
+                    onChange={(e) => setNewHabitLabel(e.target.value)}
+                    placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
+                    className="mb-4"
+                  />
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => {
+                        if (newHabitLabel.trim()) {
+                          setCustomHabits([...customHabits, {
+                            id: `habit_${Date.now()}`,
+                            label: newHabitLabel.trim(),
+                            type: 'good'
+                          }]);
+                          setNewHabitLabel('');
+                          setShowAddHabit(false);
+                        }
+                      }}
+                      className="flex-1"
+                      style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)' }}
+                    >
+                      {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setNewHabitLabel('');
+                        setShowAddHabit(false);
+                      }}
+                      className="flex-1"
+                    >
+                      {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

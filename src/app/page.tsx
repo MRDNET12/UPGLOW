@@ -13,7 +13,7 @@ import {
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -43,9 +43,6 @@ import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
-import { MyGoals } from '@/components/goals/MyGoals';
-import { GoalWorkspacePage } from '@/components/goals/GoalWorkspacePage';
-import { BlockagePopup } from '@/components/goals/BlockagePopup';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
 import { markWelcomeSeen, markPresentationSeen, hasPresentationBeenSeen } from '@/utils/visitTracker';
@@ -351,7 +348,7 @@ isActionCompleted,
   ];
 
   const MOODS_DATA = [
-    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', icon: SunIcon, color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700' },
+    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', icon: Sun, color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700' },
     { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', icon: Moon, color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700' },
     { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', icon: Sparkles, color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
     { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', icon: Frown, color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
@@ -400,7 +397,8 @@ isActionCompleted,
   }, [dailyIntention]);
 
   // États pour Planning
-  const [planningTab, setPlanningTab] = useState<'my-tasks' | 'glowee-tasks'>('my-tasks');
+  // Planning tab is now simplified to only 'my-tasks'
+  const planningTab = 'my-tasks';
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
 
   // États pour TimeCapsule (Message à moi)
@@ -410,18 +408,6 @@ isActionCompleted,
   // Mes tâches (manuelles)
   const [myWeekPriorities, setMyWeekPriorities] = useState<Array<{id: string, text: string, completed: boolean}>>([]);
   const [myWeeklyTasks, setMyWeeklyTasks] = useState<Record<string, Array<{id: string, text: string, completed: boolean}>>>({
-    monday: [],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-    saturday: [],
-    sunday: []
-  });
-
-  // Glowee tâches (suggestions)
-  const [gloweeWeekPriorities, setGloweeWeekPriorities] = useState<Array<{id: string, text: string, completed: boolean}>>([]);
-  const [gloweeWeeklyTasks, setGloweeWeeklyTasks] = useState<Record<string, Array<{id: string, text: string, completed: boolean}>>>({
     monday: [],
     tuesday: [],
     wednesday: [],
@@ -458,7 +444,6 @@ isActionCompleted,
     color: string;
     weeklyPriorities: Array<{id: string, text: string, completed: boolean}>;
   }>>([]);
-  const [selectedGoalForPriorities, setSelectedGoalForPriorities] = useState<string | null>(null);
 
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
@@ -800,20 +785,12 @@ isActionCompleted,
     if (isHydrated) {
       const storedMyPriorities = localStorage.getItem('myWeekPriorities');
       const storedMyTasks = localStorage.getItem('myWeeklyTasks');
-      const storedGloweePriorities = localStorage.getItem('gloweeWeekPriorities');
-      const storedGloweeTasks = localStorage.getItem('gloweeWeeklyTasks');
 
       if (storedMyPriorities) {
         setMyWeekPriorities(JSON.parse(storedMyPriorities));
       }
       if (storedMyTasks) {
         setMyWeeklyTasks(JSON.parse(storedMyTasks));
-      }
-      if (storedGloweePriorities) {
-        setGloweeWeekPriorities(JSON.parse(storedGloweePriorities));
-      }
-      if (storedGloweeTasks) {
-        setGloweeWeeklyTasks(JSON.parse(storedGloweeTasks));
       }
     }
   }, [isHydrated]);
@@ -830,18 +807,6 @@ isActionCompleted,
     }
   }, [myWeeklyTasks, isHydrated]);
 
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem('gloweeWeekPriorities', JSON.stringify(gloweeWeekPriorities));
-    }
-  }, [gloweeWeekPriorities, isHydrated]);
-
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem('gloweeWeeklyTasks', JSON.stringify(gloweeWeeklyTasks));
-    }
-  }, [gloweeWeeklyTasks, isHydrated]);
-
   // Note: Le chargement et la sauvegarde des tâches avec dates sont maintenant gérés par usePlanningSync
   // qui charge depuis Firebase au montage et synchronise automatiquement les changements
 
@@ -852,10 +817,6 @@ isActionCompleted,
       if (savedGoalsWithPriorities) {
         setGoalsWithPriorities(JSON.parse(savedGoalsWithPriorities));
       }
-      const savedSelectedGoal = localStorage.getItem('selectedGoalForPriorities');
-      if (savedSelectedGoal) {
-        setSelectedGoalForPriorities(savedSelectedGoal);
-      }
     }
   }, [isHydrated]);
 
@@ -865,11 +826,6 @@ isActionCompleted,
     }
   }, [goalsWithPriorities, isHydrated]);
 
-  useEffect(() => {
-    if (isHydrated && selectedGoalForPriorities) {
-      localStorage.setItem('selectedGoalForPriorities', selectedGoalForPriorities);
-    }
-  }, [selectedGoalForPriorities, isHydrated]);
 
   useEffect(() => {
     if (hasStarted && isHydrated) {
@@ -980,11 +936,11 @@ isActionCompleted,
     return Array.from(goalsMap.values());
   };
 
-  // Variables dynamiques basées sur l'onglet actif
-  const weekPriorities = planningTab === 'my-tasks' ? myWeekPriorities : gloweeWeekPriorities;
-  const setWeekPriorities = planningTab === 'my-tasks' ? setMyWeekPriorities : setGloweeWeekPriorities;
-  const weeklyTasks = planningTab === 'my-tasks' ? myWeeklyTasks : gloweeWeeklyTasks;
-  const setWeeklyTasks = planningTab === 'my-tasks' ? setMyWeeklyTasks : setGloweeWeeklyTasks;
+  // Variables pour les priorités et tâches de la semaine
+  const weekPriorities = myWeekPriorities;
+  const setWeekPriorities = setMyWeekPriorities;
+  const weeklyTasks = myWeeklyTasks;
+  const setWeeklyTasks = setMyWeeklyTasks;
 
   // Register service worker for PWA
   useEffect(() => {
@@ -2495,35 +2451,7 @@ isActionCompleted,
               </div>
             </div>
 
-            {/* Navigation Tabs - Mes tâches & Glowee tâches */}
-            <div className="px-4 pb-2">
-              <div className="flex gap-2 max-w-lg mx-auto">
-                <button
-                  onClick={() => setPlanningTab('my-tasks')}
-                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    planningTab === 'my-tasks'
-                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                      : theme === 'dark'
-                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                  }`}
-                >
-                  {language === 'fr' ? 'Mes tâches' : language === 'en' ? 'My tasks' : 'Mis tareas'}
-                </button>
-                <button
-                  onClick={() => setPlanningTab('glowee-tasks')}
-                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    planningTab === 'glowee-tasks'
-                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                      : theme === 'dark'
-                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                  }`}
-                >
-                  {language === 'fr' ? 'Glowee tâches' : language === 'en' ? 'Glowee tasks' : 'Tareas Glowee'}
-                </button>
-              </div>
-            </div>
+
 
             {/* Navigation par semaine */}
             <div className="px-4 pb-2">
@@ -2574,46 +2502,12 @@ isActionCompleted,
                   {language === 'fr' ? 'Mes 3 priorités de la semaine' : language === 'en' ? 'My 3 weekly priorities' : 'Mis 3 prioridades semanales'}
                 </h2>
 
-                {/* Sélecteur d'objectif (seulement pour Glowee tâches) */}
-                {planningTab === 'glowee-tasks' && goalsWithPriorities.length > 0 && (
-                  <div className="mb-2.5">
-                    <p className="text-[10px] text-stone-500 dark:text-stone-400 mb-1.5">
-                      {language === 'fr' ? 'Afficher les priorités de :' : language === 'en' ? 'Show priorities for:' : 'Mostrar prioridades de:'}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {goalsWithPriorities.map((goal) => (
-                        <button
-                          key={goal.id}
-                          onClick={() => setSelectedGoalForPriorities(goal.id)}
-                          className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
-                            selectedGoalForPriorities === goal.id
-                              ? theme === 'dark' ? 'bg-stone-700 ring-2 ring-offset-1 ring-offset-stone-900' : 'bg-stone-200 ring-2 ring-offset-1 ring-offset-white'
-                              : theme === 'dark' ? 'bg-stone-800 hover:bg-stone-700' : 'bg-stone-50 hover:bg-stone-100'
-                          }`}
-                          style={selectedGoalForPriorities === goal.id ? { ringColor: goal.color } : {}}
-                        >
-                          <div
-                            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: goal.color }}
-                          />
-                          <span className="truncate max-w-[100px]">{goal.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 <div className="space-y-2">
                   {(() => {
                     // Déterminer quelles priorités afficher
                     let prioritiesToShow = weekPriorities;
 
-                    if (planningTab === 'glowee-tasks' && selectedGoalForPriorities) {
-                      const selectedGoal = goalsWithPriorities.find(g => g.id === selectedGoalForPriorities);
-                      if (selectedGoal) {
-                        prioritiesToShow = selectedGoal.weeklyPriorities;
-                      }
-                    }
 
                     if (prioritiesToShow.length === 0) {
                       return (
@@ -2630,32 +2524,12 @@ isActionCompleted,
                           theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
                         }`}
                       >
-                        {/* Indicateur de couleur pour les priorités Glowee */}
-                        {planningTab === 'glowee-tasks' && selectedGoalForPriorities && (() => {
-                          const selectedGoal = goalsWithPriorities.find(g => g.id === selectedGoalForPriorities);
-                          return selectedGoal ? (
-                            <div
-                              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: selectedGoal.color }}
-                            />
-                          ) : null;
-                        })()}
                         <span className={`flex-1 text-xs ${priority.completed ? 'line-through text-stone-500' : ''}`}>
                           {priority.text}
                         </span>
                         <button
                           onClick={() => {
-                            if (planningTab === 'glowee-tasks' && selectedGoalForPriorities) {
-                              // Supprimer de l'objectif sélectionné
-                              setGoalsWithPriorities(prev => prev.map(g =>
-                                g.id === selectedGoalForPriorities
-                                  ? { ...g, weeklyPriorities: g.weeklyPriorities.filter(p => p.id !== priority.id) }
-                                  : g
-                              ));
-                            } else {
-                              // Supprimer des priorités manuelles
-                              setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
-                            }
+                            setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
                           }}
                           className="text-stone-400 hover:text-red-500"
                         >
@@ -2689,9 +2563,7 @@ isActionCompleted,
                     const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
 
                     // Récupérer les tâches pour cette date
-                    const dayTasks = planningTab === 'glowee-tasks'
-                      ? getTasksForDate(dateStr, 'glowee')
-                      : getTasksForDate(dateStr, 'user');
+                    const dayTasks = getTasksForDate(dateStr, "user");
 
                     return (
                       <div
@@ -2806,113 +2678,6 @@ isActionCompleted,
               </Button>
             </div>
           </div>
-        )}
-
-        {/* My Goals View */}
-        {currentView === 'my-goals' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            <MyGoals
-              onAddGloweeTasks={(
-                tasks: Array<{day: string, date?: string, task: string, priority: string, category: string, goalId?: string, goalName?: string, goalColor?: string}>,
-                goalData: {id: string, name: string, color: string, weeklyPriorities: Array<{id: string, text: string, completed: boolean}>}
-              ) => {
-                // Convertir les tâches de l'API en format du Planning avec dates
-                const newTasksWithDates = tasks.map(task => ({
-                  id: `glowee_${Date.now()}_${Math.random()}`,
-                  text: task.task,
-                  date: task.date || '', // La date est déjà fournie par MyGoals
-                  completed: false,
-                  type: 'glowee' as const,
-                  priority: task.priority,
-                  category: task.category,
-                  goalId: task.goalId,
-                  goalName: task.goalName,
-                  goalColor: task.goalColor
-                }));
-
-                setTasksWithDates(prev => [...prev, ...newTasksWithDates]);
-
-                // Sauvegarder les tâches Glowee dans Firebase si l'utilisateur est connecté
-                if (user) {
-                  (async () => {
-                    try {
-                      for (const task of newTasksWithDates) {
-                        const firebaseId = await saveTask(user.uid, task);
-                        // Mettre à jour l'ID local avec l'ID Firebase
-                        setTasksWithDates(prev => prev.map(t =>
-                          t.id === task.id ? { ...t, id: firebaseId } : t
-                        ));
-                      }
-                    } catch (error) {
-                      console.error('Error saving Glowee tasks to Firebase:', error);
-                    }
-                  })();
-                }
-
-                // Ajouter l'objectif avec ses priorités
-                setGoalsWithPriorities(prev => {
-                  // Vérifier si l'objectif existe déjà
-                  const existingIndex = prev.findIndex(g => g.id === goalData.id);
-                  if (existingIndex >= 0) {
-                    // Mettre à jour l'objectif existant
-                    const updated = [...prev];
-                    updated[existingIndex] = goalData;
-                    return updated;
-                  } else {
-                    // Ajouter le nouvel objectif
-                    return [...prev, goalData];
-                  }
-                });
-
-                // Sélectionner automatiquement ce nouvel objectif pour les priorités
-                setSelectedGoalForPriorities(goalData.id);
-
-                // Rediriger vers Planning
-                setCurrentView('routine');
-                setPlanningTab('glowee-tasks');
-              }}
-              onShowGoalDetails={(goalId: string, goal: any) => {
-                setSelectedGoalId(goalId);
-                // Mettre à jour l'état goals avec le goal actuel si nécessaire
-                setGoals(prev => {
-                  const existingIndex = prev.findIndex(g => g.id === goalId);
-                  if (existingIndex >= 0) {
-                    return prev;
-                  } else {
-                    return [...prev, goal];
-                  }
-                });
-                setCurrentView('goal-details');
-              }}
-              onGoalsChange={(updatedGoals: any[]) => {
-                setGoals(updatedGoals);
-              }}
-            />
-          </div>
-        )}
-
-        {/* Goal Workspace View */}
-        {currentView === 'goal-details' && selectedGoalId && (
-          <GoalWorkspacePage
-            goal={goals.find(g => g.id === selectedGoalId) || null}
-            onBack={() => {
-              setCurrentView('my-goals');
-              setSelectedGoalId(null);
-            }}
-            onNavigateToPlanning={() => {
-              setCurrentView('routine');
-              setPlanningTab('glowee-tasks');
-            }}
-            onGoalDeleted={() => {
-              // Rafraîchir la liste des objectifs après suppression
-              const savedGoals = localStorage.getItem('myGoals');
-              if (savedGoals) {
-                setGoals(JSON.parse(savedGoals));
-              }
-            }}
-            theme={theme}
-            language={language}
-          />
         )}
 
         {/* Vision Board View */}

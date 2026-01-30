@@ -2163,23 +2163,34 @@ isActionCompleted,
               {/* Intention du jour */}
               <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <span style={{ color: '#8b5cf6' }}>🎯</span>
+                  <span className="text-violet-500">🎯</span>
                   {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : '🎯 Hoy, soy alguien que…'}
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
-                    { fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
-                    { fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
-                    { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
-                  ].map((intention) => {
-                    const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
-                    const isSelected = dailyIntention === label;
-                    return (
-                      <button
-                        key={label}
-                        onClick={() => {
-                          if (!dailyIntention) {
+                
+                {dailyIntention ? (
+                  <div className="bg-gradient-to-r from-violet-100 to-purple-100 rounded-xl p-4 border border-violet-200">
+                    <p className="text-sm font-bold text-violet-700">
+                      {dailyIntention}
+                    </p>
+                    {showIntentionFeedback && (
+                      <p className="text-xs text-violet-500 mt-2 animate-pulse">
+                        ✨ {intentionFeedbackMessage}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
+                      { fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
+                      { fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
+                      { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
+                    ].map((intention) => {
+                      const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
+                      return (
+                        <button
+                          key={label}
+                          onClick={() => {
                             setDailyIntention(label);
                             const messages = [
                               language === 'fr' ? 'Tu t\'engages envers toi.' : language === 'en' ? 'You commit to yourself.' : 'Te comprometes contigo.',
@@ -2192,43 +2203,30 @@ isActionCompleted,
                             setIntentionFeedbackMessage(randomMessage);
                             setShowIntentionFeedback(true);
                             setTimeout(() => setShowIntentionFeedback(false), 3000);
-                          }
-                        }}
-                        disabled={!!dailyIntention && !isSelected}
-                        className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 ${
-                          isSelected
-                            ? 'text-white shadow-md'
-                            : dailyIntention
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                        style={isSelected ? { background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' } : {}}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
-                </div>
-                {showIntentionFeedback && (
-                  <p className="mt-3 text-xs font-medium italic" style={{ color: '#8b5cf6' }}>
-                    ✨ {intentionFeedbackMessage}
-                  </p>
+                          }}
+                          className="px-4 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-600 transition-all duration-200 active:scale-95"
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
 
               {/* Humeur du jour */}
               <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <span style={{ color: '#f59e0b' }}>😊</span>
+                  <span className="text-amber-500">😊</span>
                   {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>
                 <div className="flex gap-2">
                   {[
-                    { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', colors: ['#60a5fa', '#22d3ee'] },
-                    { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', colors: ['#9ca3af', '#6b7280'] },
-                    { fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', colors: ['#fbbf24', '#f59e0b'] },
-                    { fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', colors: ['#818cf8', '#a78bfa'] },
-                    { fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', colors: ['#2dd4bf', '#34d399'] }
+                    { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', gradient: 'from-sky-400 to-cyan-400' },
+                    { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', gradient: 'from-gray-400 to-gray-500' },
+                    { fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', gradient: 'from-amber-400 to-orange-400' },
+                    { fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', gradient: 'from-indigo-400 to-purple-400' },
+                    { fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', gradient: 'from-teal-400 to-emerald-400' }
                   ].map((feeling) => {
                     const label = language === 'fr' ? feeling.fr : language === 'en' ? feeling.en : feeling.es;
                     const isSelected = dailyFeeling === label;
@@ -2236,15 +2234,14 @@ isActionCompleted,
                       <button
                         key={label}
                         onClick={() => setDailyFeeling(label)}
-                        className={`flex-1 flex flex-col items-center gap-1 p-2 rounded-xl text-xs font-medium transition-all duration-200 ${
+                        className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all duration-200 active:scale-95 ${
                           isSelected
-                            ? 'text-white shadow-md'
+                            ? `bg-gradient-to-br ${feeling.gradient} text-white shadow-md`
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
-                        style={isSelected ? { background: `linear-gradient(135deg, ${feeling.colors[0]}, ${feeling.colors[1]})` } : {}}
                       >
-                        <span className="text-xl">{feeling.emoji}</span>
-                        <span className="text-[10px]">{label}</span>
+                        <span className="text-lg">{feeling.emoji}</span>
+                        <span className="text-[10px] font-medium">{label}</span>
                       </button>
                     );
                   })}

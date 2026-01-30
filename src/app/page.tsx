@@ -315,7 +315,6 @@ isActionCompleted,
   const [newBlockName, setNewBlockName] = useState('');
   const [newBlockIcon, setNewBlockIcon] = useState('📝');
   const [newBlockColor, setNewBlockColor] = useState('from-blue-100 to-indigo-100');
-  const [habitTab, setHabitTab] = useState<'tasks' | 'growth'>('tasks');
   // Mode liste fixe pour le bloc par défaut (non modifiable)
   const habitGridMode = 'list' as const;
 
@@ -2047,7 +2046,7 @@ isActionCompleted,
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setHabitTab('growth')}
+                    onClick={() => setCurrentView('habit-progress')}
                     className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
                     style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                   >
@@ -2388,6 +2387,36 @@ isActionCompleted,
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Habit Progress View */}
+        {currentView === 'habit-progress' && (
+          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+            {/* Header */}
+            <div className="px-4 pt-4 pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCurrentView('trackers')}
+                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
+                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-800" />
+                  </button>
+                  <h1 className="text-lg font-bold text-gray-800">
+                    Progression
+                  </h1>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-4 space-y-3">
+              {/* Simple placeholder content for now */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
+                <p className="text-gray-600">Page de progression des habitudes</p>
+              </div>
+            </div>
           </div>
         )}
 

@@ -334,6 +334,30 @@ isActionCompleted,
     return Math.round((completed / block.habits.length) * 100);
   };
 
+  // Données pour les intentions et humeurs
+  const INTENTIONS_DATA = [
+    { id: 'respect', fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
+    { id: 'advance', fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
+    { id: 'energy', fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
+    { id: 'word', fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' },
+  ];
+
+  const INTENTION_MESSAGES = [
+    'Tu t\'engages envers toi.',
+    'Tu honores cette intention.',
+    'Alignement confirmé.',
+    'C\'est assumé.',
+    'Tu avances avec ça.',
+  ];
+
+  const MOODS_DATA = [
+    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', gradient: 'from-sky-400 to-cyan-400' },
+    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', gradient: 'from-gray-400 to-gray-500' },
+    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', gradient: 'from-amber-400 to-orange-400' },
+    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', gradient: 'from-indigo-400 to-purple-400' },
+    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', gradient: 'from-teal-400 to-emerald-400' },
+  ];
+
   // États pour "Comment je me sens ?" et "Intention du jour"
   const [dailyFeeling, setDailyFeeling] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
@@ -2160,51 +2184,39 @@ isActionCompleted,
                 );
               })()}
 
-              {/* Intention du jour */}
-              <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              {/* SECTION INTENTION */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <span className="text-violet-500">🎯</span>
-                  {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : '🎯 Hoy, soy alguien que…'}
+                  {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                 </h3>
                 
                 {dailyIntention ? (
-                  <div className="bg-gradient-to-r from-violet-100 to-purple-100 rounded-xl p-4 border border-violet-200">
-                    <p className="text-sm font-bold text-violet-700">
+                  <div className="bg-gradient-to-r from-violet-100 to-purple-100 rounded-xl p-3">
+                    <p className="text-sm font-semibold text-violet-700">
                       {dailyIntention}
                     </p>
                     {showIntentionFeedback && (
-                      <p className="text-xs text-violet-500 mt-2 animate-pulse">
+                      <p className="text-xs text-violet-500 mt-1 animate-fade-in">
                         ✨ {intentionFeedbackMessage}
                       </p>
                     )}
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {[
-                      { fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
-                      { fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
-                      { fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
-                      { fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' }
-                    ].map((intention) => {
+                    {INTENTIONS_DATA.map((intention) => {
                       const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
                       return (
                         <button
-                          key={label}
+                          key={intention.id}
                           onClick={() => {
                             setDailyIntention(label);
-                            const messages = [
-                              language === 'fr' ? 'Tu t\'engages envers toi.' : language === 'en' ? 'You commit to yourself.' : 'Te comprometes contigo.',
-                              language === 'fr' ? 'Tu honores cette intention.' : language === 'en' ? 'You honor this intention.' : 'Honras esta intención.',
-                              language === 'fr' ? 'Alignement confirmé.' : language === 'en' ? 'Alignment confirmed.' : 'Alineación confirmada.',
-                              language === 'fr' ? 'C\'est assumé.' : language === 'en' ? 'It\'s owned.' : 'Está asumido.',
-                              language === 'fr' ? 'Tu avances avec ça.' : language === 'en' ? 'You move forward with this.' : 'Avanzas con esto.'
-                            ];
-                            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                            setIntentionFeedbackMessage(randomMessage);
+                            const msg = INTENTION_MESSAGES[Math.floor(Math.random() * INTENTION_MESSAGES.length)];
+                            setIntentionFeedbackMessage(msg);
                             setShowIntentionFeedback(true);
                             setTimeout(() => setShowIntentionFeedback(false), 3000);
                           }}
-                          className="px-4 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-600 transition-all duration-200 active:scale-95"
+                          className="px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-600 transition-colors active:scale-95"
                         >
                           {label}
                         </button>
@@ -2214,33 +2226,27 @@ isActionCompleted,
                 )}
               </div>
 
-              {/* Humeur du jour */}
-              <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              {/* SECTION HUMEUR */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <span className="text-amber-500">😊</span>
                   {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>
                 <div className="flex gap-2">
-                  {[
-                    { fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', gradient: 'from-sky-400 to-cyan-400' },
-                    { fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', gradient: 'from-gray-400 to-gray-500' },
-                    { fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', gradient: 'from-amber-400 to-orange-400' },
-                    { fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', gradient: 'from-indigo-400 to-purple-400' },
-                    { fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', gradient: 'from-teal-400 to-emerald-400' }
-                  ].map((feeling) => {
-                    const label = language === 'fr' ? feeling.fr : language === 'en' ? feeling.en : feeling.es;
+                  {MOODS_DATA.map((mood) => {
+                    const label = language === 'fr' ? mood.fr : language === 'en' ? mood.en : mood.es;
                     const isSelected = dailyFeeling === label;
                     return (
                       <button
-                        key={label}
+                        key={mood.id}
                         onClick={() => setDailyFeeling(label)}
-                        className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all duration-200 active:scale-95 ${
+                        className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all active:scale-95 ${
                           isSelected
-                            ? `bg-gradient-to-br ${feeling.gradient} text-white shadow-md`
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? `bg-gradient-to-br ${mood.gradient} text-white shadow-md`
+                            : 'bg-gray-100 text-gray-600'
                         }`}
                       >
-                        <span className="text-lg">{feeling.emoji}</span>
+                        <span className="text-lg">{mood.emoji}</span>
                         <span className="text-[10px] font-medium">{label}</span>
                       </button>
                     );

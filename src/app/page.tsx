@@ -153,7 +153,6 @@ isActionCompleted,
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
   const [showGloweeFifthVisit, setShowGloweeFifthVisit] = useState(false);
   const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
-  const [showBlockagePopup, setShowBlockagePopup] = useState(false);
 
   // États pour le message Glowee avec effet typing et rotation toutes les 10 minutes
   const [gloweeMessageIndex, setGloweeMessageIndex] = useState(0);
@@ -833,48 +832,6 @@ isActionCompleted,
     }
   }, [hasStarted, setCurrentView, isHydrated]);
 
-  // Détecter le blocage et afficher la popup si l'utilisateur n'a pas complété de tâches depuis 3 jours
-  useEffect(() => {
-    if (!isHydrated || !hasStarted) return;
-
-    // Vérifier si déjà montré aujourd'hui
-    const today = getLocalDateString();
-    const lastShown = localStorage.getItem('blockagePopupLastShown');
-    if (lastShown === today) return;
-
-    // Vérifier si l'utilisateur a des objectifs actifs
-    if (goalsWithPriorities.length === 0) return;
-
-    // Vérifier la dernière tâche complétée
-    const completedTasks = tasksWithDates.filter(t => t.completed);
-
-    const checkBlockage = () => {
-      if (completedTasks.length === 0) {
-        // Pas de tâches complétées, vérifier depuis combien de temps l'app a été ouverte
-        const firstOpen = localStorage.getItem('firstOpenDate');
-        if (firstOpen) {
-          const daysSinceFirst = Math.floor((Date.now() - new Date(firstOpen).getTime()) / (1000 * 60 * 60 * 24));
-          if (daysSinceFirst >= 3) {
-            setTimeout(() => setShowBlockagePopup(true), 2000);
-          }
-        }
-      } else {
-        // Trouver la date de la dernière tâche complétée
-        const lastCompletedDate = completedTasks.reduce((latest, task) => {
-          return task.date > latest ? task.date : latest;
-        }, '');
-
-        if (lastCompletedDate) {
-          const daysSinceLastCompletion = Math.floor((Date.now() - new Date(lastCompletedDate).getTime()) / (1000 * 60 * 60 * 24));
-          if (daysSinceLastCompletion >= 3) {
-            setTimeout(() => setShowBlockagePopup(true), 2000);
-          }
-        }
-      }
-    };
-
-    checkBlockage();
-  }, [isHydrated, hasStarted, goalsWithPriorities.length, tasksWithDates]);
 
   // Scroll to top quand on accède à la page Glow Up (bonus)
   useEffect(() => {
@@ -5067,20 +5024,6 @@ isActionCompleted,
         language={language}
       />
 
-      {/* Blockage Popup - Affiché si l'utilisateur n'a pas complété de tâches depuis 3 jours */}
-      <BlockagePopup
-        isOpen={showBlockagePopup}
-        onClose={() => {
-          setShowBlockagePopup(false);
-          localStorage.setItem('blockagePopupLastShown', getLocalDateString());
-        }}
-        goals={goalsWithPriorities.map(g => ({
-          id: g.id,
-          name: g.name,
-          progress: g.progress || 0
-        }))}
-        language={language}
-      />
 
       {/* Challenge Switch Drawer - Design moderne */}
       <Drawer open={showChallengeDrawer} onOpenChange={setShowChallengeDrawer}>

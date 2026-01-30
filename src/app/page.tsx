@@ -351,11 +351,11 @@ isActionCompleted,
   ];
 
   const MOODS_DATA = [
-    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', emoji: '☀️', color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700' },
-    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', emoji: '🌙', color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700' },
-    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', emoji: '✨', color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
-    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', emoji: '😟', color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
-    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', emoji: '😐', color: '#14b8a6', bgColor: 'bg-teal-100', textColor: 'text-teal-700' },
+    { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', icon: SunIcon, color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700' },
+    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', icon: Moon, color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700' },
+    { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', icon: Sparkles, color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700' },
+    { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', icon: Frown, color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
+    { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', icon: Meh, color: '#14b8a6', bgColor: 'bg-teal-100', textColor: 'text-teal-700' },
   ];
 
   // États pour "Comment je me sens ?" et "Intention du jour"
@@ -2244,15 +2244,13 @@ isActionCompleted,
                           isSelected ? `${mood.bgColor} shadow-sm` : 'bg-gray-50'
                         }`}
                       >
-                        <span 
-                          className="text-lg transition-all duration-200"
+                        <mood.icon 
+                          className="w-5 h-5 transition-all duration-200"
                           style={{ 
                             filter: isSelected ? 'none' : 'grayscale(100%) brightness(1.2)',
                             opacity: isSelected ? 1 : 0.6,
                           }}
-                        >
-                          {mood.emoji}
-                        </span>
+                        />
                         <span className={`text-[10px] font-medium ${isSelected ? mood.textColor : 'text-gray-500'}`}>
                           {label}
                         </span>

@@ -1569,71 +1569,112 @@ isActionCompleted,
             {/* Petits Succès Compact */}
             <SmallWinsCompact theme={theme} />
 
-            {/* Grille de cartes - 2 colonnes pour Mes Habitudes et Ma semaine */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* Carte Mes Habitudes */}
+            {/* Grille de cartes - Layout moderne style capture */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Carte Mes Habitudes - Grande carte à gauche */}
               <Card
-                className="row-span-2 border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                className="row-span-2 border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
                 onClick={() => setCurrentView('trackers')}
               >
-                <CardContent className="p-4 relative overflow-hidden">
-                  <div className="absolute -top-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
-                    📚
-                  </div>
-                  <div className="relative z-10 flex flex-col items-center justify-center gap-2">
-                    <div className="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
-                      <span className="text-2xl">📝</span>
-                    </div>
-                    <h3 className="text-sm font-bold text-gray-800 text-center">
+                <CardContent className="p-5 h-full flex flex-col">
+                  {/* Header */}
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 mb-1">
                       {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                     </h3>
+                    <p className="text-xs text-gray-500">
+                      {language === 'fr' ? 'Tout ce dont vous avez besoin pour rester productif' : language === 'en' ? 'Everything you need to stay productive' : 'Todo lo que necesitas para mantenerte productivo'}
+                    </p>
                   </div>
+                  
+                  {/* Image/Mascotte */}
+                  <div className="flex-1 flex items-center justify-center mb-4">
+                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
+                      <span className="text-6xl">🧘‍♀️</span>
+                    </div>
+                  </div>
+                  
+                  {/* Bouton */}
+                  <button className="w-full bg-gray-900 text-white text-sm font-semibold py-3 px-6 rounded-full hover:bg-gray-800 transition-colors">
+                    {language === 'fr' ? 'Commencer' : language === 'en' ? 'Get Started' : 'Empezar'}
+                  </button>
                 </CardContent>
               </Card>
-              {/* Right column container */}
-              <div className="flex flex-col gap-4">
 
-              {/* Ma semaine */}
-              <Card
-                className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-50 via-rose-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02] relative overflow-hidden"
-                onClick={() => setCurrentView('routine')}
-              >
-                <CardContent className="p-4 relative overflow-hidden">
-                  <div className="absolute -bottom-1 -right-1 text-4xl opacity-10 drop-shadow-lg">
-                    👩‍🍳
-                  </div>
-                  <div className="relative z-10 flex flex-col items-center justify-center gap-2">
-                    <div className="w-12 h-12 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
-                      <Calendar className="w-6 h-6 text-pink-400" />
+              {/* Colonne droite - 2 cartes empilées */}
+              <div className="flex flex-col gap-3">
+                {/* Carte Ma Semaine */}
+                <Card
+                  className="border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1"
+                  onClick={() => setCurrentView('routine')}
+                >
+                  <CardContent className="p-4">
+                    {/* Header avec icône */}
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-sm font-bold text-gray-800">
+                        {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                      </h3>
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-gray-600" />
+                      </div>
                     </div>
-                    <h3 className="text-sm font-bold text-gray-800 text-center">
-                      {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
-                    </h3>
-                  </div>
-                </CardContent>
-              </Card>
-              {/* Carte 8 Limites - Réduite de 40% */}
-              <Card
-                className="border-none shadow-lg shadow-purple-100/50 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-                onClick={() => setCurrentView('boundaries')}
-              >
-                <CardContent className="p-2.5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-md">
-                      <Shield className="w-3.5 h-3.5 text-purple-400" />
+                    
+                    {/* Valeur principale */}
+                    <div className="mb-2">
+                      <p className="text-2xl font-bold text-gray-800">
+                        {tasksWithDates.filter(t => !t.completed).length}
+                      </p>
+                      <p className="text-xs text-gray-400">tâches</p>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-xs text-gray-800 truncate">
+                    
+                    {/* Indicateur */}
+                    <div className="flex items-center gap-1">
+                      <Check className="w-3 h-3 text-emerald-500" />
+                      <span className="text-xs text-gray-600">
+                        {tasksWithDates.filter(t => t.completed).length} {language === 'fr' ? 'complétées' : 'completed'}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Carte 8 Limites */}
+                <Card
+                  className="border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1"
+                  onClick={() => setCurrentView('boundaries')}
+                >
+                  <CardContent className="p-4">
+                    {/* Header avec icône */}
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-sm font-bold text-gray-800">
                         {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
                       </h3>
-                      <p className="text-[9px] text-gray-500 font-medium truncate">
-                        {language === 'fr' ? 'Pour ta paix' : language === 'en' ? 'For your peace' : 'Para tu paz'}
-                      </p>
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Shield className="w-4 h-4 text-gray-600" />
+                      </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-purple-400 flex-shrink-0" />
-                  </div>
-                </CardContent>
-              </Card>
+                    
+                    {/* Valeur principale */}
+                    <div className="mb-2">
+                      <p className="text-2xl font-bold text-gray-800">
+                        {boundaries.filter(b => b.active).length}<span className="text-lg text-gray-400">/8</span>
+                      </p>
+                      <p className="text-xs text-gray-400">{language === 'fr' ? 'actives' : 'active'}</p>
+                    </div>
+                    
+                    {/* Indicateur */}
+                    <div className="flex items-center gap-1">
+                      <Check className="w-3 h-3 text-emerald-500" />
+                      <span className="text-xs text-gray-600">
+                        {(() => {
+                          const activeBoundaries = boundaries.filter(b => b.active);
+                          if (activeBoundaries.length === 0) return '0%';
+                          const respectedCount = activeBoundaries.filter(b => b.respectedToday).length;
+                          return Math.round((respectedCount / activeBoundaries.length) * 100) + '%';
+                        })()} {language === 'fr' ? 'respectées' : 'respected'}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
 

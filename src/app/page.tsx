@@ -970,58 +970,60 @@ isActionCompleted,
   const isChallengeView = currentView === 'challenge-selection' || currentView === 'dashboard' || currentView === 'challenge';
   const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView;
 
-  // Language Selection Screen - Glassmorphism Rose Pastel
+  // Language Selection Screen - Emerald/Teal Design System
   if (!hasSelectedLanguage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
         <div className="max-w-md w-full text-center space-y-8">
           {/* Logo avec Glowee */}
           <div className="space-y-6 animate-in fade-in duration-700">
             <div className="flex justify-center">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-2xl opacity-40"></div>
+                <div className="absolute inset-0 rounded-full blur-2xl opacity-40" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}></div>
                 <img
                   src="/Glowee/glowee-acceuillante.webp"
                   alt="Glowee"
-                  className="w-40 h-40 object-contain relative z-10 drop-shadow-2xl"
+                  className="w-40 h-40 object-contain relative z-10"
+                  style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent drop-shadow-lg">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800">
                 {t.languageSelection.title}
               </h1>
-              <p className="text-xl text-gray-700 font-medium">
+              <p className="text-xl text-gray-600 font-medium">
                 {t.languageSelection.subtitle}
               </p>
             </div>
           </div>
 
-          {/* Language Options - Glassmorphism Cards */}
+          {/* Language Options - Clean White Cards */}
           <div className="space-y-3 animate-in slide-in-from-bottom duration-700 delay-200">
             {[
-              { code: 'fr' as Language, name: 'Français', flag: '🇫🇷', gradient: 'from-pink-100 to-rose-100' },
-              { code: 'en' as Language, name: 'English', flag: '🇬🇧', gradient: 'from-rose-100 to-orange-100' },
-              { code: 'es' as Language, name: 'Español', flag: '🇪🇸', gradient: 'from-orange-100 to-pink-100' }
+              { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
+              { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
+              { code: 'es' as Language, name: 'Español', flag: '🇪🇸' }
             ].map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`w-full p-5 rounded-[1.5rem] transition-all duration-300 ${
+                className={`w-full p-5 rounded-2xl transition-all duration-300 bg-white ${
                   language === lang.code
-                    ? 'bg-white/90 backdrop-blur-xl border-2 border-pink-300 shadow-2xl shadow-pink-200/50 scale-105'
-                    : `bg-white/60 backdrop-blur-md border border-pink-100/50 shadow-lg shadow-pink-100/30 hover:bg-white/80 hover:scale-102 hover:shadow-xl`
+                    ? 'ring-2 ring-emerald-400 shadow-lg'
+                    : 'shadow-sm hover:shadow-md'
                 }`}
+                style={language === lang.code ? { boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)' } : { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${lang.gradient} flex items-center justify-center shadow-lg`}>
-                      <span className="text-3xl drop-shadow-lg">{lang.flag}</span>
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #d1fae5, #ccfbf1)' }}>
+                      <span className="text-3xl">{lang.flag}</span>
                     </div>
                     <span className="text-xl font-bold text-gray-800">{lang.name}</span>
                   </div>
                   {language === lang.code && (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center shadow-lg">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}>
                       <Check className="w-5 h-5 text-white" />
                     </div>
                   )}
@@ -1033,7 +1035,8 @@ isActionCompleted,
           {/* Continue Button */}
           <Button
             onClick={() => setCurrentView('presentation')}
-            className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-400"
+            className="w-full h-16 text-xl text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
+            style={{ background: 'linear-gradient(135deg, #34d399, #10b981)', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}
           >
             {t.languageSelection.continue}
             <ChevronRight className="ml-2 w-6 h-6" />
@@ -1074,12 +1077,12 @@ isActionCompleted,
     }
 
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+      <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
         <div className="flex-1 overflow-y-auto p-6 pb-24">
           <div className="max-w-md mx-auto space-y-6">
             {/* Header */}
             <div className="text-center space-y-4 pt-6">
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-gradient-to-br from-pink-300 to-pink-400 shadow-2xl shadow-pink-200/50">
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-200/50">
                 <Sparkles className="w-12 h-12 text-white drop-shadow-lg" />
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
@@ -1091,7 +1094,7 @@ isActionCompleted,
             </div>
 
             {/* Subtitle */}
-            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+            <Card className="bg-white rounded-2xl shadow-sm">
               <CardContent className="p-6 text-center">
                 <p className="text-lg font-bold text-gray-800">
                   {t.presentation.description}
@@ -1102,17 +1105,17 @@ isActionCompleted,
             {/* Triangle de transformation */}
             <div className="space-y-4">
               <h2 className="text-xl font-bold text-center flex items-center justify-center gap-3 text-gray-800">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-lg shadow-purple-200/50">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
                   <Target className="w-6 h-6 text-white" />
                 </div>
                 {t.presentation.triangleTitle}
               </h2>
 
               {/* Pilier 1 */}
-              <Card className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-rose-50 to-white rounded-[1.5rem]">
+              <Card className="bg-white rounded-2xl shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-lg shadow-pink-200/50">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
                       <Sparkles className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar1Title}
@@ -1121,10 +1124,10 @@ isActionCompleted,
               </Card>
 
               {/* Pilier 2 */}
-              <Card className="border-none shadow-xl shadow-purple-100/50 bg-gradient-to-br from-purple-100 via-pink-50 to-white rounded-[1.5rem]">
+              <Card className="bg-white rounded-2xl shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center shadow-lg shadow-purple-200/50">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
                       <Heart className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar2Title}
@@ -1133,10 +1136,10 @@ isActionCompleted,
               </Card>
 
               {/* Pilier 3 */}
-              <Card className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-100 via-pink-50 to-white rounded-[1.5rem]">
+              <Card className="bg-white rounded-2xl shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-300 to-orange-400 flex items-center justify-center shadow-lg shadow-orange-200/50">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
                       <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     {t.presentation.pillar3Title}
@@ -1146,10 +1149,10 @@ isActionCompleted,
             </div>
 
             {/* Règles du Challenge */}
-            <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-[2rem]">
+            <Card className="bg-white rounded-2xl shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-center text-lg flex items-center justify-center gap-3 text-gray-800">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center shadow-lg shadow-pink-200/50">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
                     <Award className="w-6 h-6 text-white" />
                   </div>
                   {t.presentation.rulesTitle}
@@ -1162,9 +1165,9 @@ isActionCompleted,
                 ].map((rule, index) => (
                   <div
                     key={index}
-                    className="flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-pink-50 to-white shadow-lg shadow-pink-100/30"
+                    className="flex items-start gap-3 p-4 rounded-xl bg-emerald-50/50"
                   >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-pink-200/50">
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm">
                       {index === 0 ? '1' : '5'}
                     </div>
                     <p className={`flex-1 leading-relaxed text-sm text-gray-700 ${index === 1 ? 'font-bold' : 'font-medium'}`}>
@@ -1181,7 +1184,7 @@ isActionCompleted,
                 markPresentationSeen();
                 setCurrentView('onboarding');
               }}
-              className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold rounded-[1.5rem] shadow-xl shadow-pink-200/50 hover:shadow-2xl transition-all"
+              className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
             >
               {t.presentation.startChallenge}
               <ChevronRight className="ml-2 w-5 h-5" />

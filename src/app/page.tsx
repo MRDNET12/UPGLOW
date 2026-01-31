@@ -2414,7 +2414,7 @@ isActionCompleted,
             </div>
 
             <div className="px-4 pb-8 space-y-4">
-              {/* All Habits - 30 Day Checklist */}
+              {/* All Habits - 30 Day Checklist depuis firstOpenDate */}
               <div className="space-y-4">
                 {/* Combine newMeHabits and customHabits */}
                 {(() => {
@@ -2423,28 +2423,28 @@ isActionCompleted,
                     ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
                   ];
                   
+                  // Récupérer firstOpenDate
+                  const firstOpenStr = typeof window !== 'undefined' 
+                    ? localStorage.getItem('firstOpenDate') 
+                    : null;
+                  const firstOpenDate = firstOpenStr ? new Date(firstOpenStr) : new Date();
+                  
                   return allHabits.map((habit) => {
-                    // Generate 30 days of completion data
-                    const today = new Date();
+                    // Generate 30 days of completion data depuis firstOpenDate
                     const daysData = [];
                     
-                    for (let i = 29; i >= 0; i--) {
-                      const date = new Date(today);
-                      date.setDate(today.getDate() - i);
+                    for (let i = 0; i < 30; i++) {
+                      const date = new Date(firstOpenDate);
+                      date.setDate(firstOpenDate.getDate() + i);
                       const dateStr = getLocalDateString(date);
-                      const dayNumber = 30 - i; // 1-30
-                      const isToday = i === 0;
+                      const dayNumber = i + 1; // 1-30
                       
                       let wasCompleted = false;
                       
                       if (habit.source === 'newme') {
-                        // For New Me habits: check localStorage for past days, current state for today
-                        if (isToday) {
-                          wasCompleted = habit.completed;
-                        } else {
-                          const saved = localStorage.getItem(`newme_${habit.id}_${dateStr}`);
-                          wasCompleted = saved === 'true';
-                        }
+                        // For New Me habits: check localStorage
+                        const saved = localStorage.getItem(`newme_${habit.id}_${dateStr}`);
+                        wasCompleted = saved === 'true';
                       } else {
                         // For custom habits: check trackers
                         const tracker = trackers.find(t => t.date === dateStr);
@@ -2497,15 +2497,13 @@ isActionCompleted,
                               <div
                                 key={day.dayNumber}
                                 className={`
-                                  aspect-square rounded flex items-center justify-center text-[10px] font-medium
+                                  aspect-square rounded
                                   ${day.wasCompleted 
-                                    ? 'bg-emerald-500 text-white shadow-sm' 
-                                    : 'bg-gray-100 text-gray-400 border border-gray-200'}
+                                    ? 'bg-emerald-500 shadow-sm' 
+                                    : 'bg-gray-100 border border-gray-200'}
                                 `}
                                 title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Complété' : 'Non complété'}`}
-                              >
-                                {day.dayNumber}
-                              </div>
+                              />
                             ))}
                           </div>
                           
@@ -2515,28 +2513,14 @@ isActionCompleted,
                               <div
                                 key={day.dayNumber}
                                 className={`
-                                  aspect-square rounded flex items-center justify-center text-[10px] font-medium
+                                  aspect-square rounded
                                   ${day.wasCompleted 
-                                    ? 'bg-emerald-500 text-white shadow-sm' 
-                                    : 'bg-gray-100 text-gray-400 border border-gray-200'}
+                                    ? 'bg-emerald-500 shadow-sm' 
+                                    : 'bg-gray-100 border border-gray-200'}
                                 `}
                                 title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Complété' : 'Non complété'}`}
-                              >
-                                {day.dayNumber}
-                              </div>
+                              />
                             ))}
-                          </div>
-                        </div>
-                        
-                        {/* Legend */}
-                        <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-gray-100">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-4 h-4 rounded bg-emerald-500"></div>
-                            <span className="text-xs text-gray-500">Complété</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-4 h-4 rounded bg-gray-100 border border-gray-200"></div>
-                            <span className="text-xs text-gray-500">Non complété</span>
                           </div>
                         </div>
                       </div>

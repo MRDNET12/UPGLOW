@@ -26,7 +26,7 @@ export default function AppLoader() {
 
         {/* Texte de chargement */}
         <h2 className="text-2xl font-bold bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 bg-clip-text text-transparent mb-2">
-          UPGLOW
+          PROJECT GLOW
         </h2>
         <p className="text-stone-600 text-sm">Chargement...</p>
 

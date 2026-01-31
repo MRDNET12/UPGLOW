@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "UPGLOW",
+    title: "PROJECT GLOW",
   },
   openGraph: {
     title: "Glow Up Challenge - 30 Jours de Transformation",
@@ -62,7 +62,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="UPGLOW" />
+        <meta name="apple-mobile-web-app-title" content="PROJECT GLOW" />
         <link rel="apple-touch-icon" href="/icon.svg" />
         {/* OneSignal Push Notifications */}
         <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>

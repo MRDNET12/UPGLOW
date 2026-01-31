@@ -13,6 +13,7 @@ import {
 } from '@/lib/challenge-data';
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
+import { boundaries } from '@/lib/boundaries-data';
 import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
@@ -1655,22 +1656,15 @@ isActionCompleted,
                     
                     {/* Valeur principale */}
                     <div className="mb-2">
-                      <p className="text-2xl font-bold text-gray-800">
-                        {boundaries.filter(b => b.active).length}<span className="text-lg text-gray-400">/8</span>
-                      </p>
-                      <p className="text-xs text-gray-400">{language === 'fr' ? 'actives' : 'active'}</p>
+                      <p className="text-2xl font-bold text-gray-800">8</p>
+                      <p className="text-xs text-gray-400">{language === 'fr' ? 'limites à définir' : 'boundaries to set'}</p>
                     </div>
                     
                     {/* Indicateur */}
                     <div className="flex items-center gap-1">
                       <Check className="w-3 h-3 text-emerald-500" />
                       <span className="text-xs text-gray-600">
-                        {(() => {
-                          const activeBoundaries = boundaries.filter(b => b.active);
-                          if (activeBoundaries.length === 0) return '0%';
-                          const respectedCount = activeBoundaries.filter(b => b.respectedToday).length;
-                          return Math.round((respectedCount / activeBoundaries.length) * 100) + '%';
-                        })()} {language === 'fr' ? 'respectées' : 'respected'}
+                        {language === 'fr' ? 'Pour ta paix' : 'For your peace'}
                       </span>
                     </div>
                   </CardContent>

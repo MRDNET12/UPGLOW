@@ -1570,10 +1570,10 @@ isActionCompleted,
             <SmallWinsCompact theme={theme} />
 
             {/* Grille de cartes - 2 colonnes pour Mes Habitudes et Ma semaine */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {/* Carte Mes Habitudes */}
               <Card
-                className="border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                className="row-span-2 border-none shadow-xl shadow-orange-100/50 bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => setCurrentView('trackers')}
               >
                 <CardContent className="p-4 relative overflow-hidden">
@@ -1590,6 +1590,8 @@ isActionCompleted,
                   </div>
                 </CardContent>
               </Card>
+              {/* Right column container */}
+              <div className="flex flex-col gap-4">
 
               {/* Ma semaine */}
               <Card
@@ -1610,6 +1612,29 @@ isActionCompleted,
                   </div>
                 </CardContent>
               </Card>
+              {/* Carte 8 Limites - Réduite de 40% */}
+              <Card
+                className="border-none shadow-lg shadow-purple-100/50 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                onClick={() => setCurrentView('boundaries')}
+              >
+                <CardContent className="p-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-md">
+                      <Shield className="w-3.5 h-3.5 text-purple-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-xs text-gray-800 truncate">
+                        {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
+                      </h3>
+                      <p className="text-[9px] text-gray-500 font-medium truncate">
+                        {language === 'fr' ? 'Pour ta paix' : language === 'en' ? 'For your peace' : 'Para tu paz'}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                  </div>
+                </CardContent>
+              </Card>
+              </div>
             </div>
 
             {/* Carte Glow Up (Bonus) - MASQUÉE */}
@@ -1633,28 +1658,6 @@ isActionCompleted,
               </CardContent>
             </Card> */}
 
-            {/* Carte 8 Limites - Réduite de 40% */}
-            <Card
-              className="border-none shadow-lg shadow-purple-100/50 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-              onClick={() => setCurrentView('boundaries')}
-            >
-              <CardContent className="p-2.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-md">
-                    <Shield className="w-3.5 h-3.5 text-purple-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-xs text-gray-800 truncate">
-                      {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
-                    </h3>
-                    <p className="text-[9px] text-gray-500 font-medium truncate">
-                      {language === 'fr' ? 'Pour ta paix' : language === 'en' ? 'For your peace' : 'Para tu paz'}
-                    </p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-purple-400 flex-shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Carte 50 choses à faire seule - MASQUÉE */}
             {/* <Card

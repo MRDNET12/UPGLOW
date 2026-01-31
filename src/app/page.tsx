@@ -1621,7 +1621,7 @@ isActionCompleted,
               <div className="flex flex-col gap-2">
                 {/* Carte Ma Semaine */}
                 <Card
-                  className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1"
+                  className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[95px]"
                   onClick={() => setCurrentView('routine')}
                 >
                   <CardContent className="p-3 flex flex-col h-full justify-between">
@@ -1661,7 +1661,7 @@ isActionCompleted,
 
                 {/* Carte 8 Limites */}
                 <Card
-                  className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1"
+                  className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[95px]"
                   onClick={() => setCurrentView('boundaries')}
                 >
                   <CardContent className="p-3 flex flex-col h-full justify-between">

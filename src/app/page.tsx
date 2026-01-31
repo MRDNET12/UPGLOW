@@ -241,33 +241,47 @@ isActionCompleted,
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
   // New Me habits - 9 predefined habits with completion tracking
+  const defaultNewMeHabits = [
+    { id: 'water', icon: '💧', label: 'Boire 1,5–2 L d\'eau', completed: false },
+    { id: 'move', icon: '🏃', label: 'Bouger 20–30 min', completed: false },
+    { id: 'positive', icon: '✍️', label: 'Écrire une pensée positive', completed: false },
+    { id: 'win', icon: '🏆', label: 'Noter une petite victoire', completed: false },
+    { id: 'tidy', icon: '🧹', label: 'Ranger mon espace 5 min', completed: false },
+    { id: 'future', icon: '🚀', label: 'Faire une action pour mon futur', completed: false },
+    { id: 'priority', icon: '🎯', label: 'Définir une priorité du jour', completed: false },
+    { id: 'imperfect', icon: '✓', label: 'Accomplir une tâche imparfaite', completed: false },
+    { id: 'bed', icon: '🌙', label: 'Me coucher en me disant : « J\'ai avancé. »', completed: false }
+  ];
+
   const [newMeHabits, setNewMeHabits] = useState<Array<{
     id: string;
     icon: string;
     label: string;
     completed: boolean;
   }>>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`newMeHabits_${getLocalDateString()}`);
-      if (saved) return JSON.parse(saved);
-    }
-    return [
-      { id: 'water', icon: '💧', label: 'Boire 1,5–2 L d\'eau', completed: false },
-      { id: 'move', icon: '🏃', label: 'Bouger 20–30 min', completed: false },
-      { id: 'positive', icon: '✍️', label: 'Écrire une pensée positive', completed: false },
-      { id: 'win', icon: '🏆', label: 'Noter une petite victoire', completed: false },
-      { id: 'tidy', icon: '🧹', label: 'Ranger mon espace 5 min', completed: false },
-      { id: 'future', icon: '🚀', label: 'Faire une action pour mon futur', completed: false },
-      { id: 'priority', icon: '🎯', label: 'Définir une priorité du jour', completed: false },
-      { id: 'imperfect', icon: '✓', label: 'Accomplir une tâche imparfaite', completed: false },
-      { id: 'bed', icon: '🌙', label: 'Me coucher en me disant : « J\'ai avancé. »', completed: false }
-    ];
+    // Lire depuis le format individuel newme_${id}_${date} (utilisé par la page Progression)
+    const today = getLocalDateString();
+    return defaultNewMeHabits.map(habit => {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem(`newme_${habit.id}_${today}`);
+        return { ...habit, completed: saved === 'true' };
+      }
+      return habit;
+    });
   });
 
-  // Save New Me habits to localStorage
+  // Save New Me habits to localStorage au format individuel
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`newMeHabits_${getLocalDateString()}`, JSON.stringify(newMeHabits));
+      const today = getLocalDateString();
+      newMeHabits.forEach(habit => {
+        const storageKey = `newme_${habit.id}_${today}`;
+        if (habit.completed) {
+          localStorage.setItem(storageKey, 'true');
+        } else {
+          localStorage.removeItem(storageKey);
+        }
+      });
     }
   }, [newMeHabits]);
 
@@ -2233,9 +2247,21 @@ isActionCompleted,
                     <button
                       key={habit.id}
                       onClick={() => {
+                        const newCompletedState = !habit.completed;
+                        
+                        // Mettre à jour le state
                         setNewMeHabits(newMeHabits.map(h =>
-                          h.id === habit.id ? { ...h, completed: !h.completed } : h
+                          h.id === habit.id ? { ...h, completed: newCompletedState } : h
                         ));
+                        
+                        // Enregistrer dans localStorage pour la page de progression
+                        const today = getLocalDateString();
+                        const storageKey = `newme_${habit.id}_${today}`;
+                        if (newCompletedState) {
+                          localStorage.setItem(storageKey, 'true');
+                        } else {
+                          localStorage.removeItem(storageKey);
+                        }
                       }}
                       onContextMenu={(e) => {
                         e.preventDefault();

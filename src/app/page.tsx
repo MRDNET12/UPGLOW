@@ -1588,7 +1588,7 @@ isActionCompleted,
             <div className="grid grid-cols-2 gap-3">
               {/* Carte Mes Habitudes - Grande carte à gauche */}
               <Card
-                className="row-span-2 border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
+                className="row-span-2 border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden max-h-[280px]"
                 onClick={() => setCurrentView('trackers')}
               >
                 <CardContent className="p-5 h-full flex flex-col">
@@ -1620,7 +1620,7 @@ isActionCompleted,
               <div className="flex flex-col gap-3">
                 {/* Carte Ma Semaine */}
                 <Card
-                  className="border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1"
+                  className="border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[135px]"
                   onClick={() => setCurrentView('routine')}
                 >
                   <CardContent className="p-4">
@@ -1654,7 +1654,7 @@ isActionCompleted,
 
                 {/* Carte 8 Limites */}
                 <Card
-                  className="border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1"
+                  className="border-none shadow-lg bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[135px]"
                   onClick={() => setCurrentView('boundaries')}
                 >
                   <CardContent className="p-4">

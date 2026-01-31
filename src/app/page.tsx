@@ -242,17 +242,91 @@ isActionCompleted,
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
   // New Me habits - 9 predefined habits with completion tracking
-  const defaultNewMeHabits = [
-    { id: 'water', icon: '💧', label: 'Boire 1,5–2 L d\'eau', completed: false },
-    { id: 'move', icon: '🏃', label: 'Bouger 20–30 min', completed: false },
-    { id: 'positive', icon: '✍️', label: 'Écrire une pensée positive', completed: false },
-    { id: 'win', icon: '🏆', label: 'Noter une petite victoire', completed: false },
-    { id: 'tidy', icon: '🧹', label: 'Ranger mon espace 5 min', completed: false },
-    { id: 'future', icon: '🚀', label: 'Faire une action pour mon futur', completed: false },
-    { id: 'priority', icon: '🎯', label: 'Définir une priorité du jour', completed: false },
-    { id: 'imperfect', icon: '✓', label: 'Accomplir une tâche imparfaite', completed: false },
-    { id: 'bed', icon: '🌙', label: 'Me coucher en me disant : « J\'ai avancé. »', completed: false }
-  ];
+  // Données des habitudes New Me avec traductions
+  const newMeHabitsData = {
+    water: {
+      icon: '💧',
+      label: {
+        fr: 'Boire 1,5–2 L d\'eau',
+        en: 'Drink 1.5–2 L of water',
+        es: 'Beber 1,5–2 L de agua'
+      }
+    },
+    move: {
+      icon: '🏃',
+      label: {
+        fr: 'Bouger 20–30 min',
+        en: 'Move 20–30 min',
+        es: 'Moverse 20–30 min'
+      }
+    },
+    positive: {
+      icon: '✍️',
+      label: {
+        fr: 'Écrire une pensée positive',
+        en: 'Write a positive thought',
+        es: 'Escribir un pensamiento positivo'
+      }
+    },
+    win: {
+      icon: '🏆',
+      label: {
+        fr: 'Noter une petite victoire',
+        en: 'Note a small win',
+        es: 'Anotar una pequeña victoria'
+      }
+    },
+    tidy: {
+      icon: '🧹',
+      label: {
+        fr: 'Ranger mon espace 5 min',
+        en: 'Tidy my space 5 min',
+        es: 'Ordenar mi espacio 5 min'
+      }
+    },
+    future: {
+      icon: '🚀',
+      label: {
+        fr: 'Faire une action pour mon futur',
+        en: 'Do an action for my future',
+        es: 'Hacer una acción para mi futuro'
+      }
+    },
+    priority: {
+      icon: '🎯',
+      label: {
+        fr: 'Définir une priorité du jour',
+        en: 'Define today\'s priority',
+        es: 'Definir una prioridad del día'
+      }
+    },
+    imperfect: {
+      icon: '✓',
+      label: {
+        fr: 'Accomplir une tâche imparfaite',
+        en: 'Complete an imperfect task',
+        es: 'Completar una tarea imperfecta'
+      }
+    },
+    bed: {
+      icon: '🌙',
+      label: {
+        fr: 'Me coucher en me disant : « J\'ai avancé. »',
+        en: 'Go to bed saying: "I made progress."',
+        es: 'Acostarme diciendo: "He avanzado."'
+      }
+    }
+  };
+
+  // Fonction pour obtenir les habitudes traduites selon la langue
+  const getTranslatedNewMeHabits = () => {
+    return Object.entries(newMeHabitsData).map(([id, data]) => ({
+      id,
+      icon: data.icon,
+      label: data.label[language],
+      completed: false
+    }));
+  };
 
   const [newMeHabits, setNewMeHabits] = useState<Array<{
     id: string;
@@ -262,7 +336,8 @@ isActionCompleted,
   }>>(() => {
     // Lire depuis le format individuel newme_${id}_${date} (utilisé par la page Progression)
     const today = getLocalDateString();
-    return defaultNewMeHabits.map(habit => {
+    const translatedHabits = getTranslatedNewMeHabits();
+    return translatedHabits.map(habit => {
       if (typeof window !== 'undefined') {
         const saved = localStorage.getItem(`newme_${habit.id}_${today}`);
         return { ...habit, completed: saved === 'true' };
@@ -285,6 +360,16 @@ isActionCompleted,
       });
     }
   }, [newMeHabits]);
+
+  // Mettre à jour les labels des habitudes quand la langue change
+  useEffect(() => {
+    setNewMeHabits(prevHabits => {
+      return prevHabits.map(habit => ({
+        ...habit,
+        label: newMeHabitsData[habit.id as keyof typeof newMeHabitsData].label[language]
+      }));
+    });
+  }, [language]);
 
   // Bloc par défaut unique et non-modifiable
   const getDefaultHabitBlocks = () => [

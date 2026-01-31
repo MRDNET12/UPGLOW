@@ -219,6 +219,7 @@ isActionCompleted,
   // États pour Beauty Pillars (Challenge Beauté et Corps)
   const [beautySelectedDate, setBeautySelectedDate] = useState<string>(getLocalDateString(new Date()));
   const [beautyChoiceExpanded, setBeautyChoiceExpanded] = useState(false);
+  const [expandedPillar, setExpandedPillar] = useState<string | null>(null); // Pour gérer l'ouverture des détails des piliers
   const [beautyGloweeMessageIndex, setBeautyGloweeMessageIndex] = useState(0);
   const [beautyGloweeDisplayedMessage, setBeautyGloweeDisplayedMessage] = useState('');
   const [beautyGloweeIsTyping, setBeautyGloweeIsTyping] = useState(true);
@@ -3160,6 +3161,8 @@ isActionCompleted,
                       const isCompleted = dayProgress?.[pillar.id as keyof typeof dayProgress] || false;
                       const isChoicePillar = pillar.type === 'choice';
 
+                      const isExpanded = expandedPillar === pillar.id;
+
                       return (
                         <div key={pillar.id}>
                           {/* Pillar Card */}
@@ -3185,14 +3188,69 @@ isActionCompleted,
                                   {pillar.description[language]}
                                 </p>
                               </div>
-                              {isCompleted && !isChoicePillar && (
-                                <Check className="w-6 h-6 text-green-500 flex-shrink-0 drop-shadow-lg" />
-                              )}
-                              {isChoicePillar && (
-                                <ChevronDown className={`w-5 h-5 text-pink-400 flex-shrink-0 transition-transform duration-300 ${beautyChoiceExpanded ? 'rotate-180' : ''}`} />
-                              )}
+                              {/* Flèche d'ouverture pour tous les piliers */}
+                              <div 
+                                className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors"
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Empêcher la propagation pour ne pas cocher la tâche
+                                  setExpandedPillar(isExpanded ? null : pillar.id);
+                                }}
+                              >
+                                <ChevronDown 
+                                  className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${
+                                    (isChoicePillar && beautyChoiceExpanded) || (!isChoicePillar && isExpanded) ? 'rotate-180' : ''
+                                  }`} 
+                                />
+                              </div>
                             </div>
                           </div>
+                          
+                          {/* Section dépliable avec explications pour tous les piliers */}
+                          {!isChoicePillar && (
+                            <div
+                              className={`overflow-hidden transition-all duration-300 ease-out ${
+                                isExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+                              }`}
+                            >
+                              <div className="bg-pink-50/50 rounded-xl p-4 mx-2">
+                                <h5 className="font-semibold text-sm text-pink-700 mb-2">
+                                  {language === 'fr' ? 'Conseils & Explications' : language === 'en' ? 'Tips & Explanations' : 'Consejos y Explicaciones'}
+                                </h5>
+                                <p className="text-xs text-gray-600 leading-relaxed">
+                                  {pillar.id === 'walk-sport' && (language === 'fr' 
+                                    ? 'La marche rapide ou le sport quotidien améliorent la circulation sanguine, boostent l\'énergie et favorisent un sommeil réparateur. 30 minutes suffisent pour activer le métabolisme et libérer des endorphines.'
+                                    : language === 'en' 
+                                    ? 'Brisk walking or daily sport improve blood circulation, boost energy and promote restorative sleep. 30 minutes is enough to activate metabolism and release endorphins.'
+                                    : 'Caminar rápido o hacer deporte diariamente mejora la circulación sanguínea, aumenta la energía y favorece un sueño reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
+                                  )}
+                                  {pillar.id === 'water' && (language === 'fr'
+                                    ? 'Boire 2 litres d\'eau par jour hydrate la peau de l\'intérieur, réduit les cernes et améliore l\'élasticité de la peau. L\'hydratation optimale favorise aussi l\'élimination des toxines et la brillance des cheveux.'
+                                    : language === 'en'
+                                    ? 'Drinking 2 liters of water per day hydrates skin from within, reduces dark circles and improves skin elasticity. Optimal hydration also promotes toxin elimination and hair shine.'
+                                    : 'Beber 2 litros de agua al día hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidratación óptima también favorece la eliminación de toxinas y el brillo del cabello.'
+                                  )}
+                                </p>
+                                <div className="mt-3 flex items-center justify-between">
+                                  <span className="text-xs text-pink-500 font-medium">
+                                    {isCompleted ? '✓ ' : ''}{language === 'fr' ? 'Pilier' : language === 'en' ? 'Pillar' : 'Pilar'} {isCompleted ? (language === 'fr' ? 'complété' : language === 'en' ? 'completed' : 'completado') : (language === 'fr' ? 'à faire' : language === 'en' ? 'to do' : 'por hacer')}
+                                  </span>
+                                  <button
+                                    onClick={() => toggleBeautyPillar(beautySelectedDate, pillar.id)}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                                      isCompleted 
+                                        ? 'bg-gray-200 text-gray-600' 
+                                        : 'bg-pink-500 text-white hover:bg-pink-600'
+                                    }`}
+                                  >
+                                    {isCompleted 
+                                      ? (language === 'fr' ? 'Annuler' : language === 'en' ? 'Undo' : 'Deshacer')
+                                      : (language === 'fr' ? 'Valider' : language === 'en' ? 'Complete' : 'Completar')
+                                    }
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
 
                           {/* Slide content for choice pillar */}
                           {isChoicePillar && (

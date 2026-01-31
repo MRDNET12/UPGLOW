@@ -1637,7 +1637,10 @@ isActionCompleted,
                     {/* Valeur principale */}
                     <div className="mb-2">
                       <p className="text-2xl font-bold text-gray-800">
-                        {tasksWithDates.filter(t => !t.completed).length}
+                        {(() => {
+                          const weekDates = getWeekDates(0); // Semaine actuelle
+                          return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
+                        })()}
                       </p>
                       <p className="text-xs text-gray-400">tâches</p>
                     </div>
@@ -1646,7 +1649,10 @@ isActionCompleted,
                     <div className="flex items-center gap-1">
                       <Check className="w-3 h-3 text-emerald-500" />
                       <span className="text-xs text-gray-600">
-                        {tasksWithDates.filter(t => t.completed).length} {language === 'fr' ? 'complétées' : 'completed'}
+                        {(() => {
+                          const weekDates = getWeekDates(0); // Semaine actuelle
+                          return tasksWithDates.filter(t => t.completed && weekDates.includes(t.date)).length;
+                        })()} {language === 'fr' ? 'complétées' : 'completed'}
                       </span>
                     </div>
                   </CardContent>

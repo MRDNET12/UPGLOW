@@ -54,17 +54,17 @@ export const beautyPillars: BeautyPillar[] = [
     type: 'mandatory'
   },
   {
-    id: 'water',
-    icon: '💧',
+    id: 'face-massage',
+    icon: '💆‍♀️',
     title: {
-      fr: 'Boire 2 litres d\'eau par jour',
-      en: 'Drink 2 liters of water per day',
-      es: 'Beber 2 litros de agua al día'
+      fr: 'Massage visage',
+      en: 'Face massage',
+      es: 'Masaje facial'
     },
     description: {
-      fr: 'L\'hydratation pour une peau et cheveux parfaits',
-      en: 'Hydration for perfect skin and hair',
-      es: 'Hidratación para una piel y cabello perfectos'
+      fr: 'Stimule la circulation sanguine et donne bonne mine',
+      en: 'Stimulates blood circulation and gives a healthy glow',
+      es: 'Estimula la circulación sanguínea y da buena cara'
     },
     type: 'mandatory'
   },

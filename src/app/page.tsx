@@ -3186,9 +3186,9 @@ isActionCompleted,
 
         {/* New Me View */}
         {currentView === 'new-me' && (
-          <div className="pb-24">
+          <div className="pb-24 min-h-screen bg-white">
             {/* Header */}
-            <div className="p-4 pb-0">
+            <div className="p-4 pb-0 bg-white">
               <div className="flex items-center gap-3 mb-3">
                 <Button
                   variant="ghost"
@@ -4536,63 +4536,67 @@ isActionCompleted,
         )}
       </main>
 
-      {/* Bottom Navigation - Glassmorphism Rose Pastel - Taille réduite */}
+      {/* Bottom Navigation - Design moderne épuré */}
       {currentView !== 'goal-details' && (
-        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md z-50">
-          <div className="bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-2xl shadow-pink-200/50 px-2 py-1.5 border border-pink-100/50">
+        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-lg z-50">
+          <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-3 py-2 border border-gray-100">
             <div className="flex items-center justify-around">
+              {/* Accueil */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
                   currentView === 'dashboard'
-                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
-                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
                 onClick={() => setCurrentView('dashboard')}
               >
-                <Home className="w-4 h-4" />
-                <span className="text-[9px] font-semibold">{t.nav.home}</span>
+                <Home className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{t.nav.home}</span>
               </Button>
 
+              {/* Habitudes */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
-                  currentView === 'routine'
-                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
-                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
+                  currentView === 'new-me'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
-                onClick={() => setCurrentView('routine')}
+                onClick={() => setCurrentView('new-me')}
               >
-                <Calendar className="w-4 h-4" />
-                <span className="text-[9px] font-semibold">
-                  {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                <Target className="w-5 h-5" />
+                <span className="text-[10px] font-medium">
+                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
                 </span>
               </Button>
 
+              {/* Journal - NOUVEAU */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
-                  currentView === 'trackers'
-                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
-                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
+                  currentView === 'journal'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
-                onClick={() => setCurrentView('trackers')}
+                onClick={() => setCurrentView('journal')}
               >
-                <Target className="w-4 h-4" />
-                <span className="text-[9px] font-semibold">{t.nav.trackers}</span>
+                <BookOpen className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{t.nav.journal}</span>
               </Button>
 
+              {/* Profil */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-9 flex-col gap-0.5 rounded-lg transition-all duration-200 ${
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
                   currentView === 'settings'
-                    ? 'bg-gradient-to-br from-pink-100 to-rose-100 text-pink-600'
-                    : 'text-gray-500 hover:text-pink-500 hover:bg-pink-50/50'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
                 onClick={() => setCurrentView('settings')}
               >
-                <Settings className="w-4 h-4" />
-                <span className="text-[9px] font-semibold">{t.nav.settings}</span>
+                <Settings className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{t.nav.settings}</span>
               </Button>
             </div>
           </div>

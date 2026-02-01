@@ -6674,10 +6674,10 @@ isActionCompleted,
                 </h3>
                 <p className="text-gray-600 mb-4">
                   {language === 'fr'
-                    ? 'Qui êtes-vous en train de devenir ? Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
+                    ? 'Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
                     : language === 'en'
-                    ? 'Who are you becoming? Use the app for 7 days, then come back to see who you\'re becoming.'
-                    : '¿En quién te estás convirtiendo? Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
+                    ? 'Use the app for 7 days, then come back to see who you\'re becoming.'
+                    : 'Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
                 </p>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
                   <span className="text-sm font-medium text-gray-600">

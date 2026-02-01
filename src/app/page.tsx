@@ -6365,7 +6365,7 @@ isActionCompleted,
 
       {/* Journal View */}
       {currentView === 'journal' && (
-        <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white overscroll-none">
           {/* Header */}
           <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-4">
             <div className="flex items-center justify-between max-w-lg mx-auto">
@@ -6592,7 +6592,7 @@ isActionCompleted,
           <div className="fixed bottom-20 left-0 right-0 px-4 max-w-lg mx-auto z-40">
             <button
               onClick={() => setShowJournalEntryModal(true)}
-              className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+              className="w-full bg-gray-900 text-white py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors text-sm"
             >
               <Plus className="w-5 h-5" />
               {language === 'fr' ? 'Ma journée' : language === 'en' ? 'My day' : 'Mi día'}

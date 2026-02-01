@@ -247,6 +247,7 @@ isActionCompleted,
   // État pour Glow Mirror
   const [showGlowMirror, setShowGlowMirror] = useState(false);
   const [glowMirrorMessage, setGlowMirrorMessage] = useState('');
+  const [glowMirrorLoading, setGlowMirrorLoading] = useState(false);
   const [lastGlowMirrorView, setLastGlowMirrorView] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('lastGlowMirrorView') || '';
@@ -342,12 +343,11 @@ isActionCompleted,
     checkGlowMirrorAvailability();
   }, [lastGlowMirrorView]);
 
-  // Générer le message Glow Mirror
-  const generateGlowMirror = () => {
+  // Générer le message Glow Mirror avec Kimi AI
+  const generateGlowMirror = async () => {
     const now = new Date();
-    const messages: string[] = [];
     
-    // Analyser les petits succès
+    // Collecter toutes les données
     const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
     const recentWins = smallWins.filter((win: any) => {
       const winDate = new Date(win.date);
@@ -355,128 +355,106 @@ isActionCompleted,
       return daysDiff <= 7;
     });
     
-    // Analyser les habitudes (New Me)
     const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
     const completedHabits = newMeHabits.filter((habit: any) => habit.completed);
     
-    // Analyser les entrées du journal
     const recentEntries = journalEntries.filter(entry => {
       const entryDate = new Date(entry.date);
       const daysDiff = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
       return daysDiff <= 7;
     });
     
-    // Analyser les 8 limites
     const boundariesData = JSON.parse(localStorage.getItem('boundaries') || '[]');
     const completedBoundaries = boundariesData.filter((b: any) => b.completed);
     
-    // Analyser les tâches de la semaine
     const weekTasks = JSON.parse(localStorage.getItem('weekTasks') || '[]');
     const completedTasks = weekTasks.filter((task: any) => task.completed);
     
-    // Analyser la progression des challenges
     const challengeProgress = JSON.parse(localStorage.getItem('challengeProgress') || '{}');
     const completedDays = Object.values(challengeProgress).filter((p: any) => p.completed).length;
     
-    // Générer le message personnalisé
-    if (language === 'fr') {
-      if (recentWins.length > 0) {
-        messages.push(`Cette semaine, tu as célébré ${recentWins.length} petit${recentWins.length > 1 ? 's' : ''} succès. Tu prends le temps de reconnaître tes victoires.`);
+    // Construire le prompt pour Kimi
+    const promptData = {
+      language: language,
+      timeRange: 'last 7 days',
+      data: {
+        smallWins: {
+          count: recentWins.length,
+          items: recentWins.slice(0, 5).map((w: any) => w.text || w.title || 'Win')
+        },
+        habits: {
+          count: completedHabits.length,
+          total: newMeHabits.length,
+          items: completedHabits.slice(0, 5).map((h: any) => h.label || h.name || 'Habit')
+        },
+        journal: {
+          entriesCount: recentEntries.length,
+          moods: recentEntries.map((e: any) => e.mood).filter(Boolean),
+          tags: [...new Set(recentEntries.flatMap((e: any) => e.tags || []))].slice(0, 10)
+        },
+        boundaries: {
+          count: completedBoundaries.length,
+          total: boundariesData.length
+        },
+        tasks: {
+          completed: completedTasks.length,
+          total: weekTasks.length
+        },
+        challenges: {
+          completedDays: completedDays
+        }
+      }
+    };
+    
+    const systemPrompt = language === 'fr' 
+      ? "Tu es Glow Mirror, un miroir identitaire évolutif qui reflète à l'utilisateur qui il est en train de devenir. Écris un message court (3-10 lignes), à la deuxième personne (tu/vous), ton humain, calme et précis. Analyse les données fournies et crée un reflet personnalisé de qui il est en devenant."
+      : language === 'en'
+      ? "You are Glow Mirror, an evolving identity mirror that reflects to the user who they are becoming. Write a short message (3-10 lines), in second person (you), human tone, calm and precise. Analyze the provided data and create a personalized reflection of who they are becoming."
+      : "Eres Glow Mirror, un espejo de identidad evolutivo que refleja al usuario quién está llegando a ser. Escribe un mensaje corto (3-10 líneas), en segunda persona (tú), tono humano, calmado y preciso. Analiza los datos proporcionados y crea un reflejo personalizado de quién está llegando a ser.";
+    
+    const userPrompt = `Voici les données de l'utilisateur pour les 7 derniers jours:\n${JSON.stringify(promptData.data, null, 2)}\n\nGénère un message Glow Mirror personnalisé qui reflète qui il est en train de devenir.`;
+    
+    setGlowMirrorLoading(true);
+    
+    try {
+      const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer sk-kimi-wQWfSCmBauIFhz4h4K3WsFNTHbzhxvd2ieRqRfDNnZKdn1zwtYQwTvgTD8Bgwgiq'
+        },
+        body: JSON.stringify({
+          model: 'kimi-latest',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('API Error');
       }
       
-      if (completedHabits.length > 0) {
-        messages.push(`Tu as maintenu ${completedHabits.length} habitude${completedHabits.length > 1 ? 's' : ''} cette semaine. Chaque jour compte.`);
-      }
+      const data = await response.json();
+      const aiMessage = data.choices?.[0]?.message?.content || '';
       
-      if (recentEntries.length > 0) {
-        const moods = recentEntries.map((e: any) => e.mood);
-        const dominantMood = moods.sort((a, b) => moods.filter(v => v === a).length - moods.filter(v => v === b).length).pop();
-        messages.push(`Tu as écrit ${recentEntries.length} fois dans ton journal. Tu prends soin de te connecter à toi-même.`);
-      }
-      
-      if (completedBoundaries.length > 0) {
-        messages.push(`Tu as maintenu ${completedBoundaries.length} limite${completedBoundaries.length > 1 ? 's' : ''} saine${completedBoundaries.length > 1 ? 's' : ''}. Tu te protèges.`);
-      }
-      
-      if (completedTasks.length > 0) {
-        messages.push(`Tu as accompli ${completedTasks.length} tâche${completedTasks.length > 1 ? 's' : ''} cette semaine. Tu avances sereinement.`);
-      }
-      
-      if (completedDays > 0) {
-        messages.push(`Tu as complété ${completedDays} jour${completedDays > 1 ? 's' : ''} de challenge. Tu es sur la bonne voie.`);
-      }
-      
-      // Message par défaut si peu d'activité
-      if (messages.length === 0) {
-        messages.push("Tu es en train de construire quelque chose de beau. Chaque petit pas compte.");
-        messages.push("Prends un moment pour célébrer qui tu es aujourd'hui.");
-      }
-    } else if (language === 'en') {
-      if (recentWins.length > 0) {
-        messages.push(`This week, you celebrated ${recentWins.length} small win${recentWins.length > 1 ? 's' : ''}. You take time to recognize your victories.`);
-      }
-      
-      if (completedHabits.length > 0) {
-        messages.push(`You maintained ${completedHabits.length} habit${completedHabits.length > 1 ? 's' : ''} this week. Every day counts.`);
-      }
-      
-      if (recentEntries.length > 0) {
-        messages.push(`You wrote ${recentEntries.length} times in your journal. You're taking care of connecting with yourself.`);
-      }
-      
-      if (completedBoundaries.length > 0) {
-        messages.push(`You maintained ${completedBoundaries.length} healthy boundar${completedBoundaries.length > 1 ? 'ies' : 'y'}. You're protecting yourself.`);
-      }
-      
-      if (completedTasks.length > 0) {
-        messages.push(`You completed ${completedTasks.length} task${completedTasks.length > 1 ? 's' : ''} this week. You're moving forward calmly.`);
-      }
-      
-      if (completedDays > 0) {
-        messages.push(`You completed ${completedDays} challenge day${completedDays > 1 ? 's' : ''}. You're on the right track.`);
-      }
-      
-      if (messages.length === 0) {
-        messages.push("You are building something beautiful. Every small step counts.");
-        messages.push("Take a moment to celebrate who you are today.");
-      }
-    } else {
-      // Spanish
-      if (recentWins.length > 0) {
-        messages.push(`Esta semana, celebraste ${recentWins.length} pequeño éxito. Te tomas tiempo para reconocer tus victorias.`);
-      }
-      
-      if (completedHabits.length > 0) {
-        messages.push(`Mantuviste ${completedHabits.length} hábito esta semana. Cada día cuenta.`);
-      }
-      
-      if (recentEntries.length > 0) {
-        messages.push(`Escribiste ${recentEntries.length} veces en tu diario. Te cuidas conectando contigo mismo.`);
-      }
-      
-      if (completedBoundaries.length > 0) {
-        messages.push(`Mantuviste ${completedBoundaries.length} límite${completedBoundaries.length > 1 ? 's' : ''} saludable${completedBoundaries.length > 1 ? 's' : ''}. Te proteges.`);
-      }
-      
-      if (completedTasks.length > 0) {
-        messages.push(`Completaste ${completedTasks.length} tarea${completedTasks.length > 1 ? 's' : ''} esta semana. Avanzas serenamente.`);
-      }
-      
-      if (completedDays > 0) {
-        messages.push(`Completaste ${completedDays} día${completedDays > 1 ? 's' : ''} de challenge. Estás en el buen camino.`);
-      }
-      
-      if (messages.length === 0) {
-        messages.push("Estás construyendo algo hermoso. Cada pequeño paso cuenta.");
-        messages.push("Tómate un momento para celebrar quién eres hoy.");
-      }
+      setGlowMirrorMessage(aiMessage);
+    } catch (error) {
+      console.error('Glow Mirror AI Error:', error);
+      // Fallback message
+      const fallbackMessages = {
+        fr: "Tu es en train de construire quelque chose de beau. Chaque petit pas compte. Prends un moment pour célébrer qui tu es aujourd'hui.",
+        en: "You are building something beautiful. Every small step counts. Take a moment to celebrate who you are today.",
+        es: "Estás construyendo algo hermoso. Cada pequeño paso cuenta. Tómate un momento para celebrar quién eres hoy."
+      };
+      setGlowMirrorMessage(fallbackMessages[language]);
+    } finally {
+      setGlowMirrorLoading(false);
     }
     
-    // Sélectionner 2-3 messages aléatoires
-    const selectedMessages = messages.sort(() => 0.5 - Math.random()).slice(0, 3);
-    const finalMessage = selectedMessages.join('\n\n');
-    
-    setGlowMirrorMessage(finalMessage);
     setShowGlowMirror(true);
     
     // Sauvegarder la date de visualisation
@@ -2130,21 +2108,35 @@ isActionCompleted,
             <div className="mt-6 mb-4">
               <button
                 onClick={generateGlowMirror}
-                disabled={!canViewGlowMirror}
+                disabled={!canViewGlowMirror || glowMirrorLoading}
                 className={`w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 ${
                   canViewGlowMirror
                     ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                {canViewGlowMirror
-                  ? (language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror')
-                  : (language === 'fr' ? 'Disponible dans 7 jours' : language === 'en' ? 'Available in 7 days' : 'Disponible en 7 días')
-                }
+                {glowMirrorLoading ? (
+                  <>
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>
+                      {language === 'fr' ? 'Analyse en cours...' : language === 'en' ? 'Analyzing...' : 'Analizando...'}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    {canViewGlowMirror
+                      ? (language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror')
+                      : (language === 'fr' ? 'Disponible dans 7 jours' : language === 'en' ? 'Available in 7 days' : 'Disponible en 7 días')
+                    }
+                  </>
+                )}
               </button>
               {!canViewGlowMirror && (
                 <p className="text-center text-xs text-gray-400 mt-2">

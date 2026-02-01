@@ -2500,9 +2500,9 @@ isActionCompleted,
             <div className="mt-6 mb-4">
               <button
                 onClick={() => generateGlowMirror()}
-                disabled={!canViewGlowMirror || glowMirrorLoading}
+                disabled={!isGlowMirrorReady || !canViewGlowMirror || glowMirrorLoading}
                 className={`w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                  canViewGlowMirror
+                  isGlowMirrorReady && canViewGlowMirror
                     ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}

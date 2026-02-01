@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import confetti from 'canvas-confetti';
 import Image from 'next/image';
 import { useStore, View } from '@/lib/store';
 import {
@@ -248,6 +249,13 @@ isActionCompleted,
   const [showGlowMirror, setShowGlowMirror] = useState(false);
   const [glowMirrorMessage, setGlowMirrorMessage] = useState('');
   const [glowMirrorLoading, setGlowMirrorLoading] = useState(false);
+  const [glowMirrorDeepMode, setGlowMirrorDeepMode] = useState(false);
+  const [glowMirrorRetryCount, setGlowMirrorRetryCount] = useState(0);
+  const [glowMirrorQAMessages, setGlowMirrorQAMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
+  const [glowMirrorQAInput, setGlowMirrorQAInput] = useState('');
+  const [glowMirrorQALoading, setGlowMirrorQALoading] = useState(false);
+  const [glowMirrorHistory, setGlowMirrorHistory] = useState<Array<{date: string, message: string}>>([]);
+  const [showGlowMirrorNotification, setShowGlowMirrorNotification] = useState(false);
   const [lastGlowMirrorView, setLastGlowMirrorView] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('lastGlowMirrorView') || '';
@@ -255,6 +263,7 @@ isActionCompleted,
     return '';
   });
   const [canViewGlowMirror, setCanViewGlowMirror] = useState(false);
+  const [glowMirrorWeeklyTrends, setGlowMirrorWeeklyTrends] = useState<any>(null);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -325,23 +334,134 @@ isActionCompleted,
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
-  // Vérifier si on peut voir le Glow Mirror (1x par semaine)
+  // Vérifier si on peut voir le Glow Mirror (1x par semaine) + notification
   useEffect(() => {
     const checkGlowMirrorAvailability = () => {
       if (!lastGlowMirrorView) {
         setCanViewGlowMirror(true);
+        setShowGlowMirrorNotification(true);
         return;
       }
       
       const lastView = new Date(lastGlowMirrorView);
       const now = new Date();
       const daysSinceLastView = Math.floor((now.getTime() - lastView.getTime()) / (1000 * 60 * 60 * 24));
+      const isAvailable = daysSinceLastView >= 7;
       
-      setCanViewGlowMirror(daysSinceLastView >= 7);
+      setCanViewGlowMirror(isAvailable);
+      setShowGlowMirrorNotification(isAvailable);
     };
     
     checkGlowMirrorAvailability();
+    
+    // Vérifier toutes les heures
+    const interval = setInterval(checkGlowMirrorAvailability, 60 * 60 * 1000);
+    return () => clearInterval(interval);
   }, [lastGlowMirrorView]);
+
+  // Helper: Calculer les jours consécutifs d'une habitude
+  const calculateHabitConsecutiveDays = (habitHistory: Array<{date: string, completed: boolean}>) => {
+    if (!habitHistory || habitHistory.length === 0) return 0;
+    
+    const sorted = [...habitHistory].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    
+    let consecutive = 0;
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    
+    const lastEntry = sorted[0];
+    if (lastEntry?.completed && (lastEntry.date === today || lastEntry.date === yesterday)) {
+      consecutive = 1;
+      
+      for (let i = 1; i < sorted.length; i++) {
+        const current = new Date(sorted[i].date);
+        const previous = new Date(sorted[i-1].date);
+        const diffDays = Math.floor((previous.getTime() - current.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1 && sorted[i].completed) {
+          consecutive++;
+        } else {
+          break;
+        }
+      }
+    }
+    
+    return consecutive;
+  };
+
+  // Helper: Calculer les tendances hebdomadaires
+  const calculateWeeklyTrends = (now: Date) => {
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+    
+    const getDataForPeriod = (startDate: Date, endDate: Date) => {
+      const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+      const journalEntriesData = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+      const weekTasks = JSON.parse(localStorage.getItem('weekTasks') || '[]');
+      const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
+      const boundaries = JSON.parse(localStorage.getItem('boundaries') || '[]');
+      
+      const filterByDate = (items: any[], dateField: string = 'date') => {
+        return items.filter(item => {
+          const itemDate = new Date(item[dateField] || item.date);
+          return itemDate >= startDate && itemDate < endDate;
+        });
+      };
+      
+      return {
+        smallWins: filterByDate(smallWins).length,
+        journalEntries: filterByDate(journalEntriesData).length,
+        completedTasks: filterByDate(weekTasks.filter((t: any) => t.completed)).length,
+        totalTasks: filterByDate(weekTasks).length,
+        completedHabits: newMeHabits.filter((h: any) => h.completed).length,
+        completedBoundaries: boundaries.filter((b: any) => b.completed).length
+      };
+    };
+    
+    const currentWeek = getDataForPeriod(oneWeekAgo, now);
+    const previousWeek = getDataForPeriod(twoWeeksAgo, oneWeekAgo);
+    
+    const calculateChange = (current: number, previous: number) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return Math.round(((current - previous) / previous) * 100);
+    };
+    
+    return {
+      currentWeek,
+      previousWeek,
+      changes: {
+        smallWins: calculateChange(currentWeek.smallWins, previousWeek.smallWins),
+        journalEntries: calculateChange(currentWeek.journalEntries, previousWeek.journalEntries),
+        tasks: calculateChange(currentWeek.completedTasks, previousWeek.completedTasks),
+        habits: calculateChange(currentWeek.completedHabits, previousWeek.completedHabits),
+        boundaries: calculateChange(currentWeek.completedBoundaries, previousWeek.completedBoundaries)
+      },
+      globalTrend: calculateChange(
+        currentWeek.smallWins + currentWeek.journalEntries + currentWeek.completedTasks + currentWeek.completedHabits,
+        previousWeek.smallWins + previousWeek.journalEntries + previousWeek.completedTasks + previousWeek.completedHabits
+      )
+    };
+  };
+
+  // Helper: Retry avec exponential backoff
+  const fetchWithRetry = async (url: string, options: RequestInit, maxRetries = 3) => {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const response = await fetch(url, options);
+        if (response.ok) return response;
+        throw new Error(`HTTP Error: ${response.status}`);
+      } catch (error) {
+        if (attempt === maxRetries - 1) throw error;
+        const delay = Math.pow(2, attempt) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    throw new Error('Max retries reached');
+  };
+
+  // Générer le message Glow Mirror avec Kimi AI
 
   // Générer le message Glow Mirror avec Kimi AI
   const generateGlowMirror = async () => {

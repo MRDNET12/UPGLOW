@@ -2386,33 +2386,42 @@ isActionCompleted,
                   </CardContent>
                 </Card>
 
-                {/* Carte 8 Limites */}
+                {/* Carte Mon Journal */}
                 <Card
                   className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[95px]"
-                  onClick={() => setCurrentView('boundaries')}
+                  onClick={() => setCurrentView('journal')}
                 >
                   <CardContent className="p-3 flex flex-col h-full justify-between">
                     {/* Header avec icône */}
                     <div className="flex items-start justify-between mb-1">
                       <h3 className="text-xs font-bold text-gray-800">
-                        {language === 'fr' ? '8 Limites' : language === 'en' ? '8 Boundaries' : '8 Límites'}
+                        {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
                       </h3>
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Shield className="w-3 h-3 text-gray-600" />
+                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                        <BookOpen className="w-3 h-3 text-blue-600" />
                       </div>
                     </div>
-                    
+
                     {/* Valeur principale */}
                     <div className="mb-1">
-                      <p className="text-xl font-bold text-gray-800">8</p>
-                      <p className="text-[10px] text-gray-400">{language === 'fr' ? 'limites à définir' : 'boundaries to set'}</p>
+                      <p className="text-xl font-bold text-gray-800">{journalEntries.length}</p>
+                      <p className="text-[10px] text-gray-400">
+                        {journalEntries.length === 0
+                          ? (language === 'fr' ? 'Écrire aujourd\'hui' : language === 'en' ? 'Write today' : 'Escribe hoy')
+                          : (journalEntries.length === 1
+                            ? (language === 'fr' ? 'entrée' : language === 'en' ? 'entry' : 'entrada')
+                            : (language === 'fr' ? 'entrées' : language === 'en' ? 'entries' : 'entradas'))
+                        }
+                      </p>
                     </div>
-                    
+
                     {/* Indicateur */}
                     <div className="flex items-center gap-1">
-                      <Check className="w-3 h-3 text-emerald-500" />
-                      <span className="text-[10px] text-gray-600">
-                        {language === 'fr' ? 'Pour ta paix' : 'For your peace'}
+                      <span className="text-[10px] text-blue-600">
+                        {journalEntries.length === 0
+                          ? (language === 'fr' ? 'Commencer maintenant' : language === 'en' ? 'Start now' : 'Empezar ahora')
+                          : (language === 'fr' ? 'Continuer à écrire' : language === 'en' ? 'Keep writing' : 'Sigue escribiendo')
+                        }
                       </span>
                     </div>
                   </CardContent>

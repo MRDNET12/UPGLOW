@@ -6365,25 +6365,27 @@ isActionCompleted,
 
       {/* Journal View */}
       {currentView === 'journal' && (
-        <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white overscroll-none">
+        <div className="pb-24 min-h-screen bg-white">
           {/* Header */}
-          <div className="sticky top-0 z-50 bg-white border-b border-gray-100 pt-[env(safe-area-inset-top)]">
-            <div className="px-4 py-3">
-              <div className="flex items-center justify-between max-w-lg mx-auto">
-                <button
-                  onClick={() => setCurrentView('dashboard')}
-                  className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-                <h1 className="text-lg font-bold text-gray-800">
+          <div className="p-4 pb-0 bg-white">
+            <div className="flex items-center gap-3 mb-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-lg font-bold flex items-center gap-2">
                   {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
                 </h1>
-                <div className="w-10" />
               </div>
-              
-              {/* Navigation Mois */}
-              <div className="flex items-center justify-center gap-4 mt-3">
+            </div>
+            
+            {/* Navigation Mois */}
+            <div className="flex items-center justify-center gap-4 mt-3">
               <button 
                 onClick={() => changeJournalMonth('prev')}
                 className="p-2 rounded-full hover:bg-gray-100"
@@ -6605,21 +6607,25 @@ isActionCompleted,
 
       {/* Glow Mirror View */}
       {currentView === 'glow-mirror' && (
-        <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="pb-24 min-h-screen bg-white">
           {/* Header */}
-          <div className="sticky top-0 z-50 bg-white border-b border-gray-100 pt-[env(safe-area-inset-top)]">
-            <div className="px-4 py-3">
-              <div className="flex items-center justify-between max-w-lg mx-auto">
-                <button
-                  onClick={() => setCurrentView('dashboard')}
-                  className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-                <h1 className="text-lg font-bold text-gray-800">
+          <div className="p-4 pb-0 bg-white">
+            <div className="flex items-center gap-3 mb-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-lg font-bold flex items-center gap-2">
                   {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
                 </h1>
-                <div className="w-10" />
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
+                </p>
               </div>
             </div>
           </div>

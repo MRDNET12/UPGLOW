@@ -2500,75 +2500,17 @@ isActionCompleted,
             {/* Glow Mirror Button */}
             <div className="mt-6 mb-4">
               <button
-                onClick={() => {
-                  if (!isGlowMirrorReady) {
-                    setShowGlowMirrorAlert(true);
-                  } else {
-                    generateGlowMirror();
-                  }
-                }}
-                disabled={glowMirrorLoading}
-                className={`w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                  isGlowMirrorReady && canViewGlowMirror
-                    ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                }`}
+                onClick={() => setCurrentView('glow-mirror')}
+                className="w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
               >
-                {glowMirrorLoading ? (
-                  <>
-                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>
-                      {language === 'fr' ? 'Analyse en cours...' : language === 'en' ? 'Analyzing...' : 'Analizando...'}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    {!isGlowMirrorReady
-                      ? (language === 'fr' 
-                        ? `Revenez dans ${7 - daysSinceFirstUse} jours` 
-                        : language === 'en' 
-                        ? `Come back in ${7 - daysSinceFirstUse} days`
-                        : `Vuelve en ${7 - daysSinceFirstUse} días`)
-                      : canViewGlowMirror
-                        ? (language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror')
-                        : (language === 'fr' ? 'Disponible dans 7 jours' : language === 'en' ? 'Available in 7 days' : 'Disponible en 7 días')
-                    }
-                  </>
-                )}
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>
+                  {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
+                </span>
               </button>
-              {!isGlowMirrorReady ? (
-                <div className="mt-3 p-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl border border-violet-100">
-                  <p className="text-sm text-violet-700 text-center font-medium">
-                    {language === 'fr'
-                      ? 'Qui êtes-vous en train de devenir ? Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
-                      : language === 'en'
-                      ? 'Who are you becoming? Use the app for 7 days, then come back to see who you\'re becoming.'
-                      : '¿En quién te estás convirtiendo? Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
-                  </p>
-                  <p className="text-xs text-violet-500 text-center mt-2">
-                    {language === 'fr'
-                      ? `Jour ${daysSinceFirstUse} sur 7`
-                      : language === 'en'
-                      ? `Day ${daysSinceFirstUse} of 7`
-                      : `Día ${daysSinceFirstUse} de 7`}
-                  </p>
-                </div>
-              ) : !canViewGlowMirror && (
-                <p className="text-center text-xs text-gray-400 mt-2">
-                  {language === 'fr' 
-                    ? 'Une fois par semaine maximum' 
-                    : language === 'en' 
-                    ? 'Once per week maximum' 
-                    : 'Una vez por semana máximo'}
-                </p>
-              )}
             </div>
           </div>
         )}
@@ -5302,6 +5244,23 @@ isActionCompleted,
                 </span>
               </Button>
 
+              {/* Glow Mirror */}
+              <Button
+                variant="ghost"
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
+                  currentView === 'glow-mirror'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setCurrentView('glow-mirror')}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span className="text-[10px] font-medium">{language === 'fr' ? 'Glow' : language === 'en' ? 'Glow' : 'Glow'}</span>
+              </Button>
+
               {/* Profil */}
               <Button
                 variant="ghost"
@@ -6655,6 +6614,142 @@ isActionCompleted,
               <Plus className="w-5 h-5" />
               {language === 'fr' ? 'Ma journée' : language === 'en' ? 'My day' : 'Mi día'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Glow Mirror View */}
+      {currentView === 'glow-mirror' && (
+        <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white">
+          {/* Header */}
+          <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-4">
+            <div className="flex items-center justify-between max-w-lg mx-auto">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+              <h1 className="text-lg font-bold text-gray-800">
+                {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
+              </h1>
+              <div className="w-10" />
+            </div>
+          </div>
+          
+          {/* Content */}
+          <div className="p-5 max-w-lg mx-auto">
+            {/* Description */}
+            <div className="mb-6 p-5 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl border border-violet-100">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </div>
+                <h2 className="text-lg font-bold text-violet-800">
+                  {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
+                </h2>
+              </div>
+              <p className="text-sm text-violet-700 leading-relaxed">
+                {language === 'fr' 
+                  ? 'Glow Mirror analyse vos données sur 7 jours pour créer un reflet personnalisé de qui vous êtes en train de devenir.'
+                  : language === 'en'
+                  ? 'Glow Mirror analyzes your data over 7 days to create a personalized reflection of who you are becoming.'
+                  : 'Glow Mirror analiza tus datos durante 7 días para crear un reflejo personalizado de en quién te estás convirtiendo.'}
+              </p>
+            </div>
+            
+            {/* Status message */}
+            {!isGlowMirrorReady ? (
+              <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
+                  {language === 'fr' ? 'Patience...' : language === 'en' ? 'Patience...' : 'Paciencia...'}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {language === 'fr'
+                    ? 'Qui êtes-vous en train de devenir ? Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
+                    : language === 'en'
+                    ? 'Who are you becoming? Use the app for 7 days, then come back to see who you\'re becoming.'
+                    : '¿En quién te estás convirtiendo? Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
+                </p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+                  <span className="text-sm font-medium text-gray-600">
+                    {language === 'fr' ? `Jour ${daysSinceFirstUse} sur 7` : language === 'en' ? `Day ${daysSinceFirstUse} of 7` : `Día ${daysSinceFirstUse} de 7`}
+                  </span>
+                </div>
+              </div>
+            ) : !canViewGlowMirror ? (
+              <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
+                  {language === 'fr' ? 'Prochain Glow Mirror' : language === 'en' ? 'Next Glow Mirror' : 'Próximo Glow Mirror'}
+                </h3>
+                <p className="text-gray-600">
+                  {language === 'fr' 
+                    ? 'Votre prochain Glow Mirror sera disponible dans 7 jours.' 
+                    : language === 'en' 
+                    ? 'Your next Glow Mirror will be available in 7 days.' 
+                    : 'Tu próximo Glow Mirror estará disponible en 7 días.'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* History */}
+                {glowMirrorHistory.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-sm font-bold text-gray-700 mb-3">
+                      {language === 'fr' ? 'Historique' : language === 'en' ? 'History' : 'Historial'}
+                    </h3>
+                    <div className="space-y-2">
+                      {glowMirrorHistory.slice(0, 3).map((entry, idx) => (
+                        <div key={idx} className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                          <p className="text-xs text-gray-400 mb-2">
+                            {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
+                          </p>
+                          <p className="text-sm text-gray-700 line-clamp-3">{entry.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Launch Button */}
+                <button
+                  onClick={() => generateGlowMirror()}
+                  disabled={glowMirrorLoading}
+                  className="w-full py-4 rounded-2xl font-bold text-white transition-all bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {glowMirrorLoading ? (
+                    <>
+                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>{language === 'fr' ? 'Analyse en cours...' : language === 'en' ? 'Analyzing...' : 'Analizando...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <span>{language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

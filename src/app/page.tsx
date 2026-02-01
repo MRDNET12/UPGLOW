@@ -6367,22 +6367,23 @@ isActionCompleted,
       {currentView === 'journal' && (
         <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white overscroll-none">
           {/* Header */}
-          <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-4">
-            <div className="flex items-center justify-between max-w-lg mx-auto">
-              <button
-                onClick={() => setCurrentView('dashboard')}
-                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700" />
-              </button>
-              <h1 className="text-lg font-bold text-gray-800">
-                {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
-              </h1>
-              <div className="w-10" />
-            </div>
-            
-            {/* Navigation Mois */}
-            <div className="flex items-center justify-center gap-4 mt-3">
+          <div className="sticky top-0 z-50 bg-white border-b border-gray-100 pt-[env(safe-area-inset-top)]">
+            <div className="px-4 py-3">
+              <div className="flex items-center justify-between max-w-lg mx-auto">
+                <button
+                  onClick={() => setCurrentView('dashboard')}
+                  className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </button>
+                <h1 className="text-lg font-bold text-gray-800">
+                  {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
+                </h1>
+                <div className="w-10" />
+              </div>
+              
+              {/* Navigation Mois */}
+              <div className="flex items-center justify-center gap-4 mt-3">
               <button 
                 onClick={() => changeJournalMonth('prev')}
                 className="p-2 rounded-full hover:bg-gray-100"
@@ -6399,8 +6400,9 @@ isActionCompleted,
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
             </div>
+          </div>
 
-            {/* Journal Statistics */}
+          {/* Journal Statistics */}
             {(() => {
               const monthEntries = getFilteredJournalEntries();
               const totalEntries = monthEntries.length;
@@ -6605,18 +6607,20 @@ isActionCompleted,
       {currentView === 'glow-mirror' && (
         <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white">
           {/* Header */}
-          <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-4">
-            <div className="flex items-center justify-between max-w-lg mx-auto">
-              <button
-                onClick={() => setCurrentView('dashboard')}
-                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5 text-gray-700" />
-              </button>
-              <h1 className="text-lg font-bold text-gray-800">
-                {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
-              </h1>
-              <div className="w-10" />
+          <div className="sticky top-0 z-50 bg-white border-b border-gray-100 pt-[env(safe-area-inset-top)]">
+            <div className="px-4 py-3">
+              <div className="flex items-center justify-between max-w-lg mx-auto">
+                <button
+                  onClick={() => setCurrentView('dashboard')}
+                  className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </button>
+                <h1 className="text-lg font-bold text-gray-800">
+                  {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
+                </h1>
+                <div className="w-10" />
+              </div>
             </div>
           </div>
           

@@ -252,7 +252,100 @@ isActionCompleted,
   const [showJournalEntryModal, setShowJournalEntryModal] = useState(false);
   const [newJournalEntry, setNewJournalEntry] = useState('');
   const [selectedJournalMood, setSelectedJournalMood] = useState('');
+  const [selectedJournalMoodColor, setSelectedJournalMoodColor] = useState('');
   const [selectedJournalTags, setSelectedJournalTags] = useState<string[]>([]);
+  const [journalImages, setJournalImages] = useState<string[]>([]);
+  const [journalCurrentMonth, setJournalCurrentMonth] = useState(new Date());
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
+
+  // Charger les entrées du journal depuis localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('journalEntries');
+      if (saved) {
+        setJournalEntries(JSON.parse(saved));
+      }
+    }
+  }, []);
+
+  // Sauvegarder les entrées du journal dans localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+    }
+  }, [journalEntries]);
+
+  // Fonction pour ajouter ou modifier une entrée
+  const saveJournalEntry = () => {
+    if (!newJournalEntry.trim() || !selectedJournalMood) return;
+    
+    const now = new Date();
+    const entryData = {
+      id: editingEntryId || Date.now().toString(),
+      date: now.toISOString().split('T')[0],
+      time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      mood: selectedJournalMood,
+      moodColor: selectedJournalMoodColor,
+      tags: selectedJournalTags,
+      text: newJournalEntry,
+      images: journalImages
+    };
+
+    if (editingEntryId) {
+      setJournalEntries(prev => prev.map(e => e.id === editingEntryId ? entryData : e));
+      setEditingEntryId(null);
+    } else {
+      setJournalEntries(prev => [entryData, ...prev]);
+    }
+
+    // Reset form
+    setNewJournalEntry('');
+    setSelectedJournalMood('');
+    setSelectedJournalMoodColor('');
+    setSelectedJournalTags([]);
+    setJournalImages([]);
+    setShowJournalEntryModal(false);
+  };
+
+  // Fonction pour supprimer une entrée
+  const deleteJournalEntry = (id: string) => {
+    if (confirm(language === 'fr' ? 'Supprimer cette entrée ?' : language === 'en' ? 'Delete this entry?' : '¿Eliminar esta entrada?')) {
+      setJournalEntries(prev => prev.filter(e => e.id !== id));
+    }
+  };
+
+  // Fonction pour éditer une entrée
+  const editJournalEntry = (entry: typeof journalEntries[0]) => {
+    setEditingEntryId(entry.id);
+    setNewJournalEntry(entry.text);
+    setSelectedJournalMood(entry.mood);
+    setSelectedJournalMoodColor(entry.moodColor);
+    setSelectedJournalTags(entry.tags);
+    setJournalImages(entry.images || []);
+    setShowJournalEntryModal(true);
+  };
+
+  // Fonction pour changer de mois
+  const changeJournalMonth = (direction: 'prev' | 'next') => {
+    setJournalCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(newDate.getMonth() - 1);
+      } else {
+        newDate.setMonth(newDate.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  // Filtrer les entrées par mois
+  const getFilteredJournalEntries = () => {
+    return journalEntries.filter(entry => {
+      const entryDate = new Date(entry.date);
+      return entryDate.getMonth() === journalCurrentMonth.getMonth() && 
+             entryDate.getFullYear() === journalCurrentMonth.getFullYear();
+    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  };
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);

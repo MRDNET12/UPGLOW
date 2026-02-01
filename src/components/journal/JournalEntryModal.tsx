@@ -118,12 +118,12 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
   const t = {
     fr: {
       editEntry: 'Modifier l\'entrée',
-      newEntry: 'Nouvelle entrée',
+      newEntry: 'Moments vrais',
       howAreYou: 'Comment vous sentez-vous ?',
       tags: 'Tags',
       quickTags: 'Tags rapides',
       categories: 'Catégories',
-      yourEntry: 'Votre entrée',
+      yourEntry: 'Ma journée',
       placeholder: 'Écrivez vos pensées, ressentis, gratitudes...',
       photos: 'Photos',
       addPhoto: 'Ajouter une photo',

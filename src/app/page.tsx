@@ -53,6 +53,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
+import { JournalEntryModal, JournalEntry } from '@/components/journal';
 
 // Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
 const getLocalDateString = (date: Date = new Date()): string => {
@@ -237,26 +238,10 @@ isActionCompleted,
     tags: string[];
     text: string;
     images?: string[];
-  }>>([
-    // Exemple d'entrée pour démonstration
-    {
-      id: '1',
-      date: new Date().toISOString().split('T')[0],
-      time: '09:45',
-      mood: language === 'fr' ? 'bien' : language === 'en' ? 'good' : 'bien',
-      moodColor: '#84cc16',
-      tags: language === 'fr' ? ['bonne nuit', 'sport', 'manger sain', 'soleil'] : language === 'en' ? ['good night', 'sport', 'healthy eating', 'sun'] : ['buena noche', 'deporte', 'comer sano', 'sol'],
-      text: language === 'fr' ? 'Course du matin 🏃‍♀️. Je me sens bien et plein d\'énergie ! 😎🚀' : language === 'en' ? 'Morning run 🏃‍♀️. I feel good and full of energy! 😎🚀' : 'Carrera matutina 🏃‍♀️. ¡Me siento bien y lleno de energía! 😎🚀'
-    }
-  ]);
+  }>>([]);
   const [showJournalEntryModal, setShowJournalEntryModal] = useState(false);
-  const [newJournalEntry, setNewJournalEntry] = useState('');
-  const [selectedJournalMood, setSelectedJournalMood] = useState('');
-  const [selectedJournalMoodColor, setSelectedJournalMoodColor] = useState('');
-  const [selectedJournalTags, setSelectedJournalTags] = useState<string[]>([]);
-  const [journalImages, setJournalImages] = useState<string[]>([]);
   const [journalCurrentMonth, setJournalCurrentMonth] = useState(new Date());
-  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
+  const [editingEntry, setEditingEntry] = useState<typeof journalEntries[0] | null>(null);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -275,35 +260,20 @@ isActionCompleted,
     }
   }, [journalEntries]);
 
-  // Fonction pour ajouter ou modifier une entrée
-  const saveJournalEntry = () => {
-    if (!newJournalEntry.trim() || !selectedJournalMood) return;
-    
-    const now = new Date();
-    const entryData = {
-      id: editingEntryId || Date.now().toString(),
-      date: now.toISOString().split('T')[0],
-      time: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      mood: selectedJournalMood,
-      moodColor: selectedJournalMoodColor,
-      tags: selectedJournalTags,
-      text: newJournalEntry,
-      images: journalImages
-    };
-
-    if (editingEntryId) {
-      setJournalEntries(prev => prev.map(e => e.id === editingEntryId ? entryData : e));
-      setEditingEntryId(null);
+  // Fonction pour sauvegarder une entrée (ajout ou modification)
+  const handleSaveJournalEntry = (entryData: Omit<typeof journalEntries[0], 'id'>) => {
+    if (editingEntry) {
+      setJournalEntries(prev => prev.map(e => 
+        e.id === editingEntry.id ? { ...entryData, id: editingEntry.id } : e
+      ));
+      setEditingEntry(null);
     } else {
-      setJournalEntries(prev => [entryData, ...prev]);
+      const newEntry = {
+        ...entryData,
+        id: Date.now().toString()
+      };
+      setJournalEntries(prev => [newEntry, ...prev]);
     }
-
-    // Reset form
-    setNewJournalEntry('');
-    setSelectedJournalMood('');
-    setSelectedJournalMoodColor('');
-    setSelectedJournalTags([]);
-    setJournalImages([]);
     setShowJournalEntryModal(false);
   };
 
@@ -316,12 +286,7 @@ isActionCompleted,
 
   // Fonction pour éditer une entrée
   const editJournalEntry = (entry: typeof journalEntries[0]) => {
-    setEditingEntryId(entry.id);
-    setNewJournalEntry(entry.text);
-    setSelectedJournalMood(entry.mood);
-    setSelectedJournalMoodColor(entry.moodColor);
-    setSelectedJournalTags(entry.tags);
-    setJournalImages(entry.images || []);
+    setEditingEntry(entry);
     setShowJournalEntryModal(true);
   };
 
@@ -5582,6 +5547,18 @@ isActionCompleted,
         defaultMode={user ? 'signin' : 'signup'}
       />
 
+      {/* Journal Entry Modal */}
+      <JournalEntryModal
+        isOpen={showJournalEntryModal}
+        onClose={() => {
+          setShowJournalEntryModal(false);
+          setEditingEntry(null);
+        }}
+        onSave={handleSaveJournalEntry}
+        editingEntry={editingEntry}
+        language={language}
+      />
+
       {/* Popup de série - Beauty Challenge */}
       {showBeautyStreakPopup && (
         <div className="fixed top-0 left-0 right-0 z-50 animate-in slide-in-from-top duration-500">
@@ -5746,6 +5723,85 @@ isActionCompleted,
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
             </div>
+
+            {/* Journal Statistics */}
+            {(() => {
+              const monthEntries = getFilteredJournalEntries();
+              const totalEntries = monthEntries.length;
+              
+              // Calculate mood distribution
+              const moodCounts: Record<string, number> = {};
+              monthEntries.forEach(entry => {
+                moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1;
+              });
+              
+              // Find dominant mood
+              const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0];
+              
+              // Calculate streak
+              let currentStreak = 0;
+              const sortedEntries = [...journalEntries].sort((a, b) => 
+                new Date(b.date).getTime() - new Date(a.date).getTime()
+              );
+              
+              if (sortedEntries.length > 0) {
+                const today = new Date().toISOString().split('T')[0];
+                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                
+                // Check if entry exists today or yesterday to start streak
+                const hasEntryToday = sortedEntries.some(e => e.date === today);
+                const hasEntryYesterday = sortedEntries.some(e => e.date === yesterday);
+                
+                if (hasEntryToday || hasEntryYesterday) {
+                  currentStreak = 1;
+                  let checkDate = new Date(hasEntryToday ? today : yesterday);
+                  
+                  for (let i = 1; i < sortedEntries.length; i++) {
+                    checkDate.setDate(checkDate.getDate() - 1);
+                    const checkDateStr = checkDate.toISOString().split('T')[0];
+                    
+                    if (sortedEntries.some(e => e.date === checkDateStr)) {
+                      currentStreak++;
+                    } else {
+                      break;
+                    }
+                  }
+                }
+              }
+              
+              return (
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {/* Total Entries */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-3 text-center">
+                    <p className="text-2xl font-bold text-blue-600">{totalEntries}</p>
+                    <p className="text-xs text-blue-600/70">
+                      {language === 'fr' ? 'Entrées' : language === 'en' ? 'Entries' : 'Entradas'}
+                    </p>
+                  </div>
+                  
+                  {/* Dominant Mood */}
+                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-3 text-center">
+                    <p className="text-2xl font-bold text-emerald-600">
+                      {dominantMood ? Math.round((dominantMood[1] / totalEntries) * 100) : 0}%
+                    </p>
+                    <p className="text-xs text-emerald-600/70 capitalize">
+                      {dominantMood 
+                        ? dominantMood[0] 
+                        : (language === 'fr' ? 'Humeur' : language === 'en' ? 'Mood' : 'Estado')
+                      }
+                    </p>
+                  </div>
+                  
+                  {/* Current Streak */}
+                  <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-3 text-center">
+                    <p className="text-2xl font-bold text-orange-600">{currentStreak}</p>
+                    <p className="text-xs text-orange-600/70">
+                      {language === 'fr' ? 'Jours' : language === 'en' ? 'Days' : 'Días'}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Liste des entrées */}

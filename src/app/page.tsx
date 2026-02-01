@@ -373,46 +373,176 @@ isActionCompleted,
     const challengeProgress = JSON.parse(localStorage.getItem('challengeProgress') || '{}');
     const completedDays = Object.values(challengeProgress).filter((p: any) => p.completed).length;
     
-    // Construire le prompt pour Kimi
+    // Calculer des statistiques avancées
+    const habitCompletionRate = newMeHabits.length > 0 ? Math.round((completedHabits.length / newMeHabits.length) * 100) : 0;
+    const taskCompletionRate = weekTasks.length > 0 ? Math.round((completedTasks.length / weekTasks.length) * 100) : 0;
+    const boundaryCompletionRate = boundariesData.length > 0 ? Math.round((completedBoundaries.length / boundariesData.length) * 100) : 0;
+    
+    // Analyser l'humeur dominante
+    const moodCounts: Record<string, number> = {};
+    recentEntries.forEach((e: any) => {
+      if (e.mood) moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1;
+    });
+    const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+    const dominantMoodPercentage = recentEntries.length > 0 && dominantMood 
+      ? Math.round((moodCounts[dominantMood] / recentEntries.length) * 100) 
+      : 0;
+    
+    // Analyser les tags les plus utilisés
+    const allTags = recentEntries.flatMap((e: any) => e.tags || []);
+    const tagCounts: Record<string, number> = {};
+    allTags.forEach((tag: string) => {
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    });
+    const topTags = Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([tag, count]) => ({ tag, count }));
+    
+    // Calculer la régularité (streak)
+    let currentStreak = 0;
+    const sortedEntries = [...journalEntries].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    if (sortedEntries.length > 0) {
+      const today = now.toISOString().split('T')[0];
+      const yesterday = new Date(now.getTime() - 86400000).toISOString().split('T')[0];
+      const hasEntryToday = sortedEntries.some(e => e.date === today);
+      const hasEntryYesterday = sortedEntries.some(e => e.date === yesterday);
+      
+      if (hasEntryToday || hasEntryYesterday) {
+        currentStreak = 1;
+        let checkDate = new Date(hasEntryToday ? today : yesterday);
+        for (let i = 1; i < sortedEntries.length; i++) {
+          checkDate.setDate(checkDate.getDate() - 1);
+          const checkDateStr = checkDate.toISOString().split('T')[0];
+          if (sortedEntries.some(e => e.date === checkDateStr)) {
+            currentStreak++;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+    
+    // Construire le prompt enrichi pour Kimi
     const promptData = {
       language: language,
       timeRange: 'last 7 days',
-      data: {
+      userProfile: {
+        currentStreak: currentStreak,
+        totalJournalEntries: journalEntries.length,
+        weeklyActivityScore: Math.min(100, (recentEntries.length * 10) + (completedHabits.length * 5) + (completedTasks.length * 3) + (recentWins.length * 2))
+      },
+      analytics: {
         smallWins: {
           count: recentWins.length,
           items: recentWins.slice(0, 5).map((w: any) => w.text || w.title || 'Win')
         },
         habits: {
-          count: completedHabits.length,
+          completed: completedHabits.length,
           total: newMeHabits.length,
-          items: completedHabits.slice(0, 5).map((h: any) => h.label || h.name || 'Habit')
+          completionRate: habitCompletionRate,
+          items: completedHabits.slice(0, 5).map((h: any) => h.label || h.name || 'Habit'),
+          missed: newMeHabits.length - completedHabits.length
         },
         journal: {
           entriesCount: recentEntries.length,
-          moods: recentEntries.map((e: any) => e.mood).filter(Boolean),
-          tags: [...new Set(recentEntries.flatMap((e: any) => e.tags || []))].slice(0, 10)
+          totalEntries: journalEntries.length,
+          dominantMood: {
+            mood: dominantMood,
+            percentage: dominantMoodPercentage
+          },
+          allMoods: moodCounts,
+          topTags: topTags,
+          streak: currentStreak
         },
         boundaries: {
-          count: completedBoundaries.length,
-          total: boundariesData.length
+          completed: completedBoundaries.length,
+          total: boundariesData.length,
+          completionRate: boundaryCompletionRate
         },
         tasks: {
           completed: completedTasks.length,
-          total: weekTasks.length
+          total: weekTasks.length,
+          completionRate: taskCompletionRate,
+          pending: weekTasks.length - completedTasks.length
         },
         challenges: {
           completedDays: completedDays
         }
+      },
+      insights: {
+        strengthAreas: [] as Array<string>,
+        improvementAreas: [] as Array<string>
       }
     };
     
-    const systemPrompt = language === 'fr' 
-      ? "Tu es Glow Mirror, un miroir identitaire évolutif qui reflète à l'utilisateur qui il est en train de devenir. Écris un message court (3-10 lignes), à la deuxième personne (tu/vous), ton humain, calme et précis. Analyse les données fournies et crée un reflet personnalisé de qui il est en devenant."
-      : language === 'en'
-      ? "You are Glow Mirror, an evolving identity mirror that reflects to the user who they are becoming. Write a short message (3-10 lines), in second person (you), human tone, calm and precise. Analyze the provided data and create a personalized reflection of who they are becoming."
-      : "Eres Glow Mirror, un espejo de identidad evolutivo que refleja al usuario quién está llegando a ser. Escribe un mensaje corto (3-10 líneas), en segunda persona (tú), tono humano, calmado y preciso. Analiza los datos proporcionados y crea un reflejo personalizado de quién está llegando a ser.";
+    // Identifier les forces et axes d'amélioration
+    const strengthAreas: string[] = [];
+    const improvementAreas: string[] = [];
     
-    const userPrompt = `Voici les données de l'utilisateur pour les 7 derniers jours:\n${JSON.stringify(promptData.data, null, 2)}\n\nGénère un message Glow Mirror personnalisé qui reflète qui il est en train de devenir.`;
+    if (habitCompletionRate >= 70) strengthAreas.push('consistency_habits');
+    if (taskCompletionRate >= 70) strengthAreas.push('productivity');
+    if (recentEntries.length >= 3) strengthAreas.push('self_reflection');
+    if (recentWins.length >= 2) strengthAreas.push('celebration');
+    if (boundaryCompletionRate >= 70) strengthAreas.push('self_care');
+    
+    if (habitCompletionRate < 50) improvementAreas.push('habit_consistency');
+    if (taskCompletionRate < 50) improvementAreas.push('task_completion');
+    if (recentEntries.length < 2) improvementAreas.push('journaling_frequency');
+    if (recentWins.length === 0) improvementAreas.push('celebration_mindset');
+    
+    // Mettre à jour promptData avec les tableaux remplis
+    promptData.insights.strengthAreas = strengthAreas;
+    promptData.insights.improvementAreas = improvementAreas;
+    
+    const systemPrompt = language === 'fr' 
+      ? `Tu es Glow Mirror, un miroir identitaire intelligent et bienveillant. Tu analyses les données d'une utilisatrice sur 7 jours pour créer un reflet personnalisé de qui elle est en train de devenir.
+
+RÈGLES:
+- Écris à la 2ème personne (tu/vous)
+- Ton humain, chaleureux mais professionnel
+- Message de 8-15 lignes maximum
+- Structure: 1) Analyse de qui elle est (forces identifiées), 2) Tendances remarquables, 3) Un conseil d'amélioration concret et personnalisé
+- Sois précis: cite des chiffres, des patterns, des exemples concrets des données
+- Le conseil doit être actionnable et adapté à son profil
+- Si elle manque de régularité, suggère un micro-habit facile
+- Si elle est très active, suggère comment optimiser ou équilibrer`
+      : language === 'en'
+      ? `You are Glow Mirror, an intelligent and caring identity mirror. You analyze a user's data over 7 days to create a personalized reflection of who they are becoming.
+
+RULES:
+- Write in 2nd person (you)
+- Human, warm but professional tone
+- Message of 8-15 lines maximum
+- Structure: 1) Analysis of who they are (identified strengths), 2) Notable trends, 3) A concrete, personalized improvement tip
+- Be specific: cite numbers, patterns, concrete examples from data
+- The advice must be actionable and adapted to their profile
+- If they lack consistency, suggest an easy micro-habit
+- If they are very active, suggest how to optimize or balance`
+      : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso. Analizas los datos de una usuaria durante 7 días para crear un reflejo personalizado de quién está llegando a ser.
+
+REGLAS:
+- Escribe en 2ª persona (tú)
+- Tono humano, cálido pero profesional
+- Mensaje de 8-15 líneas máximo
+- Estructura: 1) Análisis de quién es (fortalezas identificadas), 2) Tendencias notables, 3) Un consejo de mejora concreto y personalizado
+- Sé específico: cita números, patrones, ejemplos concretos de los datos
+- El consejo debe ser accionable y adaptado a su perfil
+- Si le falta regularidad, sugiere un micro-hábito fácil
+- Si es muy activa, sugiere cómo optimizar o equilibrar`;
+    
+    const userPrompt = `Voici les données détaillées de l'utilisatrice pour les 7 derniers jours:
+
+${JSON.stringify(promptData, null, 2)}
+
+En tant que Glow Mirror, analyse ces données en profondeur et génère:
+1. UN MIROIR: Qui est-elle vraiment? Quels sont ses patterns? Ses forces cachées?
+2. DES CONSTATS: Quelles tendances remarques-tu? Des connexions entre les différentes activités?
+3. UN CONSEIL: Un conseil d'amélioration ultra-personnalisé et actionnable basé sur ses faiblesses ET ses forces.
+
+Sois précis, cite des données, et donne un conseil concret qu'elle peut appliquer dès demain.`;
     
     setGlowMirrorLoading(true);
     
@@ -429,8 +559,9 @@ isActionCompleted,
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
           ],
-          temperature: 0.7,
-          max_tokens: 500
+          temperature: 0.8,
+          max_tokens: 800,
+          top_p: 0.9
         })
       });
       

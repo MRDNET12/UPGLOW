@@ -5198,15 +5198,15 @@ isActionCompleted,
                 <span className="text-[10px] font-medium">{t.nav.home}</span>
               </Button>
 
-              {/* Habitudes */}
+               {/* Habitudes */}
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'new-me'
+                  currentView === 'trackers'
                     ? 'bg-gray-900 text-white shadow-md'
                     : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
-                onClick={() => setCurrentView('new-me')}
+                onClick={() => setCurrentView('trackers')}
               >
                 <Target className="w-5 h-5" />
                 <span className="text-[10px] font-medium">

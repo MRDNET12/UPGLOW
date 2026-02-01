@@ -2523,14 +2523,37 @@ isActionCompleted,
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    {canViewGlowMirror
-                      ? (language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror')
-                      : (language === 'fr' ? 'Disponible dans 7 jours' : language === 'en' ? 'Available in 7 days' : 'Disponible en 7 días')
+                    {!isGlowMirrorReady
+                      ? (language === 'fr' 
+                        ? `Revenez dans ${7 - daysSinceFirstUse} jours` 
+                        : language === 'en' 
+                        ? `Come back in ${7 - daysSinceFirstUse} days`
+                        : `Vuelve en ${7 - daysSinceFirstUse} días`)
+                      : canViewGlowMirror
+                        ? (language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror')
+                        : (language === 'fr' ? 'Disponible dans 7 jours' : language === 'en' ? 'Available in 7 days' : 'Disponible en 7 días')
                     }
                   </>
                 )}
               </button>
-              {!canViewGlowMirror && (
+              {!isGlowMirrorReady ? (
+                <div className="mt-3 p-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl border border-violet-100">
+                  <p className="text-sm text-violet-700 text-center font-medium">
+                    {language === 'fr' 
+                      ? '✨ Utilisez Project Glow pendant 7 jours, puis revenez découvrir qui vous êtes en train de devenir !'
+                      : language === 'en'
+                      ? '✨ Use Project Glow for 7 days, then come back to discover who you are becoming!'
+                      : '✨ ¡Usa Project Glow durante 7 días, luego vuelve para descubrir en quién te estás convirtiendo!'}
+                  </p>
+                  <p className="text-xs text-violet-500 text-center mt-2">
+                    {language === 'fr'
+                      ? `Jour ${daysSinceFirstUse} sur 7`
+                      : language === 'en'
+                      ? `Day ${daysSinceFirstUse} of 7`
+                      : `Día ${daysSinceFirstUse} de 7`}
+                  </p>
+                </div>
+              ) : !canViewGlowMirror && (
                 <p className="text-center text-xs text-gray-400 mt-2">
                   {language === 'fr' 
                     ? 'Une fois par semaine maximum' 

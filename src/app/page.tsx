@@ -14,7 +14,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -226,6 +226,33 @@ isActionCompleted,
   const [beautyHasShownFirstMessage, setBeautyHasShownFirstMessage] = useState(false);
   const [showBeautyStreakPopup, setShowBeautyStreakPopup] = useState(false);
   const [showBeautyIncompletePopup, setShowBeautyIncompletePopup] = useState(false);
+
+  // État pour le Journal
+  const [journalEntries, setJournalEntries] = useState<Array<{
+    id: string;
+    date: string;
+    time: string;
+    mood: string;
+    moodColor: string;
+    tags: string[];
+    text: string;
+    images?: string[];
+  }>>([
+    // Exemple d'entrée pour démonstration
+    {
+      id: '1',
+      date: new Date().toISOString().split('T')[0],
+      time: '09:45',
+      mood: language === 'fr' ? 'bien' : language === 'en' ? 'good' : 'bien',
+      moodColor: '#84cc16',
+      tags: language === 'fr' ? ['bonne nuit', 'sport', 'manger sain', 'soleil'] : language === 'en' ? ['good night', 'sport', 'healthy eating', 'sun'] : ['buena noche', 'deporte', 'comer sano', 'sol'],
+      text: language === 'fr' ? 'Course du matin 🏃‍♀️. Je me sens bien et plein d\'énergie ! 😎🚀' : language === 'en' ? 'Morning run 🏃‍♀️. I feel good and full of energy! 😎🚀' : 'Carrera matutina 🏃‍♀️. ¡Me siento bien y lleno de energía! 😎🚀'
+    }
+  ]);
+  const [showJournalEntryModal, setShowJournalEntryModal] = useState(false);
+  const [newJournalEntry, setNewJournalEntry] = useState('');
+  const [selectedJournalMood, setSelectedJournalMood] = useState('');
+  const [selectedJournalTags, setSelectedJournalTags] = useState<string[]>([]);
 
   // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
@@ -1799,6 +1826,34 @@ isActionCompleted,
               </CardContent>
             </Card> */}
 
+
+            {/* Carte Mon Journal */}
+            <Card
+              className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
+              onClick={() => setCurrentView('journal')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-sm text-gray-800">
+                      {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
+                    </h3>
+                    <p className="text-[10px] text-gray-500 mt-0.5">
+                      {language === 'fr' ? 'Ma journée, mes humeurs, mes photos' : language === 'en' ? 'My day, my moods, my photos' : 'Mi día, mis estados de ánimo, mis fotos'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                    <span className="text-[10px] text-gray-400">
+                      {journalEntries.length} {language === 'fr' ? 'entrées' : language === 'en' ? 'entries' : 'entradas'}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Carte 50 choses à faire seule - MASQUÉE */}
             {/* <Card
@@ -5561,6 +5616,123 @@ isActionCompleted,
           }
         }
       `}</style>
+
+      {/* Journal View */}
+      {currentView === 'journal' && (
+        <div className="pb-24 min-h-screen bg-gradient-to-b from-gray-50 to-white">
+          {/* Header */}
+          <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-4">
+            <div className="flex items-center justify-between max-w-lg mx-auto">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+              <h1 className="text-lg font-bold text-gray-800">
+                {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
+              </h1>
+              <div className="w-10" />
+            </div>
+            
+            {/* Navigation Mois */}
+            <div className="flex items-center justify-center gap-4 mt-3">
+              <button className="p-2 rounded-full hover:bg-gray-100">
+                <ChevronLeft className="w-4 h-4 text-gray-400" />
+              </button>
+              <span className="text-base font-semibold text-gray-800">
+                {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
+              </span>
+              <button className="p-2 rounded-full hover:bg-gray-100">
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+            </div>
+          </div>
+
+          {/* Liste des entrées */}
+          <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
+            {journalEntries.map((entry) => (
+              <div key={entry.id} className="bg-white rounded-2xl p-4 shadow-sm">
+                {/* Header avec date et humeur */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    {/* Emoji humeur */}
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
+                      style={{ backgroundColor: entry.moodColor + '20' }}
+                    >
+                      {entry.mood === 'bien' || entry.mood === 'good' ? '😊' : 
+                       entry.mood === 'super' || entry.mood === 'great' ? '😄' :
+                       entry.mood === 'triste' || entry.mood === 'sad' ? '😢' :
+                       entry.mood === 'fatigué' || entry.mood === 'tired' ? '😴' : '😐'}
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wide">
+                        {entry.date === new Date().toISOString().split('T')[0] 
+                          ? (language === 'fr' ? 'Aujourd\'hui' : language === 'en' ? 'Today' : 'Hoy')
+                          : language === 'fr' ? 'Hier' : language === 'en' ? 'Yesterday' : 'Ayer'
+                        }, {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
+                      </p>
+                      <div className="flex items-center gap-2">
+                      <span 
+                        className="text-lg font-semibold"
+                        style={{ color: entry.moodColor }}
+                      >
+                        {entry.mood}
+                      </span>
+                      <span className="text-xs text-gray-400">{entry.time}</span>
+                    </div>
+                    </div>
+                  </div>
+                  <button className="p-1 rounded-full hover:bg-gray-100">
+                    <MoreHorizontal className="w-5 h-5 text-gray-400" />
+                  </button>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {entry.tags.map((tag, idx) => (
+                    <span 
+                      key={idx}
+                      className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Texte */}
+                <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                  {entry.text}
+                </p>
+
+                {/* Images si présentes */}
+                {entry.images && entry.images.length > 0 && (
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {entry.images.map((img, idx) => (
+                      <div key={idx} className="flex-shrink-0 w-24 h-24 rounded-xl bg-gray-100 overflow-hidden">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Bouton Ajouter en bas */}
+          <div className="fixed bottom-6 left-0 right-0 px-4 max-w-lg mx-auto">
+            <button
+              onClick={() => setShowJournalEntryModal(true)}
+              className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              {language === 'fr' ? 'Ajouter une entrée' : language === 'en' ? 'Add entry' : 'Agregar entrada'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

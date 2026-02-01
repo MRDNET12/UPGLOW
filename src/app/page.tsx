@@ -3071,18 +3071,17 @@ isActionCompleted,
                           isSelected ? `bg-gradient-to-br ${mood.gradient} shadow-sm` : 'bg-gray-50'
                         }`}
                       >
-                        <mood.icon 
-                          className={`w-5 h-5 transition-all duration-200 ${isSelected ? "drop-shadow-sm" : ""}`}
-                          style={{ 
-                            color: isSelected ? mood.iconColor : undefined,
-                            filter: isSelected ? "none" : "grayscale(100%) brightness(1.3)",
-                            opacity: isSelected ? 1 : 0.5,
-                            transform: isSelected ? "scale(1.1)" : "scale(1)",
-                          }}
-                        />
-                        <span className={`text-[10px] font-medium ${isSelected ? mood.textColor : 'text-gray-500'}`}>
-                          {label}
-                        </span>
+          <mood.icon 
+            className={`w-5 h-5 transition-all duration-200 ${isSelected ? "text-white drop-shadow-sm" : ""}`}
+            style={{ 
+              filter: isSelected ? "none" : "grayscale(100%) brightness(1.3)",
+              opacity: isSelected ? 1 : 0.5,
+              transform: isSelected ? "scale(1.1)" : "scale(1)",
+            }}
+          />
+          <span className={`text-[10px] font-medium ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+            {label}
+          </span>
                       </button>
                     );
                   })}
@@ -3158,9 +3157,7 @@ isActionCompleted,
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 pb-4 text-center">
-                  {language === 'fr' ? '(Appuie longtemps pour le suivi)' : language === 'en' ? '(Long press for tracking)' : '(Mantén presionado para seguimiento)'}
-                </p>
+
               </div>
 
               {/* Custom Habits */}
@@ -3203,52 +3200,42 @@ isActionCompleted,
                       return (
                         <div
                           key={habit.id}
-                          className="flex items-center justify-between p-3 rounded-xl bg-gray-50"
+                          className="flex items-center justify-between p-3 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-all duration-200"
+                          onClick={() => {
+                            const today = getLocalDateString();
+                            const existingTracker = trackers.find(t => t.date === today);
+                            if (existingTracker) {
+                              updateTracker(today, {
+                                habits: {
+                                  ...existingTracker.habits,
+                                  [habit.id]: !isCompleted
+                                }
+                              });
+                            } else {
+                              updateTracker(today, {
+                                habits: { [habit.id]: true }
+                              });
+                            }
+                          }}
                         >
                           <div className="flex items-center gap-3 flex-1">
-                            <button
-                              onClick={() => {
-                                const today = getLocalDateString();
-                                const existingTracker = trackers.find(t => t.date === today);
-                                if (existingTracker) {
-                                  updateTracker(today, {
-                                    habits: {
-                                      ...existingTracker.habits,
-                                      [habit.id]: !isCompleted
-                                    }
-                                  });
-                                } else {
-                                  updateTracker(today, {
-                                    habits: { [habit.id]: true }
-                                  });
-                                }
-                              }}
+                            <div
                               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
                                 isCompleted
-                                  ? 'text-white'
-                                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                                  ? 'bg-white border-2 border-emerald-400 text-emerald-500'
+                                  : 'bg-gray-100 text-gray-400'
                               }`}
-                              style={isCompleted ? { background: 'linear-gradient(135deg, #34d399, #14b8a6)' } : {}}
                             >
-                              {isCompleted && <Check className="w-5 h-5" />}
-                            </button>
+                              {isCompleted && <Check className="w-4 h-4" />}
+                            </div>
                             <div className="flex flex-col flex-1">
                               <span className={`text-sm font-bold ${
                                 isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'
                               }`}>
                                 {habit.label}
                               </span>
-                              <span className="text-xs text-gray-400">
-                                {isCompleted 
-                                  ? (language === 'fr' ? 'Aujourd\'hui ✓' : language === 'en' ? 'Today ✓' : 'Hoy ✓')
-                                  : (language === 'fr' ? 'À faire' : language === 'en' ? 'To do' : 'Por hacer')
-                                }
-                              </span>
                             </div>
                           </div>
-                          <button className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-all">
-                            <span className="text-lg leading-none">⋯</span>
-                          </button>
                         </div>
                       );
                     })}

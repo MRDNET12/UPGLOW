@@ -264,6 +264,8 @@ isActionCompleted,
   });
   const [canViewGlowMirror, setCanViewGlowMirror] = useState(false);
   const [glowMirrorWeeklyTrends, setGlowMirrorWeeklyTrends] = useState<any>(null);
+  const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{habit: string, streak: number}>>([]);
+  const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -462,9 +464,13 @@ isActionCompleted,
   };
 
   // Générer le message Glow Mirror avec Kimi AI
+  const generateGlowMirror = async (forceRetry = false) => {
+    if (!forceRetry) {
+      setGlowMirrorRetryCount(0);
+      setGlowMirrorQAMessages([]);
+      setGlowMirrorHasBeenRead(false);
+    }
 
-  // Générer le message Glow Mirror avec Kimi AI
-  const generateGlowMirror = async () => {
     const now = new Date();
     
     // Collecter toutes les données
@@ -477,6 +483,13 @@ isActionCompleted,
     
     const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
     const completedHabits = newMeHabits.filter((habit: any) => habit.completed);
+    
+    // Calculer les jours consécutifs pour chaque habitude
+    const habitConsecutiveData = newMeHabits.map((habit: any) => ({
+      name: habit.label || habit.name || 'Habit',
+      streak: calculateHabitConsecutiveDays(habit.history || []),
+      totalCompleted: habit.totalCompletions || 0
+    })).filter((h: any) => h.streak > 0).sort((a: any, b: any) => b.streak - a.streak);
     
     const recentEntries = journalEntries.filter(entry => {
       const entryDate = new Date(entry.date);
@@ -545,6 +558,9 @@ isActionCompleted,
       }
     }
     
+    // Calculer les tendances hebdomadaires
+    const weeklyTrends = calculateWeeklyTrends(now);
+    
     // Construire le prompt enrichi pour Kimi
     const promptData = {
       language: language,
@@ -564,7 +580,8 @@ isActionCompleted,
           total: newMeHabits.length,
           completionRate: habitCompletionRate,
           items: completedHabits.slice(0, 5).map((h: any) => h.label || h.name || 'Habit'),
-          missed: newMeHabits.length - completedHabits.length
+          missed: newMeHabits.length - completedHabits.length,
+          consecutiveStreaks: habitConsecutiveData.slice(0, 3)
         },
         journal: {
           entriesCount: recentEntries.length,
@@ -592,9 +609,10 @@ isActionCompleted,
           completedDays: completedDays
         }
       },
+      trends: weeklyTrends,
       insights: {
-        strengthAreas: [] as Array<string>,
-        improvementAreas: [] as Array<string>
+        strengthAreas: [] as string[],
+        improvementAreas: [] as string[]
       }
     };
     
@@ -607,67 +625,81 @@ isActionCompleted,
     if (recentEntries.length >= 3) strengthAreas.push('self_reflection');
     if (recentWins.length >= 2) strengthAreas.push('celebration');
     if (boundaryCompletionRate >= 70) strengthAreas.push('self_care');
+    if (habitConsecutiveData.some((h: any) => h.streak >= 7)) strengthAreas.push('long_term_consistency');
     
     if (habitCompletionRate < 50) improvementAreas.push('habit_consistency');
     if (taskCompletionRate < 50) improvementAreas.push('task_completion');
     if (recentEntries.length < 2) improvementAreas.push('journaling_frequency');
     if (recentWins.length === 0) improvementAreas.push('celebration_mindset');
+    if (weeklyTrends.globalTrend < 0) improvementAreas.push('weekly_momentum');
     
-    // Mettre à jour promptData avec les tableaux remplis
     promptData.insights.strengthAreas = strengthAreas;
     promptData.insights.improvementAreas = improvementAreas;
     
-    const systemPrompt = language === 'fr' 
-      ? `Tu es Glow Mirror, un miroir identitaire intelligent et bienveillant. Tu analyses les données d'une utilisatrice sur 7 jours pour créer un reflet personnalisé de qui elle est en train de devenir.
-
-RÈGLES:
+    // System prompt avec support du mode profond
+    const getSystemPrompt = () => {
+      const basePrompt = language === 'fr'
+        ? `Tu es Glow Mirror, un miroir identitaire intelligent et bienveillant.`
+        : language === 'en'
+        ? `You are Glow Mirror, an intelligent and caring identity mirror.`
+        : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso.`;
+      
+      const rules = language === 'fr'
+        ? `RÈGLES:
 - Écris à la 2ème personne (tu/vous)
 - Ton humain, chaleureux mais professionnel
-- Message de 8-15 lignes maximum
-- Structure: 1) Analyse de qui elle est (forces identifiées), 2) Tendances remarquables, 3) Un conseil d'amélioration concret et personnalisé
-- Sois précis: cite des chiffres, des patterns, des exemples concrets des données
+- Structure: 1) Analyse profonde de qui elle est, 2) Tendances remarquables avec comparaisons, 3) Conseil d'amélioration ultra-personnalisé
+- Sois précis: cite des chiffres, des patterns, des exemples concrets
+- Analyse les tendances sur 2 semaines (comparaison semaine actuelle vs précédente)
+- Mentionne ses streaks de consécutivité comme preuve de sa discipline
 - Le conseil doit être actionnable et adapté à son profil
 - Si elle manque de régularité, suggère un micro-habit facile
-- Si elle est très active, suggère comment optimiser ou équilibrer`
-      : language === 'en'
-      ? `You are Glow Mirror, an intelligent and caring identity mirror. You analyze a user's data over 7 days to create a personalized reflection of who they are becoming.
-
-RULES:
+- Si elle est très active, suggère comment optimiser ou équilibrer
+- Si la tendance est négative, encourage-la avec bienveillance`
+        : language === 'en'
+        ? `RULES:
 - Write in 2nd person (you)
 - Human, warm but professional tone
-- Message of 8-15 lines maximum
-- Structure: 1) Analysis of who they are (identified strengths), 2) Notable trends, 3) A concrete, personalized improvement tip
-- Be specific: cite numbers, patterns, concrete examples from data
+- Structure: 1) Deep analysis of who they are, 2) Notable trends with comparisons, 3) Ultra-personalized improvement advice
+- Be specific: cite numbers, patterns, concrete examples
+- Analyze trends over 2 weeks (current vs previous week comparison)
+- Mention their consecutive streaks as proof of discipline
 - The advice must be actionable and adapted to their profile
 - If they lack consistency, suggest an easy micro-habit
-- If they are very active, suggest how to optimize or balance`
-      : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso. Analizas los datos de una usuaria durante 7 días para crear un reflejo personalizado de quién está llegando a ser.
-
-REGLAS:
+- If they are very active, suggest how to optimize or balance
+- If trend is negative, encourage them with kindness`
+        : `REGLAS:
 - Escribe en 2ª persona (tú)
 - Tono humano, cálido pero profesional
-- Mensaje de 8-15 líneas máximo
-- Estructura: 1) Análisis de quién es (fortalezas identificadas), 2) Tendencias notables, 3) Un consejo de mejora concreto y personalizado
-- Sé específico: cita números, patrones, ejemplos concretos de los datos
+- Estructura: 1) Análisis profundo de quién es, 2) Tendencias notables con comparaciones, 3) Consejo de mejora ultra-personalizado
+- Sé específico: cita números, patrones, ejemplos concretos
+- Analiza tendencias durante 2 semanas (comparación semana actual vs anterior)
+- Menciona sus rachas consecutivas como prueba de disciplina
 - El consejo debe ser accionable y adaptado a su perfil
 - Si le falta regularidad, sugiere un micro-hábito fácil
-- Si es muy activa, sugiere cómo optimizar o equilibrar`;
+- Si es muy activa, sugiere cómo optimizar o equilibrar
+- Si la tendencia es negativa, anímala con amabilidad`;
+      
+      const length = glowMirrorDeepMode
+        ? (language === 'fr' ? 'Message de 15-25 lignes pour une analyse profonde' : language === 'en' ? 'Message of 15-25 lines for deep analysis' : 'Mensaje de 15-25 líneas para análisis profundo')
+        : (language === 'fr' ? 'Message de 8-15 lignes' : language === 'en' ? 'Message of 8-15 lines' : 'Mensaje de 8-15 líneas');
+      
+      return `${basePrompt}\n\n${rules}\n\n${length}`;
+    };
     
-    const userPrompt = `Voici les données détaillées de l'utilisatrice pour les 7 derniers jours:
-
-${JSON.stringify(promptData, null, 2)}
-
-En tant que Glow Mirror, analyse ces données en profondeur et génère:
-1. UN MIROIR: Qui est-elle vraiment? Quels sont ses patterns? Ses forces cachées?
-2. DES CONSTATS: Quelles tendances remarques-tu? Des connexions entre les différentes activités?
-3. UN CONSEIL: Un conseil d'amélioration ultra-personnalisé et actionnable basé sur ses faiblesses ET ses forces.
-
-Sois précis, cite des données, et donne un conseil concret qu'elle peut appliquer dès demain.`;
+    const systemPrompt = getSystemPrompt();
+    
+    const userPrompt = language === 'fr'
+      ? `Voici les données détaillées de l'utilisatrice pour les 7 derniers jours, incluant les tendances comparées à la semaine précédente:\n\n${JSON.stringify(promptData, null, 2)}\n\nEn tant que Glow Mirror, analyse ces données en profondeur et génère:\n1. UN MIROIR PROFOND: Qui est-elle vraiment? Ses patterns? Forces cachées? Mentionne spécifiquement ses streaks de consécutivité comme preuves de sa discipline.\n2. TENDANCES: Compare sa semaine actuelle à la précédente. Progression ou régression?\n3. UN CONSEIL ACTIONNABLE: Ultra-personnalisé basé sur ses forces ET faiblesses.\n\n${glowMirrorDeepMode ? 'Mode Profond: Fournis une analyse très détaillée de 15-25 lignes.' : 'Fournis une analyse de 8-15 lignes.'}`
+      : language === 'en'
+      ? `Here is the detailed user data for the last 7 days, including trends compared to the previous week:\n\n${JSON.stringify(promptData, null, 2)}\n\nAs Glow Mirror, deeply analyze this data and generate:\n1. A DEEP MIRROR: Who are they really? Their patterns? Hidden strengths? Specifically mention their consecutive streaks as proof of discipline.\n2. TRENDS: Compare current week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized based on their strengths AND weaknesses.\n\n${glowMirrorDeepMode ? 'Deep Mode: Provide a very detailed 15-25 line analysis.' : 'Provide an 8-15 line analysis.'}`
+      : `Aquí están los datos detallados de la usuaria de los últimos 7 días, incluyendo tendencias comparadas con la semana anterior:\n\n${JSON.stringify(promptData, null, 2)}\n\nComo Glow Mirror, analiza profundamente estos datos y genera:\n1. ESPEJO PROFUNDO: ¿Quién es realmente? ¿Sus patrones? ¿Fortalezas ocultas? Menciona específicamente sus rachas consecutivas como prueba de disciplina.\n2. TENDENCIAS: Compara la semana actual con la anterior. ¿Progreso o regresión?\n3. CONSEJO ACCIONABLE: Ultra-personalizado basado en sus fortalezas Y debilidades.\n\n${glowMirrorDeepMode ? 'Modo Profundo: Proporciona un análisis muy detallado de 15-25 líneas.' : 'Proporciona un análisis de 8-15 líneas.'}`;
     
     setGlowMirrorLoading(true);
+    setGlowMirrorRetryCount(forceRetry ? glowMirrorRetryCount + 1 : 0);
     
     try {
-      const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      const response = await fetchWithRetry('https://api.moonshot.cn/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -679,40 +711,117 @@ Sois précis, cite des données, et donne un conseil concret qu'elle peut appliq
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
           ],
-          temperature: 0.8,
-          max_tokens: 800,
+          temperature: glowMirrorDeepMode ? 0.85 : 0.8,
+          max_tokens: glowMirrorDeepMode ? 1200 : 800,
           top_p: 0.9
         })
-      });
-      
-      if (!response.ok) {
-        throw new Error('API Error');
-      }
+      }, 3);
       
       const data = await response.json();
       const aiMessage = data.choices?.[0]?.message?.content || '';
       
       setGlowMirrorMessage(aiMessage);
+      setGlowMirrorQAMessages([{ role: 'assistant', content: aiMessage }]);
+      
+      // Sauvegarder dans l'historique
+      const newHistory = [{ date: now.toISOString(), message: aiMessage }, ...glowMirrorHistory].slice(0, 10);
+      setGlowMirrorHistory(newHistory);
+      localStorage.setItem('glowMirrorHistory', JSON.stringify(newHistory));
+      
+      // Déclencher le confetti après 2 secondes
+      setTimeout(() => {
+        setGlowMirrorHasBeenRead(true);
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981']
+        });
+      }, 2000);
+      
     } catch (error) {
       console.error('Glow Mirror AI Error:', error);
-      // Fallback message
+      
+      if (glowMirrorRetryCount < 2) {
+        // Retry automatique
+        setTimeout(() => generateGlowMirror(true), 1000);
+        return;
+      }
+      
+      // Message de fallback après les retries
       const fallbackMessages = {
         fr: "Tu es en train de construire quelque chose de beau. Chaque petit pas compte. Prends un moment pour célébrer qui tu es aujourd'hui.",
         en: "You are building something beautiful. Every small step counts. Take a moment to celebrate who you are today.",
         es: "Estás construyendo algo hermoso. Cada pequeño paso cuenta. Tómate un momento para celebrar quién eres hoy."
       };
       setGlowMirrorMessage(fallbackMessages[language]);
+      setGlowMirrorQAMessages([{ role: 'assistant', content: fallbackMessages[language] }]);
     } finally {
       setGlowMirrorLoading(false);
     }
     
     setShowGlowMirror(true);
+    setShowGlowMirrorNotification(false);
     
     // Sauvegarder la date de visualisation
     const today = new Date().toISOString();
     setLastGlowMirrorView(today);
     localStorage.setItem('lastGlowMirrorView', today);
     setCanViewGlowMirror(false);
+  };
+
+  // Q&A avec l'IA (max 3 questions)
+  const askGlowMirrorQuestion = async () => {
+    if (!glowMirrorQAInput.trim() || glowMirrorQAMessages.filter(m => m.role === 'user').length >= 3) return;
+    
+    const userQuestion = glowMirrorQAInput.trim();
+    setGlowMirrorQAInput('');
+    setGlowMirrorQALoading(true);
+    
+    const updatedMessages = [...glowMirrorQAMessages, { role: 'user' as const, content: userQuestion }];
+    setGlowMirrorQAMessages(updatedMessages);
+    
+    const qaSystemPrompt = language === 'fr'
+      ? "Tu es Glow Mirror. Réponds à la question de l'utilisatrice de façon concise (3-5 lignes max), bienveillante et personnalisée. Base-toi sur le contexte précédent."
+      : language === 'en'
+      ? "You are Glow Mirror. Answer the user's question concisely (3-5 lines max), kindly and personally. Base yourself on the previous context."
+      : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 líneas máx), amable y personalizada. Basándote en el contexto anterior.";
+    
+    try {
+      const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer sk-kimi-wQWfSCmBauIFhz4h4K3WsFNTHbzhxvd2ieRqRfDNnZKdn1zwtYQwTvgTD8Bgwgiq'
+        },
+        body: JSON.stringify({
+          model: 'kimi-latest',
+          messages: [
+            { role: 'system', content: qaSystemPrompt },
+            ...updatedMessages.map(m => ({ role: m.role, content: m.content }))
+          ],
+          temperature: 0.7,
+          max_tokens: 300
+        })
+      });
+      
+      if (!response.ok) throw new Error('API Error');
+      
+      const data = await response.json();
+      const aiResponse = data.choices?.[0]?.message?.content || '';
+      
+      setGlowMirrorQAMessages([...updatedMessages, { role: 'assistant', content: aiResponse }]);
+    } catch (error) {
+      console.error('Q&A Error:', error);
+      const fallback = language === 'fr' 
+        ? "Je ne peux pas répondre pour le moment. Continue ton beau travail !"
+        : language === 'en'
+        ? "I can't answer right now. Keep up your great work!"
+        : "No puedo responder ahora. ¡Sigue con tu gran trabajo!";
+      setGlowMirrorQAMessages([...updatedMessages, { role: 'assistant', content: fallback }]);
+    } finally {
+      setGlowMirrorQALoading(false);
+    }
   };
 
   // Fermer le menu quand on clique ailleurs
@@ -2358,7 +2467,7 @@ Sois précis, cite des données, et donne un conseil concret qu'elle peut appliq
             {/* Glow Mirror Button */}
             <div className="mt-6 mb-4">
               <button
-                onClick={generateGlowMirror}
+                onClick={() => generateGlowMirror()}
                 disabled={!canViewGlowMirror || glowMirrorLoading}
                 className={`w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 ${
                   canViewGlowMirror

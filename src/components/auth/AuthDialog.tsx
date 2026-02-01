@@ -12,9 +12,10 @@ interface AuthDialogProps {
   isOpen: boolean;
   onClose: () => void;
   defaultMode?: 'signin' | 'signup';
+  onSuccess?: () => void;
 }
 
-export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDialogProps) {
+export function AuthDialog({ isOpen, onClose, defaultMode = 'signin', onSuccess }: AuthDialogProps) {
   const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,6 +65,7 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin' }: AuthDial
         setPassword('');
         setConfirmPassword('');
         setSuccess(false);
+        onSuccess?.();
         onClose();
       }, 500);
     } catch (err: any) {

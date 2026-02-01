@@ -5202,11 +5202,11 @@ isActionCompleted,
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'new-me'
+                  currentView === 'challenge'
                     ? 'bg-gray-900 text-white shadow-md'
                     : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
-                onClick={() => setCurrentView('new-me')}
+                onClick={() => setCurrentView('challenge')}
               >
                 <Target className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
@@ -5242,23 +5242,6 @@ isActionCompleted,
                 <span className="text-[10px] font-medium">
                   {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
                 </span>
-              </Button>
-
-              {/* Glow Mirror */}
-              <Button
-                variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'glow-mirror'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setCurrentView('glow-mirror')}
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                <span className="text-[10px] font-medium">{language === 'fr' ? 'Glow' : language === 'en' ? 'Glow' : 'Glow'}</span>
               </Button>
 
               {/* Profil */}

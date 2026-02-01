@@ -221,16 +221,22 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
     onClose();
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).slice(0, 4 - images.length).forEach(file => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImages(prev => [...prev, reader.result as string]);
-        };
-        reader.readAsDataURL(file);
+      const filesToProcess = Array.from(files).slice(0, 4 - images.length);
+      const imagePromises = filesToProcess.map(file => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        });
       });
+      
+      const newImages = await Promise.all(imagePromises);
+      setImages(prev => [...prev, ...newImages]);
     }
     e.target.value = '';
   };

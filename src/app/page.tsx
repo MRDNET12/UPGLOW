@@ -243,6 +243,17 @@ isActionCompleted,
   const [journalCurrentMonth, setJournalCurrentMonth] = useState(new Date());
   const [editingEntry, setEditingEntry] = useState<typeof journalEntries[0] | null>(null);
   const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
+  
+  // État pour Glow Mirror
+  const [showGlowMirror, setShowGlowMirror] = useState(false);
+  const [glowMirrorMessage, setGlowMirrorMessage] = useState('');
+  const [lastGlowMirrorView, setLastGlowMirrorView] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('lastGlowMirrorView') || '';
+    }
+    return '';
+  });
+  const [canViewGlowMirror, setCanViewGlowMirror] = useState(false);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -311,6 +322,168 @@ isActionCompleted,
       return entryDate.getMonth() === journalCurrentMonth.getMonth() && 
              entryDate.getFullYear() === journalCurrentMonth.getFullYear();
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  };
+
+  // Vérifier si on peut voir le Glow Mirror (1x par semaine)
+  useEffect(() => {
+    const checkGlowMirrorAvailability = () => {
+      if (!lastGlowMirrorView) {
+        setCanViewGlowMirror(true);
+        return;
+      }
+      
+      const lastView = new Date(lastGlowMirrorView);
+      const now = new Date();
+      const daysSinceLastView = Math.floor((now.getTime() - lastView.getTime()) / (1000 * 60 * 60 * 24));
+      
+      setCanViewGlowMirror(daysSinceLastView >= 7);
+    };
+    
+    checkGlowMirrorAvailability();
+  }, [lastGlowMirrorView]);
+
+  // Générer le message Glow Mirror
+  const generateGlowMirror = () => {
+    const now = new Date();
+    const messages: string[] = [];
+    
+    // Analyser les petits succès
+    const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+    const recentWins = smallWins.filter((win: any) => {
+      const winDate = new Date(win.date);
+      const daysDiff = Math.floor((now.getTime() - winDate.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff <= 7;
+    });
+    
+    // Analyser les habitudes (New Me)
+    const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
+    const completedHabits = newMeHabits.filter((habit: any) => habit.completed);
+    
+    // Analyser les entrées du journal
+    const recentEntries = journalEntries.filter(entry => {
+      const entryDate = new Date(entry.date);
+      const daysDiff = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff <= 7;
+    });
+    
+    // Analyser les 8 limites
+    const boundariesData = JSON.parse(localStorage.getItem('boundaries') || '[]');
+    const completedBoundaries = boundariesData.filter((b: any) => b.completed);
+    
+    // Analyser les tâches de la semaine
+    const weekTasks = JSON.parse(localStorage.getItem('weekTasks') || '[]');
+    const completedTasks = weekTasks.filter((task: any) => task.completed);
+    
+    // Analyser la progression des challenges
+    const challengeProgress = JSON.parse(localStorage.getItem('challengeProgress') || '{}');
+    const completedDays = Object.values(challengeProgress).filter((p: any) => p.completed).length;
+    
+    // Générer le message personnalisé
+    if (language === 'fr') {
+      if (recentWins.length > 0) {
+        messages.push(`Cette semaine, tu as célébré ${recentWins.length} petit${recentWins.length > 1 ? 's' : ''} succès. Tu prends le temps de reconnaître tes victoires.`);
+      }
+      
+      if (completedHabits.length > 0) {
+        messages.push(`Tu as maintenu ${completedHabits.length} habitude${completedHabits.length > 1 ? 's' : ''} cette semaine. Chaque jour compte.`);
+      }
+      
+      if (recentEntries.length > 0) {
+        const moods = recentEntries.map((e: any) => e.mood);
+        const dominantMood = moods.sort((a, b) => moods.filter(v => v === a).length - moods.filter(v => v === b).length).pop();
+        messages.push(`Tu as écrit ${recentEntries.length} fois dans ton journal. Tu prends soin de te connecter à toi-même.`);
+      }
+      
+      if (completedBoundaries.length > 0) {
+        messages.push(`Tu as maintenu ${completedBoundaries.length} limite${completedBoundaries.length > 1 ? 's' : ''} saine${completedBoundaries.length > 1 ? 's' : ''}. Tu te protèges.`);
+      }
+      
+      if (completedTasks.length > 0) {
+        messages.push(`Tu as accompli ${completedTasks.length} tâche${completedTasks.length > 1 ? 's' : ''} cette semaine. Tu avances sereinement.`);
+      }
+      
+      if (completedDays > 0) {
+        messages.push(`Tu as complété ${completedDays} jour${completedDays > 1 ? 's' : ''} de challenge. Tu es sur la bonne voie.`);
+      }
+      
+      // Message par défaut si peu d'activité
+      if (messages.length === 0) {
+        messages.push("Tu es en train de construire quelque chose de beau. Chaque petit pas compte.");
+        messages.push("Prends un moment pour célébrer qui tu es aujourd'hui.");
+      }
+    } else if (language === 'en') {
+      if (recentWins.length > 0) {
+        messages.push(`This week, you celebrated ${recentWins.length} small win${recentWins.length > 1 ? 's' : ''}. You take time to recognize your victories.`);
+      }
+      
+      if (completedHabits.length > 0) {
+        messages.push(`You maintained ${completedHabits.length} habit${completedHabits.length > 1 ? 's' : ''} this week. Every day counts.`);
+      }
+      
+      if (recentEntries.length > 0) {
+        messages.push(`You wrote ${recentEntries.length} times in your journal. You're taking care of connecting with yourself.`);
+      }
+      
+      if (completedBoundaries.length > 0) {
+        messages.push(`You maintained ${completedBoundaries.length} healthy boundar${completedBoundaries.length > 1 ? 'ies' : 'y'}. You're protecting yourself.`);
+      }
+      
+      if (completedTasks.length > 0) {
+        messages.push(`You completed ${completedTasks.length} task${completedTasks.length > 1 ? 's' : ''} this week. You're moving forward calmly.`);
+      }
+      
+      if (completedDays > 0) {
+        messages.push(`You completed ${completedDays} challenge day${completedDays > 1 ? 's' : ''}. You're on the right track.`);
+      }
+      
+      if (messages.length === 0) {
+        messages.push("You are building something beautiful. Every small step counts.");
+        messages.push("Take a moment to celebrate who you are today.");
+      }
+    } else {
+      // Spanish
+      if (recentWins.length > 0) {
+        messages.push(`Esta semana, celebraste ${recentWins.length} pequeño éxito. Te tomas tiempo para reconocer tus victorias.`);
+      }
+      
+      if (completedHabits.length > 0) {
+        messages.push(`Mantuviste ${completedHabits.length} hábito esta semana. Cada día cuenta.`);
+      }
+      
+      if (recentEntries.length > 0) {
+        messages.push(`Escribiste ${recentEntries.length} veces en tu diario. Te cuidas conectando contigo mismo.`);
+      }
+      
+      if (completedBoundaries.length > 0) {
+        messages.push(`Mantuviste ${completedBoundaries.length} límite${completedBoundaries.length > 1 ? 's' : ''} saludable${completedBoundaries.length > 1 ? 's' : ''}. Te proteges.`);
+      }
+      
+      if (completedTasks.length > 0) {
+        messages.push(`Completaste ${completedTasks.length} tarea${completedTasks.length > 1 ? 's' : ''} esta semana. Avanzas serenamente.`);
+      }
+      
+      if (completedDays > 0) {
+        messages.push(`Completaste ${completedDays} día${completedDays > 1 ? 's' : ''} de challenge. Estás en el buen camino.`);
+      }
+      
+      if (messages.length === 0) {
+        messages.push("Estás construyendo algo hermoso. Cada pequeño paso cuenta.");
+        messages.push("Tómate un momento para celebrar quién eres hoy.");
+      }
+    }
+    
+    // Sélectionner 2-3 messages aléatoires
+    const selectedMessages = messages.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const finalMessage = selectedMessages.join('\n\n');
+    
+    setGlowMirrorMessage(finalMessage);
+    setShowGlowMirror(true);
+    
+    // Sauvegarder la date de visualisation
+    const today = new Date().toISOString();
+    setLastGlowMirrorView(today);
+    localStorage.setItem('lastGlowMirrorView', today);
+    setCanViewGlowMirror(false);
   };
 
   // Fermer le menu quand on clique ailleurs
@@ -1952,6 +2125,95 @@ isActionCompleted,
                 </div>
               </CardContent>
             </Card> */}
+
+            {/* Glow Mirror Button */}
+            <div className="mt-6 mb-4">
+              <button
+                onClick={generateGlowMirror}
+                disabled={!canViewGlowMirror}
+                className={`w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                  canViewGlowMirror
+                    ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                {canViewGlowMirror
+                  ? (language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror')
+                  : (language === 'fr' ? 'Disponible dans 7 jours' : language === 'en' ? 'Available in 7 days' : 'Disponible en 7 días')
+                }
+              </button>
+              {!canViewGlowMirror && (
+                <p className="text-center text-xs text-gray-400 mt-2">
+                  {language === 'fr' 
+                    ? 'Une fois par semaine maximum' 
+                    : language === 'en' 
+                    ? 'Once per week maximum' 
+                    : 'Una vez por semana máximo'}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Glow Mirror Modal */}
+        {showGlowMirror && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">Glow Mirror</h2>
+                      <p className="text-sm text-white/80">
+                        {language === 'fr' ? 'Qui tu es en train de devenir' : language === 'en' ? 'Who you are becoming' : 'Quién estás llegando a ser'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowGlowMirror(false)}
+                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm">
+                    {glowMirrorMessage}
+                  </p>
+                </div>
+
+                <div className="mt-6 text-center">
+                  <p className="text-xs text-gray-400 mb-4">
+                    {language === 'fr' 
+                      ? 'Prochain Glow Mirror disponible dans 7 jours'
+                      : language === 'en'
+                      ? 'Next Glow Mirror available in 7 days'
+                      : 'Próximo Glow Mirror disponible en 7 días'}
+                  </p>
+                  <button
+                    onClick={() => setShowGlowMirror(false)}
+                    className="px-8 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    {language === 'fr' ? 'Continuer mon voyage' : language === 'en' ? 'Continue my journey' : 'Continuar mi viaje'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

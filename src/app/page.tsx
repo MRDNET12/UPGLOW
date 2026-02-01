@@ -5932,7 +5932,7 @@ isActionCompleted,
               className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              {language === 'fr' ? 'Ajouter une entrée' : language === 'en' ? 'Add entry' : 'Agregar entrada'}
+              {language === 'fr' ? 'Ma journée' : language === 'en' ? 'My day' : 'Mi día'}
             </button>
           </div>
         </div>

@@ -169,7 +169,7 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
       addPhoto: 'Ajouter une photo',
       maxImages: 'Maximum 4 images. Les images sont stockées localement.',
       save: 'Enregistrer',
-      add: 'Ajouter',
+      add: 'Ma journée',
       cancel: 'Annuler'
     },
     en: {
@@ -281,6 +281,18 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
     setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
   };
 
+  // Close category dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (expandedCategory) {
+        setExpandedCategory(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [expandedCategory]);
+
   if (!isOpen) return null;
 
   return (
@@ -370,22 +382,30 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
           {/* Categories */}
           <div>
             <p className="text-sm font-semibold text-gray-700 mb-3">{t.categories}</p>
-            <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
               {tagCategories[language].map((category) => (
-                <div key={category.name} className="border border-gray-200 rounded-2xl overflow-hidden">
+                <div key={category.name} className="relative">
                   <button
-                    onClick={() => toggleCategory(category.name)}
-                    className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleCategory(category.name);
+                    }}
+                    className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
+                      expandedCategory === category.name
+                        ? 'bg-gray-800 text-white border-gray-800'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
+                    }`}
                   >
-                    <span className="text-sm font-medium text-gray-800">{category.name}</span>
-                    {expandedCategory === category.name ? (
-                      <ChevronUp className="w-4 h-4 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-gray-500" />
-                    )}
+                    {category.name}
                   </button>
+                  
+                  {/* Dropdown with tags */}
                   {expandedCategory === category.name && (
-                    <div className="p-3 bg-white">
+                    <div 
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute z-50 top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 p-3 min-w-[200px] max-w-[280px]"
+                    >
+                      <p className="text-xs font-semibold text-gray-500 mb-2">{category.name}</p>
                       <div className="flex flex-wrap gap-2">
                         {category.tags.map((tag) => (
                           <button

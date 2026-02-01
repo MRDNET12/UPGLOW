@@ -54,7 +54,8 @@ const mainTags = {
     { tag: 'soleil', color: 'from-amber-400 to-orange-500' },
     { tag: 'sport', color: 'from-rose-400 to-pink-500' },
     { tag: 'travail', color: 'from-blue-400 to-indigo-500' },
-    { tag: 'sommeil', color: 'from-violet-400 to-purple-500' }
+    { tag: 'sommeil', color: 'from-violet-400 to-purple-500' },
+    { tag: "ce que j'ai fais", color: 'from-cyan-400 to-teal-500' }
   ],
   en: [
     { tag: 'good night', color: 'from-indigo-400 to-purple-500' },
@@ -62,7 +63,8 @@ const mainTags = {
     { tag: 'sun', color: 'from-amber-400 to-orange-500' },
     { tag: 'sport', color: 'from-rose-400 to-pink-500' },
     { tag: 'work', color: 'from-blue-400 to-indigo-500' },
-    { tag: 'sleep', color: 'from-violet-400 to-purple-500' }
+    { tag: 'sleep', color: 'from-violet-400 to-purple-500' },
+    { tag: 'what I did', color: 'from-cyan-400 to-teal-500' }
   ],
   es: [
     { tag: 'buena noche', color: 'from-indigo-400 to-purple-500' },
@@ -70,7 +72,8 @@ const mainTags = {
     { tag: 'sol', color: 'from-amber-400 to-orange-500' },
     { tag: 'deporte', color: 'from-rose-400 to-pink-500' },
     { tag: 'trabajo', color: 'from-blue-400 to-indigo-500' },
-    { tag: 'sueño', color: 'from-violet-400 to-purple-500' }
+    { tag: 'sueño', color: 'from-violet-400 to-purple-500' },
+    { tag: 'lo que hice', color: 'from-cyan-400 to-teal-500' }
   ]
 };
 

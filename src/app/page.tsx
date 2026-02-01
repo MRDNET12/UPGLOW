@@ -5730,13 +5730,19 @@ isActionCompleted,
             
             {/* Navigation Mois */}
             <div className="flex items-center justify-center gap-4 mt-3">
-              <button className="p-2 rounded-full hover:bg-gray-100">
+              <button 
+                onClick={() => changeJournalMonth('prev')}
+                className="p-2 rounded-full hover:bg-gray-100"
+              >
                 <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
-              <span className="text-base font-semibold text-gray-800">
-                {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
+              <span className="text-base font-semibold text-gray-800 capitalize">
+                {journalCurrentMonth.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
               </span>
-              <button className="p-2 rounded-full hover:bg-gray-100">
+              <button 
+                onClick={() => changeJournalMonth('next')}
+                className="p-2 rounded-full hover:bg-gray-100"
+              >
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
             </div>

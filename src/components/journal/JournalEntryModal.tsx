@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Image as ImageIcon } from 'lucide-react';
+import { X, Image as ImageIcon, ChevronDown, ChevronUp } from 'lucide-react';
 
 export interface JournalEntry {
   id: string;
@@ -46,10 +46,105 @@ const moodOptions = {
   ]
 };
 
-const tagOptions = {
-  fr: ['sommeil', 'sport', 'travail', 'relation', 'santé', 'famille', 'créativité', 'nutrition'],
-  en: ['sleep', 'sport', 'work', 'relationship', 'health', 'family', 'creativity', 'nutrition'],
-  es: ['sueño', 'deporte', 'trabajo', 'relación', 'salud', 'familia', 'creatividad', 'nutrición']
+// Main tags (always visible)
+const mainTags = {
+  fr: ['bonne nuit', 'manger sain', 'soleil', 'sport', 'travail', 'sommeil'],
+  en: ['good night', 'healthy eating', 'sun', 'sport', 'work', 'sleep'],
+  es: ['buena noche', 'comer sano', 'sol', 'deporte', 'trabajo', 'sueño']
+};
+
+// Categories with their tags
+const tagCategories = {
+  fr: [
+    {
+      name: 'Relations',
+      tags: ['famille', 'amis', 'rendez-vous amoureux', 'rencontre nouvelle', 'conflit', 'discussion', 'temps seul']
+    },
+    {
+      name: 'Santé',
+      tags: ['malade', 'malaise', 'fatigue']
+    },
+    {
+      name: 'Productivité',
+      tags: ['deep work', 'réunion', 'créativité', 'procrastination', 'objectif atteint', 'stress', 'burnout']
+    },
+    {
+      name: 'Loisirs',
+      tags: ['lecture', 'films', 'gaming', 'nature', 'art', 'création', 'voyage']
+    },
+    {
+      name: 'Émotions',
+      tags: ['gratitude', 'anxiété', 'fierté', 'colère', 'flow', 'plénitude', 'mélancolie']
+    },
+    {
+      name: 'Développement Personnel',
+      tags: ['nouvelle habitude', 'échec', 'apprentissage', 'méditation', 'journal', 'morning pages', 'insight', 'prise de conscience', 'lâcher prise']
+    },
+    {
+      name: 'Quotidien',
+      tags: ['ménage', 'courses', 'cuisine', 'organisation', 'finances', 'administration']
+    }
+  ],
+  en: [
+    {
+      name: 'Relationships',
+      tags: ['family', 'friends', 'date', 'new encounter', 'conflict', 'discussion', 'alone time']
+    },
+    {
+      name: 'Health',
+      tags: ['sick', 'unwell', 'fatigue']
+    },
+    {
+      name: 'Productivity',
+      tags: ['deep work', 'meeting', 'creativity', 'procrastination', 'goal achieved', 'stress', 'burnout']
+    },
+    {
+      name: 'Leisure',
+      tags: ['reading', 'movies', 'gaming', 'nature', 'art', 'creation', 'travel']
+    },
+    {
+      name: 'Emotions',
+      tags: ['gratitude', 'anxiety', 'pride', 'anger', 'flow', 'fulfillment', 'melancholy']
+    },
+    {
+      name: 'Personal Growth',
+      tags: ['new habit', 'failure', 'learning', 'meditation', 'journaling', 'morning pages', 'insight', 'realization', 'letting go']
+    },
+    {
+      name: 'Daily Life',
+      tags: ['housework', 'shopping', 'cooking', 'organization', 'finances', 'administration']
+    }
+  ],
+  es: [
+    {
+      name: 'Relaciones',
+      tags: ['familia', 'amigos', 'cita', 'nuevo encuentro', 'conflicto', 'discusión', 'tiempo solo']
+    },
+    {
+      name: 'Salud',
+      tags: ['enfermo', 'malestar', 'cansancio']
+    },
+    {
+      name: 'Productividad',
+      tags: ['deep work', 'reunión', 'creatividad', 'procrastinación', 'objetivo logrado', 'estrés', 'burnout']
+    },
+    {
+      name: 'Ocio',
+      tags: ['lectura', 'películas', 'gaming', 'naturaleza', 'arte', 'creación', 'viaje']
+    },
+    {
+      name: 'Emociones',
+      tags: ['gratitud', 'ansiedad', 'orgullo', 'ira', 'flow', 'plenitud', 'melancolía']
+    },
+    {
+      name: 'Desarrollo Personal',
+      tags: ['nuevo hábito', 'fracaso', 'aprendizaje', 'meditación', 'diario', 'morning pages', 'insight', 'toma de conciencia', 'soltar']
+    },
+    {
+      name: 'Vida Cotidiana',
+      tags: ['limpieza', 'compras', 'cocina', 'organización', 'finanzas', 'administración']
+    }
+  ]
 };
 
 export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, language }: JournalEntryModalProps) {
@@ -58,6 +153,7 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
   const [selectedMoodColor, setSelectedMoodColor] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const t = {
     fr: {
@@ -65,6 +161,8 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
       newEntry: 'Nouvelle entrée',
       howAreYou: 'Comment vous sentez-vous ?',
       tags: 'Tags (optionnel)',
+      quickTags: 'Tags rapides',
+      categories: 'Catégories',
       yourEntry: 'Votre entrée',
       placeholder: 'Écrivez vos pensées, ressentis, gratitudes...',
       photos: 'Photos',
@@ -79,6 +177,8 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
       newEntry: 'New entry',
       howAreYou: 'How are you feeling?',
       tags: 'Tags (optional)',
+      quickTags: 'Quick Tags',
+      categories: 'Categories',
       yourEntry: 'Your entry',
       placeholder: 'Write your thoughts, feelings, gratitudes...',
       photos: 'Photos',
@@ -93,6 +193,8 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
       newEntry: 'Nueva entrada',
       howAreYou: '¿Cómo te sientes?',
       tags: 'Etiquetas (opcional)',
+      quickTags: 'Etiquetas rápidas',
+      categories: 'Categorías',
       yourEntry: 'Tu entrada',
       placeholder: 'Escribe tus pensamientos, sentimientos, gratitudes...',
       photos: 'Fotos',
@@ -122,6 +224,7 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
     setSelectedMoodColor('');
     setSelectedTags([]);
     setImages([]);
+    setExpandedCategory(null);
   };
 
   const handleClose = () => {
@@ -174,6 +277,10 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
     }
   };
 
+  const toggleCategory = (categoryName: string) => {
+    setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -220,22 +327,83 @@ export function JournalEntryModal({ isOpen, onClose, onSave, editingEntry, langu
             </div>
           </div>
 
-          {/* Tags */}
-          <div>
-            <p className="text-sm font-semibold text-gray-700 mb-3">{t.tags}</p>
+          {/* Selected Tags Display */}
+          {selectedTags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {tagOptions[language].map((tag) => (
+              {selectedTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700"
+                >
+                  {tag}
+                  <button
+                    onClick={() => toggleTag(tag)}
+                    className="w-4 h-4 rounded-full bg-emerald-200 flex items-center justify-center hover:bg-emerald-300"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Quick Tags */}
+          <div>
+            <p className="text-sm font-semibold text-gray-700 mb-3">{t.quickTags}</p>
+            <div className="flex flex-wrap gap-2">
+              {mainTags[language].map((tag) => (
                 <button
                   key={tag}
                   onClick={() => toggleTag(tag)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                     selectedTags.includes(tag)
-                      ? 'bg-emerald-100 text-emerald-700'
+                      ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-300'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
                   {tag}
                 </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Categories */}
+          <div>
+            <p className="text-sm font-semibold text-gray-700 mb-3">{t.categories}</p>
+            <div className="space-y-2">
+              {tagCategories[language].map((category) => (
+                <div key={category.name} className="border border-gray-200 rounded-2xl overflow-hidden">
+                  <button
+                    onClick={() => toggleCategory(category.name)}
+                    className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span className="text-sm font-medium text-gray-800">{category.name}</span>
+                    {expandedCategory === category.name ? (
+                      <ChevronUp className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                  {expandedCategory === category.name && (
+                    <div className="p-3 bg-white">
+                      <div className="flex flex-wrap gap-2">
+                        {category.tags.map((tag) => (
+                          <button
+                            key={tag}
+                            onClick={() => toggleTag(tag)}
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                              selectedTags.includes(tag)
+                                ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-300'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

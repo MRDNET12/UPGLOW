@@ -2348,10 +2348,10 @@ isActionCompleted,
               <div className="flex flex-col gap-2">
                 {/* Carte Ma Semaine */}
                 <Card
-                  className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[95px]"
+                  className="row-span-2 border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden h-full"
                   onClick={() => setCurrentView('routine')}
                 >
-                  <CardContent className="p-3 flex flex-col h-full justify-between">
+                  <CardContent className="p-3 h-full flex flex-col justify-between">
                     {/* Header avec icône */}
                     <div className="flex items-start justify-between mb-1">
                       <h3 className="text-xs font-bold text-gray-800">
@@ -2361,7 +2361,7 @@ isActionCompleted,
                         <Calendar className="w-3 h-3 text-gray-600" />
                       </div>
                     </div>
-                    
+
                     {/* Valeur principale */}
                     <div className="mb-1">
                       <p className="text-xl font-bold text-gray-800">
@@ -2372,7 +2372,7 @@ isActionCompleted,
                       </p>
                       <p className="text-[10px] text-gray-400">tâches</p>
                     </div>
-                    
+
                     {/* Indicateur */}
                     <div className="flex items-center gap-1">
                       <Check className="w-3 h-3 text-emerald-500" />
@@ -2381,47 +2381,6 @@ isActionCompleted,
                           const weekDates = getWeekDates(0); // Semaine actuelle
                           return tasksWithDates.filter(t => t.completed && weekDates.includes(t.date)).length;
                         })()} {language === 'fr' ? 'complétées' : 'completed'}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Carte Mon Journal */}
-                <Card
-                  className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden flex-1 max-h-[95px]"
-                  onClick={() => setCurrentView('journal')}
-                >
-                  <CardContent className="p-3 flex flex-col h-full justify-between">
-                    {/* Header avec icône */}
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="text-xs font-bold text-gray-800">
-                        {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
-                      </h3>
-                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                        <BookOpen className="w-3 h-3 text-blue-600" />
-                      </div>
-                    </div>
-
-                    {/* Valeur principale */}
-                    <div className="mb-1">
-                      <p className="text-xl font-bold text-gray-800">{journalEntries.length}</p>
-                      <p className="text-[10px] text-gray-400">
-                        {journalEntries.length === 0
-                          ? (language === 'fr' ? 'Écrire aujourd\'hui' : language === 'en' ? 'Write today' : 'Escribe hoy')
-                          : (journalEntries.length === 1
-                            ? (language === 'fr' ? 'entrée' : language === 'en' ? 'entry' : 'entrada')
-                            : (language === 'fr' ? 'entrées' : language === 'en' ? 'entries' : 'entradas'))
-                        }
-                      </p>
-                    </div>
-
-                    {/* Indicateur */}
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-blue-600">
-                        {journalEntries.length === 0
-                          ? (language === 'fr' ? 'Commencer maintenant' : language === 'en' ? 'Start now' : 'Empezar ahora')
-                          : (language === 'fr' ? 'Continuer à écrire' : language === 'en' ? 'Keep writing' : 'Sigue escribiendo')
-                        }
                       </span>
                     </div>
                   </CardContent>

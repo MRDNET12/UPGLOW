@@ -266,6 +266,7 @@ isActionCompleted,
   const [glowMirrorWeeklyTrends, setGlowMirrorWeeklyTrends] = useState<any>(null);
   const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{habit: string, streak: number}>>([]);
   const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
+  const [showGlowMirrorAlert, setShowGlowMirrorAlert] = useState(false);
   
   // Date de première utilisation de l'app (pour Glow Mirror)
   const [firstAppUseDate, setFirstAppUseDate] = useState<string>(() => {
@@ -2499,8 +2500,14 @@ isActionCompleted,
             {/* Glow Mirror Button */}
             <div className="mt-6 mb-4">
               <button
-                onClick={() => generateGlowMirror()}
-                disabled={!isGlowMirrorReady || !canViewGlowMirror || glowMirrorLoading}
+                onClick={() => {
+                  if (!isGlowMirrorReady) {
+                    setShowGlowMirrorAlert(true);
+                  } else {
+                    generateGlowMirror();
+                  }
+                }}
+                disabled={glowMirrorLoading}
                 className={`w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 ${
                   isGlowMirrorReady && canViewGlowMirror
                     ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
@@ -2539,11 +2546,11 @@ isActionCompleted,
               {!isGlowMirrorReady ? (
                 <div className="mt-3 p-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl border border-violet-100">
                   <p className="text-sm text-violet-700 text-center font-medium">
-                    {language === 'fr' 
-                      ? '✨ Utilisez Project Glow pendant 7 jours, puis revenez découvrir qui vous êtes en train de devenir !'
+                    {language === 'fr'
+                      ? 'Qui êtes-vous en train de devenir ? Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
                       : language === 'en'
-                      ? '✨ Use Project Glow for 7 days, then come back to discover who you are becoming!'
-                      : '✨ ¡Usa Project Glow durante 7 días, luego vuelve para descubrir en quién te estás convirtiendo!'}
+                      ? 'Who are you becoming? Use the app for 7 days, then come back to see who you\'re becoming.'
+                      : '¿En quién te estás convirtiendo? Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
                   </p>
                   <p className="text-xs text-violet-500 text-center mt-2">
                     {language === 'fr'
@@ -2562,6 +2569,31 @@ isActionCompleted,
                     : 'Una vez por semana máximo'}
                 </p>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Glow Mirror Alert Modal */}
+        {showGlowMirrorAlert && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+              <div className="p-6">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
+                  <span className="text-3xl">✨</span>
+                </div>
+                <h3 className="text-lg font-bold text-center text-gray-800 mb-2">
+                  Glow Mirror
+                </h3>
+                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                  ✨ Utilisez Project Glow pendant 7 jours, puis revenez découvrir qui vous êtes en train de devenir !
+                </p>
+                <button
+                  onClick={() => setShowGlowMirrorAlert(false)}
+                  className="mt-6 w-full py-3 bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-xl font-medium hover:from-violet-600 hover:to-purple-600 transition-all"
+                >
+                  {language === 'fr' ? 'Compris' : language === 'en' ? 'Got it' : 'Entendido'}
+                </button>
+              </div>
             </div>
           </div>
         )}

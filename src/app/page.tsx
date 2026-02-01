@@ -5877,7 +5877,7 @@ isActionCompleted,
           </div>
 
           {/* Bouton Ajouter en bas */}
-          <div className="fixed bottom-6 left-0 right-0 px-4 max-w-lg mx-auto">
+          <div className="fixed bottom-20 left-0 right-0 px-4 max-w-lg mx-auto z-40">
             <button
               onClick={() => setShowJournalEntryModal(true)}
               className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"

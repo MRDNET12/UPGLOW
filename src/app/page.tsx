@@ -6352,7 +6352,7 @@ isActionCompleted,
 
       {/* Journal View */}
       {currentView === 'journal' && (
-        <div className="pb-24 min-h-screen bg-white">
+        <div className="pb-24 min-h-screen bg-white overscroll-none overflow-hidden">
           {/* Header */}
           <div className="p-4 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">

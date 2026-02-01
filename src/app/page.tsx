@@ -266,6 +266,21 @@ isActionCompleted,
   const [glowMirrorWeeklyTrends, setGlowMirrorWeeklyTrends] = useState<any>(null);
   const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{habit: string, streak: number}>>([]);
   const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
+  
+  // Date de première utilisation de l'app (pour Glow Mirror)
+  const [firstAppUseDate, setFirstAppUseDate] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('firstAppUseDate');
+      if (saved) return saved;
+      // Si pas de date sauvegardée, c'est la première utilisation
+      const today = new Date().toISOString();
+      localStorage.setItem('firstAppUseDate', today);
+      return today;
+    }
+    return '';
+  });
+  const [daysSinceFirstUse, setDaysSinceFirstUse] = useState(0);
+  const [isGlowMirrorReady, setIsGlowMirrorReady] = useState(false);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -336,17 +351,34 @@ isActionCompleted,
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
-  // Vérifier si on peut voir le Glow Mirror (1x par semaine) + notification
+  // Vérifier si on peut voir le Glow Mirror (1x par semaine) + 7 jours minimum d'utilisation
   useEffect(() => {
     const checkGlowMirrorAvailability = () => {
+      const now = new Date();
+      
+      // Vérifier si l'utilisateur a utilisé l'app pendant au moins 7 jours
+      const firstUse = new Date(firstAppUseDate);
+      const daysSinceFirst = Math.floor((now.getTime() - firstUse.getTime()) / (1000 * 60 * 60 * 24));
+      setDaysSinceFirstUse(daysSinceFirst);
+      const hasMinimumUsage = daysSinceFirst >= 7;
+      setIsGlowMirrorReady(hasMinimumUsage);
+      
+      // Si moins de 7 jours, pas disponible
+      if (!hasMinimumUsage) {
+        setCanViewGlowMirror(false);
+        setShowGlowMirrorNotification(false);
+        return;
+      }
+      
+      // Si jamais vu, disponible après 7 jours
       if (!lastGlowMirrorView) {
         setCanViewGlowMirror(true);
         setShowGlowMirrorNotification(true);
         return;
       }
       
+      // Vérifier 7 jours depuis la dernière vue
       const lastView = new Date(lastGlowMirrorView);
-      const now = new Date();
       const daysSinceLastView = Math.floor((now.getTime() - lastView.getTime()) / (1000 * 60 * 60 * 24));
       const isAvailable = daysSinceLastView >= 7;
       
@@ -359,7 +391,7 @@ isActionCompleted,
     // Vérifier toutes les heures
     const interval = setInterval(checkGlowMirrorAvailability, 60 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [lastGlowMirrorView]);
+  }, [lastGlowMirrorView, firstAppUseDate]);
 
   // Helper: Calculer les jours consécutifs d'une habitude
   const calculateHabitConsecutiveDays = (habitHistory: Array<{date: string, completed: boolean}>) => {

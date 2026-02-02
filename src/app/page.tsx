@@ -1902,7 +1902,7 @@ isActionCompleted,
     const handleStart = () => {
       if (selected !== null) {
         setObjectifPrincipal(objectifsPrioritaires[selected]);
-        setCurrentView('onboarding');
+        startChallenge();
       }
     };
 
@@ -2353,12 +2353,100 @@ isActionCompleted,
 
           {/* Start Button */}
           <Button
-            onClick={() => setCurrentView('challenge-selection')}
+            onClick={() => setOnboardingPage(3)}
             className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
           >
             {t.onboarding.gloweeButton}
             <Sparkles className="ml-2 w-6 h-6" />
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Onboarding Screen - Page 3: Challenge Selection - Glassmorphism
+  if (!hasStarted && onboardingPage === 3) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
+        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-700">
+          {/* Glowee Image */}
+          <div className="flex justify-center animate-in zoom-in duration-500">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+              <img
+                src="/Glowee/glowee-acceuillante.webp"
+                alt="Glowee"
+                className="w-52 h-52 object-contain relative z-10 drop-shadow-2xl"
+              />
+            </div>
+          </div>
+
+          {/* Message */}
+          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-300">
+            <h2 className="text-3xl font-bold text-gray-800">
+              {language === 'fr' ? 'Je suis là pour t\'aider à forger la nouvelle toi.' : 
+               language === 'en' ? 'I\'m here to help you forge the new you.' : 
+               'Estoy aquí para ayudarte a forjar el nuevo tú.'}
+            </h2>
+            <p className="text-xl text-gray-600">
+              {language === 'fr' ? 'Sur quoi veux-tu glow up en priorité ?' : 
+               language === 'en' ? 'What do you want to glow up first?' : 
+               '¿En qué quieres brillar primero?'}
+            </p>
+          </div>
+
+          {/* Challenge Options */}
+          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-500">
+            {/* Option 1: Mind & Life */}
+            <button
+              onClick={() => {
+                setSelectedChallenge('mind-life');
+                setCurrentView('goal-setup-5');
+              }}
+              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-purple-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-purple-100 via-pink-50 to-white text-left"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center text-3xl shadow-lg shadow-purple-200/50">
+                  🌱
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-2 text-gray-800">
+                    {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente y Vida'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'fr' ? 'Confiance, objectifs, relations, clarté, moi profond' : 
+                     language === 'en' ? 'Confidence, goals, relationships, clarity, deep self' : 
+                     'Confianza, objetivos, relaciones, claridad, yo profundo'}
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* Option 2: Beauty & Body */}
+            <button
+              onClick={() => {
+                setSelectedChallenge('beauty-body');
+                setCurrentView('goal-setup-5');
+              }}
+              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-pink-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white text-left"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-3xl shadow-lg shadow-pink-200/50">
+                  💄
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-2 text-gray-800">
+                    {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza y Cuerpo'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'fr' ? 'Soins, corps, énergie, discipline douce, glow naturel' : 
+                     language === 'en' ? 'Care, body, energy, soft discipline, natural glow' : 
+                     'Cuidado, cuerpo, energía, disciplina suave, brillo natural'}
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     );

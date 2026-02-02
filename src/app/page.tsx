@@ -3497,9 +3497,9 @@ isActionCompleted,
               </div>
             </div>
 
-            {/* Sélecteur de dates - Exact copy from Mes Habitudes */}
+            {/* Sélecteur de dates - Oval pill design */}
             <div className="px-4 py-2">
-              <div className="flex justify-between items-center px-2">
+              <div className="flex justify-between items-center gap-1">
                 {(() => {
                   const today = new Date();
                   const dates: Date[] = [];
@@ -3517,15 +3517,19 @@ isActionCompleted,
                     const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
                     const dayNumber = date.getDate();
                     return (
-                      <div
+                      <button
                         key={index}
-                        className={`relative flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}
+                        className={`relative flex flex-col items-center cursor-pointer transition-all px-3 py-2 rounded-full ${
+                          isSelected 
+                            ? 'bg-gray-900 text-white scale-105' 
+                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                        }`}
                         onClick={() => setBeautySelectedDate(dateString)}
                       >
-                        <span className={`text-[10px] uppercase ${isSelected || isToday ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
+                        <span className={`text-[10px] uppercase font-bold ${isSelected ? 'text-white' : 'text-gray-500'}`}>
                           {dayName}
                         </span>
-                        <span className={`text-lg font-bold ${isSelected || isToday ? 'text-gray-900' : 'text-gray-400'}`}>
+                        <span className={`text-base font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
                           {dayNumber}
                         </span>
                         {/* Croix de validation */}
@@ -3534,7 +3538,7 @@ isActionCompleted,
                             <Check className="w-3 h-3 text-white" />
                           </div>
                         )}
-                      </div>
+                      </button>
                     );
                   });
                 })()}

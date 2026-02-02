@@ -1984,33 +1984,33 @@ isActionCompleted,
   // Language Selection Screen - Emerald/Teal Design System
   if (!hasSelectedLanguage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
-        <div className="max-w-md w-full text-center space-y-8">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+        <div className="max-w-md w-full text-center space-y-4">
           {/* Logo avec Glowee */}
-          <div className="space-y-6 animate-in fade-in duration-700">
+          <div className="space-y-3 animate-in fade-in duration-700">
             <div className="flex justify-center">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full blur-2xl opacity-40" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}></div>
                 <img
                   src="/Glowee/glowee-acceuillante.webp"
                   alt="Glowee"
-                  className="w-40 h-40 object-contain relative z-10"
+                  className="w-28 h-28 object-contain relative z-10"
                   style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-800">
+            <div className="space-y-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
                 {t.languageSelection.title}
               </h1>
-              <p className="text-xl text-gray-600 font-medium">
+              <p className="text-base text-gray-600 font-medium">
                 {t.languageSelection.subtitle}
               </p>
             </div>
           </div>
 
           {/* Language Options - Clean White Cards */}
-          <div className="space-y-3 animate-in slide-in-from-bottom duration-700 delay-200">
+          <div className="space-y-2 animate-in slide-in-from-bottom duration-700 delay-200">
             {[
               { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
               { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
@@ -2019,7 +2019,7 @@ isActionCompleted,
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`w-full p-5 rounded-2xl transition-all duration-300 bg-white ${
+                className={`w-full p-3 rounded-2xl transition-all duration-300 bg-white ${
                   language === lang.code
                     ? 'ring-2 ring-emerald-400 shadow-lg'
                     : 'shadow-sm hover:shadow-md'
@@ -2027,15 +2027,15 @@ isActionCompleted,
                 style={language === lang.code ? { boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)' } : { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #d1fae5, #ccfbf1)' }}>
-                      <span className="text-3xl">{lang.flag}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #d1fae5, #ccfbf1)' }}>
+                      <span className="text-2xl">{lang.flag}</span>
                     </div>
-                    <span className="text-xl font-bold text-gray-800">{lang.name}</span>
+                    <span className="text-base font-bold text-gray-800">{lang.name}</span>
                   </div>
                   {language === lang.code && (
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}>
-                      <Check className="w-5 h-5 text-white" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}>
+                      <Check className="w-4 h-4 text-white" />
                     </div>
                   )}
                 </div>
@@ -2046,11 +2046,11 @@ isActionCompleted,
           {/* Continue Button */}
           <Button
             onClick={() => setCurrentView('presentation-1')}
-            className="w-full h-16 text-xl text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
+            className="w-full h-12 text-lg text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #34d399, #10b981)', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}
           >
             {t.languageSelection.continue}
-            <ChevronRight className="ml-2 w-6 h-6" />
+            <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </div>
@@ -2167,20 +2167,20 @@ isActionCompleted,
           {/* Titre principal */}
           <div className="text-center space-y-4">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              Chaque petit pas te fait avancer
+              {t.presentation1?.title || 'Chaque petit pas te fait avancer'}
             </h1>
           </div>
 
           {/* Texte explicatif */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed">
-              Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois.
+              {t.presentation1?.description || 'Changer ne se fait pas d\'un coup. Cette app t\'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois.'}
             </p>
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
-            {['Progression', 'Habitudes', 'Évolution personnelle'].map((tag) => (
+            {(t.presentation1?.tags || ['Progression', 'Habitudes', 'Évolution personnelle']).map((tag) => (
               <span 
                 key={tag}
                 className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
@@ -2195,7 +2195,7 @@ isActionCompleted,
             onClick={() => setCurrentView('presentation-2')}
             className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
           >
-            Continuer
+            {t.presentation1?.continue || 'Continuer'}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
@@ -2211,20 +2211,20 @@ isActionCompleted,
           {/* Titre principal */}
           <div className="text-center space-y-4">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              Célèbre tes petites victoires
+              {t.presentation2?.title || 'Célèbre tes petites victoires'}
             </h1>
           </div>
 
           {/* Texte explicatif */}
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed">
-              Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens.
+              {t.presentation2?.description || 'Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens.'}
             </p>
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
-            {['Petits succès', 'Motivation', 'Confiance en soi'].map((tag) => (
+            {(t.presentation2?.tags || ['Petits succès', 'Motivation', 'Confiance en soi']).map((tag) => (
               <span 
                 key={tag}
                 className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
@@ -2239,7 +2239,7 @@ isActionCompleted,
             onClick={() => setCurrentView('goal-setup-5')}
             className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
           >
-            Commencer mon évolution
+            {t.presentation2?.start || 'Commencer mon évolution'}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
         </div>

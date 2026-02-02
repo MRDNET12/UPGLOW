@@ -76,6 +76,21 @@ export interface Translation {
     startChallenge: string;
   };
 
+  // New Presentation Pages
+  presentation1: {
+    title: string;
+    description: string;
+    tags: string[];
+    continue: string;
+  };
+
+  presentation2: {
+    title: string;
+    description: string;
+    tags: string[];
+    start: string;
+  };
+
   // Dashboard
   dashboard: {
     welcome: string;
@@ -427,6 +442,18 @@ export const translations: Record<Language, Translation> = {
       rule5: 'ZÉRO excuse',
       startChallenge: 'Commencer le Challenge',
     },
+    presentation1: {
+      title: 'Chaque petit pas te fait avancer',
+      description: 'Changer ne se fait pas d\'un coup. Cette app t\'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois.',
+      tags: ['Progression', 'Habitudes', 'Évolution personnelle'],
+      continue: 'Continuer',
+    },
+    presentation2: {
+      title: 'Célèbre tes petites victoires',
+      description: 'Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens.',
+      tags: ['Petits succès', 'Motivation', 'Confiance en soi'],
+      start: 'Commencer mon évolution',
+    },
     dashboard: {
       welcome: 'Bienvenue',
       progress: 'Progression',
@@ -754,6 +781,18 @@ export const translations: Record<Language, Translation> = {
       rule5: 'ZERO excuses',
       startChallenge: 'Start the Challenge',
     },
+    presentation1: {
+      title: 'Every small step moves you forward',
+      description: 'Change doesn\'t happen overnight. This app guides your progress, one habit, one thought, one victory at a time.',
+      tags: ['Progress', 'Habits', 'Personal growth'],
+      continue: 'Continue',
+    },
+    presentation2: {
+      title: 'Celebrate your small wins',
+      description: 'Recognizing your progress gives you strength to continue. Here, every effort counts and brings you closer to who you\'re becoming.',
+      tags: ['Small wins', 'Motivation', 'Self-confidence'],
+      start: 'Start my evolution',
+    },
     dashboard: {
       welcome: 'Welcome',
       progress: 'Progress',
@@ -1080,6 +1119,18 @@ export const translations: Record<Language, Translation> = {
       rule4: 'Cada día: 1 acción para cada pilar',
       rule5: 'CERO excusas',
       startChallenge: 'Comenzar el Desafío',
+    },
+    presentation1: {
+      title: 'Cada pequeño paso te hace avanzar',
+      description: 'El cambio no ocurre de la noche a la mañana. Esta app te acompaña en tu progreso, un hábito, un pensamiento, una victoria a la vez.',
+      tags: ['Progreso', 'Hábitos', 'Evolución personal'],
+      continue: 'Continuar',
+    },
+    presentation2: {
+      title: 'Celebra tus pequeños logros',
+      description: 'Reconocer tu progreso te da fuerzas para continuar. Aquí, cada esfuerzo cuenta y te acerca a la persona que estás convirtiéndote.',
+      tags: ['Pequeños logros', 'Motivación', 'Confianza en ti'],
+      start: 'Comenzar mi evolución',
     },
     dashboard: {
       welcome: 'Bienvenida',

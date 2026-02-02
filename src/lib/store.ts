@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from './translations';
 
-export type View = 'language-selection' | 'presentation' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress';
+export type View = 'language-selection' | 'presentation' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-3' | 'goal-setup-1';
 export type ChallengeType = 'mind-life' | 'beauty-body';
 
 interface ChallengeProgress {
@@ -121,6 +121,15 @@ interface AppState {
   setCurrentDay: (day: number) => void;
   selectedGoalId: string | null;
   setSelectedGoalId: (goalId: string | null) => void;
+
+  // Goal Setup (Objectives)
+  objectifsInitiaux: string[];
+  objectifsPrioritaires: string[];
+  objectifPrincipal: string;
+  setObjectifsInitiaux: (objectifs: string[]) => void;
+  setObjectifsPrioritaires: (objectifs: string[]) => void;
+  setObjectifPrincipal: (objectif: string) => void;
+  resetGoalSetup: () => void;
 
   // Challenge Selection
   selectedChallenge: ChallengeType | null;
@@ -252,6 +261,19 @@ export const useStore = create<AppState>()(
       setCurrentDay: (day) => set({ currentDay: day }),
       selectedGoalId: null,
       setSelectedGoalId: (goalId) => set({ selectedGoalId: goalId }),
+
+      // Goal Setup (Objectives)
+      objectifsInitiaux: [],
+      objectifsPrioritaires: [],
+      objectifPrincipal: '',
+      setObjectifsInitiaux: (objectifs) => set({ objectifsInitiaux: objectifs }),
+      setObjectifsPrioritaires: (objectifs) => set({ objectifsPrioritaires: objectifs }),
+      setObjectifPrincipal: (objectif) => set({ objectifPrincipal: objectif }),
+      resetGoalSetup: () => set({
+        objectifsInitiaux: [],
+        objectifsPrioritaires: [],
+        objectifPrincipal: ''
+      }),
 
       // Challenge Selection
       selectedChallenge: null,

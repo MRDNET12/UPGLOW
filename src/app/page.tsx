@@ -127,7 +127,14 @@ isActionCompleted,
     // Trackers
     trackers,
     updateTracker,
-    getTrackerByDate
+    getTrackerByDate,
+    // Goal Setup
+    objectifsInitiaux,
+    objectifsPrioritaires,
+    objectifPrincipal,
+    setObjectifsInitiaux,
+    setObjectifsPrioritaires,
+    setObjectifPrincipal
   } = useStore();
 
   const { t } = useTranslation();
@@ -1707,6 +1714,265 @@ isActionCompleted,
 
   const progressPercentage = getProgressPercentage();
 
+  // Goal Setup Page A - Define 5 objectives
+  const GoalSetup5 = () => {
+    const [objectives, setObjectives] = useState<string[]>(['', '', '', '', '']);
+    const [error, setError] = useState('');
+
+    const handleObjectiveChange = (index: number, value: string) => {
+      const newObjectives = [...objectives];
+      newObjectives[index] = value;
+      setObjectives(newObjectives);
+      setError('');
+    };
+
+    const handleContinue = () => {
+      const filledObjectives = objectives.filter(obj => obj.trim() !== '');
+      if (filledObjectives.length < 5) {
+        setError(language === 'fr' ? 'Remplis tous les 5 objectifs pour continuer' : language === 'en' ? 'Fill in all 5 objectives to continue' : 'Completa los 5 objetivos para continuar');
+        return;
+      }
+      setObjectifsInitiaux(objectives);
+      setCurrentView('goal-setup-3');
+    };
+
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+        <div className="flex-1 max-w-md mx-auto w-full space-y-6 pt-8">
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg shadow-pink-200/50">
+              <Target className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {language === 'fr' ? 'Définis tes objectifs' : language === 'en' ? 'Define your goals' : 'Define tus objetivos'}
+            </h1>
+            <p className="text-gray-600">
+              {language === 'fr' ? 'Prends un moment pour toi. Note 5 objectifs qui comptent pour toi en ce moment. Ils peuvent être petits ou grands.' : language === 'en' ? 'Take a moment for yourself. Write down 5 goals that matter to you right now. They can be small or big.' : 'Tómate un momento para ti. Anota 5 objetivos que te importen ahora mismo. Pueden ser pequeños o grandes.'}
+            </p>
+          </div>
+
+          {/* Input Fields */}
+          <div className="space-y-4">
+            {objectives.map((objective, index) => (
+              <div key={index} className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-white font-bold text-sm">
+                  {index + 1}
+                </div>
+                <input
+                  type="text"
+                  value={objective}
+                  onChange={(e) => handleObjectiveChange(index, e.target.value)}
+                  placeholder={language === 'fr' ? `Objectif ${index + 1}` : language === 'en' ? `Goal ${index + 1}` : `Objetivo ${index + 1}`}
+                  className="w-full pl-16 pr-4 py-4 rounded-2xl bg-white shadow-sm border-2 border-transparent focus:border-pink-300 focus:outline-none text-gray-800 placeholder-gray-400"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium text-center">
+              {error}
+            </div>
+          )}
+
+          {/* Progress Indicator */}
+          <div className="flex justify-center gap-2">
+            <div className="w-8 h-2 rounded-full bg-pink-500"></div>
+            <div className="w-8 h-2 rounded-full bg-gray-300"></div>
+            <div className="w-8 h-2 rounded-full bg-gray-300"></div>
+          </div>
+        </div>
+
+        {/* Continue Button */}
+        <div className="pt-6 pb-8">
+          <Button
+            onClick={handleContinue}
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+          >
+            {language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar'}
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  // Goal Setup Page B - Select 3 objectives
+  const GoalSetup3 = () => {
+    const [selected, setSelected] = useState<number[]>([]);
+
+    const handleToggle = (index: number) => {
+      if (selected.includes(index)) {
+        setSelected(selected.filter(i => i !== index));
+      } else if (selected.length < 3) {
+        setSelected([...selected, index]);
+      }
+    };
+
+    const handleContinue = () => {
+      const selectedObjectives = selected.map(index => objectifsInitiaux[index]);
+      setObjectifsPrioritaires(selectedObjectives);
+      setCurrentView('goal-setup-1');
+    };
+
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+        <div className="flex-1 max-w-md mx-auto w-full space-y-6 pt-8">
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg shadow-pink-200/50">
+              <Layers className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {language === 'fr' ? 'Choisis tes priorités' : language === 'en' ? 'Choose your priorities' : 'Elige tus prioridades'}
+            </h1>
+            <p className="text-gray-600">
+              {language === 'fr' ? "Tu ne peux pas tout changer en même temps. Choisis 3 objectifs sur lesquels tu aimerais te concentrer." : language === 'en' ? "You can't change everything at once. Choose 3 goals you'd like to focus on." : "No puedes cambiar todo a la vez. Elige 3 objetivos en los que te gustaría concentrarte."}
+            </p>
+          </div>
+
+          {/* Counter */}
+          <div className="text-center">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm text-gray-700 font-medium">
+              <span className="text-pink-500 font-bold">{selected.length}/3</span>
+              <span>{language === 'fr' ? 'sélectionnés' : language === 'en' ? 'selected' : 'seleccionados'}</span>
+            </span>
+          </div>
+
+          {/* Selection List */}
+          <div className="space-y-3">
+            {objectifsInitiaux.map((objective, index) => (
+              <button
+                key={index}
+                onClick={() => handleToggle(index)}
+                disabled={!selected.includes(index) && selected.length >= 3}
+                className={`w-full p-4 rounded-2xl text-left transition-all ${
+                  selected.includes(index)
+                    ? 'bg-gradient-to-r from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200/50'
+                    : selected.length >= 3
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white shadow-sm text-gray-800 hover:shadow-md'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    selected.includes(index) ? 'border-white bg-white/20' : 'border-gray-300'
+                  }`}>
+                    {selected.includes(index) && <Check className="w-4 h-4 text-white" />}
+                  </div>
+                  <span className="flex-1 font-medium">{objective}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="flex justify-center gap-2">
+            <div className="w-8 h-2 rounded-full bg-gray-300"></div>
+            <div className="w-8 h-2 rounded-full bg-pink-500"></div>
+            <div className="w-8 h-2 rounded-full bg-gray-300"></div>
+          </div>
+        </div>
+
+        {/* Continue Button */}
+        <div className="pt-6 pb-8">
+          <Button
+            onClick={handleContinue}
+            disabled={selected.length === 0}
+            className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
+              selected.length > 0
+                ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar'}
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  // Goal Setup Page C - Select 1 objective
+  const GoalSetup1 = () => {
+    const [selected, setSelected] = useState<number | null>(null);
+
+    const handleStart = () => {
+      if (selected !== null) {
+        setObjectifPrincipal(objectifsPrioritaires[selected]);
+        setCurrentView('onboarding');
+      }
+    };
+
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+        <div className="flex-1 max-w-md mx-auto w-full space-y-6 pt-8">
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg shadow-pink-200/50">
+              <Star className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {language === 'fr' ? 'Ta priorité actuelle' : language === 'en' ? 'Your current priority' : 'Tu prioridad actual'}
+            </h1>
+            <p className="text-gray-600">
+              {language === 'fr' ? "Le vrai changement commence par une chose à la fois. Choisis l'objectif qui sera ta priorité actuelle." : language === 'en' ? "Real change starts with one thing at a time. Choose the goal that will be your current priority." : "El cambio real comienza con una cosa a la vez. Elige el objetivo que será tu prioridad actual."}
+            </p>
+          </div>
+
+          {/* Selection List */}
+          <div className="space-y-3">
+            {objectifsPrioritaires.map((objective, index) => (
+              <button
+                key={index}
+                onClick={() => setSelected(index)}
+                className={`w-full p-4 rounded-2xl text-left transition-all ${
+                  selected === index
+                    ? 'bg-gradient-to-r from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200/50'
+                    : 'bg-white shadow-sm text-gray-800 hover:shadow-md'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    selected === index ? 'border-white bg-white/20' : 'border-gray-300'
+                  }`}>
+                    {selected === index && <Check className="w-4 h-4 text-white" />}
+                  </div>
+                  <span className="flex-1 font-medium">{objective}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="flex justify-center gap-2">
+            <div className="w-8 h-2 rounded-full bg-gray-300"></div>
+            <div className="w-8 h-2 rounded-full bg-gray-300"></div>
+            <div className="w-8 h-2 rounded-full bg-pink-500"></div>
+          </div>
+        </div>
+
+        {/* Start Button */}
+        <div className="pt-6 pb-8">
+          <Button
+            onClick={handleStart}
+            disabled={selected === null}
+            className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
+              selected !== null
+                ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {language === 'fr' ? 'Commencer mon parcours' : language === 'en' ? 'Start my journey' : 'Comenzar mi camino'}
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   // Bloquer l'accès si l'essai est expiré et pas d'abonnement
   // Cette vérification s'applique à toutes les vues sauf language-selection et challenge
   // Les challenges (Beauté et Corps, Esprit et Vie) sont toujours accessibles
@@ -1925,7 +2191,7 @@ isActionCompleted,
             <Button
               onClick={() => {
                 markPresentationSeen();
-                setCurrentView('onboarding');
+                setCurrentView('goal-setup-5');
               }}
               className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
             >
@@ -2096,6 +2362,21 @@ isActionCompleted,
         </div>
       </div>
     );
+  }
+
+  // Goal Setup Page A - Define 5 objectives
+  if (currentView === 'goal-setup-5') {
+    return <GoalSetup5 />;
+  }
+
+  // Goal Setup Page B - Select 3 objectives
+  if (currentView === 'goal-setup-3') {
+    return <GoalSetup3 />;
+  }
+
+  // Goal Setup Page C - Select 1 objective
+  if (currentView === 'goal-setup-1') {
+    return <GoalSetup1 />;
   }
 
   return (
@@ -4778,6 +5059,81 @@ isActionCompleted,
                       </div>
                       <ChevronRight className="w-4 h-4" />
                     </button>
+                  )}
+                </div>
+
+                {/* Section Moi - Mes Objectifs */}
+                <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <div className="p-4 border-b border-gray-100">
+                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
+                      {language === 'fr' ? 'Moi' : language === 'en' ? 'Me' : 'Yo'}
+                    </h3>
+                  </div>
+                  
+                  {/* Objectif Principal */}
+                  {objectifPrincipal && (
+                    <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-pink-50 to-rose-50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Star className="w-4 h-4 text-pink-500" />
+                        <span className="text-xs font-bold text-pink-600 uppercase tracking-wide">
+                          {language === 'fr' ? 'Ma priorité actuelle' : language === 'en' ? 'My current priority' : 'Mi prioridad actual'}
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-800 pl-6">{objectifPrincipal}</p>
+                    </div>
+                  )}
+
+                  {/* Objectifs Prioritaires */}
+                  {objectifsPrioritaires.length > 0 && (
+                    <div className="p-4 border-b border-gray-100">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Layers className="w-4 h-4 text-rose-500" />
+                        <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">
+                          {language === 'fr' ? 'Mes 3 objectifs prioritaires' : language === 'en' ? 'My 3 priority goals' : 'Mis 3 objetivos prioritarios'}
+                        </span>
+                      </div>
+                      <div className="space-y-2 pl-6">
+                        {objectifsPrioritaires.map((objective, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                              {index + 1}
+                            </span>
+                            <span className="text-sm text-gray-700">{objective}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Objectifs Initiaux */}
+                  {objectifsInitiaux.length > 0 && (
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Target className="w-4 h-4 text-gray-500" />
+                        <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">
+                          {language === 'fr' ? 'Mes 5 objectifs' : language === 'en' ? 'My 5 goals' : 'Mis 5 objetivos'}
+                        </span>
+                      </div>
+                      <div className="space-y-2 pl-6">
+                        {objectifsInitiaux.map((objective, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                              {index + 1}
+                            </span>
+                            <span className="text-sm text-gray-600">{objective}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Message si aucun objectif */}
+                  {objectifsInitiaux.length === 0 && objectifsPrioritaires.length === 0 && !objectifPrincipal && (
+                    <div className="p-4 text-center">
+                      <p className="text-sm text-gray-500">
+                        {language === 'fr' ? 'Aucun objectif défini pour le moment' : language === 'en' ? 'No goals defined yet' : 'Ningún objetivo definido aún'}
+                      </p>
+                    </div>
                   )}
                 </div>
 

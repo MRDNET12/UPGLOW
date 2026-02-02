@@ -1974,10 +1974,12 @@ isActionCompleted,
   };
 
   // Bloquer l'accès si l'essai est expiré et pas d'abonnement
-  // Cette vérification s'applique à toutes les vues sauf language-selection et challenge
+  // Cette vérification s'applique à toutes les vues sauf language-selection, challenge et les pages d'onboarding
   // Les challenges (Beauté et Corps, Esprit et Vie) sont toujours accessibles
+  // Les pages de présentation et de configuration des objectifs sont aussi accessibles
   const isChallengeView = currentView === 'challenge-selection' || currentView === 'dashboard' || currentView === 'challenge';
-  const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView;
+  const isOnboardingView = currentView === 'presentation-1' || currentView === 'presentation-2' || currentView === 'goal-setup-5' || currentView === 'goal-setup-3' || currentView === 'goal-setup-1';
+  const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView && !isOnboardingView;
 
   // Language Selection Screen - Emerald/Teal Design System
   if (!hasSelectedLanguage) {

@@ -3959,6 +3959,7 @@ isActionCompleted,
                                 {beautyChoices.map((choice) => {
                                   const isSelected = dayProgress?.selectedChoice === choice.id;
                                   const hasSubtasks = choice.subtasks && choice.subtasks.length > 0;
+                                  const hasDetailedExplanation = choice.detailedExplanation && choice.detailedExplanation[language];
 
                                   return (
                                     <div key={choice.id}>
@@ -3981,6 +3982,53 @@ isActionCompleted,
                                           {isSelected && <Check className="w-5 h-5 text-green-600 flex-shrink-0" />}
                                         </div>
                                       </div>
+
+                                      {/* Explications détaillées avec flèche */}
+                                      {hasDetailedExplanation && (
+                                        <div className="mt-2">
+                                          <Accordion type="single" collapsible className="w-full">
+                                            <AccordionItem value={`explanation-${choice.id}`} className="border-none">
+                                              <AccordionTrigger className="py-2 px-4 text-xs font-medium text-pink-600 hover:text-pink-700 hover:no-underline bg-pink-50 rounded-xl">
+                                                {language === 'fr' ? 'En savoir plus' : language === 'en' ? 'Learn more' : 'Saber más'}
+                                              </AccordionTrigger>
+                                              <AccordionContent className="pt-2">
+                                                <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-4 space-y-4">
+                                                  {/* Explication détaillée */}
+                                                  <p className="text-sm text-gray-700 leading-relaxed">
+                                                    {choice.detailedExplanation![language]}
+                                                  </p>
+
+                                                  {/* Résultats promis */}
+                                                  {choice.promisedResults && choice.promisedResults[language] && (
+                                                    <div className="space-y-2">
+                                                      <p className="text-xs font-bold text-pink-600 uppercase tracking-wide">
+                                                        {language === 'fr' ? 'Résultats promis :' : language === 'en' ? 'Promised results:' : 'Resultados prometidos:'}
+                                                      </p>
+                                                      <ul className="space-y-1">
+                                                        {choice.promisedResults[language].map((result, idx) => (
+                                                          <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                                            <span className="text-pink-400 mt-1">✦</span>
+                                                            {result}
+                                                          </li>
+                                                        ))}
+                                                      </ul>
+                                                    </div>
+                                                  )}
+
+                                                  {/* Message Glowee */}
+                                                  {choice.gloweeMessage && choice.gloweeMessage[language] && (
+                                                    <div className="bg-white rounded-xl p-3 shadow-sm">
+                                                      <p className="text-xs text-pink-500 font-medium italic">
+                                                        Glowee : "{choice.gloweeMessage[language]}"
+                                                      </p>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </AccordionContent>
+                                            </AccordionItem>
+                                          </Accordion>
+                                        </div>
+                                      )}
 
                                       {/* Subtasks for this choice */}
                                       {hasSubtasks && isSelected && (

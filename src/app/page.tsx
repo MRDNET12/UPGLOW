@@ -2043,7 +2043,7 @@ isActionCompleted,
 
           {/* Continue Button */}
           <Button
-            onClick={() => setCurrentView('presentation')}
+            onClick={() => setCurrentView('presentation-1')}
             className="w-full h-16 text-xl text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #34d399, #10b981)', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}
           >
@@ -2073,133 +2073,6 @@ isActionCompleted,
             setShouldReopenSubscription(true);
           }}
         />
-      </div>
-    );
-  }
-
-  // Presentation Screen - Ne s'affiche qu'une seule fois
-  if (currentView === 'presentation') {
-    // Si la présentation a déjà été vue, passer directement à l'onboarding
-    if (hasPresentationBeenSeen()) {
-      setCurrentView('onboarding');
-      return null;
-    }
-
-    return (
-      <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
-        <div className="flex-1 overflow-y-auto p-6 pb-24">
-          <div className="max-w-md mx-auto space-y-6">
-            {/* Header */}
-            <div className="text-center space-y-4 pt-6">
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-200/50">
-                <Sparkles className="w-12 h-12 text-white drop-shadow-lg" />
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-                {t.presentation.title}
-              </h1>
-              <p className="text-base md:text-lg text-gray-600 italic font-medium">
-                "{t.presentation.quote}"
-              </p>
-            </div>
-
-            {/* Subtitle */}
-            <Card className="bg-white rounded-2xl shadow-sm">
-              <CardContent className="p-6 text-center">
-                <p className="text-lg font-bold text-gray-800">
-                  {t.presentation.description}
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Triangle de transformation */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-center flex items-center justify-center gap-3 text-gray-800">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                {t.presentation.triangleTitle}
-              </h2>
-
-              {/* Pilier 1 */}
-              <Card className="bg-white rounded-2xl shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                      <Sparkles className="w-6 h-6 text-white" />
-                    </div>
-                    {t.presentation.pillar1Title}
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-
-              {/* Pilier 2 */}
-              <Card className="bg-white rounded-2xl shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                      <Heart className="w-6 h-6 text-white" />
-                    </div>
-                    {t.presentation.pillar2Title}
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-
-              {/* Pilier 3 */}
-              <Card className="bg-white rounded-2xl shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-gray-800 text-base">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                      <TrendingUp className="w-6 h-6 text-white" />
-                    </div>
-                    {t.presentation.pillar3Title}
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-            </div>
-
-            {/* Règles du Challenge */}
-            <Card className="bg-white rounded-2xl shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-center text-lg flex items-center justify-center gap-3 text-gray-800">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                    <Award className="w-6 h-6 text-white" />
-                  </div>
-                  {t.presentation.rulesTitle}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {[
-                  t.presentation.rule1,
-                  t.presentation.rule5
-                ].map((rule, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-4 rounded-xl bg-emerald-50/50"
-                  >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm">
-                      {index === 0 ? '1' : '5'}
-                    </div>
-                    <p className={`flex-1 leading-relaxed text-sm text-gray-700 ${index === 1 ? 'font-bold' : 'font-medium'}`}>
-                      {rule}
-                    </p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* CTA Button */}
-            <Button
-              onClick={() => {
-                markPresentationSeen();
-                setCurrentView('goal-setup-5');
-              }}
-              className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
-            >
-              {t.presentation.startChallenge}
-              <ChevronRight className="ml-2 w-5 h-5" />
-            </Button>
-          </div>
-        </div>
       </div>
     );
   }
@@ -2284,169 +2157,89 @@ isActionCompleted,
     );
   }
 
-  // Onboarding Screen - Page 1: Glowee se présente - Glassmorphism
-  if (!hasStarted && onboardingPage === 1) {
+  // Page de présentation 1: Chaque petit pas te fait avancer
+  if (currentView === 'presentation-1') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
-        <div className="max-w-md w-full text-center space-y-10 animate-in fade-in duration-700">
-          {/* Glowee Image avec effet glow */}
-          <div className="flex justify-center animate-in zoom-in duration-500">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-              <img
-                src="/Glowee/glowee-acceuillante.webp"
-                alt="Glowee"
-                className="w-72 h-72 object-contain relative z-10 drop-shadow-2xl"
-              />
-            </div>
+      <div className="min-h-screen flex flex-col p-6" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          {/* Titre principal */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+              Chaque petit pas te fait avancer
+            </h1>
           </div>
 
-          {/* Greeting Card */}
-          <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
-            <div className="p-8 rounded-[2rem] bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50">
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
-                {t.onboarding.gloweeGreeting}
-              </h1>
-              <p className="text-2xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed">
-                {t.onboarding.gloweeIntro}
-              </p>
-            </div>
-          </div>
-
-          {/* Next Button */}
-          <Button
-            onClick={() => setOnboardingPage(2)}
-            className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
-          >
-            <ChevronRight className="w-7 h-7" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Onboarding Screen - Page 2: Message de Glowee - Glassmorphism
-  if (!hasStarted && onboardingPage === 2) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
-        <div className="max-w-md w-full text-center space-y-10 animate-in fade-in duration-700">
-          {/* Glowee Image avec effet glow */}
-          <div className="flex justify-center animate-in zoom-in duration-500">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-              <img
-                src="/Glowee/glowee-acceuillante.webp"
-                alt="Glowee"
-                className="w-72 h-72 object-contain relative z-10 drop-shadow-2xl"
-              />
-            </div>
-          </div>
-
-          {/* Message Card */}
-          <div className="space-y-6 animate-in slide-in-from-bottom duration-700 delay-300">
-            <div className="p-8 rounded-[2rem] bg-white/80 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50">
-              <p className="text-2xl md:text-3xl text-gray-800 font-semibold whitespace-pre-line leading-relaxed">
-                {t.onboarding.gloweeMessage}
-              </p>
-            </div>
-          </div>
-
-          {/* Start Button */}
-          <Button
-            onClick={() => setOnboardingPage(3)}
-            className="w-full h-16 text-xl bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-[1.5rem] shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all animate-in slide-in-from-bottom duration-700 delay-500"
-          >
-            {t.onboarding.gloweeButton}
-            <Sparkles className="ml-2 w-6 h-6" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Onboarding Screen - Page 3: Challenge Selection - Glassmorphism
-  if (!hasStarted && onboardingPage === 3) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100">
-        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in duration-700">
-          {/* Glowee Image */}
-          <div className="flex justify-center animate-in zoom-in duration-500">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 via-rose-300 to-orange-300 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-              <img
-                src="/Glowee/glowee-acceuillante.webp"
-                alt="Glowee"
-                className="w-52 h-52 object-contain relative z-10 drop-shadow-2xl"
-              />
-            </div>
-          </div>
-
-          {/* Message */}
-          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-300">
-            <h2 className="text-3xl font-bold text-gray-800">
-              {language === 'fr' ? 'Je suis là pour t\'aider à forger la nouvelle toi.' : 
-               language === 'en' ? 'I\'m here to help you forge the new you.' : 
-               'Estoy aquí para ayudarte a forjar el nuevo tú.'}
-            </h2>
-            <p className="text-xl text-gray-600">
-              {language === 'fr' ? 'Sur quoi veux-tu glow up en priorité ?' : 
-               language === 'en' ? 'What do you want to glow up first?' : 
-               '¿En qué quieres brillar primero?'}
+          {/* Texte explicatif */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois.
             </p>
           </div>
 
-          {/* Challenge Options */}
-          <div className="space-y-4 animate-in slide-in-from-bottom duration-700 delay-500">
-            {/* Option 1: Mind & Life */}
-            <button
-              onClick={() => {
-                setSelectedChallenge('mind-life');
-                setCurrentView('goal-setup-5');
-              }}
-              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-purple-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-purple-100 via-pink-50 to-white text-left"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-300 to-purple-400 flex items-center justify-center text-3xl shadow-lg shadow-purple-200/50">
-                  🌱
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-2 text-gray-800">
-                    {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente y Vida'}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {language === 'fr' ? 'Confiance, objectifs, relations, clarté, moi profond' : 
-                     language === 'en' ? 'Confidence, goals, relationships, clarity, deep self' : 
-                     'Confianza, objetivos, relaciones, claridad, yo profundo'}
-                  </p>
-                </div>
-              </div>
-            </button>
-
-            {/* Option 2: Beauty & Body */}
-            <button
-              onClick={() => {
-                setSelectedChallenge('beauty-body');
-                setCurrentView('goal-setup-5');
-              }}
-              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-pink-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white text-left"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-3xl shadow-lg shadow-pink-200/50">
-                  💄
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-2 text-gray-800">
-                    {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza y Cuerpo'}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {language === 'fr' ? 'Soins, corps, énergie, discipline douce, glow naturel' : 
-                     language === 'en' ? 'Care, body, energy, soft discipline, natural glow' : 
-                     'Cuidado, cuerpo, energía, disciplina suave, brillo natural'}
-                  </p>
-                </div>
-              </div>
-            </button>
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            {['Progression', 'Habitudes', 'Évolution personnelle'].map((tag) => (
+              <span 
+                key={tag}
+                className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
+
+          {/* Bouton Continuer */}
+          <Button
+            onClick={() => setCurrentView('presentation-2')}
+            className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
+          >
+            Continuer
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Page de présentation 2: Célèbre tes petites victoires
+  if (currentView === 'presentation-2') {
+    return (
+      <div className="min-h-screen flex flex-col p-6" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          {/* Titre principal */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+              Célèbre tes petites victoires
+            </h1>
+          </div>
+
+          {/* Texte explicatif */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens.
+            </p>
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            {['Petits succès', 'Motivation', 'Confiance en soi'].map((tag) => (
+              <span 
+                key={tag}
+                className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Bouton Commencer */}
+          <Button
+            onClick={() => setCurrentView('goal-setup-5')}
+            className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
+          >
+            Commencer mon évolution
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
         </div>
       </div>
     );

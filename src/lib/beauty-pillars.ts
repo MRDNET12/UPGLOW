@@ -27,6 +27,21 @@ export interface BeautyChoice {
     en: string;
     es: string;
   };
+  detailedExplanation?: {
+    fr: string;
+    en: string;
+    es: string;
+  };
+  promisedResults?: {
+    fr: string[];
+    en: string[];
+    es: string[];
+  };
+  gloweeMessage?: {
+    fr: string;
+    en: string;
+    es: string;
+  };
   subtasks?: {
     id: string;
     title: {
@@ -93,6 +108,21 @@ export const beautyChoices: BeautyChoice[] = [
       fr: 'Massage visage',
       en: 'Face massage',
       es: 'Masaje facial'
+    },
+    detailedExplanation: {
+      fr: "Fais-toi un massage facial tous les jours pendant un mois, et je te promets, ma star, que tu vas grave voir des résultats sur ta peau. Tu vas avoir une belle peau pour cet été, et tu vas te sentir super bien dans ta peau.",
+      en: "Give yourself a facial massage every day for a month, and I promise you, my star, that you'll seriously see results on your skin. You'll have beautiful skin for this summer, and you'll feel great in your skin.",
+      es: "Hazte un masaje facial todos los días durante un mes, y te prometo, mi estrella, que verás resultados serios en tu piel. Tendrás una piel hermosa para este verano, y te sentirás muy bien en tu piel."
+    },
+    promisedResults: {
+      fr: ["Peau plus belle", "Peau plus nette", "Confiance en soi renforcée"],
+      en: ["More beautiful skin", "Clearer skin", "Boosted self-confidence"],
+      es: ["Piel más bella", "Piel más limpia", "Autoestima reforzada"]
+    },
+    gloweeMessage: {
+      fr: "Tu vas grave voir des résultats.",
+      en: "You're going to seriously see results.",
+      es: "Vas a ver resultados serios."
     }
   },
   {
@@ -102,6 +132,21 @@ export const beautyChoices: BeautyChoice[] = [
       fr: 'Skincare',
       en: 'Skincare',
       es: 'Cuidado de la piel'
+    },
+    detailedExplanation: {
+      fr: "Fais ta routine skincare le matin et le soir pendant un mois, et je te promets, ma star, que tu vas grave voir des résultats sur ta peau. Tu vas avoir une belle peau pour cet été, et tu vas te sentir super bien dans ta peau.",
+      en: "Do your skincare routine morning and evening for a month, and I promise you, my star, that you'll seriously see results on your skin. You'll have beautiful skin for this summer, and you'll feel great in your skin.",
+      es: "Haz tu rutina de cuidado de la piel por la mañana y por la noche durante un mes, y te prometo, mi estrella, que verás resultados serios en tu piel. Tendrás una piel hermosa para este verano, y te sentirás muy bien en tu piel."
+    },
+    promisedResults: {
+      fr: ["Peau plus belle", "Peau plus nette", "Confiance en soi renforcée"],
+      en: ["More beautiful skin", "Clearer skin", "Boosted self-confidence"],
+      es: ["Piel más bella", "Piel más limpia", "Autoestima reforzada"]
+    },
+    gloweeMessage: {
+      fr: "Tu vas grave voir des résultats.",
+      en: "You're going to seriously see results.",
+      es: "Vas a ver resultados serios."
     }
   },
   {
@@ -111,6 +156,21 @@ export const beautyChoices: BeautyChoice[] = [
       fr: 'Brossage à sec',
       en: 'Dry brushing',
       es: 'Cepillado en seco'
+    },
+    detailedExplanation: {
+      fr: "Fais du brossage à sec tous les jours pendant un mois, et je te promets, ma star, que tu vas grave voir des résultats sur ta peau. Tu vas avoir une peau plus lisse, et tu vas te sentir super bien dans ta peau.",
+      en: "Do dry brushing every day for a month, and I promise you, my star, that you'll seriously see results on your skin. You'll have smoother skin, and you'll feel great in your skin.",
+      es: "Haz cepillado en seco todos los días durante un mes, y te prometo, mi estrella, que verás resultados serios en tu piel. Tendrás una piel más suave, y te sentirás muy bien en tu piel."
+    },
+    promisedResults: {
+      fr: ["Peau plus lisse", "Meilleure circulation", "Confiance en soi renforcée"],
+      en: ["Smoother skin", "Better circulation", "Boosted self-confidence"],
+      es: ["Piel más suave", "Mejor circulación", "Autoestima reforzada"]
+    },
+    gloweeMessage: {
+      fr: "Tu vas grave voir des résultats.",
+      en: "You're going to seriously see results.",
+      es: "Vas a ver resultados serios."
     }
   },
   {
@@ -120,6 +180,21 @@ export const beautyChoices: BeautyChoice[] = [
       fr: 'Crème corps',
       en: 'Body cream',
       es: 'Crema corporal'
+    },
+    detailedExplanation: {
+      fr: "Mets de la crème corps tous les jours pendant un mois, et je te promets, ma star, que tu vas grave voir des résultats sur ta peau. Tu vas avoir une peau plus douce, et tu vas te sentir super bien dans ta peau.",
+      en: "Apply body cream every day for a month, and I promise you, my star, that you'll seriously see results on your skin. You'll have softer skin, and you'll feel great in your skin.",
+      es: "Aplica crema corporal todos los días durante un mes, y te prometo, mi estrella, que verás resultados serios en tu piel. Tendrás una piel más suave, y te sentirás muy bien en tu piel."
+    },
+    promisedResults: {
+      fr: ["Peau plus douce", "Peau hydratée", "Confiance en soi renforcée"],
+      en: ["Softer skin", "Hydrated skin", "Boosted self-confidence"],
+      es: ["Piel más suave", "Piel hidratada", "Autoestima reforzada"]
+    },
+    gloweeMessage: {
+      fr: "Tu vas grave voir des résultats.",
+      en: "You're going to seriously see results.",
+      es: "Vas a ver resultados serios."
     }
   },
   {
@@ -129,6 +204,21 @@ export const beautyChoices: BeautyChoice[] = [
       fr: 'Cils / cheveux',
       en: 'Lashes / hair',
       es: 'Pestañas / cabello'
+    },
+    detailedExplanation: {
+      fr: "Utilise un sérum pour la pousse des cils ou prends soin de tes cheveux avec des coiffures protectrices, je te promets, ça a été la meilleure décision que j'ai pu prendre. J'ai des cils qui sont longs sans mascara, et franchement, ça fait toute la différence. Surtout pour l'été, quand on se maquille pas parce qu'on va se baigner, etc., si tu fais juste un rehaussement de cils avec les cils qui auront poussé, tu verras, ça va être magnifique.",
+      en: "Use a lash growth serum or take care of your hair with protective hairstyles, I promise you, it's been the best decision I could make. I have lashes that are long without mascara, and honestly, it makes all the difference. Especially for summer, when we don't wear makeup because we're going swimming, etc., if you just do a lash lift with grown lashes, you'll see, it's going to be beautiful.",
+      es: "Usa un sérum para el crecimiento de las pestañas o cuida tu cabello con peinados protectores, te lo prometo, ha sido la mejor decisión que he podido tomar. Tengo pestañas que son largas sin máscara, y honestamente, marca toda la diferencia. Especialmente para el verano, cuando no usamos maquillaje porque vamos a nadar, etc., si solo haces un lifting de pestañas con pestañas crecidas, verás, va a ser hermoso."
+    },
+    promisedResults: {
+      fr: ["Cils naturellement longs", "Cheveux protégés", "Regard intense sans maquillage"],
+      en: ["Naturally long lashes", "Protected hair", "Intense look without makeup"],
+      es: ["Pestañas naturalmente largas", "Cabello protegido", "Mirada intensa sin maquillaje"]
+    },
+    gloweeMessage: {
+      fr: "Tu vas grave voir des résultats.",
+      en: "You're going to seriously see results.",
+      es: "Vas a ver resultados serios."
     },
     subtasks: [
       {

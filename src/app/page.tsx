@@ -5742,55 +5742,15 @@ isActionCompleted,
         <DrawerContent className="max-w-lg mx-auto bg-cream-100 border-none rounded-t-3xl">
           <DrawerHeader className="border-b border-stone-200 pb-4">
             <DrawerTitle className="text-center text-xl font-bold text-navy-900">
-              {language === 'fr' ? 'Choisir un challenge' : language === 'en' ? 'Choose a challenge' : 'Elegir un desafío'}
+              {language === 'fr' ? 'Challenge Beauté & Corps' : language === 'en' ? 'Beauty & Body Challenge' : 'Desafío Belleza & Cuerpo'}
             </DrawerTitle>
             <DrawerDescription className="text-center text-sm text-stone-600">
-              {language === 'fr' ? 'Sélectionne le challenge que tu veux suivre' : language === 'en' ? 'Select the challenge you want to follow' : 'Selecciona el desafío que quieres seguir'}
+              {language === 'fr' ? '30 jours pour un glow up complet' : language === 'en' ? '30 days for a complete glow up' : '30 días para un glow up completo'}
             </DrawerDescription>
           </DrawerHeader>
 
           <div className="p-5 space-y-3">
-            {/* Mind & Life Option */}
-            <button
-              onClick={() => {
-                setSelectedChallenge('mind-life');
-                setShowChallengeDrawer(false);
-              }}
-              className={`w-full p-4 rounded-2xl border-none shadow-soft transition-all hover:scale-[1.02] relative overflow-hidden ${
-                selectedChallenge === 'mind-life'
-                  ? 'bg-gradient-to-br from-soft-purple-200 to-soft-purple-400'
-                  : 'bg-gradient-to-br from-soft-purple-100 to-soft-purple-200'
-              }`}
-            >
-              {/* Emoji décoratif */}
-              <div className="absolute top-2 right-2 text-5xl opacity-20">
-                🎯
-              </div>
-
-              <div className="flex items-start gap-3 relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center flex-shrink-0">
-                  <span className="text-2xl">🌱</span>
-                </div>
-                <div className="flex-1 text-left">
-                  <h3 className="text-lg font-bold mb-1 text-navy-900">
-                    {t.challengeSelection.mindLifeTitle}
-                  </h3>
-                  <p className="text-xs text-navy-800 leading-relaxed">
-                    {t.challengeSelection.mindLifeDesc}
-                  </p>
-                  {selectedChallenge === 'mind-life' && (
-                    <div className="mt-2 flex items-center gap-1.5 text-soft-purple-500">
-                      <Check className="w-4 h-4" />
-                      <span className="text-xs font-semibold">
-                        {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desafío activo'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </button>
-
-            {/* Beauty & Body Option */}
+            {/* Beauty & Body Option - Seul challenge disponible */}
             <button
               onClick={() => {
                 setSelectedChallenge('beauty-body');

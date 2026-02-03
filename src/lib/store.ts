@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from './translations';
 
-export type View = 'language-selection' | 'presentation' | 'presentation-1' | 'presentation-2' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-3' | 'goal-setup-1';
+export type View = 'language-selection' | 'presentation' | 'presentation-1' | 'presentation-2' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-3' | 'goal-setup-1' | 'flow-proposition' | 'flow-description' | 'flow-challenge';
 export type ChallengeType = 'mind-life' | 'beauty-body';
 
 interface ChallengeProgress {
@@ -48,6 +48,48 @@ interface VisionBoardImage {
   url: string;
   caption: string;
 }
+
+
+// Personalized Flow System
+interface FlowAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  isMandatory: boolean;
+  isCompleted?: boolean;
+}
+
+interface FlowDay {
+  day: number;
+  title: string;
+  mandatoryActions: FlowAction[];
+  choiceActions: FlowAction[];
+  completed: boolean;
+  selectedChoiceId?: string;
+}
+
+interface PersonalizedFlow {
+  id: string;
+  objective: string;
+  objectiveDescription: string;
+  days: FlowDay[];
+  currentDay: number;
+  completedDays: number[];
+  startDate: string;
+  isActive: boolean;
+  badges: string[];
+}
+
+interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  condition: string;
+  unlockedAt?: string;
+}
+
 
 interface WeeklyBonusProgress {
   sectionId: string;
@@ -232,6 +274,19 @@ interface AppState {
   toggleBeautySubtask: (date: string, subtaskId: string) => void;
   getBeautyProgressForDate: (date: string) => BeautyPillarsProgress[string] | undefined;
   validateBeautyDate: (date: string) => void;
+
+  // Personalized Flow
+  personalizedFlow: PersonalizedFlow | null;
+  flowDescription: string;
+  isGeneratingFlow: boolean;
+  setPersonalizedFlow: (flow: PersonalizedFlow | null) => void;
+  setFlowDescription: (description: string) => void;
+  setIsGeneratingFlow: (isGenerating: boolean) => void;
+  completeFlowDay: (day: number) => void;
+  toggleFlowAction: (day: number, actionId: string) => void;
+  selectFlowChoice: (day: number, choiceId: string) => void;
+  generatePersonalizedFlow: (objective: string, description: string) => Promise<void>;
+  unlockBadge: (badgeId: string) => void;
 }
 
 // Helper function to get week number
@@ -847,6 +902,11 @@ export const useStore = create<AppState>()(
       beautyPillarsProgress: {},
       beautyValidatedDates: [],
 
+      // Personalized Flow
+      personalizedFlow: null,
+      flowDescription: "",
+      isGeneratingFlow: false,
+
       validateBeautyDate: (date) => {
         const { beautyValidatedDates } = get();
         if (!beautyValidatedDates.includes(date)) {
@@ -920,6 +980,152 @@ export const useStore = create<AppState>()(
 
       getBeautyProgressForDate: (date) => {
         return get().beautyPillarsProgress[date];
+      },
+
+      // Personalized Flow Functions
+      setPersonalizedFlow: (flow) => set({ personalizedFlow: flow }),
+      setFlowDescription: (description) => set({ flowDescription: description }),
+      setIsGeneratingFlow: (isGenerating) => set({ isGeneratingFlow: isGenerating }),
+
+      completeFlowDay: (day) => {
+        const { personalizedFlow } = get();
+        if (!personalizedFlow) return;
+
+        const today = new Date().toISOString().split('T')[0];
+        const updatedDays = personalizedFlow.days.map((d) =>
+          d.day === day ? { ...d, completed: true } : d
+        );
+        const newCompletedDays = [...personalizedFlow.completedDays, day].sort((a, b) => a - b);
+        const nextDay = updatedDays.find((d) => !d.completed)?.day || day;
+
+        set({
+          personalizedFlow: {
+            ...personalizedFlow,
+            days: updatedDays,
+            currentDay: nextDay,
+            completedDays: newCompletedDays
+          }
+        });
+      },
+
+      toggleFlowAction: (day, actionId) => {
+        const { personalizedFlow } = get();
+        if (!personalizedFlow) return;
+
+        const updatedDays = personalizedFlow.days.map((d) => {
+          if (d.day !== day) return d;
+
+          const updateActions = (actions: FlowAction[]) =>
+            actions.map((a) =>
+              a.id === actionId ? { ...a, isCompleted: !a.isCompleted } : a
+            );
+
+          return {
+            ...d,
+            mandatoryActions: updateActions(d.mandatoryActions),
+            choiceActions: updateActions(d.choiceActions)
+          };
+        });
+
+        set({
+          personalizedFlow: {
+            ...personalizedFlow,
+            days: updatedDays
+          }
+        });
+      },
+
+      selectFlowChoice: (day, choiceId) => {
+        const { personalizedFlow } = get();
+        if (!personalizedFlow) return;
+
+        const updatedDays = personalizedFlow.days.map((d) =>
+          d.day === day ? { ...d, selectedChoiceId: choiceId } : d
+        );
+
+        set({
+          personalizedFlow: {
+            ...personalizedFlow,
+            days: updatedDays
+          }
+        });
+      },
+
+      generatePersonalizedFlow: async (objective, description) => {
+        set({ isGeneratingFlow: true });
+        try {
+          // Simulate API call - replace with actual AI generation
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          const today = new Date().toISOString().split('T')[0];
+          const newFlow: PersonalizedFlow = {
+            id: crypto.randomUUID(),
+            objective,
+            objectiveDescription: description,
+            days: Array.from({ length: 30 }, (_, i) => ({
+              day: i + 1,
+              title: `Day ${i + 1}: ${objective}`,
+              mandatoryActions: [
+                {
+                  id: `action-${i + 1}-1`,
+                  title: 'Morning reflection',
+                  description: 'Take 5 minutes to reflect on your goal',
+                  icon: 'sun',
+                  isMandatory: true,
+                  isCompleted: false
+                }
+              ],
+              choiceActions: [
+                {
+                  id: `choice-${i + 1}-1`,
+                  title: 'Option A: Deep work session',
+                  description: 'Focus on your goal for 30 minutes',
+                  icon: 'target',
+                  isMandatory: false,
+                  isCompleted: false
+                },
+                {
+                  id: `choice-${i + 1}-2`,
+                  title: 'Option B: Learning time',
+                  description: 'Read or learn something related to your goal',
+                  icon: 'book',
+                  isMandatory: false,
+                  isCompleted: false
+                }
+              ],
+              completed: false
+            })),
+            currentDay: 1,
+            completedDays: [],
+            startDate: today,
+            isActive: true,
+            badges: []
+          };
+
+          set({
+            personalizedFlow: newFlow,
+            flowDescription: description,
+            isGeneratingFlow: false
+          });
+        } catch (error) {
+          console.error('Error generating flow:', error);
+          set({ isGeneratingFlow: false });
+          throw error;
+        }
+      },
+
+      unlockBadge: (badgeId) => {
+        const { personalizedFlow } = get();
+        if (!personalizedFlow) return;
+
+        if (!personalizedFlow.badges.includes(badgeId)) {
+          set({
+            personalizedFlow: {
+              ...personalizedFlow,
+              badges: [...personalizedFlow.badges, badgeId]
+            }
+          });
+        }
       }
     }),
     {

@@ -138,7 +138,17 @@ isActionCompleted,
     objectifPrincipal,
     setObjectifsInitiaux,
     setObjectifsPrioritaires,
-    setObjectifPrincipal
+    setObjectifPrincipal,
+    // Personalized Flow
+    personalizedFlow,
+    setPersonalizedFlow,
+    setFlowDescription,
+    setIsGeneratingFlow,
+    completeFlowDay,
+    toggleFlowAction,
+    selectFlowChoice,
+    generatePersonalizedFlow,
+    unlockBadge
   } = useStore();
 
   const { t } = useTranslation();
@@ -2041,9 +2051,159 @@ isActionCompleted,
         objectifsPrioritaires={objectifsPrioritaires}
         onStart={(objectifPrincipal) => {
           setObjectifPrincipal(objectifPrincipal);
-          startChallenge();
+          setCurrentView('flow-proposition');
         }}
       />
+    );
+  }
+
+  // Page de proposition de Flow - Page 1
+  if (currentView === 'flow-proposition') {
+    const title = language === 'fr' ? 'Un pas de plus vers ton objectif' : language === 'en' ? 'One step closer to your goal' : 'Un paso más hacia tu objetivo';
+    const description1 = language === 'fr' ? 'Tu as choisi de te concentrer sur :' : language === 'en' ? 'You chose to focus on:' : 'Elegiste concentrarte en:';
+    const description2 = language === 'fr' ? 'Souhaites-tu passer à l\'action avec un Flow de 30 jours ?' : language === 'en' ? 'Do you want to take action with a 30-day Flow?' : '¿Quieres pasar a la acción con un Flow de 30 días?';
+    const description3 = language === 'fr' ? '3 petites actions par jour pour avancer vers ton objectif' : language === 'en' ? '3 small actions per day to move toward your goal' : '3 pequeñas acciones por día para avanzar hacia tu objetivo';
+    const yesButton = language === 'fr' ? 'Oui, je veux essayer' : language === 'en' ? 'Yes, I want to try' : 'Sí, quiero probar';
+    const noButton = language === 'fr' ? 'Pas maintenant' : language === 'en' ? 'Not now' : 'Ahora no';
+    
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-white">
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          {/* Titre */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+              {title}
+            </h1>
+          </div>
+
+          {/* Objectif principal affiché */}
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 shadow-sm border-2 border-pink-200">
+            <p className="text-sm text-pink-600 font-medium mb-2">{description1}</p>
+            <p className="text-xl font-bold text-gray-800">"{objectifPrincipal}"</p>
+          </div>
+
+          {/* Description du Flow */}
+          <div className="text-center space-y-2">
+            <p className="text-lg text-gray-700 font-medium">
+              {description2}
+            </p>
+            <p className="text-sm text-gray-500">
+              {description3}
+            </p>
+          </div>
+
+          {/* Boutons */}
+          <div className="space-y-4">
+            <Button
+              onClick={() => setCurrentView('flow-description')}
+              className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+            >
+              {yesButton}
+              <ChevronRight className="ml-2 w-5 h-5" />
+            </Button>
+            
+            <Button
+              onClick={() => startChallenge()}
+              variant="outline"
+              className="w-full h-14 text-lg text-gray-600 font-medium rounded-2xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
+            >
+              {noButton}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Page de description du Flow - Page A (saisie de l'objectif)
+  if (currentView === 'flow-description') {
+    const title = language === 'fr' ? 'Parfait, dis-nous en un peu plus' : language === 'en' ? 'Perfect, tell us a bit more' : 'Perfecto, cuéntanos un poco más';
+    const subtitle = language === 'fr' ? 'Sur ton objectif et ta situation actuelle...' : language === 'en' ? 'About your goal and current situation...' : 'Sobre tu objetivo y tu situación actual...';
+    const placeholder = language === 'fr' ? 'Ex: Je veux améliorer ma confiance en moi car je me sens souvent anxieux en public...' : language === 'en' ? 'Ex: I want to improve my self-confidence because I often feel anxious in public...' : 'Ej: Quiero mejorar mi confianza porque a menudo me siento ansioso en público...';
+    const createButton = language === 'fr' ? 'Créer mon Flow' : language === 'en' ? 'Create my Flow' : 'Crear mi Flow';
+    const backButton = language === 'fr' ? 'Retour' : language === 'en' ? 'Back' : 'Volver';
+    
+    const [flowDescription, setFlowDescription] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-white">
+        <div className="flex-1 flex flex-col max-w-md mx-auto w-full space-y-6 pt-8">
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg shadow-pink-200/50">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {title}
+            </h1>
+            <p className="text-gray-600">
+              {subtitle}
+            </p>
+          </div>
+
+          {/* Champ de saisie */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              {language === 'fr' ? 'Décris ton objectif et ta situation' : language === 'en' ? 'Describe your goal and situation' : 'Describe tu objetivo y tu situación'}
+            </label>
+            <textarea
+              value={flowDescription}
+              onChange={(e) => setFlowDescription(e.target.value)}
+              placeholder={placeholder}
+              className="w-full h-40 p-4 rounded-2xl bg-gray-50 border-2 border-gray-200 focus:border-pink-400 focus:outline-none text-gray-800 resize-none"
+            />
+          </div>
+
+          {/* Objectif affiché */}
+          <div className="bg-pink-50 rounded-xl p-4">
+            <p className="text-xs text-pink-600 font-medium mb-1">
+              {language === 'fr' ? 'Ton objectif principal' : language === 'en' ? 'Your main goal' : 'Tu objetivo principal'}
+            </p>
+            <p className="font-medium text-gray-800">{objectifPrincipal}</p>
+          </div>
+
+          {/* Boutons */}
+          <div className="pt-4 space-y-3">
+            <Button
+              onClick={() => {
+                setIsGenerating(true);
+                // Ici on générera le Flow avec l'IA
+                setTimeout(() => {
+                  setIsGenerating(false);
+                  startChallenge();
+                }, 2000);
+              }}
+              disabled={!flowDescription.trim() || isGenerating}
+              className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
+                flowDescription.trim() && !isGenerating
+                  ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              {isGenerating ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  {language === 'fr' ? 'Préparation de ton Flow...' : language === 'en' ? 'Preparing your Flow...' : 'Preparando tu Flow...'}
+                </span>
+              ) : (
+                <>
+                  {createButton}
+                  <ChevronRight className="ml-2 w-5 h-5" />
+                </>
+              )}
+            </Button>
+            
+            <Button
+              onClick={() => setCurrentView('flow-proposition')}
+              variant="outline"
+              className="w-full h-12 text-gray-600 font-medium rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
+            >
+              {backButton}
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   }
 

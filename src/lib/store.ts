@@ -179,6 +179,7 @@ interface AppState {
   language: Language;
   setLanguage: (language: Language) => void;
   hasSelectedLanguage: boolean;
+  confirmLanguageSelection: () => void;
 
   // 50 Things Alone
   completedThingsAlone: number[];
@@ -499,8 +500,9 @@ export const useStore = create<AppState>()(
       notificationsEnabled: true,
       setNotificationsEnabled: (enabled) => set({ notificationsEnabled: enabled }),
       language: 'fr',
-      setLanguage: (language) => set({ language, hasSelectedLanguage: true }),
+      setLanguage: (language) => set({ language }),
       hasSelectedLanguage: false,
+      confirmLanguageSelection: () => set({ hasSelectedLanguage: true }),
 
       // 50 Things Alone
       completedThingsAlone: [],

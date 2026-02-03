@@ -104,6 +104,7 @@ isActionCompleted,
     language,
     setLanguage,
     hasSelectedLanguage,
+    confirmLanguageSelection,
     canAccessDay,
     getCurrentUnlockedDay,
     bonusProgress,
@@ -1790,7 +1791,8 @@ isActionCompleted,
           {/* Continue Button */}
           <Button
             onClick={() => {
-              console.log('[DEBUG] Continue button clicked, setting currentView to presentation-1');
+              console.log('[DEBUG] Continue button clicked, confirming language and navigating to presentation-1');
+              confirmLanguageSelection();
               setCurrentView('presentation-1');
             }}
             className="w-full h-12 text-lg text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"

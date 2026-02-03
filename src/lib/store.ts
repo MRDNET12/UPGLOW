@@ -51,7 +51,7 @@ interface VisionBoardImage {
 
 
 // Personalized Flow System
-interface FlowAction {
+export interface FlowAction {
   id: string;
   title: string;
   description: string;
@@ -60,7 +60,7 @@ interface FlowAction {
   isCompleted?: boolean;
 }
 
-interface FlowDay {
+export interface FlowDay {
   day: number;
   title: string;
   mandatoryActions: FlowAction[];
@@ -69,7 +69,7 @@ interface FlowDay {
   selectedChoiceId?: string;
 }
 
-interface PersonalizedFlow {
+export interface PersonalizedFlow {
   id: string;
   objective: string;
   objectiveDescription: string;
@@ -81,7 +81,7 @@ interface PersonalizedFlow {
   badges: string[];
 }
 
-interface Badge {
+export interface Badge {
   id: string;
   name: string;
   description: string;

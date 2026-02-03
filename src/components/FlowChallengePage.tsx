@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Language } from '@/lib/translations';
 import { PersonalizedFlow } from '@/lib/store';
@@ -27,243 +27,482 @@ export function FlowChallengePage({
   onSelectChoice,
   onCompleteDay
 }: FlowChallengePageProps) {
+  const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
+  const [showChoiceCard, setShowChoiceCard] = useState(true);
+  
   const currentFlowDay = personalizedFlow?.days.find(d => d.day === personalizedFlow.currentDay);
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;
-  const streak = personalizedFlow?.completedDays.length || 0;
+  const completedCount = personalizedFlow?.completedDays.length || 0;
+  const currentDay = personalizedFlow?.currentDay || 1;
   
-  // Badges prédéfinis
-  const badges = [
-    { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso', icon: '👣', condition: '1 jour complété' },
-    { id: 'week-warrior', name: language === 'fr' ? 'Guerrier de la Semaine' : language === 'en' ? 'Week Warrior' : 'Guerrero de la Semana', icon: '⚡', condition: '7 jours consécutifs' },
-    { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : language === 'en' ? 'Halfway There' : 'Mitad del Camino', icon: '🎯', condition: '15 jours complétés' },
-    { id: 'consistent', name: language === 'fr' ? 'Cohérent' : language === 'en' ? 'Consistent' : 'Consistente', icon: '🔥', condition: '21 jours complétés' },
-    { id: 'flow-master', name: language === 'fr' ? 'Maître du Flow' : language === 'en' ? 'Flow Master' : 'Maestro del Flow', icon: '👑', condition: '30 jours complétés' },
-    { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : language === 'en' ? 'Early Bird' : 'Madrugador', icon: '🌅', condition: '5 matinées productives' },
-    { id: 'night-owl', name: language === 'fr' ? 'Hibou de Nuit' : language === 'en' ? 'Night Owl' : 'Búho Nocturno', icon: '🌙', condition: '5 soirées productives' },
-    { id: 'action-hero', name: language === 'fr' ? 'Héros d\'Action' : language === 'en' ? 'Action Hero' : 'Héroe de Acción', icon: '🦸', condition: '50 actions complétées' },
-    { id: 'choice-maker', name: language === 'fr' ? 'Décideur' : language === 'en' ? 'Choice Maker' : 'Tomador de Decisiones', icon: '✨', condition: '20 choix effectués' },
-    { id: 'perfectionist', name: language === 'fr' ? 'Perfectionniste' : language === 'en' ? 'Perfectionist' : 'Perfeccionista', icon: '💎', condition: '10 jours parfaits' },
-    { id: 'comeback', name: language === 'fr' ? 'Retour en Force' : language === 'en' ? 'Comeback' : 'Regreso', icon: '🚀', condition: 'Reprise après pause' },
-    { id: 'speed-demon', name: language === 'fr' ? 'Démon de Vitesse' : language === 'en' ? 'Speed Demon' : 'Demonio de Velocidad', icon: '⚡', condition: '3 jours avant 9h' },
-    { id: 'weekend-warrior', name: language === 'fr' ? 'Guerrier du Weekend' : language === 'en' ? 'Weekend Warrior' : 'Guerrero de Fin de Semana', icon: '🏆', condition: 'Weekend complété' },
-    { id: 'reflection', name: language === 'fr' ? 'Réfléchi' : language === 'en' ? 'Reflective' : 'Reflexivo', icon: '🤔', condition: '10 notes écrites' },
-    { id: 'champion', name: language === 'fr' ? 'Champion' : language === 'en' ? 'Champion' : 'Campeón', icon: '🏅', condition: 'Flow 30 jours terminé' }
+  // Traductions
+  const t = {
+    flow: language === 'fr' ? 'Flow' : language === 'en' ? 'Flow' : 'Flow',
+    progression: language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso',
+    badges: language === 'fr' ? 'Badges' : language === 'en' ? 'Badges' : 'Insignias',
+    day: language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día',
+    validate: language === 'fr' ? 'Valider le jour' : language === 'en' ? 'Complete day' : 'Completar día',
+    or: language === 'fr' ? 'ou' : language === 'en' ? 'or' : 'o',
+    mandatory: language === 'fr' ? 'Obligatoire' : language === 'en' ? 'Mandatory' : 'Obligatorio',
+    choice: language === 'fr' ? 'Au choix' : language === 'en' ? 'Choose one' : 'A elegir',
+    walkTitle: language === 'fr' ? 'Marcher 30 min OU sport' : language === 'en' ? 'Walk 30 min OR exercise' : 'Caminar 30 min O ejercicio',
+    walkDesc: language === 'fr' ? 'Le sport remplace la marche ce jour-là' : language === 'en' ? 'Exercise replaces the walk on that day' : 'El ejercicio reemplaza la caminata ese día',
+    massageTitle: language === 'fr' ? 'Massage visage' : language === 'en' ? 'Face massage' : 'Masaje facial',
+    massageDesc: language === 'fr' ? 'Stimule la circulation sanguine et donne bonne mine' : language === 'en' ? 'Stimulates blood circulation and gives a healthy glow' : 'Estimula la circulación sanguínea y da buen aspecto',
+    gestureTitle: language === 'fr' ? '1 geste pour toi' : language === 'en' ? '1 gesture for you' : '1 gesto para ti',
+    gestureSubtitle: language === 'fr' ? 'Choisis ton rituel beauté' : language === 'en' ? 'Choose your beauty ritual' : 'Elige tu ritual de belleza',
+    dryBrush: language === 'fr' ? 'Brossage à sec' : language === 'en' ? 'Dry brushing' : 'Cepillado en seco',
+    bodyCream: language === 'fr' ? 'Crème corps' : language === 'en' ? 'Body cream' : 'Crema corporal',
+    hair: language === 'fr' ? 'Soin cheveux' : language === 'en' ? 'Hair care' : 'Cuidado del cabello',
+  };
+
+  // Actions par défaut si pas de Flow généré
+  const mandatoryActions = [
+    { 
+      id: 'walk-sport', 
+      title: t.walkTitle, 
+      description: t.walkDesc,
+      icon: '🚶‍♀️',
+      isCompleted: currentFlowDay?.mandatoryActions.find(a => a.id === 'walk-sport')?.isCompleted || false
+    },
+    { 
+      id: 'face-massage', 
+      title: t.massageTitle, 
+      description: t.massageDesc,
+      icon: '💆‍♀️',
+      isCompleted: currentFlowDay?.mandatoryActions.find(a => a.id === 'face-massage')?.isCompleted || false
+    }
   ];
-  
+
+  const choiceActions = [
+    { id: 'dry-brushing', title: t.dryBrush, icon: '🧽', description: 'Exfoliation naturelle' },
+    { id: 'body-cream', title: t.bodyCream, icon: '🧴', description: 'Hydratation profonde' },
+    { id: 'hair-care', title: t.hair, icon: '✨', description: 'Masque nourrissant' }
+  ];
+
+  const selectedChoiceId = currentFlowDay?.selectedChoiceId || '';
+  const isWalkCompleted = mandatoryActions[0].isCompleted;
+  const isMassageCompleted = mandatoryActions[1].isCompleted;
+  const isChoiceCompleted = !!selectedChoiceId;
+  const canCompleteDay = isWalkCompleted && isMassageCompleted && isChoiceCompleted;
+
+  // Section Flow
+  const renderFlowSection = () => (
+    <div className="space-y-4 pb-24">
+      {/* Header du jour */}
+      <div className="text-center mb-6">
+        <Badge className="bg-pink-100 text-pink-700 mb-2">
+          {t.day} {currentDay} / 30
+        </Badge>
+        <h2 className="text-2xl font-bold text-gray-800">
+          {personalizedFlow?.objective || objectifPrincipal}
+        </h2>
+      </div>
+
+      {/* Action 1: Marche/Sport */}
+      <Card 
+        className={`border-2 cursor-pointer transition-all ${
+          isWalkCompleted 
+            ? 'border-green-400 bg-green-50' 
+            : 'border-gray-200 hover:border-pink-300'
+        }`}
+        onClick={() => onToggleAction(currentDay, 'walk-sport')}
+      >
+        <CardContent className="p-4">
+          <div className="flex items-start gap-4">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+              isWalkCompleted ? 'bg-green-500' : 'bg-pink-100'
+            }`}>
+              {isWalkCompleted ? <Check className="w-6 h-6 text-white" /> : <span>🚶‍♀️</span>}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className={`font-bold ${isWalkCompleted ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                  {t.walkTitle}
+                </h3>
+                <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
+                  {t.mandatory}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-600">{t.walkDesc}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action 2: Massage visage */}
+      <Card 
+        className={`border-2 cursor-pointer transition-all ${
+          isMassageCompleted 
+            ? 'border-green-400 bg-green-50' 
+            : 'border-gray-200 hover:border-pink-300'
+        }`}
+        onClick={() => onToggleAction(currentDay, 'face-massage')}
+      >
+        <CardContent className="p-4">
+          <div className="flex items-start gap-4">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+              isMassageCompleted ? 'bg-green-500' : 'bg-pink-100'
+            }`}>
+              {isMassageCompleted ? <Check className="w-6 h-6 text-white" /> : <span>💆‍♀️</span>}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className={`font-bold ${isMassageCompleted ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                  {t.massageTitle}
+                </h3>
+                <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
+                  {t.mandatory}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-600">{t.massageDesc}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action 3: 1 geste pour toi (carte déroulante) */}
+      <Card className="border-2 border-pink-300 overflow-hidden">
+        <CardContent className="p-0">
+          {/* Header de la carte déroulante */}
+          <div 
+            className="p-4 bg-gradient-to-r from-pink-50 to-rose-50 cursor-pointer"
+            onClick={() => setShowChoiceCard(!showChoiceCard)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+                  isChoiceCompleted ? 'bg-green-500' : 'bg-pink-200'
+                }`}>
+                  {isChoiceCompleted ? <Check className="w-6 h-6 text-white" /> : <Sparkles className="w-6 h-6 text-pink-600" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-gray-800">{t.gestureTitle}</h3>
+                    <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
+                      {t.choice}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-600">{t.gestureSubtitle}</p>
+                </div>
+              </div>
+              {showChoiceCard ? <ChevronUp className="w-5 h-5 text-pink-500" /> : <ChevronDown className="w-5 h-5 text-pink-500" />}
+            </div>
+          </div>
+
+          {/* Contenu déroulant */}
+          {showChoiceCard && (
+            <div className="p-4 space-y-3 bg-white">
+              <p className="text-sm text-gray-500 mb-3">
+                {language === 'fr' ? 'Sélectionne un rituel beauté pour aujourd\'hui :' : language === 'en' ? 'Select a beauty ritual for today:' : 'Selecciona un ritual de belleza para hoy:'}
+              </p>
+              {choiceActions.map((action) => (
+                <div
+                  key={action.id}
+                  onClick={() => {
+                    onSelectChoice(currentDay, action.id);
+                    onToggleAction(currentDay, action.id);
+                  }}
+                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border-2 ${
+                    selectedChoiceId === action.id
+                      ? 'border-pink-400 bg-pink-50' 
+                      : 'border-gray-200 hover:border-pink-200'
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
+                    selectedChoiceId === action.id ? 'bg-pink-500 text-white' : 'bg-gray-100'
+                  }`}>
+                    {selectedChoiceId === action.id ? <Check className="w-5 h-5" /> : <span>{action.icon}</span>}
+                  </div>
+                  <div className="flex-1">
+                    <p className={`font-medium ${selectedChoiceId === action.id ? 'text-pink-700' : 'text-gray-800'}`}>
+                      {action.title}
+                    </p>
+                    <p className="text-xs text-gray-500">{action.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Bouton Valider */}
+      <div className="fixed bottom-20 left-4 right-4 max-w-md mx-auto">
+        <Button
+          onClick={() => onCompleteDay(currentDay)}
+          disabled={!canCompleteDay}
+          className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
+            canCompleteDay
+              ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          }`}
+        >
+          {t.validate}
+          {canCompleteDay && <Check className="ml-2 w-5 h-5" />}
+        </Button>
+      </div>
+    </div>
+  );
+
+  // Section Progression
+  const renderProgressionSection = () => (
+    <div className="space-y-6 pb-24">
+      {/* Cercle de progression principal */}
+      <Card className="border-none shadow-lg bg-gradient-to-br from-pink-50 to-rose-50">
+        <CardContent className="p-6 text-center">
+          <div className="relative w-40 h-40 mx-auto mb-4">
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke="#fce7f3"
+                strokeWidth="8"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke="url(#gradient)"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeDasharray={`${progressPercent * 2.83} 283`}
+                className="transition-all duration-1000"
+              />
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#f472b6" />
+                  <stop offset="100%" stopColor="#e11d48" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-4xl font-bold text-pink-600">{progressPercent}%</span>
+              <span className="text-xs text-gray-500 mt-1">
+                {completedCount}/30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
+              </span>
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-gray-800 mb-1">
+            {language === 'fr' ? 'Tu avances bien !' : language === 'en' ? 'You\'re doing great!' : '¡Vas muy bien!'}
+          </h3>
+          <p className="text-gray-600">
+            {language === 'fr' 
+              ? `Encore ${30 - completedCount} jours pour atteindre ton objectif` 
+              : language === 'en' 
+                ? `${30 - completedCount} more days to reach your goal`
+                : `${30 - completedCount} días más para alcanzar tu objetivo`}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Stats en grille */}
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="border-none shadow-md bg-gradient-to-br from-orange-50 to-yellow-50">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">🔥</div>
+            <p className="text-3xl font-bold text-orange-600">{completedCount}</p>
+            <p className="text-xs text-gray-600">
+              {language === 'fr' ? 'Jours d\'affilée' : language === 'en' ? 'Streak days' : 'Días consecutivos'}
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-none shadow-md bg-gradient-to-br from-blue-50 to-indigo-50">
+          <CardContent className="p-4 text-center">
+            <div className="text-3xl mb-2">⭐</div>
+            <p className="text-3xl font-bold text-blue-600">
+              {Math.round(completedCount * 3)}
+            </p>
+            <p className="text-xs text-gray-600">
+              {language === 'fr' ? 'Actions complétées' : language === 'en' ? 'Actions completed' : 'Acciones completadas'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Timeline des jours */}
+      <Card className="border-none shadow-md">
+        <CardContent className="p-4">
+          <h4 className="font-bold text-gray-800 mb-4">
+            {language === 'fr' ? 'Ta timeline' : language === 'en' ? 'Your timeline' : 'Tu línea de tiempo'}
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
+              const isCompleted = personalizedFlow?.completedDays.includes(day);
+              const isCurrent = day === currentDay;
+              return (
+                <div
+                  key={day}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                    isCompleted 
+                      ? 'bg-green-500 text-white' 
+                      : isCurrent 
+                        ? 'bg-pink-500 text-white ring-4 ring-pink-200'
+                        : 'bg-gray-100 text-gray-400'
+                  }`}
+                >
+                  {isCompleted ? <Check className="w-4 h-4" /> : day}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  // Section Badges
+  const renderBadgesSection = () => {
+    const badges = [
+      { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+      { id: 'week-warrior', name: language === 'fr' ? 'Guerrier Semaine' : language === 'en' ? 'Week Warrior' : 'Guerrero Semana', icon: '⚡', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+      { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : language === 'en' ? 'Halfway' : 'Mitad', icon: '🎯', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 15 },
+      { id: 'consistent', name: language === 'fr' ? 'Cohérent' : language === 'en' ? 'Consistent' : 'Consistente', icon: '🔥', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 21 },
+      { id: 'flow-master', name: language === 'fr' ? 'Maître Flow' : language === 'en' ? 'Flow Master' : 'Maestro Flow', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
+      { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : language === 'en' ? 'Early Bird' : 'Madrugador', icon: '🌅', color: 'from-pink-100 to-rose-200', unlocked: false },
+      { id: 'action-hero', name: language === 'fr' ? 'Héros' : language === 'en' ? 'Hero' : 'Héroe', icon: '🦸', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
+      { id: 'perfectionist', name: language === 'fr' ? 'Perfect' : language === 'en' ? 'Perfect' : 'Perfecto', icon: '💎', color: 'from-cyan-100 to-blue-200', unlocked: false },
+      { id: 'champion', name: language === 'fr' ? 'Champion' : language === 'en' ? 'Champion' : 'Campeón', icon: '🏅', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
+      { id: 'choice-maker', name: language === 'fr' ? 'Décideur' : language === 'en' ? 'Decider' : 'Decisor', icon: '✨', color: 'from-indigo-100 to-purple-200', unlocked: completedCount >= 5 },
+      { id: 'comeback', name: language === 'fr' ? 'Retour' : language === 'en' ? 'Comeback' : 'Regreso', icon: '🚀', color: 'from-red-100 to-pink-200', unlocked: false },
+      { id: 'reflection', name: language === 'fr' ? 'Réfléchi' : language === 'en' ? 'Reflective' : 'Reflexivo', icon: '🤔', color: 'from-teal-100 to-teal-200', unlocked: false },
+    ];
+
+    const unlockedCount = badges.filter(b => b.unlocked).length;
+
+    return (
+      <div className="space-y-6 pb-24">
+        {/* Header badges */}
+        <div className="text-center">
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            {language === 'fr' ? 'Tes Badges' : language === 'en' ? 'Your Badges' : 'Tus Insignias'}
+          </h3>
+          <p className="text-gray-600">
+            {unlockedCount} / {badges.length} {language === 'fr' ? 'débloqués' : language === 'en' ? 'unlocked' : 'desbloqueados'}
+          </p>
+          <div className="w-full bg-gray-200 rounded-full h-3 mt-3 max-w-xs mx-auto">
+            <div 
+              className="bg-gradient-to-r from-pink-400 to-rose-500 h-3 rounded-full transition-all duration-500"
+              style={{ width: `${(unlockedCount / badges.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Grille de badges */}
+        <div className="grid grid-cols-3 gap-3">
+          {badges.map((badge) => (
+            <div
+              key={badge.id}
+              className={`p-4 rounded-2xl text-center transition-all ${
+                badge.unlocked 
+                  ? `bg-gradient-to-br ${badge.color} shadow-lg scale-100` 
+                  : 'bg-gray-100 opacity-50 grayscale'
+              }`}
+            >
+              <div className="text-4xl mb-2">{badge.icon}</div>
+              <p className={`text-xs font-bold leading-tight ${badge.unlocked ? 'text-gray-800' : 'text-gray-500'}`}>
+                {badge.name}
+              </p>
+              {badge.unlocked && (
+                <div className="mt-2">
+                  <span className="text-[10px] bg-white/80 px-2 py-1 rounded-full text-green-600 font-bold">
+                    ✓ {language === 'fr' ? 'Débloqué' : language === 'en' ? 'Unlocked' : 'Desbloqueado'}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Message d'encouragement */}
+        {unlockedCount === 0 && (
+          <Card className="bg-gradient-to-r from-pink-50 to-rose-50 border-pink-200">
+            <CardContent className="p-4 text-center">
+              <p className="text-gray-700">
+                {language === 'fr' 
+                  ? '🎯 Complète ton premier jour pour débloquer ton premier badge !' 
+                  : language === 'en' 
+                    ? '🎯 Complete your first day to unlock your first badge!'
+                    : '🎯 ¡Completa tu primer día para desbloquear tu primera insignia!'}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-pink-400 to-rose-500 p-6 pb-8">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-gradient-to-r from-pink-400 to-rose-500 p-4 pb-6">
+        <div className="flex items-center mb-4">
           <button 
             onClick={onBack}
             className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all"
           >
-            <ChevronRight className="w-6 h-6 text-white rotate-180" />
+            <ChevronLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="text-xl font-bold text-white">
-            {language === 'fr' ? 'Mon Flow' : language === 'en' ? 'My Flow' : 'Mi Flow'}
+          <h1 className="text-xl font-bold text-white ml-3">
+            {personalizedFlow?.objective || objectifPrincipal}
           </h1>
-          <div className="w-10" />
         </div>
         
-        <div className="text-center">
-          <p className="text-pink-100 text-sm mb-1">
-            {language === 'fr' ? 'Objectif' : language === 'en' ? 'Goal' : 'Objetivo'}
-          </p>
-          <p className="text-white text-lg font-bold">
-            {personalizedFlow?.objective || objectifPrincipal}
-          </p>
+        {/* Badge de progression */}
+        <div className="flex items-center justify-between">
+          <Badge className="bg-white/20 text-white border-none">
+            <Flame className="w-4 h-4 mr-1" />
+            {completedCount} {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
+          </Badge>
+          <span className="text-white/80 text-sm">
+            {currentDay}/30
+          </span>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-4 py-6 -mt-4 bg-white rounded-t-3xl">
-        <div className="max-w-md mx-auto space-y-6">
+      {/* Content avec padding pour la barre de nav */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {activeTab === 'flow' && renderFlowSection()}
+        {activeTab === 'progression' && renderProgressionSection()}
+        {activeTab === 'badges' && renderBadgesSection()}
+      </div>
+
+      {/* Barre de navigation en bas */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div className="max-w-md mx-auto flex items-center justify-around">
+          <button
+            onClick={() => setActiveTab('flow')}
+            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
+              activeTab === 'flow' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
+            }`}
+          >
+            <Target className="w-6 h-6 mb-1" />
+            <span className="text-xs font-medium">{t.flow}</span>
+          </button>
           
-          {/* Section 1: Flow du jour */}
-          <Card className="border-none shadow-lg shadow-pink-100/50 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-pink-50 to-rose-50 pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-bold text-gray-800">
-                  {language === 'fr' ? `Jour ${personalizedFlow?.currentDay || 1} / 30` : language === 'en' ? `Day ${personalizedFlow?.currentDay || 1} / 30` : `Día ${personalizedFlow?.currentDay || 1} / 30`}
-                </CardTitle>
-                <Badge className="bg-pink-500 text-white">
-                  {personalizedFlow?.currentDay === 1 
-                    ? (language === 'fr' ? 'Commencer' : language === 'en' ? 'Start' : 'Comenzar')
-                    : (language === 'fr' ? 'En cours' : language === 'en' ? 'In progress' : 'En progreso')
-                  }
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3">
-              {currentFlowDay ? (
-                <>
-                  <p className="text-sm font-medium text-gray-700 mb-3">
-                    {currentFlowDay.title}
-                  </p>
-                  
-                  {/* Actions obligatoires */}
-                  <div className="space-y-2">
-                    <p className="text-xs text-gray-500 uppercase font-bold">
-                      {language === 'fr' ? 'Actions obligatoires' : language === 'en' ? 'Mandatory actions' : 'Acciones obligatorias'}
-                    </p>
-                    {currentFlowDay.mandatoryActions.map((action) => (
-                      <div 
-                        key={action.id}
-                        onClick={() => onToggleAction(personalizedFlow!.currentDay, action.id)}
-                        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
-                          action.isCompleted 
-                            ? 'bg-green-50 border-2 border-green-200' 
-                            : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
-                        }`}
-                      >
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                          action.isCompleted ? 'bg-green-500 border-green-500' : 'border-gray-300'
-                        }`}>
-                          {action.isCompleted && <Check className="w-4 h-4 text-white" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-sm font-medium ${action.isCompleted ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                            {action.icon} {action.title}
-                          </p>
-                          <p className="text-xs text-gray-500">{action.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Actions au choix */}
-                  <div className="space-y-2 mt-4">
-                    <p className="text-xs text-gray-500 uppercase font-bold">
-                      {language === 'fr' ? 'Choisis une action' : language === 'en' ? 'Choose one action' : 'Elige una acción'}
-                    </p>
-                    {currentFlowDay.choiceActions.map((action) => (
-                      <div 
-                        key={action.id}
-                        onClick={() => {
-                          onSelectChoice(personalizedFlow!.currentDay, action.id);
-                          onToggleAction(personalizedFlow!.currentDay, action.id);
-                        }}
-                        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
-                          currentFlowDay.selectedChoiceId === action.id
-                            ? 'bg-pink-50 border-2 border-pink-300' 
-                            : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-200'
-                        }`}
-                      >
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                          currentFlowDay.selectedChoiceId === action.id ? 'bg-pink-500 border-pink-500' : 'border-gray-300'
-                        }`}>
-                          {currentFlowDay.selectedChoiceId === action.id && <Check className="w-4 h-4 text-white" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-sm font-medium ${currentFlowDay.selectedChoiceId === action.id ? 'text-pink-700' : 'text-gray-700'}`}>
-                            {action.icon} {action.title}
-                          </p>
-                          <p className="text-xs text-gray-500">{action.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Bouton compléter le jour */}
-                  <Button
-                    onClick={() => onCompleteDay(personalizedFlow!.currentDay)}
-                    disabled={!currentFlowDay.mandatoryActions.every(a => a.isCompleted) || !currentFlowDay.selectedChoiceId}
-                    className={`w-full h-12 mt-4 text-base font-bold rounded-xl shadow-lg transition-all ${
-                      currentFlowDay.mandatoryActions.every(a => a.isCompleted) && currentFlowDay.selectedChoiceId
-                        ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {language === 'fr' ? 'Valider le jour' : language === 'en' ? 'Complete day' : 'Completar día'}
-                    <Check className="ml-2 w-5 h-5" />
-                  </Button>
-                </>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>{language === 'fr' ? 'Chargement du Flow...' : language === 'en' ? 'Loading Flow...' : 'Cargando Flow...'}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Section 2: Progression */}
-          <Card className="border-none shadow-md">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-bold text-gray-800">
-                {language === 'fr' ? 'Ta Progression' : language === 'en' ? 'Your Progress' : 'Tu Progreso'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Barre de progression */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">
-                    {personalizedFlow?.completedDays.length || 0} / 30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
-                  </span>
-                  <span className="font-bold text-pink-600">{progressPercent}%</span>
-                </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-pink-400 to-rose-500 rounded-full transition-all duration-500"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-pink-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-pink-600">{streak}</p>
-                  <p className="text-xs text-gray-600">
-                    {language === 'fr' ? 'Jours complétés' : language === 'en' ? 'Days completed' : 'Días completados'}
-                  </p>
-                </div>
-                <div className="bg-rose-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-rose-600">{30 - (personalizedFlow?.completedDays.length || 0)}</p>
-                  <p className="text-xs text-gray-600">
-                    {language === 'fr' ? 'Jours restants' : language === 'en' ? 'Days remaining' : 'Días restantes'}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section 3: Badges */}
-          <div className="space-y-3">
-            <h3 className="text-base font-bold text-gray-800">
-              {language === 'fr' ? 'Tes Badges' : language === 'en' ? 'Your Badges' : 'Tus Insignias'}
-              <span className="ml-2 text-sm font-normal text-gray-500">
-                ({personalizedFlow?.badges.length || 0}/15)
-              </span>
-            </h3>
-            
-            <div className="grid grid-cols-3 gap-2">
-              {badges.map((badge) => {
-                const isUnlocked = personalizedFlow?.badges.includes(badge.id);
-                return (
-                  <div 
-                    key={badge.id}
-                    className={`p-3 rounded-xl text-center transition-all ${
-                      isUnlocked 
-                        ? 'bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-yellow-300 shadow-md' 
-                        : 'bg-gray-50 border-2 border-gray-200 opacity-60'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">{badge.icon}</div>
-                    <p className={`text-xs font-medium leading-tight ${isUnlocked ? 'text-gray-800' : 'text-gray-500'}`}>
-                      {badge.name}
-                    </p>
-                    {isUnlocked && (
-                      <p className="text-[10px] text-yellow-600 mt-1">✓ {language === 'fr' ? 'Débloqué' : language === 'en' ? 'Unlocked' : 'Desbloqueado'}</p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
+          <button
+            onClick={() => setActiveTab('progression')}
+            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
+              activeTab === 'progression' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
+            }`}
+          >
+            <Flame className="w-6 h-6 mb-1" />
+            <span className="text-xs font-medium">{t.progression}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('badges')}
+            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
+              activeTab === 'badges' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
+            }`}
+          >
+            <Trophy className="w-6 h-6 mb-1" />
+            <span className="text-xs font-medium">{t.badges}</span>
+          </button>
         </div>
       </div>
     </div>

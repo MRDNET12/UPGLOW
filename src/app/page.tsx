@@ -1907,29 +1907,32 @@ isActionCompleted,
   }
 
   // Page de présentation 1: Chaque petit pas te fait avancer
-  console.log('[DEBUG] Checking currentView:', currentView, 'should render presentation-1?', currentView === 'presentation-1');
   if (currentView === 'presentation-1') {
-    console.log('[DEBUG] Rendering presentation-1 view');
+    const title = language === 'fr' ? 'Chaque petit pas te fait avancer' : language === 'en' ? 'Every small step moves you forward' : 'Cada pequeño paso te hace avanzar';
+    const description = language === 'fr' ? "Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois." : language === 'en' ? "Change doesn't happen overnight. This app guides your progress, one habit, one thought, one victory at a time." : 'El cambio no ocurre de la noche a la mañana. Esta app te acompaña en tu progreso, un hábito, un pensamiento, una victoria a la vez.';
+    const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
+    const tags = language === 'fr' ? ['Progression', 'Habitudes', 'Évolution personnelle'] : language === 'en' ? ['Progress', 'Habits', 'Personal growth'] : ['Progreso', 'Hábitos', 'Evolución personal'];
+    
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
           {/* Titre principal */}
           <div className="text-center space-y-4">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              {t.presentation1?.title || 'Chaque petit pas te fait avancer'}
+              {title}
             </h1>
           </div>
 
           {/* Texte explicatif */}
           <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed">
-              {t.presentation1?.description || 'Changer ne se fait pas d\'un coup. Cette app t\'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois.'}
+              {description}
             </p>
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
-            {(t.presentation1?.tags || ['Progression', 'Habitudes', 'Évolution personnelle']).map((tag) => (
+            {tags.map((tag) => (
               <span 
                 key={tag}
                 className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
@@ -1944,7 +1947,7 @@ isActionCompleted,
             onClick={() => setCurrentView('presentation-2')}
             className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
           >
-            {t.presentation1?.continue || 'Continuer'}
+            {continueText}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
@@ -1954,26 +1957,31 @@ isActionCompleted,
 
   // Page de présentation 2: Célèbre tes petites victoires
   if (currentView === 'presentation-2') {
+    const title = language === 'fr' ? 'Célèbre tes petites victoires' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros';
+    const description = language === 'fr' ? "Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens." : language === 'en' ? "Recognizing your progress gives you strength to continue. Here, every effort counts and brings you closer to who you're becoming." : 'Reconocer tu progreso te da fuerzas para continuar. Aquí, cada esfuerzo cuenta y te acerca a la persona que estás convirtiéndote.';
+    const startText = language === 'fr' ? 'Commencer mon évolution' : language === 'en' ? 'Start my evolution' : 'Comenzar mi evolución';
+    const tags = language === 'fr' ? ['Petits succès', 'Motivation', 'Confiance en soi'] : language === 'en' ? ['Small wins', 'Motivation', 'Self-confidence'] : ['Pequeños logros', 'Motivación', 'Confianza en ti'];
+    
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
           {/* Titre principal */}
           <div className="text-center space-y-4">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              {t.presentation2?.title || 'Célèbre tes petites victoires'}
+              {title}
             </h1>
           </div>
 
           {/* Texte explicatif */}
           <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed">
-              {t.presentation2?.description || 'Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens.'}
+              {description}
             </p>
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
-            {(t.presentation2?.tags || ['Petits succès', 'Motivation', 'Confiance en soi']).map((tag) => (
+            {tags.map((tag) => (
               <span 
                 key={tag}
                 className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
@@ -1988,7 +1996,7 @@ isActionCompleted,
             onClick={() => setCurrentView('goal-setup-5')}
             className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
           >
-            {t.presentation2?.start || 'Commencer mon évolution'}
+            {startText}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
         </div>

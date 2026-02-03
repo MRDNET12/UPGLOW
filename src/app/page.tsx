@@ -46,6 +46,7 @@ import { GoalSetup5 } from '@/components/GoalSetup5';
 import { GoalSetup3 } from '@/components/GoalSetup3';
 import { GoalSetup1 } from '@/components/GoalSetup1';
 import { FlowDescriptionPage } from '@/components/FlowDescriptionPage';
+import { FlowChallengePage } from '@/components/FlowChallengePage';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
@@ -2253,6 +2254,75 @@ isActionCompleted,
                 <ChevronRight className="w-5 h-5 rotate-180 text-pink-400" />
               </button>
             </div>
+
+            {/* Carte Flow Personnalisé - Affichée pour tous les utilisateurs */}
+            <Card
+              className={`border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-[2rem] overflow-hidden relative ${
+                personalizedFlow?.isActive 
+                  ? 'bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50' 
+                  : 'bg-gradient-to-br from-gray-100 via-gray-50 to-white border-2 border-dashed border-gray-300'
+              }`}
+              onClick={() => {
+                if (personalizedFlow?.isActive) {
+                  setCurrentView('flow-challenge');
+                } else {
+                  setCurrentView('flow-proposition');
+                }
+              }}
+            >
+              <CardContent className="p-4 relative z-10">
+                <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
+                  {personalizedFlow?.isActive ? '✨' : '🌟'}
+                </div>
+
+                <div className="mb-2">
+                  {personalizedFlow?.isActive ? (
+                    <>
+                      <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/60 backdrop-blur-sm mb-1.5">
+                        <span className="text-xs font-bold text-pink-600">
+                          {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {personalizedFlow.currentDay}/30
+                        </span>
+                      </div>
+                      <h2 className="text-lg font-bold text-gray-800 mb-1 pr-14 line-clamp-2">
+                        {personalizedFlow.objective}
+                      </h2>
+                      <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-pink-300/50">
+                        {language === 'fr' ? 'Mon Flow' : language === 'en' ? 'My Flow' : 'Mi Flow'}
+                      </Badge>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="text-lg font-bold text-gray-800 mb-2">
+                        {language === 'fr' ? 'Crée ton Flow personnalisé' : language === 'en' ? 'Create your personalized Flow' : 'Crea tu Flow personalizado'}
+                      </h2>
+                      <p className="text-xs text-gray-600 mb-2">
+                        {language === 'fr' ? 'Atteindre ses objectifs et ses rêves est le souhait de beaucoup. Les petites actions font la différence.' : language === 'en' ? 'Reaching your goals and dreams is the wish of many. Small actions make the difference.' : 'Alcanzar tus objetivos y sueños es el deseo de muchos. Las pequeñas acciones marcan la diferencia.'}
+                      </p>
+                      <Badge className="bg-gray-200 text-gray-600 text-[10px] px-2.5 py-0.5 rounded-full border-0">
+                        {language === 'fr' ? 'Clique pour commencer' : language === 'en' ? 'Click to start' : 'Haz clic para comenzar'}
+                      </Badge>
+                    </>
+                  )}
+                </div>
+
+                {personalizedFlow?.isActive && (
+                  <div className="space-y-1.5 mt-2">
+                    <div className="flex items-center justify-between text-xs text-gray-700">
+                      <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
+                      <span className="font-bold text-pink-600">
+                        {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
+                      <div
+                        className="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full transition-all duration-500 shadow-lg"
+                        style={{ width: `${(personalizedFlow.completedDays.length / 30) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
             {selectedChallenge === 'mind-life' && (

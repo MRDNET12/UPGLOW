@@ -1725,16 +1725,16 @@ isActionCompleted,
   const isOnboardingView = currentView === 'presentation-1' || currentView === 'presentation-2' || currentView === 'goal-setup-5' || currentView === 'goal-setup-3' || currentView === 'goal-setup-1';
   const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView && !isOnboardingView;
 
-  // Language Selection Screen - Emerald/Teal Design System
+  // Language Selection Screen - Clean White Design
   if (!hasSelectedLanguage) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-white">
         <div className="max-w-md w-full text-center space-y-4">
           {/* Logo avec Glowee */}
           <div className="space-y-3 animate-in fade-in duration-700">
             <div className="flex justify-center">
               <div className="relative">
-                <div className="absolute inset-0 rounded-full blur-2xl opacity-40" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}></div>
+                <div className="absolute inset-0 rounded-full blur-2xl opacity-40" style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)' }}></div>
                 <img
                   src="/Glowee/glowee-acceuillante.webp"
                   alt="Glowee"
@@ -1765,20 +1765,20 @@ isActionCompleted,
                 onClick={() => setLanguage(lang.code)}
                 className={`w-full p-3 rounded-2xl transition-all duration-300 bg-white ${
                   language === lang.code
-                    ? 'ring-2 ring-emerald-400 shadow-lg'
+                    ? 'ring-2 ring-pink-400 shadow-lg'
                     : 'shadow-sm hover:shadow-md'
                 }`}
-                style={language === lang.code ? { boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)' } : { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
+                style={language === lang.code ? { boxShadow: '0 4px 12px rgba(244, 114, 182, 0.15)' } : { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #d1fae5, #ccfbf1)' }}>
+                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #fce7f3, #fbcfe8)' }}>
                       <span className="text-2xl">{lang.flag}</span>
                     </div>
                     <span className="text-base font-bold text-gray-800">{lang.name}</span>
                   </div>
                   {language === lang.code && (
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}>
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)' }}>
                       <Check className="w-4 h-4 text-white" />
                     </div>
                   )}
@@ -1791,7 +1791,7 @@ isActionCompleted,
           <Button
             onClick={() => setCurrentView('presentation-1')}
             className="w-full h-12 text-lg text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, #34d399, #10b981)', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}
+            style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)', boxShadow: '0 4px 12px rgba(244, 114, 182, 0.25)' }}
           >
             {t.languageSelection.continue}
             <ChevronRight className="ml-2 w-5 h-5" />
@@ -1906,7 +1906,7 @@ isActionCompleted,
   // Page de présentation 1: Chaque petit pas te fait avancer
   if (currentView === 'presentation-1') {
     return (
-      <div className="min-h-screen flex flex-col p-6" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+      <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
           {/* Titre principal */}
           <div className="text-center space-y-4">
@@ -1916,7 +1916,7 @@ isActionCompleted,
           </div>
 
           {/* Texte explicatif */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed">
               {t.presentation1?.description || 'Changer ne se fait pas d\'un coup. Cette app t\'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois.'}
             </p>
@@ -1927,7 +1927,7 @@ isActionCompleted,
             {(t.presentation1?.tags || ['Progression', 'Habitudes', 'Évolution personnelle']).map((tag) => (
               <span 
                 key={tag}
-                className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
+                className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
               >
                 {tag}
               </span>
@@ -1937,7 +1937,7 @@ isActionCompleted,
           {/* Bouton Continuer */}
           <Button
             onClick={() => setCurrentView('presentation-2')}
-            className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
           >
             {t.presentation1?.continue || 'Continuer'}
             <ChevronRight className="ml-2 w-5 h-5" />
@@ -1950,7 +1950,7 @@ isActionCompleted,
   // Page de présentation 2: Célèbre tes petites victoires
   if (currentView === 'presentation-2') {
     return (
-      <div className="min-h-screen flex flex-col p-6" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+      <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
           {/* Titre principal */}
           <div className="text-center space-y-4">
@@ -1960,7 +1960,7 @@ isActionCompleted,
           </div>
 
           {/* Texte explicatif */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed">
               {t.presentation2?.description || 'Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens.'}
             </p>
@@ -1971,7 +1971,7 @@ isActionCompleted,
             {(t.presentation2?.tags || ['Petits succès', 'Motivation', 'Confiance en soi']).map((tag) => (
               <span 
                 key={tag}
-                className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
+                className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
               >
                 {tag}
               </span>
@@ -1981,7 +1981,7 @@ isActionCompleted,
           {/* Bouton Commencer */}
           <Button
             onClick={() => setCurrentView('goal-setup-5')}
-            className="w-full h-14 text-lg bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all"
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
           >
             {t.presentation2?.start || 'Commencer mon évolution'}
             <ChevronRight className="ml-2 w-5 h-5" />

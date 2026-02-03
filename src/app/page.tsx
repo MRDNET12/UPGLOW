@@ -45,6 +45,7 @@ import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
 import { GoalSetup5 } from '@/components/GoalSetup5';
 import { GoalSetup3 } from '@/components/GoalSetup3';
 import { GoalSetup1 } from '@/components/GoalSetup1';
+import { FlowDescriptionPage } from '@/components/FlowDescriptionPage';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
@@ -2117,93 +2118,16 @@ isActionCompleted,
 
   // Page de description du Flow - Page A (saisie de l'objectif)
   if (currentView === 'flow-description') {
-    const title = language === 'fr' ? 'Parfait, dis-nous en un peu plus' : language === 'en' ? 'Perfect, tell us a bit more' : 'Perfecto, cuéntanos un poco más';
-    const subtitle = language === 'fr' ? 'Sur ton objectif et ta situation actuelle...' : language === 'en' ? 'About your goal and current situation...' : 'Sobre tu objetivo y tu situación actual...';
-    const placeholder = language === 'fr' ? 'Ex: Je veux améliorer ma confiance en moi car je me sens souvent anxieux en public...' : language === 'en' ? 'Ex: I want to improve my self-confidence because I often feel anxious in public...' : 'Ej: Quiero mejorar mi confianza porque a menudo me siento ansioso en público...';
-    const createButton = language === 'fr' ? 'Créer mon Flow' : language === 'en' ? 'Create my Flow' : 'Crear mi Flow';
-    const backButton = language === 'fr' ? 'Retour' : language === 'en' ? 'Back' : 'Volver';
-    
-    const [flowDescription, setFlowDescription] = useState('');
-    const [isGenerating, setIsGenerating] = useState(false);
-    
     return (
-      <div className="min-h-screen flex flex-col p-6 bg-white">
-        <div className="flex-1 flex flex-col max-w-md mx-auto w-full space-y-6 pt-8">
-          {/* Header */}
-          <div className="text-center space-y-3">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg shadow-pink-200/50">
-              <Sparkles className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              {title}
-            </h1>
-            <p className="text-gray-600">
-              {subtitle}
-            </p>
-          </div>
-
-          {/* Champ de saisie */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              {language === 'fr' ? 'Décris ton objectif et ta situation' : language === 'en' ? 'Describe your goal and situation' : 'Describe tu objetivo y tu situación'}
-            </label>
-            <textarea
-              value={flowDescription}
-              onChange={(e) => setFlowDescription(e.target.value)}
-              placeholder={placeholder}
-              className="w-full h-40 p-4 rounded-2xl bg-gray-50 border-2 border-gray-200 focus:border-pink-400 focus:outline-none text-gray-800 resize-none"
-            />
-          </div>
-
-          {/* Objectif affiché */}
-          <div className="bg-pink-50 rounded-xl p-4">
-            <p className="text-xs text-pink-600 font-medium mb-1">
-              {language === 'fr' ? 'Ton objectif principal' : language === 'en' ? 'Your main goal' : 'Tu objetivo principal'}
-            </p>
-            <p className="font-medium text-gray-800">{objectifPrincipal}</p>
-          </div>
-
-          {/* Boutons */}
-          <div className="pt-4 space-y-3">
-            <Button
-              onClick={() => {
-                setIsGenerating(true);
-                // Ici on générera le Flow avec l'IA
-                setTimeout(() => {
-                  setIsGenerating(false);
-                  startChallenge();
-                }, 2000);
-              }}
-              disabled={!flowDescription.trim() || isGenerating}
-              className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
-                flowDescription.trim() && !isGenerating
-                  ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              {isGenerating ? (
-                <span className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  {language === 'fr' ? 'Préparation de ton Flow...' : language === 'en' ? 'Preparing your Flow...' : 'Preparando tu Flow...'}
-                </span>
-              ) : (
-                <>
-                  {createButton}
-                  <ChevronRight className="ml-2 w-5 h-5" />
-                </>
-              )}
-            </Button>
-            
-            <Button
-              onClick={() => setCurrentView('flow-proposition')}
-              variant="outline"
-              className="w-full h-12 text-gray-600 font-medium rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
-            >
-              {backButton}
-            </Button>
-          </div>
-        </div>
-      </div>
+      <FlowDescriptionPage
+        language={language}
+        objectifPrincipal={objectifPrincipal}
+        onBack={() => setCurrentView('flow-proposition')}
+        onCreate={(description) => {
+          setFlowDescription(description);
+          startChallenge();
+        }}
+      />
     );
   }
 

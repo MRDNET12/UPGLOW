@@ -1789,7 +1789,10 @@ isActionCompleted,
 
           {/* Continue Button */}
           <Button
-            onClick={() => setCurrentView('presentation-1')}
+            onClick={() => {
+              console.log('[DEBUG] Continue button clicked, setting currentView to presentation-1');
+              setCurrentView('presentation-1');
+            }}
             className="w-full h-12 text-lg text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)', boxShadow: '0 4px 12px rgba(244, 114, 182, 0.25)' }}
           >
@@ -1904,7 +1907,9 @@ isActionCompleted,
   }
 
   // Page de présentation 1: Chaque petit pas te fait avancer
+  console.log('[DEBUG] Checking currentView:', currentView, 'should render presentation-1?', currentView === 'presentation-1');
   if (currentView === 'presentation-1') {
+    console.log('[DEBUG] Rendering presentation-1 view');
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">

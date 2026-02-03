@@ -2126,8 +2126,25 @@ isActionCompleted,
         onBack={() => setCurrentView('flow-proposition')}
         onCreate={(description) => {
           setFlowDescription(description);
-          startChallenge();
+          generatePersonalizedFlow(objectifPrincipal, description).then(() => {
+            setCurrentView('flow-challenge');
+          });
         }}
+      />
+    );
+  }
+
+  // Page du Flow Challenge - Suivi jour après jour
+  if (currentView === 'flow-challenge') {
+    return (
+      <FlowChallengePage
+        language={language}
+        personalizedFlow={personalizedFlow}
+        objectifPrincipal={objectifPrincipal}
+        onBack={() => setCurrentView('dashboard')}
+        onToggleAction={toggleFlowAction}
+        onSelectChoice={selectFlowChoice}
+        onCompleteDay={completeFlowDay}
       />
     );
   }

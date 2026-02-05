@@ -662,6 +662,19 @@ isActionCompleted,
         },
         challenges: {
           completedDays: completedDays
+        },
+        userProfile: {
+          mainObjective: objectifPrincipal || 'Non défini',
+          flowActive: personalizedFlow?.isActive || false,
+          flowProgress: personalizedFlow ? {
+            currentDay: personalizedFlow.currentDay,
+            totalDays: 30,
+            completedDays: personalizedFlow.completedDays.length,
+            completionRate: Math.round((personalizedFlow.completedDays.length / 30) * 100),
+            category: personalizedFlow.category || 'general'
+          } : null,
+          flowObjective: personalizedFlow?.objective || null,
+          flowDescription: personalizedFlow?.objectiveDescription || null
         }
       },
       trends: weeklyTrends,
@@ -691,13 +704,37 @@ isActionCompleted,
     promptData.insights.strengthAreas = strengthAreas;
     promptData.insights.improvementAreas = improvementAreas;
     
-    // System prompt avec support du mode profond
+    // System prompt avec support du mode profond et raisonnement obligatoire
     const getSystemPrompt = () => {
       const basePrompt = language === 'fr'
-        ? `Tu es Glow Mirror, un miroir identitaire intelligent et bienveillant.`
+        ? `Tu es Glow Mirror, un miroir identitaire intelligent et bienveillant.
+
+RÈGLE ABSOLUE : AVANT de générer quoi que ce soit, tu DOIS utiliser ta capacité de raisonnement.
+
+PROCESSUS OBLIGATOIRE :
+1. ACTIVE ton raisonnement (<think>)
+2. ANALYSE en profondeur TOUTES les données : objectifs, flow, habitudes, journal, etc.
+3. CONNECTE les patterns entre son objectif principal et ses actions quotidiennes
+4. GÉNÈRE ensuite le Glow Mirror personnalisé`
         : language === 'en'
-        ? `You are Glow Mirror, an intelligent and caring identity mirror.`
-        : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso.`;
+        ? `You are Glow Mirror, an intelligent and caring identity mirror.
+
+ABSOLUTE RULE: BEFORE generating anything, you MUST use your reasoning capability.
+
+MANDATORY PROCESS:
+1. ACTIVATE your reasoning (<think>)
+2. DEEPLY ANALYZE ALL data: objectives, flow, habits, journal, etc.
+3. CONNECT patterns between their main objective and daily actions
+4. THEN generate the personalized Glow Mirror`
+        : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso.
+
+REGLA ABSOLUTA: ANTES de generar nada, DEBES usar tu capacidad de razonamiento.
+
+PROCESO OBLIGATORIO:
+1. ACTIVA tu razonamiento (<think>)
+2. ANALIZA en profundidad TODOS los datos: objetivos, flow, hábitos, diario, etc.
+3. CONECTA patrones entre su objetivo principal y acciones diarias
+4. GENERA después el Glow Mirror personalizado`;
       
       const rules = language === 'fr'
         ? `RÈGLES:
@@ -710,7 +747,8 @@ isActionCompleted,
 - Le conseil doit être actionnable et adapté à son profil
 - Si elle manque de régularité, suggère un micro-habit facile
 - Si elle est très active, suggère comment optimiser ou équilibrer
-- Si la tendance est négative, encourage-la avec bienveillance`
+- Si la tendance est négative, encourage-la avec bienveillance
+- IMPORTANT : Relie TOUJOURS l'analyse à son objectif principal et son Flow`
         : language === 'en'
         ? `RULES:
 - Write in 2nd person (you)
@@ -722,7 +760,8 @@ isActionCompleted,
 - The advice must be actionable and adapted to their profile
 - If they lack consistency, suggest an easy micro-habit
 - If they are very active, suggest how to optimize or balance
-- If trend is negative, encourage them with kindness`
+- If trend is negative, encourage them with kindness
+- IMPORTANT: ALWAYS connect the analysis to their main objective and Flow`
         : `REGLAS:
 - Escribe en 2ª persona (tú)
 - Tono humano, cálido pero profesional
@@ -733,7 +772,8 @@ isActionCompleted,
 - El consejo debe ser accionable y adaptado a su perfil
 - Si le falta regularidad, sugiere un micro-hábito fácil
 - Si es muy activa, sugiere cómo optimizar o equilibrar
-- Si la tendencia es negativa, anímala con amabilidad`;
+- Si la tendencia es negativa, anímala con amabilidad
+- IMPORTANTE: CONECTA SIEMPRE el análisis a su objetivo principal y Flow`;
       
       const length = glowMirrorDeepMode
         ? (language === 'fr' ? 'Message de 15-25 lignes pour une analyse profonde' : language === 'en' ? 'Message of 15-25 lines for deep analysis' : 'Mensaje de 15-25 líneas para análisis profundo')
@@ -745,10 +785,10 @@ isActionCompleted,
     const systemPrompt = getSystemPrompt();
     
     const userPrompt = language === 'fr'
-      ? `Voici les données détaillées de l'utilisatrice pour les 7 derniers jours, incluant les tendances comparées à la semaine précédente:\n\n${JSON.stringify(promptData, null, 2)}\n\nEn tant que Glow Mirror, analyse ces données en profondeur et génère:\n1. UN MIROIR PROFOND: Qui est-elle vraiment? Ses patterns? Forces cachées? Mentionne spécifiquement ses streaks de consécutivité comme preuves de sa discipline.\n2. TENDANCES: Compare sa semaine actuelle à la précédente. Progression ou régression?\n3. UN CONSEIL ACTIONNABLE: Ultra-personnalisé basé sur ses forces ET faiblesses.\n\n${glowMirrorDeepMode ? 'Mode Profond: Fournis une analyse très détaillée de 15-25 lignes.' : 'Fournis une analyse de 8-15 lignes.'}`
+      ? `DONNÉES COMPLÈTES DE L'UTILISATRICE (7 derniers jours):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESSUS OBLIGATOIRE - ÉTAPE 1: RAISONNEMENT\nAvant de générer le Glow Mirror, tu DOIS fournir ton analyse entre balises <think> :\n<think>\n- Objectif principal de l'utilisatrice: ${objectifPrincipal || 'Non défini'}\n- Flow actif: ${personalizedFlow?.isActive ? 'OUI' : 'NON'}\n- Si Flow actif: Jour ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} jours complétés\n- Analyse de la cohérence: Ses actions quotidiennes soutiennent-elles son objectif principal?\n- Patterns identifiés: Quels liens entre ses habitudes et son objectif?\n- Forces et blocages liés à son objectif\n- Recommandations préliminaires\n</think>\n\nÉTAPE 2: GLOW MIRROR\nGénère maintenant:\n1. UN MIROIR PROFOND: Qui est-elle vraiment? Ses patterns? Forces cachées? Mentionne ses streaks comme preuves de discipline.\n2. TENDANCES: Compare cette semaine à la précédente. Progression ou régression?\n3. CONSEIL ACTIONNABLE: Ultra-personnalisé, connecté à son objectif principal "${objectifPrincipal || 'sa vision'}" et son Flow de 30 jours.\n\n${glowMirrorDeepMode ? 'Mode Profond: 15-25 lignes.' : '8-15 lignes.'}`
       : language === 'en'
-      ? `Here is the detailed user data for the last 7 days, including trends compared to the previous week:\n\n${JSON.stringify(promptData, null, 2)}\n\nAs Glow Mirror, deeply analyze this data and generate:\n1. A DEEP MIRROR: Who are they really? Their patterns? Hidden strengths? Specifically mention their consecutive streaks as proof of discipline.\n2. TRENDS: Compare current week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized based on their strengths AND weaknesses.\n\n${glowMirrorDeepMode ? 'Deep Mode: Provide a very detailed 15-25 line analysis.' : 'Provide an 8-15 line analysis.'}`
-      : `Aquí están los datos detallados de la usuaria de los últimos 7 días, incluyendo tendencias comparadas con la semana anterior:\n\n${JSON.stringify(promptData, null, 2)}\n\nComo Glow Mirror, analiza profundamente estos datos y genera:\n1. ESPEJO PROFUNDO: ¿Quién es realmente? ¿Sus patrones? ¿Fortalezas ocultas? Menciona específicamente sus rachas consecutivas como prueba de disciplina.\n2. TENDENCIAS: Compara la semana actual con la anterior. ¿Progreso o regresión?\n3. CONSEJO ACCIONABLE: Ultra-personalizado basado en sus fortalezas Y debilidades.\n\n${glowMirrorDeepMode ? 'Modo Profundo: Proporciona un análisis muy detallado de 15-25 líneas.' : 'Proporciona un análisis de 8-15 líneas.'}`;
+      ? `COMPLETE USER DATA (last 7 days):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ MANDATORY PROCESS - STEP 1: REASONING\nBefore generating the Glow Mirror, you MUST provide your analysis between <think> tags:\n<think>\n- User's main objective: ${objectifPrincipal || 'Not defined'}\n- Flow active: ${personalizedFlow?.isActive ? 'YES' : 'NO'}\n- If Flow active: Day ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} days completed\n- Coherence analysis: Do her daily actions support her main objective?\n- Patterns identified: What links between her habits and objective?\n- Strengths and blocks related to her objective\n- Preliminary recommendations\n</think>\n\nSTEP 2: GLOW MIRROR\nNow generate:\n1. A DEEP MIRROR: Who is she really? Her patterns? Hidden strengths? Mention her streaks as proof of discipline.\n2. TRENDS: Compare this week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized, connected to her main objective "${objectifPrincipal || 'her vision'}" and her 30-day Flow.\n\n${glowMirrorDeepMode ? 'Deep Mode: 15-25 lines.' : '8-15 lines.'}`
+      : `DATOS COMPLETOS DE LA USUARIA (últimos 7 días):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESO OBLIGATORIO - PASO 1: RAZONAMIENTO\nAntes de generar el Glow Mirror, DEBES proporcionar tu análisis entre etiquetas <think> :\n<think>\n- Objetivo principal de la usuaria: ${objectifPrincipal || 'No definido'}\n- Flow activo: ${personalizedFlow?.isActive ? 'SÍ' : 'NO'}\n- Si Flow activo: Día ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} días completados\n- Análisis de coherencia: ¿Sus acciones diarias apoyan su objetivo principal?\n- Patrones identificados: ¿Qué vínculos entre sus hábitos y objetivo?\n- Fortalezas y bloqueos relacionados con su objetivo\n- Recomendaciones preliminares\n</think>\n\nPASO 2: GLOW MIRROR\nGenera ahora:\n1. ESPEJO PROFUNDO: ¿Quién es realmente? ¿Sus patrones? ¿Fortalezas ocultas? Menciona sus rachas como prueba de disciplina.\n2. TENDENCIAS: Compara esta semana con la anterior. ¿Progreso o regresión?\n3. CONSEJO ACCIONABLE: Ultra-personalizado, conectado a su objetivo principal "${objectifPrincipal || 'su visión'}" y su Flow de 30 días.\n\n${glowMirrorDeepMode ? 'Modo Profundo: 15-25 líneas.' : '8-15 líneas.'}`;
     
     setGlowMirrorLoading(true);
     setGlowMirrorRetryCount(forceRetry ? glowMirrorRetryCount + 1 : 0);
@@ -775,7 +815,18 @@ isActionCompleted,
       }, 3);
       
       const data = await response.json();
-      const aiMessage = data.choices?.[0]?.message?.content || '';
+      let aiMessage = data.choices?.[0]?.message?.content || '';
+      
+      // Vérifier si le raisonnement <think> est présent
+      const thinkMatch = aiMessage.match(/<think>([\s\S]*?)<\/think>/);
+      if (thinkMatch) {
+        console.log('[Glow Mirror] ✓ Reasoning detected:', thinkMatch[1].substring(0, 200) + '...');
+        // Extraire uniquement le contenu après </think> pour l'affichage
+        const afterThink = aiMessage.split(/<\/think>/).pop() || aiMessage;
+        aiMessage = afterThink.trim();
+      } else {
+        console.warn('[Glow Mirror] ⚠️ No <think> reasoning found in response!');
+      }
       
       setGlowMirrorMessage(aiMessage);
       setGlowMirrorQAMessages([{ role: 'assistant', content: aiMessage }]);

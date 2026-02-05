@@ -48,6 +48,7 @@ import { FlowDescriptionPage } from '@/components/FlowDescriptionPage';
 import { FlowChallengePage } from '@/components/FlowChallengePage';
 import { TrialExtensionPopup } from '@/components/TrialExtensionPopup';
 import { SubscriptionPopup } from '@/components/SubscriptionPopup';
+import { PlanSelectionPopup } from '@/components/PlanSelectionPopup';
 import { TrialBadge } from '@/components/TrialBadge';
 import GloweePopup from '@/components/shared/GloweePopup';
 import { GloweeHourlyMessage } from '@/components/GloweeHourlyMessage';
@@ -171,6 +172,8 @@ isActionCompleted,
   // États pour les popups de paywall
   const [showTrialExtension, setShowTrialExtension] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
+  const [showPlanSelection, setShowPlanSelection] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<'glow_start' | 'glow_plus' | null>(null);
   const [shouldReopenSubscription, setShouldReopenSubscription] = useState(false);
   const [subscriptionSource, setSubscriptionSource] = useState<'button' | 'trial_expired'>('trial_expired');
 
@@ -5964,7 +5967,7 @@ PROCESO OBLIGATORIO:
         theme={theme}
       />
 
-      {/* Subscription Popup - Abonnement 6.99€/mois */}
+      {/* Subscription Popup - Legacy */}
       <SubscriptionPopup
         isOpen={showSubscription}
         onClose={() => setShowSubscription(false)}
@@ -5973,6 +5976,34 @@ PROCESO OBLIGATORIO:
           setShouldReopenSubscription(true);
           setShowAuthDialog(true);
         }}
+      />
+
+      {/* Plan Selection Popup - New pricing */}
+      <PlanSelectionPopup
+        isOpen={showPlanSelection}
+        onClose={() => {
+          setShowPlanSelection(false);
+          setPendingPlan(null);
+        }}
+        onSelectPlan={(plan) => {
+          if (!user) {
+            // Sauvegarder le plan sélectionné et ouvrir l'authentification
+            setPendingPlan(plan);
+            setShowPlanSelection(false);
+            setShowAuthDialog(true);
+          } else {
+            // Rediriger vers Stripe avec l'email
+            if (plan) {
+              const stripeLinks = {
+                glow_start: 'https://buy.stripe.com/8x26oH178evq3KLgqNf3a03',
+                glow_plus: 'https://buy.stripe.com/9B69AT178gDybddgqNf3a02'
+              };
+              const stripeUrl = `${stripeLinks[plan]}?prefilled_email=${encodeURIComponent(user.email)}`;
+              window.location.href = stripeUrl;
+            }
+          }
+        }}
+        language={language}
       />
 
       {/* Glowee Welcome Popup - 1ère visite Dashboard */}
@@ -6080,7 +6111,17 @@ PROCESO OBLIGATORIO:
       {/* Auth Dialog */}
       <AuthDialog
         isOpen={showAuthDialog}
-        onClose={() => setShowAuthDialog(false)}
+        onClose={() => {
+          setShowAuthDialog(false);
+          // Si un plan est en attente et l'utilisateur est connecté, rediriger vers Stripe
+          if (pendingPlan && user?.email) {
+            const stripeUrl = pendingPlan === 'glow_start' 
+              ? `https://buy.stripe.com/8x26oH178evq3KLgqNf3a03?prefilled_email=${encodeURIComponent(user.email)}`
+              : `https://buy.stripe.com/9B69AT178gDybddgqNf3a02?prefilled_email=${encodeURIComponent(user.email)}`;
+            setPendingPlan(null);
+            window.location.href = stripeUrl;
+          }
+        }}
         defaultMode={user ? 'signin' : 'signup'}
       />
 

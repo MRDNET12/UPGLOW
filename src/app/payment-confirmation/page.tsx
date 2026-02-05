@@ -1,33 +1,37 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/lib/store';
-import { Sparkles, CheckCircle2, Heart, Target, Star, ArrowRight } from 'lucide-react';
+import { Sparkles, CheckCircle2, Heart, Target, Star, ArrowRight, Share2, Users } from 'lucide-react';
 
 export default function PaymentConfirmation() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, updateUserPaidStatus } = useAuth();
-  const { subscribe, language } = useStore();
+  const { subscribeToPlan, language } = useStore();
   const [isProcessing, setIsProcessing] = useState(true);
   const [showThankYou, setShowThankYou] = useState(false);
   const [error, setError] = useState('');
+  
+  // Get plan from URL params
+  const planType = (searchParams.get('plan') as 'glow_start' | 'glow_plus') || 'glow_plus';
 
   const texts = {
     fr: {
       processing: 'Confirmation en cours...',
       preparing: 'Glowee prépare ton espace premium ✨',
       thankYouTitle: 'Merci infiniment ! 💖',
-      thankYouSubtitle: 'Tu fais maintenant partie de la famille UPGLOW Premium',
-      gloweePromise: '"Ma chérie, je suis tellement heureuse que tu me fasses confiance ! Je te promets de tout donner pour t\'aider à atteindre tes objectifs. Ensemble, on va faire de grandes choses ! Tu mérites cette transformation, et je serai là à chaque étape. Prête à briller ? ✨"',
-      features: [
-        { icon: '🎯', text: 'Objectifs personnalisés illimités' },
-        { icon: '🤖', text: 'Assistant Glowee 24/7' },
-        { icon: '📊', text: 'Analyses détaillées de tes progrès' },
-        { icon: '💪', text: 'Plans d\'action sur mesure' }
-      ],
-      cta: 'Commencer mon aventure',
+      thankYouSubtitleStart: 'Tu as choisi Glow Start',
+      thankYouSubtitlePlus: 'Tu as choisi Glow Plus',
+      glowStartMessage: 'Excellent choix ! Avec Glow Start, tu vas pouvoir te reconnecter à toi-même grâce au Message à Moi, célébrer tes Petites Victoires, construire de meilleures Habitudes et suivre ton évolution dans ton Journal. Ces 4 outils sont la base d\'une transformation durable. Tu as fait le premier pas vers une meilleure version de toi !',
+      glowPlusMessage: 'Quel choix extraordinaire ! Avec Glow Plus, tu as accès à TOUT : les 4 fondations essentielles (Message, Victoires, Habitudes, Journal) PLUS le Glow Mirror AI qui va devenir ton coach personnel. Imagine avoir quelqu\'un qui comprend exactement qui tu es et ce dont tu as besoin, 24h/24. C\'est exactement ce que tu viens d\'obtenir !',
+      shareTitle: 'Partage le Glow avec tes proches 💫',
+      shareMessage: 'Si cette app t\'aide vraiment, partage-la avec une amie qui en aurait besoin. Ensemble, on brille plus fort !',
+      shareButton: 'Partager l\'app',
+      ctaStart: 'Commencer ma transformation',
+      ctaPlus: 'Découvrir mon Glow Mirror',
       errorTitle: 'Oups ! Une erreur est survenue',
       errorButton: 'Retour à l\'accueil'
     },
@@ -35,15 +39,15 @@ export default function PaymentConfirmation() {
       processing: 'Confirming...',
       preparing: 'Glowee is preparing your premium space ✨',
       thankYouTitle: 'Thank you so much! 💖',
-      thankYouSubtitle: 'You\'re now part of the UPGLOW Premium family',
-      gloweePromise: '"My dear, I\'m so happy you trust me! I promise to give my all to help you reach your goals. Together, we\'re going to do great things! You deserve this transformation, and I\'ll be there every step of the way. Ready to shine? ✨"',
-      features: [
-        { icon: '🎯', text: 'Unlimited personalized goals' },
-        { icon: '🤖', text: '24/7 Glowee assistant' },
-        { icon: '📊', text: 'Detailed progress analytics' },
-        { icon: '💪', text: 'Custom action plans' }
-      ],
-      cta: 'Start my journey',
+      thankYouSubtitleStart: 'You chose Glow Start',
+      thankYouSubtitlePlus: 'You chose Glow Plus',
+      glowStartMessage: 'Excellent choice! With Glow Start, you\'ll be able to reconnect with yourself through Message to Myself, celebrate your Small Wins, build better Habits, and track your progress in your Journal. These 4 tools are the foundation of lasting transformation. You\'ve taken the first step towards a better version of yourself!',
+      glowPlusMessage: 'What an extraordinary choice! With Glow Plus, you have access to EVERYTHING: the 4 essential foundations (Message, Wins, Habits, Journal) PLUS the Glow Mirror AI that will become your personal coach. Imagine having someone who understands exactly who you are and what you need, 24/7. That\'s exactly what you just got!',
+      shareTitle: 'Share the Glow with your loved ones 💫',
+      shareMessage: 'If this app really helps you, share it with a friend who needs it. Together, we shine brighter!',
+      shareButton: 'Share the app',
+      ctaStart: 'Start my transformation',
+      ctaPlus: 'Discover my Glow Mirror',
       errorTitle: 'Oops! An error occurred',
       errorButton: 'Back to home'
     },
@@ -51,21 +55,22 @@ export default function PaymentConfirmation() {
       processing: 'Confirmando...',
       preparing: 'Glowee está preparando tu espacio premium ✨',
       thankYouTitle: '¡Muchísimas gracias! 💖',
-      thankYouSubtitle: 'Ahora eres parte de la familia UPGLOW Premium',
-      gloweePromise: '"Mi querida, ¡estoy tan feliz de que confíes en mí! Te prometo dar todo de mí para ayudarte a alcanzar tus objetivos. ¡Juntas vamos a hacer grandes cosas! Mereces esta transformación, y estaré ahí en cada paso. ¿Lista para brillar? ✨"',
-      features: [
-        { icon: '🎯', text: 'Objetivos personalizados ilimitados' },
-        { icon: '🤖', text: 'Asistente Glowee 24/7' },
-        { icon: '📊', text: 'Análisis detallados de tu progreso' },
-        { icon: '💪', text: 'Planes de acción a medida' }
-      ],
-      cta: 'Comenzar mi aventura',
+      thankYouSubtitleStart: 'Elegiste Glow Start',
+      thankYouSubtitlePlus: 'Elegiste Glow Plus',
+      glowStartMessage: '¡Excelente elección! Con Glow Start, podrás reconectar contigo misma a través de Mensaje a Mí, celebrar tus Pequeñas Victorias, construir mejores Hábitos y seguir tu progreso en tu Diario. Estas 4 herramientas son la base de una transformación duradera. ¡Has dado el primer paso hacia una mejor versión de ti!',
+      glowPlusMessage: '¡Qué elección tan extraordinaria! Con Glow Plus, tienes acceso a TODO: las 4 bases esenciales (Mensaje, Victorias, Hábitos, Diario) MÁS el Glow Mirror AI que se convertirá en tu coach personal. Imagina tener a alguien que entiende exactamente quién eres y qué necesitas, 24/7. ¡Eso es exactamente lo que acabas de obtener!',
+      shareTitle: 'Comparte el Glow con tus seres queridos 💫',
+      shareMessage: 'Si esta app realmente te ayuda, compártela con una amiga que la necesite. ¡Juntas brillamos más fuerte!',
+      shareButton: 'Compartir la app',
+      ctaStart: 'Comenzar mi transformación',
+      ctaPlus: 'Descubrir mi Glow Mirror',
       errorTitle: '¡Ups! Ocurrió un error',
       errorButton: 'Volver al inicio'
     }
   };
 
   const t = texts[language] || texts.fr;
+  const isPlus = planType === 'glow_plus';
 
   useEffect(() => {
     const processPayment = async () => {
@@ -78,8 +83,8 @@ export default function PaymentConfirmation() {
         await new Promise(resolve => setTimeout(resolve, 2000));
         await updateUserPaidStatus();
         const endDate = new Date();
-        endDate.setFullYear(endDate.getFullYear() + 1);
-        subscribe(endDate.toISOString().split('T')[0]);
+        endDate.setMonth(endDate.getMonth() + 1); // 1 month subscription
+        subscribeToPlan(planType, endDate.toISOString().split('T')[0]);
         setIsProcessing(false);
         setShowThankYou(true);
       } catch (err: any) {
@@ -90,7 +95,31 @@ export default function PaymentConfirmation() {
     };
 
     processPayment();
-  }, [user, router, updateUserPaidStatus, subscribe]);
+  }, [user, router, updateUserPaidStatus, subscribeToPlan, planType]);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: 'UPGLOW - Transforme ta vie',
+      text: language === 'fr' 
+        ? 'Cette app m\'aide tellement à devenir la meilleure version de moi-même. Essaie-la ! ✨'
+        : language === 'en'
+        ? 'This app helps me so much to become the best version of myself. Try it! ✨'
+        : '¡Esta app me ayuda tanto a convertirme en la mejor versión de mí misma. ¡Pruébala! ✨',
+      url: 'https://upglow.app'
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+      alert(language === 'fr' ? 'Lien copié !' : language === 'en' ? 'Link copied!' : '¡Enlace copiado!');
+    }
+  };
 
   if (error) {
     return (
@@ -118,8 +147,8 @@ export default function PaymentConfirmation() {
 
   if (showThankYou) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50">
-        <div className="max-w-md w-full space-y-6 animate-in fade-in duration-700">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 overflow-y-auto">
+        <div className="max-w-md w-full space-y-6 animate-in fade-in duration-700 py-8">
           {/* Glowee joyeuse */}
           <div className="flex justify-center">
             <div className="relative">
@@ -127,7 +156,7 @@ export default function PaymentConfirmation() {
               <img
                 src="/Glowee/glowee-felicite.webp"
                 alt="Glowee"
-                className="w-48 h-48 object-contain relative z-10 drop-shadow-2xl animate-bounce"
+                className="w-32 h-32 object-contain relative z-10 drop-shadow-2xl animate-bounce"
               />
               <div className="absolute -top-2 -right-2 w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg animate-pulse">
                 <CheckCircle2 className="w-8 h-8 text-white" />
@@ -142,32 +171,42 @@ export default function PaymentConfirmation() {
                 <Star key={i} className="w-6 h-6 text-amber-400 fill-amber-400 animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
               ))}
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
               {t.thankYouTitle}
             </h1>
-            <p className="text-gray-600 font-medium">{t.thankYouSubtitle}</p>
+            <p className="text-pink-600 font-bold">
+              {isPlus ? t.thankYouSubtitlePlus : t.thankYouSubtitleStart}
+            </p>
           </div>
 
-          {/* Promesse de Glowee */}
+          {/* Message explicatif du plan */}
           <div className="bg-gradient-to-br from-pink-100 via-rose-100 to-orange-100 rounded-3xl p-5 shadow-xl border border-pink-200/50">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center flex-shrink-0 shadow-lg">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg ${isPlus ? 'bg-gradient-to-br from-pink-500 to-rose-500' : 'bg-gradient-to-br from-gray-500 to-gray-600'}`}>
                 <Heart className="w-5 h-5 text-white" />
               </div>
-              <p className="text-gray-700 font-medium italic text-sm leading-relaxed">
-                {t.gloweePromise}
+              <p className="text-gray-700 font-medium text-sm leading-relaxed">
+                {isPlus ? t.glowPlusMessage : t.glowStartMessage}
               </p>
             </div>
           </div>
 
-          {/* Features */}
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-lg space-y-3">
-            {t.features.map((feature, i) => (
-              <div key={i} className="flex items-center gap-3 animate-in slide-in-from-left duration-500" style={{ animationDelay: `${i * 100}ms` }}>
-                <span className="text-2xl">{feature.icon}</span>
-                <span className="text-gray-700 font-medium text-sm">{feature.text}</span>
-              </div>
-            ))}
+          {/* Section partage */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-5 shadow-lg border border-blue-100">
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-5 h-5 text-blue-500" />
+              <h3 className="font-bold text-blue-800 text-sm">{t.shareTitle}</h3>
+            </div>
+            <p className="text-blue-700 text-xs mb-4 leading-relaxed">
+              {t.shareMessage}
+            </p>
+            <button
+              onClick={handleShare}
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-400 to-indigo-400 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200/50 transition-all flex items-center justify-center gap-2"
+            >
+              <Share2 className="w-4 h-4" />
+              {t.shareButton}
+            </button>
           </div>
 
           {/* CTA Button */}
@@ -175,7 +214,7 @@ export default function PaymentConfirmation() {
             onClick={() => router.push('/')}
             className="w-full py-4 px-6 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-bold text-lg rounded-2xl shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-105 transition-all flex items-center justify-center gap-2"
           >
-            {t.cta}
+            {isPlus ? t.ctaPlus : t.ctaStart}
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
@@ -205,4 +244,3 @@ export default function PaymentConfirmation() {
     </div>
   );
 }
-

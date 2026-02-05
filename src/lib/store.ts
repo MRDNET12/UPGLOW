@@ -149,12 +149,17 @@ export interface BeautyPillarsProgress {
 // Subscription & Trial
 interface SubscriptionState {
   firstOpenDate: string | null; // Date de première ouverture de l'app (YYYY-MM-DD)
-  hasRegistered: boolean; // L'utilisateur s'est-il inscrit pour les 3 jours bonus ?
+  hasRegistered: boolean; // L'utilisateur s'est-il inscrit ?
   registrationDate: string | null; // Date d'inscription (YYYY-MM-DD)
   isSubscribed: boolean; // L'utilisateur a-t-il un abonnement actif ?
   subscriptionEndDate: string | null; // Date de fin d'abonnement (YYYY-MM-DD)
-  hasSeenTrialPopup: boolean; // L'utilisateur a-t-il vu le popup des 3 jours bonus ?
+  hasSeenTrialPopup: boolean; // L'utilisateur a-t-il vu le popup ?
+  planType: 'none' | 'glow_start' | 'glow_plus'; // Type de plan
+  freeDaysUsed: number; // Nombre de jours gratuits utilisés
 }
+
+// Type de plan pour les fonctionnalités
+export type PlanType = 'none' | 'glow_start' | 'glow_plus';
 
 interface AppState {
   // Navigation
@@ -265,6 +270,9 @@ interface AppState {
   getRemainingFreeDays: () => number;
   isTrialExpired: () => boolean;
   canAccessApp: () => boolean;
+  canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror') => boolean;
+  hasExceededFreeTrial: () => boolean;
+  subscribeToPlan: (planType: 'glow_start' | 'glow_plus', endDate: string) => void;
   markTrialPopupSeen: () => void;
 
   // Beauty Pillars (Challenge Beauté et Corps)
@@ -791,7 +799,9 @@ export const useStore = create<AppState>()(
         registrationDate: null,
         isSubscribed: false,
         subscriptionEndDate: null,
-        hasSeenTrialPopup: false
+        hasSeenTrialPopup: false,
+        planType: 'none',
+        freeDaysUsed: 0
       },
 
       initializeFirstOpen: () => {
@@ -881,12 +891,47 @@ export const useStore = create<AppState>()(
       },
 
       canAccessApp: () => {
+        // L'app est accessible à tous (Flow et Ma Semaine sont gratuits)
+        return true;
+      },
+
+      // Vérifier l'accès aux fonctionnalités payantes
+      canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror') => {
         const { subscription } = get();
-        // L'utilisateur peut accéder si :
-        // 1. Il est abonné (isSubscribed)
-        // 2. Il a des jours gratuits restants
-        // Note: Le statut hasPaid de Firebase sera vérifié par le composant ProtectedRoute
-        return subscription.isSubscribed || get().getRemainingFreeDays() > 0;
+        
+        // Si abonné Glow Plus, tout est accessible
+        if (subscription.planType === 'glow_plus') return true;
+        
+        // Si abonné Glow Start, accès aux features sauf Glow Mirror
+        if (subscription.planType === 'glow_start') {
+          return feature !== 'glow_mirror';
+        }
+        
+        // Si pas abonné, vérifier les jours gratuits
+        const remainingDays = get().getRemainingFreeDays();
+        if (remainingDays > 0) return true;
+        
+        // Essai terminé, pas d'accès
+        return false;
+      },
+
+      // Vérifier si l'utilisateur a dépassé les 3 jours gratuits
+      hasExceededFreeTrial: () => {
+        const { subscription } = get();
+        return !subscription.isSubscribed && get().getRemainingFreeDays() === 0;
+      },
+
+      // Souscrire à un plan
+      subscribeToPlan: (planType: 'glow_start' | 'glow_plus', endDate: string) => {
+        const { subscription } = get();
+        set({
+          subscription: {
+            ...subscription,
+            isSubscribed: true,
+            planType,
+            subscriptionEndDate: endDate
+          }
+        });
       },
 
       markTrialPopupSeen: () => {

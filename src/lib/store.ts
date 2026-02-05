@@ -1176,12 +1176,23 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             const data = await response.json();
             const content = data.choices?.[0]?.message?.content || '';
             
-            console.log('[AI Response] Content received:', content.substring(0, 500));
+            console.log('[AI Response] Full content:', content);
+            console.log('[AI Response] Content length:', content.length);
+            
+            // Vérifier si le raisonnement <think> est présent
+            const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
+            if (thinkMatch) {
+              console.log('[AI Response] ✓ Reasoning detected:', thinkMatch[1].substring(0, 200) + '...');
+            } else {
+              console.warn('[AI Response] ⚠️ No <think> reasoning found in response!');
+            }
             
             // Extract JSON from response - try to find JSON block
             let jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
             if (!jsonMatch) {
-              jsonMatch = content.match(/\{[\s\S]*\}/);
+              // Chercher le JSON après le bloc <think>
+              const afterThink = content.split(/<\/think>/).pop() || content;
+              jsonMatch = afterThink.match(/\{[\s\S]*\}/);
             }
             if (!jsonMatch) {
               console.error('[AI Response] No JSON found in:', content);

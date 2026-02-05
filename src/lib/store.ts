@@ -1103,14 +1103,16 @@ RÉPONDS UNIQUEMENT AU FORMAT JSON SUIVANT (30 jours complets) :
   ]
 }`;
 
-            const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer sk-kimi-wQWfSCmBauIFhz4h4K3WsFNTHbzhxvd2ieRqRfDNnZKdn1zwtYQwTvgTD8Bgwgiq'
+                'Authorization': 'Bearer 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',
+                'HTTP-Referer': 'https://upglow.app',
+                'X-Title': 'UPGLOW Flow Generator'
               },
               body: JSON.stringify({
-                model: 'kimi-latest',
+                model: 'tngtech/deepseek-r1t2-chimera:free',
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }

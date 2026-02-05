@@ -61,7 +61,7 @@ export function FlowChallengePage({
   const isChoiceCompleted = !!selectedChoiceId;
   const canCompleteDay = isAction1Completed && isAction2Completed && isChoiceCompleted;
 
-  // Section Flow
+  // Section Flow avec design des cartes du challenge beauté
   const renderFlowSection = () => (
     <div className="space-y-4 pb-24">
       {/* Header du jour */}
@@ -77,136 +77,128 @@ export function FlowChallengePage({
         </p>
       </div>
 
-      {/* Action 1: Première action obligatoire */}
-      {mandatoryActions[0] && (
-        <Card 
-          className={`border-2 cursor-pointer transition-all ${
-            isAction1Completed 
-              ? 'border-green-400 bg-green-50' 
-              : 'border-gray-200 hover:border-pink-300'
-          }`}
-          onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
-        >
-          <CardContent className="p-4">
-            <div className="flex items-start gap-4">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-                isAction1Completed ? 'bg-green-500' : 'bg-pink-100'
-              }`}>
-                {isAction1Completed ? <Check className="w-6 h-6 text-white" /> : <span>{mandatoryActions[0].icon}</span>}
-              </div>
+      {/* Liste des actions avec design des piliers beauté */}
+      <div className="space-y-4">
+        {/* Action 1: Première action obligatoire */}
+        {mandatoryActions[0] && (
+          <div
+            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${
+              isAction1Completed ? 'opacity-60' : ''
+            }`}
+            onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-3xl drop-shadow-lg">{mandatoryActions[0].icon}</span>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className={`font-bold ${isAction1Completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                    {mandatoryActions[0].title}
-                  </h3>
-                  <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
-                    {t.mandatory}
-                  </Badge>
+                <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isAction1Completed ? 'line-through' : ''}`}>
+                  {mandatoryActions[0].title}
+                </h4>
+                <p className={`text-sm ${isAction1Completed ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                  {mandatoryActions[0].description}
+                </p>
+              </div>
+              {isAction1Completed && (
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm text-gray-600">{mandatoryActions[0].description}</p>
-              </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
 
-      {/* Action 2: Deuxième action obligatoire */}
-      {mandatoryActions[1] && (
-        <Card 
-          className={`border-2 cursor-pointer transition-all ${
-            isAction2Completed 
-              ? 'border-green-400 bg-green-50' 
-              : 'border-gray-200 hover:border-pink-300'
-          }`}
-          onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
-        >
-          <CardContent className="p-4">
-            <div className="flex items-start gap-4">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-                isAction2Completed ? 'bg-green-500' : 'bg-pink-100'
-              }`}>
-                {isAction2Completed ? <Check className="w-6 h-6 text-white" /> : <span>{mandatoryActions[1].icon}</span>}
-              </div>
+        {/* Action 2: Deuxième action obligatoire */}
+        {mandatoryActions[1] && (
+          <div
+            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${
+              isAction2Completed ? 'opacity-60' : ''
+            }`}
+            onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-3xl drop-shadow-lg">{mandatoryActions[1].icon}</span>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className={`font-bold ${isAction2Completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                    {mandatoryActions[1].title}
-                  </h3>
-                  <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
-                    {t.mandatory}
-                  </Badge>
-                </div>
-                <p className="text-sm text-gray-600">{mandatoryActions[1].description}</p>
+                <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isAction2Completed ? 'line-through' : ''}`}>
+                  {mandatoryActions[1].title}
+                </h4>
+                <p className={`text-sm ${isAction2Completed ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                  {mandatoryActions[1].description}
+                </p>
               </div>
+              {isAction2Completed && (
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-white" />
+                </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
 
-      {/* Action 3: Carte déroulante avec choix */}
-      {choiceActions.length > 0 && (
-        <Card className="border-2 border-pink-300 overflow-hidden">
-          <CardContent className="p-0">
-            {/* Header de la carte déroulante */}
-            <div 
-              className="p-4 bg-gradient-to-r from-pink-50 to-rose-50 cursor-pointer"
+        {/* Action 3: Carte déroulante "1 geste pour toi" avec design beauté */}
+        {choiceActions.length > 0 && (
+          <div>
+            {/* Header de la carte */}
+            <div
+              className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg`}
               onClick={() => setShowChoiceCard(!showChoiceCard)}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-                    isChoiceCompleted ? 'bg-green-500' : 'bg-pink-200'
-                  }`}>
-                    {isChoiceCompleted ? <Check className="w-6 h-6 text-white" /> : <Sparkles className="w-6 h-6 text-pink-600" />}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-gray-800">{t.choiceTitle}</h3>
-                      <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
-                        {t.choice}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-gray-600">{t.choiceSubtitle}</p>
-                  </div>
+              <div className="flex items-start gap-3">
+                <span className="text-3xl drop-shadow-lg">🧠</span>
+                <div className="flex-1">
+                  <h4 className="font-bold text-sm mb-1 text-gray-800">
+                    {language === 'fr' ? '1 geste pour toi' : language === 'en' ? '1 gesture for you' : '1 gesto para ti'}
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    {language === 'fr' ? 'AU CHOIX' : language === 'en' ? 'YOUR CHOICE' : 'A ELEGIR'}
+                  </p>
                 </div>
-                {showChoiceCard ? <ChevronUp className="w-5 h-5 text-pink-500" /> : <ChevronDown className="w-5 h-5 text-pink-500" />}
+                <div className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors">
+                  <ChevronDown 
+                    className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${
+                      showChoiceCard ? 'rotate-180' : ''
+                    }`} 
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Contenu déroulant */}
-            {showChoiceCard && (
-              <div className="p-4 space-y-3 bg-white">
-                {choiceActions.map((action) => (
-                  <div
-                    key={action.id}
-                    onClick={() => {
-                      onSelectChoice(currentDay, action.id);
-                      onToggleAction(currentDay, action.id);
-                    }}
-                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border-2 ${
-                      selectedChoiceId === action.id
-                        ? 'border-pink-400 bg-pink-50' 
-                        : 'border-gray-200 hover:border-pink-200'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
-                      selectedChoiceId === action.id ? 'bg-pink-500 text-white' : 'bg-gray-100'
-                    }`}>
-                      {selectedChoiceId === action.id ? <Check className="w-5 h-5" /> : <span>{action.icon}</span>}
+            {/* Section déroulante avec les choix */}
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-out ${
+                showChoiceCard ? 'max-h-[800px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <div className="bg-pink-50/50 rounded-2xl p-4 space-y-3">
+                {choiceActions.map((action) => {
+                  const isSelected = selectedChoiceId === action.id;
+                  return (
+                    <div
+                      key={action.id}
+                      onClick={() => {
+                        onSelectChoice(currentDay, action.id);
+                        onToggleAction(currentDay, action.id);
+                      }}
+                      className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
+                        isSelected
+                          ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
+                          : 'bg-white shadow-md hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{action.icon}</span>
+                        <div className="flex-1">
+                          <h5 className="font-bold text-sm text-gray-800">{action.title}</h5>
+                          <p className="text-xs text-gray-600">{action.description}</p>
+                        </div>
+                        {isSelected && <Check className="w-5 h-5 text-green-600 flex-shrink-0" />}
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className={`font-medium ${selectedChoiceId === action.id ? 'text-pink-700' : 'text-gray-800'}`}>
-                        {action.title}
-                      </p>
-                      <p className="text-xs text-gray-500">{action.description}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Bouton Valider */}
       <div className="fixed bottom-20 left-4 right-4 max-w-md mx-auto">

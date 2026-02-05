@@ -38,13 +38,15 @@ export function TrialBadge({ theme = 'light' }: TrialBadgeProps) {
     );
   }
 
+  const daysUsed = 3 - remainingDays;
+  
   return (
     <div className={`
       flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold
       ${theme === 'dark' ? 'bg-rose-900/30 text-rose-400' : 'bg-rose-100 text-rose-600'}
     `}>
       <Clock className="w-3.5 h-3.5" />
-      <span>{remainingDays} jour{remainingDays > 1 ? 's' : ''} gratuit{remainingDays > 1 ? 's' : ''}</span>
+      <span>Jour {daysUsed}/3 gratuit</span>
     </div>
   );
 }

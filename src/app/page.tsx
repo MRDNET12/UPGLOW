@@ -122,6 +122,8 @@ isActionCompleted,
     getRemainingFreeDays,
     isTrialExpired,
     canAccessApp,
+    hasExceededFreeTrial,
+    canAccessFeature,
     // Beauty Pillars
     beautyPillarsProgress,
     beautyValidatedDates,
@@ -197,6 +199,19 @@ isActionCompleted,
   // État pour les objectifs
   const [goals, setGoals] = useState<any[]>([]);
 
+  // Helper function to check feature access and show paywall if needed
+  const checkFeatureAccess = (
+    feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror',
+    onAccessGranted: () => void
+  ) => {
+    if (canAccessFeature(feature)) {
+      onAccessGranted();
+    } else {
+      setSubscriptionSource('trial_expired');
+      setShowPlanSelection(true);
+    }
+  };
+
   // Charger les objectifs depuis localStorage
   useEffect(() => {
     if (isHydrated) {
@@ -224,6 +239,24 @@ isActionCompleted,
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [isHydrated]);
+
+  // Vérifier l'accès aux vues payantes et rediriger si nécessaire
+  useEffect(() => {
+    if (!isHydrated) return;
+    
+    const paidViews = [
+      { view: 'journal', feature: 'journal' as const },
+      { view: 'glow-mirror', feature: 'glow_mirror' as const },
+      { view: 'trackers', feature: 'habitudes' as const }
+    ];
+    
+    const currentPaidView = paidViews.find(v => v.view === currentView);
+    if (currentPaidView && !canAccessFeature(currentPaidView.feature)) {
+      setSubscriptionSource('trial_expired');
+      setShowPlanSelection(true);
+      setCurrentView('dashboard');
+    }
+  }, [currentView, isHydrated, canAccessFeature]);
 
   const [todayDate] = useState(() => getLocalDateString());
 
@@ -2481,7 +2514,7 @@ PROCESO OBLIGATORIO:
               {/* Carte Mes Habitudes - Grande carte à gauche */}
               <Card
                 className="row-span-2 border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
-                onClick={() => setCurrentView('trackers')}
+                onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
                 <CardContent className="p-3 h-full flex flex-col justify-between">
                   {/* Header */}
@@ -2577,7 +2610,7 @@ PROCESO OBLIGATORIO:
             {/* Carte Mon Journal */}
             <Card
               className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
-              onClick={() => setCurrentView('journal')}
+              onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
@@ -2632,7 +2665,7 @@ PROCESO OBLIGATORIO:
             {/* Glow Mirror Button */}
             <div className="mt-6 mb-4">
               <button
-                onClick={() => setCurrentView('glow-mirror')}
+                onClick={() => checkFeatureAccess('glow_mirror', () => setCurrentView('glow-mirror'))}
                 className="w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -4747,13 +4780,26 @@ PROCESO OBLIGATORIO:
                            language === 'en' ? 'Sign in to sync' : 
                            'Inicia sesión para sincronizar')}
                       </p>
-                      {user && (
-                        <div className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-orange-100">
-                          <Crown className="w-3 h-3 text-amber-600" />
-                          <span className="text-xs font-semibold text-amber-700">
-                            {language === 'fr' ? 'Membre Premium' : language === 'en' ? 'Premium Member' : 'Miembro Premium'}
+                      {user && subscription.isSubscribed && (
+                        <div className={`mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full ${subscription.planType === 'glow_plus' ? 'bg-gradient-to-r from-violet-100 to-purple-100' : 'bg-gradient-to-r from-amber-100 to-orange-100'}`}>
+                          <Crown className={`w-3 h-3 ${subscription.planType === 'glow_plus' ? 'text-violet-600' : 'text-amber-600'}`} />
+                          <span className={`text-xs font-semibold ${subscription.planType === 'glow_plus' ? 'text-violet-700' : 'text-amber-700'}`}>
+                            {subscription.planType === 'glow_plus' 
+                              ? (language === 'fr' ? 'Glow Plus' : language === 'en' ? 'Glow Plus' : 'Glow Plus')
+                              : subscription.planType === 'glow_start'
+                                ? (language === 'fr' ? 'Glow Start' : language === 'en' ? 'Glow Start' : 'Glow Start')
+                                : (language === 'fr' ? 'Membre Premium' : language === 'en' ? 'Premium Member' : 'Miembro Premium')
+                            }
                           </span>
                         </div>
+                      )}
+                      {user && subscription.planType === 'glow_start' && (
+                        <button
+                          onClick={() => setShowPlanSelection(true)}
+                          className="mt-2 text-xs text-violet-600 hover:text-violet-700 font-medium underline"
+                        >
+                          {language === 'fr' ? 'Passer à Glow Plus →' : language === 'en' ? 'Upgrade to Glow Plus →' : 'Actualizar a Glow Plus →'}
+                        </button>
                       )}
                     </div>
                   </div>
@@ -5110,7 +5156,7 @@ PROCESO OBLIGATORIO:
                     ? 'bg-gray-900 text-white shadow-md'
                     : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
-                onClick={() => setCurrentView('trackers')}
+                onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
                 <Target className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
@@ -5126,7 +5172,7 @@ PROCESO OBLIGATORIO:
                     ? 'bg-gray-900 text-white shadow-md'
                     : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                 }`}
-                onClick={() => setCurrentView('journal')}
+                onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
               >
                 <BookOpen className="w-5 h-5" />
                 <span className="text-[10px] font-medium">{t.nav.journal}</span>
@@ -6266,7 +6312,7 @@ PROCESO OBLIGATORIO:
       `}</style>
 
       {/* Journal View */}
-      {currentView === 'journal' && (
+      {currentView === 'journal' && canAccessFeature('journal') && (
         <div className="pb-24 min-h-screen bg-white overflow-y-auto">
           {/* Header */}
           <div className="p-4 pb-0 bg-white">
@@ -6507,7 +6553,7 @@ PROCESO OBLIGATORIO:
       )}
 
       {/* Glow Mirror View */}
-      {currentView === 'glow-mirror' && (
+      {currentView === 'glow-mirror' && canAccessFeature('glow_mirror') && (
         <div className="pb-24 min-h-screen bg-white">
           {/* Header */}
           <div className="p-4 pb-0 bg-white">

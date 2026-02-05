@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -755,14 +755,16 @@ isActionCompleted,
     setGlowMirrorRetryCount(forceRetry ? glowMirrorRetryCount + 1 : 0);
     
     try {
-      const response = await fetchWithRetry('https://api.moonshot.cn/v1/chat/completions', {
+      const response = await fetchWithRetry('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer sk-kimi-wQWfSCmBauIFhz4h4K3WsFNTHbzhxvd2ieRqRfDNnZKdn1zwtYQwTvgTD8Bgwgiq'
+          'Authorization': 'Bearer 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',
+          'HTTP-Referer': 'https://upglow.app',
+          'X-Title': 'UPGLOW Glow Mirror'
         },
         body: JSON.stringify({
-          model: 'kimi-latest',
+          model: 'tngtech/deepseek-r1t2-chimera:free',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
@@ -844,14 +846,16 @@ isActionCompleted,
       : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 líneas máx), amable y personalizada. Basándote en el contexto anterior.";
     
     try {
-      const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer sk-kimi-wQWfSCmBauIFhz4h4K3WsFNTHbzhxvd2ieRqRfDNnZKdn1zwtYQwTvgTD8Bgwgiq'
+          'Authorization': 'Bearer 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',
+          'HTTP-Referer': 'https://upglow.app',
+          'X-Title': 'UPGLOW Glow Mirror'
         },
         body: JSON.stringify({
-          model: 'kimi-latest',
+          model: 'tngtech/deepseek-r1t2-chimera:free',
           messages: [
             { role: 'system', content: qaSystemPrompt },
             ...updatedMessages.map(m => ({ role: m.role, content: m.content }))

@@ -45,62 +45,21 @@ export function FlowChallengePage({
     or: language === 'fr' ? 'ou' : language === 'en' ? 'or' : 'o',
     mandatory: language === 'fr' ? 'Obligatoire' : language === 'en' ? 'Mandatory' : 'Obligatorio',
     choice: language === 'fr' ? 'Au choix' : language === 'en' ? 'Choose one' : 'A elegir',
-    walkTitle: language === 'fr' ? 'Marcher 30 min OU sport' : language === 'en' ? 'Walk 30 min OR exercise' : 'Caminar 30 min O ejercicio',
-    walkDesc: language === 'fr' ? 'Le sport remplace la marche ce jour-là' : language === 'en' ? 'Exercise replaces the walk on that day' : 'El ejercicio reemplaza la caminata ese día',
-    massageTitle: language === 'fr' ? 'Massage visage' : language === 'en' ? 'Face massage' : 'Masaje facial',
-    massageDesc: language === 'fr' ? 'Stimule la circulation sanguine et donne bonne mine' : language === 'en' ? 'Stimulates blood circulation and gives a healthy glow' : 'Estimula la circulación sanguínea y da buen aspecto',
-    gestureTitle: language === 'fr' ? '1 geste pour toi' : language === 'en' ? '1 gesture for you' : '1 gesto para ti',
-    gestureSubtitle: language === 'fr' ? 'Choisis ton rituel beauté' : language === 'en' ? 'Choose your beauty ritual' : 'Elige tu ritual de belleza',
-    dryBrush: language === 'fr' ? 'Brossage à sec' : language === 'en' ? 'Dry brushing' : 'Cepillado en seco',
-    bodyCream: language === 'fr' ? 'Crème corps' : language === 'en' ? 'Body cream' : 'Crema corporal',
-    hair: language === 'fr' ? 'Soin cheveux' : language === 'en' ? 'Hair care' : 'Cuidado del cabello',
+    choiceTitle: language === 'fr' ? 'Action au choix' : language === 'en' ? 'Choose your action' : 'Elige tu acción',
+    choiceSubtitle: language === 'fr' ? 'Sélectionne une action pour aujourd\'hui' : language === 'en' ? 'Select an action for today' : 'Selecciona una acción para hoy',
   };
 
-  // Actions dynamiques depuis le Flow généré
-  const mandatoryActions = [
-    { 
-      id: 'walk-sport', 
-      title: t.walkTitle, 
-      description: currentFlowDay?.mandatoryActions.find(a => a.id === 'walk-sport')?.description || t.walkDesc,
-      icon: '🚶‍♀️',
-      isCompleted: currentFlowDay?.mandatoryActions.find(a => a.id === 'walk-sport')?.isCompleted || false
-    },
-    { 
-      id: 'face-massage', 
-      title: t.massageTitle, 
-      description: currentFlowDay?.mandatoryActions.find(a => a.id === 'face-massage')?.description || t.massageDesc,
-      icon: '💆‍♀️',
-      isCompleted: currentFlowDay?.mandatoryActions.find(a => a.id === 'face-massage')?.isCompleted || false
-    }
-  ];
-
-  const choiceActionsFromFlow = currentFlowDay?.choiceActions || [];
-  const choiceActions = [
-    { 
-      id: 'dry-brushing', 
-      title: t.dryBrush, 
-      icon: '🧽', 
-      description: choiceActionsFromFlow.find(a => a.id === 'dry-brushing')?.description || 'Exfoliation naturelle' 
-    },
-    { 
-      id: 'body-cream', 
-      title: t.bodyCream, 
-      icon: '🧴', 
-      description: choiceActionsFromFlow.find(a => a.id === 'body-cream')?.description || 'Hydratation profonde' 
-    },
-    { 
-      id: 'hair-care', 
-      title: t.hair, 
-      icon: '✨', 
-      description: choiceActionsFromFlow.find(a => a.id === 'hair-care')?.description || 'Masque nourrissant' 
-    }
-  ];
-
+  // Récupérer les actions dynamiques depuis le flow
+  const mandatoryActions = currentFlowDay?.mandatoryActions || [];
+  const choiceActions = currentFlowDay?.choiceActions || [];
+  
   const selectedChoiceId = currentFlowDay?.selectedChoiceId || '';
-  const isWalkCompleted = mandatoryActions[0].isCompleted;
-  const isMassageCompleted = mandatoryActions[1].isCompleted;
+  
+  // Vérifier si les actions sont complétées
+  const isAction1Completed = mandatoryActions[0]?.isCompleted || false;
+  const isAction2Completed = mandatoryActions[1]?.isCompleted || false;
   const isChoiceCompleted = !!selectedChoiceId;
-  const canCompleteDay = isWalkCompleted && isMassageCompleted && isChoiceCompleted;
+  const canCompleteDay = isAction1Completed && isAction2Completed && isChoiceCompleted;
 
   // Section Flow
   const renderFlowSection = () => (
@@ -118,133 +77,136 @@ export function FlowChallengePage({
         </p>
       </div>
 
-      {/* Action 1: Marche/Sport */}
-      <Card 
-        className={`border-2 cursor-pointer transition-all ${
-          isWalkCompleted 
-            ? 'border-green-400 bg-green-50' 
-            : 'border-gray-200 hover:border-pink-300'
-        }`}
-        onClick={() => onToggleAction(currentDay, 'walk-sport')}
-      >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-              isWalkCompleted ? 'bg-green-500' : 'bg-pink-100'
-            }`}>
-              {isWalkCompleted ? <Check className="w-6 h-6 text-white" /> : <span>🚶‍♀️</span>}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className={`font-bold ${isWalkCompleted ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                  {t.walkTitle}
-                </h3>
-                <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
-                  {t.mandatory}
-                </Badge>
+      {/* Action 1: Première action obligatoire */}
+      {mandatoryActions[0] && (
+        <Card 
+          className={`border-2 cursor-pointer transition-all ${
+            isAction1Completed 
+              ? 'border-green-400 bg-green-50' 
+              : 'border-gray-200 hover:border-pink-300'
+          }`}
+          onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-start gap-4">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+                isAction1Completed ? 'bg-green-500' : 'bg-pink-100'
+              }`}>
+                {isAction1Completed ? <Check className="w-6 h-6 text-white" /> : <span>{mandatoryActions[0].icon}</span>}
               </div>
-              <p className="text-sm text-gray-600">{t.walkDesc}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Action 2: Massage visage */}
-      <Card 
-        className={`border-2 cursor-pointer transition-all ${
-          isMassageCompleted 
-            ? 'border-green-400 bg-green-50' 
-            : 'border-gray-200 hover:border-pink-300'
-        }`}
-        onClick={() => onToggleAction(currentDay, 'face-massage')}
-      >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-              isMassageCompleted ? 'bg-green-500' : 'bg-pink-100'
-            }`}>
-              {isMassageCompleted ? <Check className="w-6 h-6 text-white" /> : <span>💆‍♀️</span>}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className={`font-bold ${isMassageCompleted ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                  {t.massageTitle}
-                </h3>
-                <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
-                  {t.mandatory}
-                </Badge>
-              </div>
-              <p className="text-sm text-gray-600">{t.massageDesc}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Action 3: 1 geste pour toi (carte déroulante) */}
-      <Card className="border-2 border-pink-300 overflow-hidden">
-        <CardContent className="p-0">
-          {/* Header de la carte déroulante */}
-          <div 
-            className="p-4 bg-gradient-to-r from-pink-50 to-rose-50 cursor-pointer"
-            onClick={() => setShowChoiceCard(!showChoiceCard)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-                  isChoiceCompleted ? 'bg-green-500' : 'bg-pink-200'
-                }`}>
-                  {isChoiceCompleted ? <Check className="w-6 h-6 text-white" /> : <Sparkles className="w-6 h-6 text-pink-600" />}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className={`font-bold ${isAction1Completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                    {mandatoryActions[0].title}
+                  </h3>
+                  <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
+                    {t.mandatory}
+                  </Badge>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-gray-800">{t.gestureTitle}</h3>
-                    <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
-                      {t.choice}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-600">{t.gestureSubtitle}</p>
-                </div>
+                <p className="text-sm text-gray-600">{mandatoryActions[0].description}</p>
               </div>
-              {showChoiceCard ? <ChevronUp className="w-5 h-5 text-pink-500" /> : <ChevronDown className="w-5 h-5 text-pink-500" />}
             </div>
-          </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {/* Contenu déroulant */}
-          {showChoiceCard && (
-            <div className="p-4 space-y-3 bg-white">
-              <p className="text-sm text-gray-500 mb-3">
-                {language === 'fr' ? 'Sélectionne un rituel beauté pour aujourd\'hui :' : language === 'en' ? 'Select a beauty ritual for today:' : 'Selecciona un ritual de belleza para hoy:'}
-              </p>
-              {choiceActions.map((action) => (
-                <div
-                  key={action.id}
-                  onClick={() => {
-                    onSelectChoice(currentDay, action.id);
-                    onToggleAction(currentDay, action.id);
-                  }}
-                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border-2 ${
-                    selectedChoiceId === action.id
-                      ? 'border-pink-400 bg-pink-50' 
-                      : 'border-gray-200 hover:border-pink-200'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
-                    selectedChoiceId === action.id ? 'bg-pink-500 text-white' : 'bg-gray-100'
+      {/* Action 2: Deuxième action obligatoire */}
+      {mandatoryActions[1] && (
+        <Card 
+          className={`border-2 cursor-pointer transition-all ${
+            isAction2Completed 
+              ? 'border-green-400 bg-green-50' 
+              : 'border-gray-200 hover:border-pink-300'
+          }`}
+          onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-start gap-4">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+                isAction2Completed ? 'bg-green-500' : 'bg-pink-100'
+              }`}>
+                {isAction2Completed ? <Check className="w-6 h-6 text-white" /> : <span>{mandatoryActions[1].icon}</span>}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className={`font-bold ${isAction2Completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                    {mandatoryActions[1].title}
+                  </h3>
+                  <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
+                    {t.mandatory}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600">{mandatoryActions[1].description}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Action 3: Carte déroulante avec choix */}
+      {choiceActions.length > 0 && (
+        <Card className="border-2 border-pink-300 overflow-hidden">
+          <CardContent className="p-0">
+            {/* Header de la carte déroulante */}
+            <div 
+              className="p-4 bg-gradient-to-r from-pink-50 to-rose-50 cursor-pointer"
+              onClick={() => setShowChoiceCard(!showChoiceCard)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+                    isChoiceCompleted ? 'bg-green-500' : 'bg-pink-200'
                   }`}>
-                    {selectedChoiceId === action.id ? <Check className="w-5 h-5" /> : <span>{action.icon}</span>}
+                    {isChoiceCompleted ? <Check className="w-6 h-6 text-white" /> : <Sparkles className="w-6 h-6 text-pink-600" />}
                   </div>
-                  <div className="flex-1">
-                    <p className={`font-medium ${selectedChoiceId === action.id ? 'text-pink-700' : 'text-gray-800'}`}>
-                      {action.title}
-                    </p>
-                    <p className="text-xs text-gray-500">{action.description}</p>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-gray-800">{t.choiceTitle}</h3>
+                      <Badge variant="outline" className="text-xs border-pink-300 text-pink-600">
+                        {t.choice}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600">{t.choiceSubtitle}</p>
                   </div>
                 </div>
-              ))}
+                {showChoiceCard ? <ChevronUp className="w-5 h-5 text-pink-500" /> : <ChevronDown className="w-5 h-5 text-pink-500" />}
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            {/* Contenu déroulant */}
+            {showChoiceCard && (
+              <div className="p-4 space-y-3 bg-white">
+                {choiceActions.map((action) => (
+                  <div
+                    key={action.id}
+                    onClick={() => {
+                      onSelectChoice(currentDay, action.id);
+                      onToggleAction(currentDay, action.id);
+                    }}
+                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border-2 ${
+                      selectedChoiceId === action.id
+                        ? 'border-pink-400 bg-pink-50' 
+                        : 'border-gray-200 hover:border-pink-200'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
+                      selectedChoiceId === action.id ? 'bg-pink-500 text-white' : 'bg-gray-100'
+                    }`}>
+                      {selectedChoiceId === action.id ? <Check className="w-5 h-5" /> : <span>{action.icon}</span>}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`font-medium ${selectedChoiceId === action.id ? 'text-pink-700' : 'text-gray-800'}`}>
+                        {action.title}
+                      </p>
+                      <p className="text-xs text-gray-500">{action.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Bouton Valider */}
       <div className="fixed bottom-20 left-4 right-4 max-w-md mx-auto">
@@ -387,9 +349,6 @@ export function FlowChallengePage({
         { id: 'money-maker', name: language === 'fr' ? 'Money Maker' : 'Money Maker', icon: '💵', color: 'from-green-200 to-emerald-300', unlocked: completedCount >= 15 },
         { id: 'business-mind', name: language === 'fr' ? 'Business Mind' : 'Business Mind', icon: '🧠', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 21 },
         { id: 'ceo-vibes', name: language === 'fr' ? 'CEO Vibes' : 'CEO Vibes', icon: '👔', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 30 },
-        { id: 'networker', name: language === 'fr' ? 'Networker' : 'Networker', icon: '🤝', color: 'from-pink-100 to-rose-200', unlocked: false },
-        { id: 'investor', name: language === 'fr' ? 'Investisseur' : 'Investor', icon: '📈', color: 'from-cyan-100 to-blue-200', unlocked: completedCount >= 10 },
-        { id: 'entrepreneur', name: language === 'fr' ? 'Entrepreneur' : 'Entrepreneur', icon: '🚀', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
       ],
       developpement: [
         { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : 'First Step', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
@@ -397,9 +356,6 @@ export function FlowChallengePage({
         { id: 'fearless', name: language === 'fr' ? 'Sans Peur' : 'Fearless', icon: '🦁', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 15 },
         { id: 'authentic-self', name: language === 'fr' ? 'Authentique' : 'Authentic', icon: '✨', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 21 },
         { id: 'transformed', name: language === 'fr' ? 'Transformé' : 'Transformed', icon: '🦋', color: 'from-pink-200 to-rose-300', unlocked: completedCount >= 30 },
-        { id: 'mirror-star', name: language === 'fr' ? 'Star du Miroir' : 'Mirror Star', icon: '🪞', color: 'from-pink-100 to-rose-200', unlocked: false },
-        { id: 'growth-mindset', name: language === 'fr' ? 'Mindset +' : 'Growth Mindset', icon: '🌱', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
-        { id: 'warrior', name: language === 'fr' ? 'Guerrier' : 'Warrior', icon: '⚔️', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
       ],
       sante: [
         { id: 'first-workout', name: language === 'fr' ? 'Premier WOD' : 'First Workout', icon: '🏃', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
@@ -407,9 +363,6 @@ export function FlowChallengePage({
         { id: 'fit-life', name: language === 'fr' ? 'Fit Life' : 'Fit Life', icon: '💪', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 15 },
         { id: 'health-guru', name: language === 'fr' ? 'Health Guru' : 'Health Guru', icon: '🥗', color: 'from-green-100 to-green-200', unlocked: completedCount >= 21 },
         { id: 'body-goals', name: language === 'fr' ? 'Body Goals' : 'Body Goals', icon: '🔥', color: 'from-red-100 to-rose-200', unlocked: completedCount >= 30 },
-        { id: 'hydration', name: language === 'fr' ? 'Hydraté' : 'Hydrated', icon: '💧', color: 'from-cyan-100 to-blue-200', unlocked: false },
-        { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : 'Early Bird', icon: '🌅', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 10 },
-        { id: 'gym-rat', name: language === 'fr' ? 'Gym Rat' : 'Gym Rat', icon: '🏋️', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 30 },
       ],
       competences: [
         { id: 'first-lesson', name: language === 'fr' ? 'Première Leçon' : 'First Lesson', icon: '📚', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
@@ -417,9 +370,6 @@ export function FlowChallengePage({
         { id: 'skill-builder', name: language === 'fr' ? 'Builder' : 'Skill Builder', icon: '🛠️', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 15 },
         { id: 'expert-mode', name: language === 'fr' ? 'Expert' : 'Expert Mode', icon: '🎓', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 21 },
         { id: 'master', name: language === 'fr' ? 'Maître' : 'Master', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
-        { id: 'bookworm', name: language === 'fr' ? 'Rat de Bib' : 'Bookworm', icon: '📖', color: 'from-green-100 to-green-200', unlocked: false },
-        { id: 'polyglot', name: language === 'fr' ? 'Polyglotte' : 'Polyglot', icon: '🗣️', color: 'from-pink-100 to-rose-200', unlocked: completedCount >= 10 },
-        { id: 'genius', name: language === 'fr' ? 'Génie' : 'Genius', icon: '🧠', color: 'from-cyan-100 to-blue-200', unlocked: completedCount >= 30 },
       ],
       relations: [
         { id: 'first-contact', name: language === 'fr' ? 'Premier Contact' : 'First Contact', icon: '💬', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
@@ -427,9 +377,6 @@ export function FlowChallengePage({
         { id: 'heart-opener', name: language === 'fr' ? 'Cœur Ouvert' : 'Heart Opener', icon: '❤️', color: 'from-red-100 to-pink-200', unlocked: completedCount >= 15 },
         { id: 'connector', name: language === 'fr' ? 'Connecteur' : 'Connector', icon: '🤝', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 21 },
         { id: 'love-guru', name: language === 'fr' ? 'Love Guru' : 'Love Guru', icon: '💕', color: 'from-pink-200 to-rose-300', unlocked: completedCount >= 30 },
-        { id: 'listener', name: language === 'fr' ? 'Auditeur' : 'Listener', icon: '👂', color: 'from-green-100 to-green-200', unlocked: false },
-        { id: 'best-friend', name: language === 'fr' ? 'Bestie' : 'Best Friend', icon: '👯', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 10 },
-        { id: 'heartbreaker', name: language === 'fr' ? 'Séducteur' : 'Heartbreaker', icon: '💘', color: 'from-red-200 to-rose-300', unlocked: completedCount >= 30 },
       ],
       'bien-etre': [
         { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : 'First Step', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
@@ -437,9 +384,6 @@ export function FlowChallengePage({
         { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : 'Halfway', icon: '🎯', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 15 },
         { id: 'consistent', name: language === 'fr' ? 'Cohérent' : 'Consistent', icon: '🔥', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 21 },
         { id: 'flow-master', name: language === 'fr' ? 'Maître' : 'Flow Master', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
-        { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : 'Early Bird', icon: '🌅', color: 'from-pink-100 to-rose-200', unlocked: false },
-        { id: 'action-hero', name: language === 'fr' ? 'Héros' : 'Hero', icon: '🦸', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
-        { id: 'perfectionist', name: language === 'fr' ? 'Perfect' : 'Perfect', icon: '💎', color: 'from-cyan-100 to-blue-200', unlocked: false },
       ],
       general: [
         { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : 'First Step', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
@@ -447,9 +391,6 @@ export function FlowChallengePage({
         { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : 'Halfway', icon: '🎯', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 15 },
         { id: 'consistent', name: language === 'fr' ? 'Cohérent' : 'Consistent', icon: '🔥', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 21 },
         { id: 'flow-master', name: language === 'fr' ? 'Maître' : 'Flow Master', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
-        { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : 'Early Bird', icon: '🌅', color: 'from-pink-100 to-rose-200', unlocked: false },
-        { id: 'action-hero', name: language === 'fr' ? 'Héros' : 'Hero', icon: '🦸', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
-        { id: 'champion', name: language === 'fr' ? 'Champion' : 'Champion', icon: '🏅', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
       ]
     };
 

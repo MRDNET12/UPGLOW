@@ -1057,93 +1057,87 @@ export const useStore = create<AppState>()(
         
         const generateWithAI = async (): Promise<PersonalizedFlow | null> => {
           try {
-            const systemPrompt = `Tu es Glow Flow, un coach expert spécialisé dans les programmes de transformation de 30 jours.
+            // Détecter la langue de l'objectif
+            const detectLanguage = (text: string): string => {
+              if (/[àâäéèêëïîôöùûüç]+/i.test(text)) return 'fr';
+              if (/[áéíóúüñ¿¡]+/i.test(text)) return 'es';
+              return 'en';
+            };
+            
+            const lang = detectLanguage(objective + ' ' + description);
+            
+            const systemPrompt = `Tu es Glow Flow, un coach expert qui crée des programmes de 30 jours ultra-personnalisés.
 
-ANALYSE INTELLIGENTE DE L'OBJECTIF :
-Tu dois analyser l'objectif principal et la description pour déterminer la CATÉGORIE et créer des actions PERTINENTES :
+RÈGLE D'OR : Tu dois analyser en profondeur l'objectif fourni et créer UNIQUEMENT des actions directement liées à cet objectif.
 
-CATÉGORIES D'OBJECTIFS :
-1. FINANCE / BUSINESS (ex: gagner 10000€, créer entreprise, investir)
-   - Action 1: Tâche productive (analyse marché, business plan, pitch, networking)
-   - Action 2: Apprentissage (lecture business, veille, formation)
-   - Action 3: Networking ou action concrète (appel, email, prospection)
+EXEMPLE SI L'OBJECTIF EST "Gagner 10000€ par mois" :
+- PAS de "marcher 30 min" ou "massage visage"
+- MAIS OUI : "Analyser 3 opportunités business", "Contacter 5 prospects", "Lire 20 min sur l'investissement"
 
-2. DÉVELOPPEMENT PERSONNEL / CONFiance (ex: confiance en soi, communication)
-   - Action 1: Exposition progressive (défi social, prise de parole)
-   - Action 2: Pratique quotidienne (affirmations, visualisation, journaling)
-   - Action 3: Action de reconfort ou célébration
+STRUCTURE OBLIGATOIRE PAR JOUR :
+1. Action 1 (obligatoire) : Action productive directement liée à l'objectif
+2. Action 2 (obligatoire) : Apprentissage ou pratique liée à l'objectif
+3. Action 3 (au choix parmi 3) : Actions complémentaires adaptées
 
-3. SANTÉ / FORME PHYSIQUE (ex: perdre du poids, musculation)
-   - Action 1: Sport adapté (cardio, muscu, yoga, sport)
-   - Action 2: Alimentation / Hydratation
-   - Action 3: Récupération ou soin du corps
+TU DOIS GÉNÉRER 30 JOURS COMPLÈTS avec des actions DIFFÉRENTES chaque jour.`;
 
-4. COMPÉTENCES / APPRENTISSAGE (ex: apprendre langue, codage)
-   - Action 1: Pratique active (exercices, projet concret)
-   - Action 2: Théorie / Veille (lecture, vidéos, cours)
-   - Action 3: Application créative ou révision
+            const userPrompt = `CRÉE UN PROGRAMME DE 30 JOURS SPÉCIFIQUE À CET OBJECTIF :
 
-5. RELATIONS / SOCIAL (ex: rencontrer quelqu'un, améliorer relations)
-   - Action 1: Action sociale (sortir, appeler, message)
-   - Action 2: Travail intérieur (gratitude, pardon, introspection)
-   - Action 3: Auto-soin ou célébration
+🎯 OBJECTIF PRINCIPAL : "${objective}"
+📝 DESCRIPTION : "${description}"
+🌍 LANGUE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
 
-6. BIEN-ÊTRE / BEAUTÉ (ex: meilleure peau, cheveux, prendre soin de soi)
-   - Action 1: Activité physique douce
-   - Action 2: Rituel beauté
-   - Action 3: Choix entre plusieurs soins
+⚠️ INSTRUCTIONS CRITIQUES :
+1. ANALYSE l'objectif en profondeur
+2. CRÉE des actions UNIQUEMENT liées à : "${objective}"
+3. JAMAIS d'actions génériques (sport, marche, massage) sauf si l'objectif le demande
+4. 30 jours avec des actions DIFFÉRENTES chaque jour
+5. Actions concrètes et réalisables
 
-STRUCTURE : 2 actions obligatoires + 1 action au choix parmi 3 options
-IMPORTANT : Adapte TOUTES les actions à la langue de l'utilisateur.`;
-
-            const userPrompt = `Analyse cet objectif et crée un programme de 30 jours PERSONNALISÉ :
-
-OBJECTIF : "${objective}"
-DESCRIPTION : "${description}"
-
-INSTRUCTIONS :
-1. Détecte la catégorie de l'objectif (finance, développement perso, santé, compétences, relations, bien-être)
-2. Crée des actions VRAIMENT pertinentes pour CET objectif spécifique
-3. Sois créatif et original - pas de génériques
-4. Adapte à la langue de saisie
-
-FORMAT JSON (30 jours complets) :
+FORMAT JSON STRICT (30 jours) :
 {
-  "category": "catégorie détectée",
+  "category": "catégorie spécifique",
   "days": [
     {
       "day": 1,
-      "title": "Titre inspirant et original",
+      "title": "Titre inspirant jour 1",
       "mandatory1": {
-        "icon": "emoji",
-        "title": "Titre action 1",
-        "description": "Description détaillée et motivante"
+        "icon": "emoji pertinent",
+        "title": "Action concrète liée à l'objectif",
+        "description": "Description détaillée de comment faire cette action"
       },
       "mandatory2": {
-        "icon": "emoji", 
-        "title": "Titre action 2",
-        "description": "Description détaillée et motivante"
+        "icon": "emoji pertinent",
+        "title": "Deuxième action liée",
+        "description": "Instructions claires"
       },
       "choiceOptions": {
         "optionA": {
           "icon": "emoji",
-          "title": "Titre option A",
+          "title": "Option A liée à l'objectif",
           "description": "Description"
         },
         "optionB": {
           "icon": "emoji",
-          "title": "Titre option B", 
+          "title": "Option B liée à l'objectif",
           "description": "Description"
         },
         "optionC": {
           "icon": "emoji",
-          "title": "Titre option C",
+          "title": "Option C liée à l'objectif",
           "description": "Description"
         }
       }
     }
   ]
-}`;
+}
+
+EXEMPLE pour "Gagner 10000€ par mois" - Jour 1 :
+- mandatory1: 💰 Identifier 3 niches business potentielles
+- mandatory2: 📚 Lire 20 min sur le marketing digital
+- choiceOptions: 📧 Envoyer 5 emails pros / 📊 Faire une analyse de marché / 🎧 Écouter un podcast business
+
+GÉNÈRE MAINTENANT LE JSON COMPLET :`;
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
@@ -1171,17 +1165,49 @@ FORMAT JSON (30 jours complets) :
             const data = await response.json();
             const content = data.choices?.[0]?.message?.content || '';
             
-            // Extract JSON from response
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            console.log('[AI Response] Content received:', content.substring(0, 500));
+            
+            // Extract JSON from response - try to find JSON block
+            let jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
             if (!jsonMatch) {
+              jsonMatch = content.match(/\{[\s\S]*\}/);
+            }
+            if (!jsonMatch) {
+              console.error('[AI Response] No JSON found in:', content);
               throw new Error('No JSON found in response');
             }
             
-            const parsed = JSON.parse(jsonMatch[0]);
+            const jsonContent = jsonMatch[1] || jsonMatch[0];
+            console.log('[AI Response] JSON extracted:', jsonContent.substring(0, 500));
             
-            if (!parsed.days || parsed.days.length !== 30) {
+            let parsed;
+            try {
+              parsed = JSON.parse(jsonContent);
+            } catch (parseError) {
+              console.error('[AI Response] JSON parse error:', parseError);
+              console.error('[AI Response] Content was:', jsonContent);
+              throw new Error('Invalid JSON format');
+            }
+            
+            if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 1) {
+              console.error('[AI Response] Invalid days data:', parsed);
               throw new Error('Invalid days data');
             }
+            
+            // Ensure we have 30 days
+            if (parsed.days.length < 30) {
+              console.warn(`[AI Response] Only ${parsed.days.length} days received, padding to 30`);
+              while (parsed.days.length < 30) {
+                const lastDay = parsed.days[parsed.days.length - 1];
+                parsed.days.push({
+                  ...lastDay,
+                  day: parsed.days.length + 1,
+                  title: lastDay.title + ' (suite)'
+                });
+              }
+            }
+            
+            console.log('[AI Response] Successfully parsed', parsed.days.length, 'days');
 
             const today = new Date().toISOString().split('T')[0];
             

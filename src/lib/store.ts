@@ -1640,8 +1640,15 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               completedDays: [],
               startDate: today,
               isActive: true,
-              badges: []
+              badges: [],
+              isFromFallback: true  // ⚠️ Flow généré par le fallback (IA n'a pas pu générer)
             };
+
+            console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.warn('[Fallback] ⚠️ Using fallback flow generation');
+            console.warn('[Fallback] Category detected:', category);
+            console.warn('[Fallback] Objective:', objective);
+            console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
           }
 
           set({

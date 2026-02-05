@@ -18,9 +18,9 @@ interface FlowChallengePageProps {
   onCompleteDay: (day: number) => void;
 }
 
-export function FlowChallengePage({ 
-  language, 
-  personalizedFlow, 
+export function FlowChallengePage({
+  language,
+  personalizedFlow,
   objectifPrincipal,
   onBack,
   onToggleAction,
@@ -29,12 +29,12 @@ export function FlowChallengePage({
 }: FlowChallengePageProps) {
   const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
   const [showChoiceCard, setShowChoiceCard] = useState(true);
-  
+
   const currentFlowDay = personalizedFlow?.days.find(d => d.day === personalizedFlow.currentDay);
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;
   const completedCount = personalizedFlow?.completedDays.length || 0;
   const currentDay = personalizedFlow?.currentDay || 1;
-  
+
   // Traductions
   const t = {
     flow: language === 'fr' ? 'Flow' : language === 'en' ? 'Flow' : 'Flow',
@@ -52,9 +52,9 @@ export function FlowChallengePage({
   // Récupérer les actions dynamiques depuis le flow
   const mandatoryActions = currentFlowDay?.mandatoryActions || [];
   const choiceActions = currentFlowDay?.choiceActions || [];
-  
+
   const selectedChoiceId = currentFlowDay?.selectedChoiceId || '';
-  
+
   // Vérifier si les actions sont complétées
   const isAction1Completed = mandatoryActions[0]?.isCompleted || false;
   const isAction2Completed = mandatoryActions[1]?.isCompleted || false;
@@ -77,14 +77,38 @@ export function FlowChallengePage({
         </p>
       </div>
 
+      {/* ⚠️ Bandeau d'avertissement si flow généré par fallback */}
+      {personalizedFlow?.isFromFallback && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 rounded-r-lg">
+          <div className="flex items-start gap-2">
+            <span className="text-yellow-600 text-lg flex-shrink-0">⚠️</span>
+            <div className="flex-1">
+              <p className="text-sm text-yellow-800 font-medium">
+                {language === 'fr'
+                  ? 'Ce flow a été généré avec un modèle standard.'
+                  : language === 'en'
+                    ? 'This flow was generated with a standard template.'
+                    : 'Este flow fue generado con una plantilla estándar.'}
+              </p>
+              <p className="text-xs text-yellow-700 mt-1">
+                {language === 'fr'
+                  ? 'Pour un flow plus personnalisé, essayez de fournir plus de détails sur votre situation lors de la prochaine création.'
+                  : language === 'en'
+                    ? 'For a more personalized flow, try providing more details about your situation next time.'
+                    : 'Para un flow más personalizado, intenta proporcionar más detalles sobre tu situación la próxima vez.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Liste des actions avec design des piliers beauté */}
       <div className="space-y-4">
         {/* Action 1: Première action obligatoire */}
         {mandatoryActions[0] && (
           <div
-            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${
-              isAction1Completed ? 'opacity-60' : ''
-            }`}
+            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isAction1Completed ? 'opacity-60' : ''
+              }`}
             onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
           >
             <div className="flex items-start gap-3">
@@ -109,9 +133,8 @@ export function FlowChallengePage({
         {/* Action 2: Deuxième action obligatoire */}
         {mandatoryActions[1] && (
           <div
-            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${
-              isAction2Completed ? 'opacity-60' : ''
-            }`}
+            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isAction2Completed ? 'opacity-60' : ''
+              }`}
             onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
           >
             <div className="flex items-start gap-3">
@@ -152,10 +175,9 @@ export function FlowChallengePage({
                   </p>
                 </div>
                 <div className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors">
-                  <ChevronDown 
-                    className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${
-                      showChoiceCard ? 'rotate-180' : ''
-                    }`} 
+                  <ChevronDown
+                    className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${showChoiceCard ? 'rotate-180' : ''
+                      }`}
                   />
                 </div>
               </div>
@@ -163,9 +185,8 @@ export function FlowChallengePage({
 
             {/* Section déroulante avec les choix */}
             <div
-              className={`overflow-hidden transition-all duration-300 ease-out ${
-                showChoiceCard ? 'max-h-[800px] opacity-100 mt-3' : 'max-h-0 opacity-0'
-              }`}
+              className={`overflow-hidden transition-all duration-300 ease-out ${showChoiceCard ? 'max-h-[800px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+                }`}
             >
               <div className="bg-pink-50/50 rounded-2xl p-4 space-y-3">
                 {choiceActions.map((action) => {
@@ -177,11 +198,10 @@ export function FlowChallengePage({
                         onSelectChoice(currentDay, action.id);
                         onToggleAction(currentDay, action.id);
                       }}
-                      className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
-                        isSelected
+                      className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${isSelected
                           ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
                           : 'bg-white shadow-md hover:shadow-lg'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{action.icon}</span>
@@ -205,11 +225,10 @@ export function FlowChallengePage({
         <Button
           onClick={() => onCompleteDay(currentDay)}
           disabled={!canCompleteDay}
-          className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
-            canCompleteDay
+          className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${canCompleteDay
               ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white'
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
+            }`}
         >
           {t.validate}
           {canCompleteDay && <Check className="ml-2 w-5 h-5" />}
@@ -263,9 +282,9 @@ export function FlowChallengePage({
             {language === 'fr' ? 'Tu avances bien !' : language === 'en' ? 'You\'re doing great!' : '¡Vas muy bien!'}
           </h3>
           <p className="text-gray-600">
-            {language === 'fr' 
-              ? `Encore ${30 - completedCount} jours pour atteindre ton objectif` 
-              : language === 'en' 
+            {language === 'fr'
+              ? `Encore ${30 - completedCount} jours pour atteindre ton objectif`
+              : language === 'en'
                 ? `${30 - completedCount} more days to reach your goal`
                 : `${30 - completedCount} días más para alcanzar tu objetivo`}
           </p>
@@ -283,7 +302,7 @@ export function FlowChallengePage({
             </p>
           </CardContent>
         </Card>
-        
+
         <Card className="border-none shadow-md bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardContent className="p-4 text-center">
             <div className="text-3xl mb-2">⭐</div>
@@ -310,13 +329,12 @@ export function FlowChallengePage({
               return (
                 <div
                   key={day}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                    isCompleted 
-                      ? 'bg-green-500 text-white' 
-                      : isCurrent 
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${isCompleted
+                      ? 'bg-green-500 text-white'
+                      : isCurrent
                         ? 'bg-pink-500 text-white ring-4 ring-pink-200'
                         : 'bg-gray-100 text-gray-400'
-                  }`}
+                    }`}
                 >
                   {isCompleted ? <Check className="w-4 h-4" /> : day}
                 </div>
@@ -332,7 +350,7 @@ export function FlowChallengePage({
   const renderBadgesSection = () => {
     // Détecter la catégorie depuis le flow ou l'objectif
     const category = personalizedFlow?.category || 'general';
-    
+
     // Badges par catégorie
     const badgesByCategory: Record<string, any[]> = {
       finance: [
@@ -400,7 +418,7 @@ export function FlowChallengePage({
             {unlockedCount} / {badges.length} {language === 'fr' ? 'débloqués' : language === 'en' ? 'unlocked' : 'desbloqueados'}
           </p>
           <div className="w-full bg-gray-200 rounded-full h-3 mt-3 max-w-xs mx-auto">
-            <div 
+            <div
               className="bg-gradient-to-r from-pink-400 to-rose-500 h-3 rounded-full transition-all duration-500"
               style={{ width: `${(unlockedCount / badges.length) * 100}%` }}
             />
@@ -412,11 +430,10 @@ export function FlowChallengePage({
           {badges.map((badge) => (
             <div
               key={badge.id}
-              className={`p-4 rounded-2xl text-center transition-all ${
-                badge.unlocked 
-                  ? `bg-gradient-to-br ${badge.color} shadow-lg scale-100` 
+              className={`p-4 rounded-2xl text-center transition-all ${badge.unlocked
+                  ? `bg-gradient-to-br ${badge.color} shadow-lg scale-100`
                   : 'bg-gray-100 opacity-50 grayscale'
-              }`}
+                }`}
             >
               <div className="text-4xl mb-2">{badge.icon}</div>
               <p className={`text-xs font-bold leading-tight ${badge.unlocked ? 'text-gray-800' : 'text-gray-500'}`}>
@@ -438,9 +455,9 @@ export function FlowChallengePage({
           <Card className="bg-gradient-to-r from-pink-50 to-rose-50 border-pink-200">
             <CardContent className="p-4 text-center">
               <p className="text-gray-700">
-                {language === 'fr' 
-                  ? '🎯 Complète ton premier jour pour débloquer ton premier badge !' 
-                  : language === 'en' 
+                {language === 'fr'
+                  ? '🎯 Complète ton premier jour pour débloquer ton premier badge !'
+                  : language === 'en'
                     ? '🎯 Complete your first day to unlock your first badge!'
                     : '🎯 ¡Completa tu primer día para desbloquear tu primera insignia!'}
               </p>
@@ -456,7 +473,7 @@ export function FlowChallengePage({
       {/* Header */}
       <div className="bg-gradient-to-r from-pink-400 to-rose-500 p-4 pb-6">
         <div className="flex items-center mb-4">
-          <button 
+          <button
             onClick={onBack}
             className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all"
           >
@@ -466,7 +483,7 @@ export function FlowChallengePage({
             {personalizedFlow?.objective || objectifPrincipal}
           </h1>
         </div>
-        
+
         {/* Badge de progression */}
         <div className="flex items-center justify-between">
           <Badge className="bg-white/20 text-white border-none">
@@ -491,29 +508,26 @@ export function FlowChallengePage({
         <div className="max-w-md mx-auto flex items-center justify-around">
           <button
             onClick={() => setActiveTab('flow')}
-            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
-              activeTab === 'flow' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
-            }`}
+            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${activeTab === 'flow' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
+              }`}
           >
             <Target className="w-6 h-6 mb-1" />
             <span className="text-xs font-medium">{t.flow}</span>
           </button>
-          
+
           <button
             onClick={() => setActiveTab('progression')}
-            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
-              activeTab === 'progression' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
-            }`}
+            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${activeTab === 'progression' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
+              }`}
           >
             <Flame className="w-6 h-6 mb-1" />
             <span className="text-xs font-medium">{t.progression}</span>
           </button>
-          
+
           <button
             onClick={() => setActiveTab('badges')}
-            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${
-              activeTab === 'badges' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
-            }`}
+            className={`flex flex-col items-center py-2 px-4 rounded-xl transition-all ${activeTab === 'badges' ? 'text-pink-600 bg-pink-50' : 'text-gray-400'
+              }`}
           >
             <Trophy className="w-6 h-6 mb-1" />
             <span className="text-xs font-medium">{t.badges}</span>

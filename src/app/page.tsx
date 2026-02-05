@@ -43,7 +43,6 @@ import { SmallWinsCompact } from '@/components/SmallWinsCompact';
 import BoundariesCompact from '@/components/BoundariesCompact';
 import { EveningQuestionQuickAdd } from '@/components/EveningQuestionQuickAdd';
 import { GoalSetup5 } from '@/components/GoalSetup5';
-import { GoalSetup3 } from '@/components/GoalSetup3';
 import { GoalSetup1 } from '@/components/GoalSetup1';
 import { FlowDescriptionPage } from '@/components/FlowDescriptionPage';
 import { FlowChallengePage } from '@/components/FlowChallengePage';
@@ -1739,7 +1738,7 @@ isActionCompleted,
   // Les challenges (Beauté et Corps, Esprit et Vie) sont toujours accessibles
   // Les pages de présentation et de configuration des objectifs sont aussi accessibles
   const isChallengeView = currentView === 'challenge-selection' || currentView === 'dashboard' || currentView === 'challenge';
-  const isOnboardingView = currentView === 'presentation-1' || currentView === 'presentation-2' || currentView === 'goal-setup-5' || currentView === 'goal-setup-3' || currentView === 'goal-setup-1';
+  const isOnboardingView = currentView === 'presentation-1' || currentView === 'presentation-2' || currentView === 'goal-setup-5' || currentView === 'goal-setup-1';
   const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView && !isOnboardingView;
 
   // Language Selection Screen - Clean White Design
@@ -2029,32 +2028,19 @@ isActionCompleted,
         language={language}
         onContinue={(objectives) => {
           setObjectifsInitiaux(objectives);
-          setCurrentView('goal-setup-3');
-        }}
-      />
-    );
-  }
-
-  // Goal Setup Page B - Select 3 objectives
-  if (currentView === 'goal-setup-3') {
-    return (
-      <GoalSetup3 
-        language={language}
-        objectifsInitiaux={objectifsInitiaux}
-        onContinue={(selectedObjectives) => {
-          setObjectifsPrioritaires(selectedObjectives);
+          setObjectifsPrioritaires(objectives);
           setCurrentView('goal-setup-1');
         }}
       />
     );
   }
 
-  // Goal Setup Page C - Select 1 objective
+  // Goal Setup Page B - Select 1 objective
   if (currentView === 'goal-setup-1') {
     return (
       <GoalSetup1 
         language={language}
-        objectifsPrioritaires={objectifsPrioritaires}
+        objectifsPrioritaires={objectifsInitiaux}
         onStart={(objectifPrincipal) => {
           setObjectifPrincipal(objectifPrincipal);
           setCurrentView('flow-proposition');

@@ -22,19 +22,19 @@ export function GoalSetup1({ language, objectifsPrioritaires, onStart }: GoalSet
 
   const getTitle = () => {
     switch (language) {
-      case 'fr': return 'Ta priorité actuelle';
-      case 'en': return 'Your current priority';
-      case 'es': return 'Tu prioridad actual';
-      default: return 'Your current priority';
+      case 'fr': return "Choisis l'objectif";
+      case 'en': return "Choose the goal";
+      case 'es': return "Elige el objetivo";
+      default: return "Choose the goal";
     }
   };
 
   const getDescription = () => {
     switch (language) {
-      case 'fr': return "Le vrai changement commence par une chose à la fois. Choisis l'objectif qui sera ta priorité actuelle.";
-      case 'en': return "Real change starts with one thing at a time. Choose the goal that will be your current priority.";
-      case 'es': return "El cambio real comienza con una cosa a la vez. Elige el objetivo que será tu prioridad actual.";
-      default: return "Real change starts with one thing at a time. Choose the goal that will be your current priority.";
+      case 'fr': return "qui compte le plus pour toi aujourd'hui.";
+      case 'en': return "that matters most to you today.";
+      case 'es': return "que más te importa hoy.";
+      default: return "that matters most to you today.";
     }
   };
 

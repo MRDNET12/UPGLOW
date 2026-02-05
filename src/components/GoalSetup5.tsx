@@ -11,7 +11,7 @@ interface GoalSetup5Props {
 }
 
 export function GoalSetup5({ language, onContinue }: GoalSetup5Props) {
-  const [objectives, setObjectives] = useState<string[]>(['', '', '', '', '']);
+  const [objectives, setObjectives] = useState<string[]>(['', '', '']);
   const [error, setError] = useState('');
 
   const handleObjectiveChange = (index: number, value: string) => {
@@ -23,8 +23,8 @@ export function GoalSetup5({ language, onContinue }: GoalSetup5Props) {
 
   const handleContinue = () => {
     const filledObjectives = objectives.filter(obj => obj.trim() !== '');
-    if (filledObjectives.length < 5) {
-      setError(language === 'fr' ? 'Remplis tous les 5 objectifs pour continuer' : language === 'en' ? 'Fill in all 5 objectives to continue' : 'Completa los 5 objetivos para continuar');
+    if (filledObjectives.length < 3) {
+      setError(language === 'fr' ? 'Remplis tous les 3 objectifs pour continuer' : language === 'en' ? 'Fill in all 3 objectives to continue' : 'Completa los 3 objetivos para continuar');
       return;
     }
     onContinue(objectives);
@@ -32,19 +32,19 @@ export function GoalSetup5({ language, onContinue }: GoalSetup5Props) {
 
   const getTitle = () => {
     switch (language) {
-      case 'fr': return 'Définis tes objectifs';
-      case 'en': return 'Define your goals';
-      case 'es': return 'Define tus objetivos';
-      default: return 'Define your goals';
+      case 'fr': return "Si Dieu te donnait tout";
+      case 'en': return "If God gave you everything";
+      case 'es': return "Si Dios te diera todo";
+      default: return "If God gave you everything";
     }
   };
 
   const getDescription = () => {
     switch (language) {
-      case 'fr': return 'Prends un moment pour toi. Note 5 objectifs qui comptent pour toi en ce moment. Ils peuvent être petits ou grands.';
-      case 'en': return 'Take a moment for yourself. Write down 5 goals that matter to you right now. They can be small or big.';
-      case 'es': return 'Tómate un momento para ti. Anota 5 objetivos que te importen ahora mismo. Pueden ser pequeños o grandes.';
-      default: return 'Take a moment for yourself. Write down 5 goals that matter to you right now. They can be small or big.';
+      case 'fr': return "ce que tu demandes, quels sont les 3 objectifs qui compteraient le plus ?";
+      case 'en': return "what you ask for, what are the 3 goals that would matter most?";
+      case 'es': return "lo que pides, ¿cuáles son los 3 objetivos que más importarían?";
+      default: return "what you ask for, what are the 3 goals that would matter most?";
     }
   };
 

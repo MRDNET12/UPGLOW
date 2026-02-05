@@ -89,7 +89,7 @@ export default function GlowUpChallengeApp() {
     toggleDayCompletion,
     updateDayNotes,
     toggleActionCompletion,
-isActionCompleted,
+    isActionCompleted,
     routine,
     updateRoutine,
     routineCompletedDates,
@@ -247,13 +247,13 @@ isActionCompleted,
   // Vérifier l'accès aux vues payantes et rediriger si nécessaire
   useEffect(() => {
     if (!isHydrated) return;
-    
+
     const paidViews = [
       { view: 'journal', feature: 'journal' as const },
       { view: 'glow-mirror', feature: 'glow_mirror' as const },
       { view: 'trackers', feature: 'habitudes' as const }
     ];
-    
+
     const currentPaidView = paidViews.find(v => v.view === currentView);
     if (currentPaidView && !canAccessFeature(currentPaidView.feature)) {
       setSubscriptionSource('trial_expired');
@@ -306,17 +306,17 @@ isActionCompleted,
   const [journalCurrentMonth, setJournalCurrentMonth] = useState(new Date());
   const [editingEntry, setEditingEntry] = useState<typeof journalEntries[0] | null>(null);
   const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
-  
+
   // État pour Glow Mirror
   const [showGlowMirror, setShowGlowMirror] = useState(false);
   const [glowMirrorMessage, setGlowMirrorMessage] = useState('');
   const [glowMirrorLoading, setGlowMirrorLoading] = useState(false);
   const [glowMirrorDeepMode, setGlowMirrorDeepMode] = useState(false);
   const [glowMirrorRetryCount, setGlowMirrorRetryCount] = useState(0);
-  const [glowMirrorQAMessages, setGlowMirrorQAMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
+  const [glowMirrorQAMessages, setGlowMirrorQAMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
   const [glowMirrorQAInput, setGlowMirrorQAInput] = useState('');
   const [glowMirrorQALoading, setGlowMirrorQALoading] = useState(false);
-  const [glowMirrorHistory, setGlowMirrorHistory] = useState<Array<{date: string, message: string}>>([]);
+  const [glowMirrorHistory, setGlowMirrorHistory] = useState<Array<{ date: string, message: string }>>([]);
   const [showGlowMirrorNotification, setShowGlowMirrorNotification] = useState(false);
   const [lastGlowMirrorView, setLastGlowMirrorView] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -326,10 +326,10 @@ isActionCompleted,
   });
   const [canViewGlowMirror, setCanViewGlowMirror] = useState(false);
   const [glowMirrorWeeklyTrends, setGlowMirrorWeeklyTrends] = useState<any>(null);
-  const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{habit: string, streak: number}>>([]);
+  const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{ habit: string, streak: number }>>([]);
   const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
   const [showGlowMirrorAlert, setShowGlowMirrorAlert] = useState(false);
-  
+
   // Date de première utilisation de l'app (pour Glow Mirror)
   const [firstAppUseDate, setFirstAppUseDate] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -365,7 +365,7 @@ isActionCompleted,
   // Fonction pour sauvegarder une entrée (ajout ou modification)
   const handleSaveJournalEntry = (entryData: Omit<typeof journalEntries[0], 'id'>) => {
     if (editingEntry) {
-      setJournalEntries(prev => prev.map(e => 
+      setJournalEntries(prev => prev.map(e =>
         e.id === editingEntry.id ? { ...entryData, id: editingEntry.id } : e
       ));
       setEditingEntry(null);
@@ -409,8 +409,8 @@ isActionCompleted,
   const getFilteredJournalEntries = () => {
     return journalEntries.filter(entry => {
       const entryDate = new Date(entry.date);
-      return entryDate.getMonth() === journalCurrentMonth.getMonth() && 
-             entryDate.getFullYear() === journalCurrentMonth.getFullYear();
+      return entryDate.getMonth() === journalCurrentMonth.getMonth() &&
+        entryDate.getFullYear() === journalCurrentMonth.getFullYear();
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
@@ -418,65 +418,65 @@ isActionCompleted,
   useEffect(() => {
     const checkGlowMirrorAvailability = () => {
       const now = new Date();
-      
+
       // Vérifier si l'utilisateur a utilisé l'app pendant au moins 7 jours
       const firstUse = new Date(firstAppUseDate);
       const daysSinceFirst = Math.floor((now.getTime() - firstUse.getTime()) / (1000 * 60 * 60 * 24));
       setDaysSinceFirstUse(daysSinceFirst);
       const hasMinimumUsage = daysSinceFirst >= 7;
       setIsGlowMirrorReady(hasMinimumUsage);
-      
+
       // Si moins de 7 jours, pas disponible
       if (!hasMinimumUsage) {
         setCanViewGlowMirror(false);
         setShowGlowMirrorNotification(false);
         return;
       }
-      
+
       // Si jamais vu, disponible après 7 jours
       if (!lastGlowMirrorView) {
         setCanViewGlowMirror(true);
         setShowGlowMirrorNotification(true);
         return;
       }
-      
+
       // Vérifier 7 jours depuis la dernière vue
       const lastView = new Date(lastGlowMirrorView);
       const daysSinceLastView = Math.floor((now.getTime() - lastView.getTime()) / (1000 * 60 * 60 * 24));
       const isAvailable = daysSinceLastView >= 7;
-      
+
       setCanViewGlowMirror(isAvailable);
       setShowGlowMirrorNotification(isAvailable);
     };
-    
+
     checkGlowMirrorAvailability();
-    
+
     // Vérifier toutes les heures
     const interval = setInterval(checkGlowMirrorAvailability, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, [lastGlowMirrorView, firstAppUseDate]);
 
   // Helper: Calculer les jours consécutifs d'une habitude
-  const calculateHabitConsecutiveDays = (habitHistory: Array<{date: string, completed: boolean}>) => {
+  const calculateHabitConsecutiveDays = (habitHistory: Array<{ date: string, completed: boolean }>) => {
     if (!habitHistory || habitHistory.length === 0) return 0;
-    
-    const sorted = [...habitHistory].sort((a, b) => 
+
+    const sorted = [...habitHistory].sort((a, b) =>
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    
+
     let consecutive = 0;
     const today = new Date().toISOString().split('T')[0];
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-    
+
     const lastEntry = sorted[0];
     if (lastEntry?.completed && (lastEntry.date === today || lastEntry.date === yesterday)) {
       consecutive = 1;
-      
+
       for (let i = 1; i < sorted.length; i++) {
         const current = new Date(sorted[i].date);
-        const previous = new Date(sorted[i-1].date);
+        const previous = new Date(sorted[i - 1].date);
         const diffDays = Math.floor((previous.getTime() - current.getTime()) / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 1 && sorted[i].completed) {
           consecutive++;
         } else {
@@ -484,7 +484,7 @@ isActionCompleted,
         }
       }
     }
-    
+
     return consecutive;
   };
 
@@ -492,21 +492,21 @@ isActionCompleted,
   const calculateWeeklyTrends = (now: Date) => {
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-    
+
     const getDataForPeriod = (startDate: Date, endDate: Date) => {
       const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
       const journalEntriesData = JSON.parse(localStorage.getItem('journalEntries') || '[]');
       const weekTasks = JSON.parse(localStorage.getItem('weekTasks') || '[]');
       const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
       const boundaries = JSON.parse(localStorage.getItem('boundaries') || '[]');
-      
+
       const filterByDate = (items: any[], dateField: string = 'date') => {
         return items.filter(item => {
           const itemDate = new Date(item[dateField] || item.date);
           return itemDate >= startDate && itemDate < endDate;
         });
       };
-      
+
       return {
         smallWins: filterByDate(smallWins).length,
         journalEntries: filterByDate(journalEntriesData).length,
@@ -516,15 +516,15 @@ isActionCompleted,
         completedBoundaries: boundaries.filter((b: any) => b.completed).length
       };
     };
-    
+
     const currentWeek = getDataForPeriod(oneWeekAgo, now);
     const previousWeek = getDataForPeriod(twoWeeksAgo, oneWeekAgo);
-    
+
     const calculateChange = (current: number, previous: number) => {
       if (previous === 0) return current > 0 ? 100 : 0;
       return Math.round(((current - previous) / previous) * 100);
     };
-    
+
     return {
       currentWeek,
       previousWeek,
@@ -567,7 +567,7 @@ isActionCompleted,
     }
 
     const now = new Date();
-    
+
     // Collecter toutes les données
     const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
     const recentWins = smallWins.filter((win: any) => {
@@ -575,47 +575,47 @@ isActionCompleted,
       const daysDiff = Math.floor((now.getTime() - winDate.getTime()) / (1000 * 60 * 60 * 24));
       return daysDiff <= 7;
     });
-    
+
     const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
     const completedHabits = newMeHabits.filter((habit: any) => habit.completed);
-    
+
     // Calculer les jours consécutifs pour chaque habitude
     const habitConsecutiveData = newMeHabits.map((habit: any) => ({
       name: habit.label || habit.name || 'Habit',
       streak: calculateHabitConsecutiveDays(habit.history || []),
       totalCompleted: habit.totalCompletions || 0
     })).filter((h: any) => h.streak > 0).sort((a: any, b: any) => b.streak - a.streak);
-    
+
     const recentEntries = journalEntries.filter(entry => {
       const entryDate = new Date(entry.date);
       const daysDiff = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
       return daysDiff <= 7;
     });
-    
+
     const boundariesData = JSON.parse(localStorage.getItem('boundaries') || '[]');
     const completedBoundaries = boundariesData.filter((b: any) => b.completed);
-    
+
     const weekTasks = JSON.parse(localStorage.getItem('weekTasks') || '[]');
     const completedTasks = weekTasks.filter((task: any) => task.completed);
-    
+
     const challengeProgress = JSON.parse(localStorage.getItem('challengeProgress') || '{}');
     const completedDays = Object.values(challengeProgress).filter((p: any) => p.completed).length;
-    
+
     // Calculer des statistiques avancées
     const habitCompletionRate = newMeHabits.length > 0 ? Math.round((completedHabits.length / newMeHabits.length) * 100) : 0;
     const taskCompletionRate = weekTasks.length > 0 ? Math.round((completedTasks.length / weekTasks.length) * 100) : 0;
     const boundaryCompletionRate = boundariesData.length > 0 ? Math.round((completedBoundaries.length / boundariesData.length) * 100) : 0;
-    
+
     // Analyser l'humeur dominante
     const moodCounts: Record<string, number> = {};
     recentEntries.forEach((e: any) => {
       if (e.mood) moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1;
     });
     const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-    const dominantMoodPercentage = recentEntries.length > 0 && dominantMood 
-      ? Math.round((moodCounts[dominantMood] / recentEntries.length) * 100) 
+    const dominantMoodPercentage = recentEntries.length > 0 && dominantMood
+      ? Math.round((moodCounts[dominantMood] / recentEntries.length) * 100)
       : 0;
-    
+
     // Analyser les tags les plus utilisés
     const allTags = recentEntries.flatMap((e: any) => e.tags || []);
     const tagCounts: Record<string, number> = {};
@@ -626,10 +626,10 @@ isActionCompleted,
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([tag, count]) => ({ tag, count }));
-    
+
     // Calculer la régularité (streak)
     let currentStreak = 0;
-    const sortedEntries = [...journalEntries].sort((a, b) => 
+    const sortedEntries = [...journalEntries].sort((a, b) =>
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
     if (sortedEntries.length > 0) {
@@ -637,7 +637,7 @@ isActionCompleted,
       const yesterday = new Date(now.getTime() - 86400000).toISOString().split('T')[0];
       const hasEntryToday = sortedEntries.some(e => e.date === today);
       const hasEntryYesterday = sortedEntries.some(e => e.date === yesterday);
-      
+
       if (hasEntryToday || hasEntryYesterday) {
         currentStreak = 1;
         let checkDate = new Date(hasEntryToday ? today : yesterday);
@@ -652,10 +652,10 @@ isActionCompleted,
         }
       }
     }
-    
+
     // Calculer les tendances hebdomadaires
     const weeklyTrends = calculateWeeklyTrends(now);
-    
+
     // Construire le prompt enrichi pour Kimi
     const promptData = {
       language: language,
@@ -711,7 +711,17 @@ isActionCompleted,
             totalDays: 30,
             completedDays: personalizedFlow.completedDays.length,
             completionRate: Math.round((personalizedFlow.completedDays.length / 30) * 100),
-            category: personalizedFlow.category || 'general'
+            category: personalizedFlow.category || 'general',
+            // ➕ Ajouter les actions complétées des 7 derniers jours du flow
+            recentCompletedActions: personalizedFlow.completedDays.slice(-7).map(dayNum => {
+              const day = personalizedFlow.days.find(d => d.day === dayNum);
+              return {
+                day: dayNum,
+                title: day?.title || `Jour ${dayNum}`,
+                mandatoryActions: day?.mandatoryActions.filter(a => a.isCompleted).map(a => a.title) || [],
+                choiceAction: day?.choiceActions.find(a => a.id === day.selectedChoiceId)?.title || null
+              };
+            })
           } : null,
           flowObjective: personalizedFlow?.objective || null,
           flowDescription: personalizedFlow?.objectiveDescription || null
@@ -723,27 +733,27 @@ isActionCompleted,
         improvementAreas: [] as string[]
       }
     };
-    
+
     // Identifier les forces et axes d'amélioration
     const strengthAreas: string[] = [];
     const improvementAreas: string[] = [];
-    
+
     if (habitCompletionRate >= 70) strengthAreas.push('consistency_habits');
     if (taskCompletionRate >= 70) strengthAreas.push('productivity');
     if (recentEntries.length >= 3) strengthAreas.push('self_reflection');
     if (recentWins.length >= 2) strengthAreas.push('celebration');
     if (boundaryCompletionRate >= 70) strengthAreas.push('self_care');
     if (habitConsecutiveData.some((h: any) => h.streak >= 7)) strengthAreas.push('long_term_consistency');
-    
+
     if (habitCompletionRate < 50) improvementAreas.push('habit_consistency');
     if (taskCompletionRate < 50) improvementAreas.push('task_completion');
     if (recentEntries.length < 2) improvementAreas.push('journaling_frequency');
     if (recentWins.length === 0) improvementAreas.push('celebration_mindset');
     if (weeklyTrends.globalTrend < 0) improvementAreas.push('weekly_momentum');
-    
+
     promptData.insights.strengthAreas = strengthAreas;
     promptData.insights.improvementAreas = improvementAreas;
-    
+
     // System prompt avec support du mode profond et raisonnement obligatoire
     const getSystemPrompt = () => {
       const basePrompt = language === 'fr'
@@ -757,7 +767,7 @@ PROCESSUS OBLIGATOIRE :
 3. CONNECTE les patterns entre son objectif principal et ses actions quotidiennes
 4. GÉNÈRE ensuite le Glow Mirror personnalisé`
         : language === 'en'
-        ? `You are Glow Mirror, an intelligent and caring identity mirror.
+          ? `You are Glow Mirror, an intelligent and caring identity mirror.
 
 ABSOLUTE RULE: BEFORE generating anything, you MUST use your reasoning capability.
 
@@ -766,7 +776,7 @@ MANDATORY PROCESS:
 2. DEEPLY ANALYZE ALL data: objectives, flow, habits, journal, etc.
 3. CONNECT patterns between their main objective and daily actions
 4. THEN generate the personalized Glow Mirror`
-        : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso.
+          : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso.
 
 REGLA ABSOLUTA: ANTES de generar nada, DEBES usar tu capacidad de razonamiento.
 
@@ -775,7 +785,7 @@ PROCESO OBLIGATORIO:
 2. ANALIZA en profundidad TODOS los datos: objetivos, flow, hábitos, diario, etc.
 3. CONECTA patrones entre su objetivo principal y acciones diarias
 4. GENERA después el Glow Mirror personalizado`;
-      
+
       const rules = language === 'fr'
         ? `RÈGLES:
 - Écris à la 2ème personne (tu/vous)
@@ -790,7 +800,7 @@ PROCESO OBLIGATORIO:
 - Si la tendance est négative, encourage-la avec bienveillance
 - IMPORTANT : Relie TOUJOURS l'analyse à son objectif principal et son Flow`
         : language === 'en'
-        ? `RULES:
+          ? `RULES:
 - Write in 2nd person (you)
 - Human, warm but professional tone
 - Structure: 1) Deep analysis of who they are, 2) Notable trends with comparisons, 3) Ultra-personalized improvement advice
@@ -802,7 +812,7 @@ PROCESO OBLIGATORIO:
 - If they are very active, suggest how to optimize or balance
 - If trend is negative, encourage them with kindness
 - IMPORTANT: ALWAYS connect the analysis to their main objective and Flow`
-        : `REGLAS:
+          : `REGLAS:
 - Escribe en 2ª persona (tú)
 - Tono humano, cálido pero profesional
 - Estructura: 1) Análisis profundo de quién es, 2) Tendencias notables con comparaciones, 3) Consejo de mejora ultra-personalizado
@@ -814,25 +824,25 @@ PROCESO OBLIGATORIO:
 - Si es muy activa, sugiere cómo optimizar o equilibrar
 - Si la tendencia es negativa, anímala con amabilidad
 - IMPORTANTE: CONECTA SIEMPRE el análisis a su objetivo principal y Flow`;
-      
+
       const length = glowMirrorDeepMode
         ? (language === 'fr' ? 'Message de 15-25 lignes pour une analyse profonde' : language === 'en' ? 'Message of 15-25 lines for deep analysis' : 'Mensaje de 15-25 líneas para análisis profundo')
         : (language === 'fr' ? 'Message de 8-15 lignes' : language === 'en' ? 'Message of 8-15 lines' : 'Mensaje de 8-15 líneas');
-      
+
       return `${basePrompt}\n\n${rules}\n\n${length}`;
     };
-    
+
     const systemPrompt = getSystemPrompt();
-    
+
     const userPrompt = language === 'fr'
       ? `DONNÉES COMPLÈTES DE L'UTILISATRICE (7 derniers jours):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESSUS OBLIGATOIRE - ÉTAPE 1: RAISONNEMENT\nAvant de générer le Glow Mirror, tu DOIS fournir ton analyse entre balises <think> :\n<think>\n- Objectif principal de l'utilisatrice: ${objectifPrincipal || 'Non défini'}\n- Flow actif: ${personalizedFlow?.isActive ? 'OUI' : 'NON'}\n- Si Flow actif: Jour ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} jours complétés\n- Analyse de la cohérence: Ses actions quotidiennes soutiennent-elles son objectif principal?\n- Patterns identifiés: Quels liens entre ses habitudes et son objectif?\n- Forces et blocages liés à son objectif\n- Recommandations préliminaires\n</think>\n\nÉTAPE 2: GLOW MIRROR\nGénère maintenant:\n1. UN MIROIR PROFOND: Qui est-elle vraiment? Ses patterns? Forces cachées? Mentionne ses streaks comme preuves de discipline.\n2. TENDANCES: Compare cette semaine à la précédente. Progression ou régression?\n3. CONSEIL ACTIONNABLE: Ultra-personnalisé, connecté à son objectif principal "${objectifPrincipal || 'sa vision'}" et son Flow de 30 jours.\n\n${glowMirrorDeepMode ? 'Mode Profond: 15-25 lignes.' : '8-15 lignes.'}`
       : language === 'en'
-      ? `COMPLETE USER DATA (last 7 days):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ MANDATORY PROCESS - STEP 1: REASONING\nBefore generating the Glow Mirror, you MUST provide your analysis between <think> tags:\n<think>\n- User's main objective: ${objectifPrincipal || 'Not defined'}\n- Flow active: ${personalizedFlow?.isActive ? 'YES' : 'NO'}\n- If Flow active: Day ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} days completed\n- Coherence analysis: Do her daily actions support her main objective?\n- Patterns identified: What links between her habits and objective?\n- Strengths and blocks related to her objective\n- Preliminary recommendations\n</think>\n\nSTEP 2: GLOW MIRROR\nNow generate:\n1. A DEEP MIRROR: Who is she really? Her patterns? Hidden strengths? Mention her streaks as proof of discipline.\n2. TRENDS: Compare this week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized, connected to her main objective "${objectifPrincipal || 'her vision'}" and her 30-day Flow.\n\n${glowMirrorDeepMode ? 'Deep Mode: 15-25 lines.' : '8-15 lines.'}`
-      : `DATOS COMPLETOS DE LA USUARIA (últimos 7 días):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESO OBLIGATORIO - PASO 1: RAZONAMIENTO\nAntes de generar el Glow Mirror, DEBES proporcionar tu análisis entre etiquetas <think> :\n<think>\n- Objetivo principal de la usuaria: ${objectifPrincipal || 'No definido'}\n- Flow activo: ${personalizedFlow?.isActive ? 'SÍ' : 'NO'}\n- Si Flow activo: Día ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} días completados\n- Análisis de coherencia: ¿Sus acciones diarias apoyan su objetivo principal?\n- Patrones identificados: ¿Qué vínculos entre sus hábitos y objetivo?\n- Fortalezas y bloqueos relacionados con su objetivo\n- Recomendaciones preliminares\n</think>\n\nPASO 2: GLOW MIRROR\nGenera ahora:\n1. ESPEJO PROFUNDO: ¿Quién es realmente? ¿Sus patrones? ¿Fortalezas ocultas? Menciona sus rachas como prueba de disciplina.\n2. TENDENCIAS: Compara esta semana con la anterior. ¿Progreso o regresión?\n3. CONSEJO ACCIONABLE: Ultra-personalizado, conectado a su objetivo principal "${objectifPrincipal || 'su visión'}" y su Flow de 30 días.\n\n${glowMirrorDeepMode ? 'Modo Profundo: 15-25 líneas.' : '8-15 líneas.'}`;
-    
+        ? `COMPLETE USER DATA (last 7 days):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ MANDATORY PROCESS - STEP 1: REASONING\nBefore generating the Glow Mirror, you MUST provide your analysis between <think> tags:\n<think>\n- User's main objective: ${objectifPrincipal || 'Not defined'}\n- Flow active: ${personalizedFlow?.isActive ? 'YES' : 'NO'}\n- If Flow active: Day ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} days completed\n- Coherence analysis: Do her daily actions support her main objective?\n- Patterns identified: What links between her habits and objective?\n- Strengths and blocks related to her objective\n- Preliminary recommendations\n</think>\n\nSTEP 2: GLOW MIRROR\nNow generate:\n1. A DEEP MIRROR: Who is she really? Her patterns? Hidden strengths? Mention her streaks as proof of discipline.\n2. TRENDS: Compare this week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized, connected to her main objective "${objectifPrincipal || 'her vision'}" and her 30-day Flow.\n\n${glowMirrorDeepMode ? 'Deep Mode: 15-25 lines.' : '8-15 lines.'}`
+        : `DATOS COMPLETOS DE LA USUARIA (últimos 7 días):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESO OBLIGATORIO - PASO 1: RAZONAMIENTO\nAntes de generar el Glow Mirror, DEBES proporcionar tu análisis entre etiquetas <think> :\n<think>\n- Objetivo principal de la usuaria: ${objectifPrincipal || 'No definido'}\n- Flow activo: ${personalizedFlow?.isActive ? 'SÍ' : 'NO'}\n- Si Flow activo: Día ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} días completados\n- Análisis de coherencia: ¿Sus acciones diarias apoyan su objetivo principal?\n- Patrones identificados: ¿Qué vínculos entre sus hábitos y objetivo?\n- Fortalezas y bloqueos relacionados con su objetivo\n- Recomendaciones preliminares\n</think>\n\nPASO 2: GLOW MIRROR\nGenera ahora:\n1. ESPEJO PROFUNDO: ¿Quién es realmente? ¿Sus patrones? ¿Fortalezas ocultas? Menciona sus rachas como prueba de disciplina.\n2. TENDENCIAS: Compara esta semana con la anterior. ¿Progreso o regresión?\n3. CONSEJO ACCIONABLE: Ultra-personalizado, conectado a su objetivo principal "${objectifPrincipal || 'su visión'}" y su Flow de 30 días.\n\n${glowMirrorDeepMode ? 'Modo Profundo: 15-25 líneas.' : '8-15 líneas.'}`;
+
     setGlowMirrorLoading(true);
     setGlowMirrorRetryCount(forceRetry ? glowMirrorRetryCount + 1 : 0);
-    
+
     try {
       const response = await fetchWithRetry('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -848,34 +858,82 @@ PROCESO OBLIGATORIO:
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
           ],
-          temperature: glowMirrorDeepMode ? 0.85 : 0.8,
-          max_tokens: glowMirrorDeepMode ? 1200 : 800,
-          top_p: 0.9
+          temperature: 0.4,              // ⬇️ Réduit de 0.8 à 0.4 pour plus de cohérence
+          max_tokens: 3000,              // ⬆️ Augmenté pour raisonnement complet + message
+          top_p: 0.9,
+          frequency_penalty: 0.3         // ➕ Réduit les répétitions
         })
       }, 3);
-      
+
       const data = await response.json();
       let aiMessage = data.choices?.[0]?.message?.content || '';
-      
-      // Vérifier si le raisonnement <think> est présent
+
+      console.log('[Glow Mirror] Response length:', aiMessage.length);
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // VALIDATION STRICTE DU RAISONNEMENT (BLOQUANTE)
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
       const thinkMatch = aiMessage.match(/<think>([\s\S]*?)<\/think>/);
-      if (thinkMatch) {
-        console.log('[Glow Mirror] ✓ Reasoning detected:', thinkMatch[1].substring(0, 200) + '...');
-        // Extraire uniquement le contenu après </think> pour l'affichage
-        const afterThink = aiMessage.split(/<\/think>/).pop() || aiMessage;
-        aiMessage = afterThink.trim();
-      } else {
-        console.warn('[Glow Mirror] ⚠️ No <think> reasoning found in response!');
+
+      if (!thinkMatch) {
+        console.error('[Glow Mirror] ❌ REJECTED: No <think> reasoning found!');
+        console.error('[Glow Mirror] Content preview:', aiMessage.substring(0, 500));
+        throw new Error('AI did not provide reasoning for Glow Mirror');
       }
-      
+
+      const reasoning = thinkMatch[1].trim();
+
+      if (reasoning.length < 150) {
+        console.error('[Glow Mirror] ❌ REJECTED: Reasoning too short!');
+        console.error('[Glow Mirror] Reasoning length:', reasoning.length);
+        throw new Error('AI reasoning insufficient (< 150 chars)');
+      }
+
+      // Vérifier que le raisonnement contient les éléments clés
+      const hasAnalysis = /cohérence|pattern|tendance|trend|coherence|patrón/i.test(reasoning);
+
+      if (!hasAnalysis) {
+        console.error('[Glow Mirror] ❌ REJECTED: Reasoning missing analysis!');
+        throw new Error('AI reasoning incomplete - missing analysis');
+      }
+
+      console.log('[Glow Mirror] ✅ Valid reasoning detected');
+      console.log('[Glow Mirror] Reasoning preview:', reasoning.substring(0, 200) + '...');
+
+      // Extraire uniquement le contenu après </think> pour l'affichage
+      const afterThink = aiMessage.split(/<\/think>/).pop() || aiMessage;
+      aiMessage = afterThink.trim();
+
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // VALIDATION DE LA QUALITÉ DU MESSAGE
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+      const minLength = glowMirrorDeepMode ? 400 : 200;
+      if (aiMessage.length < minLength) {
+        console.warn('[Glow Mirror] ⚠️ Message shorter than expected:', aiMessage.length, 'chars');
+      }
+
+      // Vérifier que le message mentionne l'objectif (si défini)
+      if (objectifPrincipal && !aiMessage.toLowerCase().includes(objectifPrincipal.toLowerCase().substring(0, 10))) {
+        console.warn('[Glow Mirror] ⚠️ Message does not mention main objective');
+      }
+
+      // Vérifier que le message mentionne le Flow (si actif)
+      if (personalizedFlow?.isActive && !/flow|jour|day|día/i.test(aiMessage)) {
+        console.warn('[Glow Mirror] ⚠️ Message does not mention Flow');
+      }
+
+      console.log('[Glow Mirror] ✅ Message quality validated');
+
       setGlowMirrorMessage(aiMessage);
       setGlowMirrorQAMessages([{ role: 'assistant', content: aiMessage }]);
-      
+
       // Sauvegarder dans l'historique
       const newHistory = [{ date: now.toISOString(), message: aiMessage }, ...glowMirrorHistory].slice(0, 10);
       setGlowMirrorHistory(newHistory);
       localStorage.setItem('glowMirrorHistory', JSON.stringify(newHistory));
-      
+
       // Déclencher le confetti après 2 secondes
       setTimeout(() => {
         setGlowMirrorHasBeenRead(true);
@@ -886,16 +944,16 @@ PROCESO OBLIGATORIO:
           colors: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981']
         });
       }, 2000);
-      
+
     } catch (error) {
       console.error('Glow Mirror AI Error:', error);
-      
+
       if (glowMirrorRetryCount < 2) {
         // Retry automatique
         setTimeout(() => generateGlowMirror(true), 1000);
         return;
       }
-      
+
       // Message de fallback après les retries
       const fallbackMessages = {
         fr: "Tu es en train de construire quelque chose de beau. Chaque petit pas compte. Prends un moment pour célébrer qui tu es aujourd'hui.",
@@ -907,10 +965,10 @@ PROCESO OBLIGATORIO:
     } finally {
       setGlowMirrorLoading(false);
     }
-    
+
     setShowGlowMirror(true);
     setShowGlowMirrorNotification(false);
-    
+
     // Sauvegarder la date de visualisation
     const today = new Date().toISOString();
     setLastGlowMirrorView(today);
@@ -921,20 +979,20 @@ PROCESO OBLIGATORIO:
   // Q&A avec l'IA (max 3 questions)
   const askGlowMirrorQuestion = async () => {
     if (!glowMirrorQAInput.trim() || glowMirrorQAMessages.filter(m => m.role === 'user').length >= 3) return;
-    
+
     const userQuestion = glowMirrorQAInput.trim();
     setGlowMirrorQAInput('');
     setGlowMirrorQALoading(true);
-    
+
     const updatedMessages = [...glowMirrorQAMessages, { role: 'user' as const, content: userQuestion }];
     setGlowMirrorQAMessages(updatedMessages);
-    
+
     const qaSystemPrompt = language === 'fr'
       ? "Tu es Glow Mirror. Réponds à la question de l'utilisatrice de façon concise (3-5 lignes max), bienveillante et personnalisée. Base-toi sur le contexte précédent."
       : language === 'en'
-      ? "You are Glow Mirror. Answer the user's question concisely (3-5 lines max), kindly and personally. Base yourself on the previous context."
-      : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 líneas máx), amable y personalizada. Basándote en el contexto anterior.";
-    
+        ? "You are Glow Mirror. Answer the user's question concisely (3-5 lines max), kindly and personally. Base yourself on the previous context."
+        : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 líneas máx), amable y personalizada. Basándote en el contexto anterior.";
+
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -954,20 +1012,20 @@ PROCESO OBLIGATORIO:
           max_tokens: 300
         })
       });
-      
+
       if (!response.ok) throw new Error('API Error');
-      
+
       const data = await response.json();
       const aiResponse = data.choices?.[0]?.message?.content || '';
-      
+
       setGlowMirrorQAMessages([...updatedMessages, { role: 'assistant', content: aiResponse }]);
     } catch (error) {
       console.error('Q&A Error:', error);
-      const fallback = language === 'fr' 
+      const fallback = language === 'fr'
         ? "Je ne peux pas répondre pour le moment. Continue ton beau travail !"
         : language === 'en'
-        ? "I can't answer right now. Keep up your great work!"
-        : "No puedo responder ahora. ¡Sigue con tu gran trabajo!";
+          ? "I can't answer right now. Keep up your great work!"
+          : "No puedo responder ahora. ¡Sigue con tu gran trabajo!";
       setGlowMirrorQAMessages([...updatedMessages, { role: 'assistant', content: fallback }]);
     } finally {
       setGlowMirrorQALoading(false);
@@ -995,7 +1053,7 @@ PROCESO OBLIGATORIO:
   // États pour Tracker
   const [trackerCurrentDay, setTrackerCurrentDay] = useState(1);
   const [trackerStartDate, setTrackerStartDate] = useState<string | null>(null);
-  const [customHabits, setCustomHabits] = useState<Array<{id: string, label: string, type: 'good' | 'bad'}>>([]);
+  const [customHabits, setCustomHabits] = useState<Array<{ id: string, label: string, type: 'good' | 'bad' }>>([]);
   const [showAddHabit, setShowAddHabit] = useState(false);
   const [newHabitLabel, setNewHabitLabel] = useState('');
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
@@ -1160,7 +1218,7 @@ PROCESO OBLIGATORIO:
     icon: string;
     color: string;
     description?: string;
-    habits: Array<{id: string, label: string, completed: boolean}>;
+    habits: Array<{ id: string, label: string, completed: boolean }>;
     collapsed: boolean;
     isDefault?: boolean; // Marquer les blocs non-supprimables
   }>>(() => {
@@ -1264,8 +1322,8 @@ PROCESO OBLIGATORIO:
   const [timeCapsuleExpanded, setTimeCapsuleExpanded] = useState(false);
 
   // Mes tâches (manuelles)
-  const [myWeekPriorities, setMyWeekPriorities] = useState<Array<{id: string, text: string, completed: boolean}>>([]);
-  const [myWeeklyTasks, setMyWeeklyTasks] = useState<Record<string, Array<{id: string, text: string, completed: boolean}>>>({
+  const [myWeekPriorities, setMyWeekPriorities] = useState<Array<{ id: string, text: string, completed: boolean }>>([]);
+  const [myWeeklyTasks, setMyWeeklyTasks] = useState<Record<string, Array<{ id: string, text: string, completed: boolean }>>>({
     monday: [],
     tuesday: [],
     wednesday: [],
@@ -1300,7 +1358,7 @@ PROCESO OBLIGATORIO:
     id: string;
     name: string;
     color: string;
-    weeklyPriorities: Array<{id: string, text: string, completed: boolean}>;
+    weeklyPriorities: Array<{ id: string, text: string, completed: boolean }>;
   }>>([]);
 
   const [showAddTask, setShowAddTask] = useState(false);
@@ -1309,7 +1367,7 @@ PROCESO OBLIGATORIO:
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<{id: string, day: string, type: 'priority' | 'task'} | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<{ id: string, day: string, type: 'priority' | 'task' } | null>(null);
 
   // États pour l'installation PWA (Android uniquement)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -1870,11 +1928,10 @@ PROCESO OBLIGATORIO:
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                className={`w-full p-3 rounded-2xl transition-all duration-300 bg-white ${
-                  language === lang.code
-                    ? 'ring-2 ring-pink-400 shadow-lg'
-                    : 'shadow-sm hover:shadow-md'
-                }`}
+                className={`w-full p-3 rounded-2xl transition-all duration-300 bg-white ${language === lang.code
+                  ? 'ring-2 ring-pink-400 shadow-lg'
+                  : 'shadow-sm hover:shadow-md'
+                  }`}
                 style={language === lang.code ? { boxShadow: '0 4px 12px rgba(244, 114, 182, 0.15)' } : { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
               >
                 <div className="flex items-center justify-between">
@@ -1918,7 +1975,7 @@ PROCESO OBLIGATORIO:
       <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-stone-950' : 'bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50'}`}>
         <SubscriptionPopup
           isOpen={true}
-          onClose={() => {}} // Fonction vide - impossible de fermer
+          onClose={() => { }} // Fonction vide - impossible de fermer
           source="trial_expired"
           onOpenAuthDialog={() => setShowAuthDialog(true)}
         />
@@ -2020,7 +2077,7 @@ PROCESO OBLIGATORIO:
     const description = language === 'fr' ? "Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois." : language === 'en' ? "Change doesn't happen overnight. This app guides your progress, one habit, one thought, one victory at a time." : 'El cambio no ocurre de la noche a la mañana. Esta app te acompaña en tu progreso, un hábito, un pensamiento, una victoria a la vez.';
     const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
     const tags = language === 'fr' ? ['Progression', 'Habitudes', 'Évolution personnelle'] : language === 'en' ? ['Progress', 'Habits', 'Personal growth'] : ['Progreso', 'Hábitos', 'Evolución personal'];
-    
+
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
@@ -2041,7 +2098,7 @@ PROCESO OBLIGATORIO:
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
             {tags.map((tag) => (
-              <span 
+              <span
                 key={tag}
                 className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
               >
@@ -2069,7 +2126,7 @@ PROCESO OBLIGATORIO:
     const description = language === 'fr' ? "Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens." : language === 'en' ? "Recognizing your progress gives you strength to continue. Here, every effort counts and brings you closer to who you're becoming." : 'Reconocer tu progreso te da fuerzas para continuar. Aquí, cada esfuerzo cuenta y te acerca a la persona que estás convirtiéndote.';
     const startText = language === 'fr' ? 'Commencer mon évolution' : language === 'en' ? 'Start my evolution' : 'Comenzar mi evolución';
     const tags = language === 'fr' ? ['Petits succès', 'Motivation', 'Confiance en soi'] : language === 'en' ? ['Small wins', 'Motivation', 'Self-confidence'] : ['Pequeños logros', 'Motivación', 'Confianza en ti'];
-    
+
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
@@ -2090,7 +2147,7 @@ PROCESO OBLIGATORIO:
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
             {tags.map((tag) => (
-              <span 
+              <span
                 key={tag}
                 className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
               >
@@ -2115,7 +2172,7 @@ PROCESO OBLIGATORIO:
   // Goal Setup Page A - Define 5 objectives
   if (currentView === 'goal-setup-5') {
     return (
-      <GoalSetup5 
+      <GoalSetup5
         language={language}
         onContinue={(objectives) => {
           setObjectifsInitiaux(objectives);
@@ -2129,7 +2186,7 @@ PROCESO OBLIGATORIO:
   // Goal Setup Page B - Select 1 objective
   if (currentView === 'goal-setup-1') {
     return (
-      <GoalSetup1 
+      <GoalSetup1
         language={language}
         objectifsPrioritaires={objectifsInitiaux}
         onStart={(objectifPrincipal) => {
@@ -2148,7 +2205,7 @@ PROCESO OBLIGATORIO:
     const description3 = language === 'fr' ? '3 petites actions par jour pour avancer vers ton objectif' : language === 'en' ? '3 small actions per day to move toward your goal' : '3 pequeñas acciones por día para avanzar hacia tu objetivo';
     const yesButton = language === 'fr' ? 'Oui, je veux essayer' : language === 'en' ? 'Yes, I want to try' : 'Sí, quiero probar';
     const noButton = language === 'fr' ? 'Pas maintenant' : language === 'en' ? 'Not now' : 'Ahora no';
-    
+
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
@@ -2184,7 +2241,7 @@ PROCESO OBLIGATORIO:
               {yesButton}
               <ChevronRight className="ml-2 w-5 h-5" />
             </Button>
-            
+
             <Button
               onClick={() => startChallenge()}
               variant="outline"
@@ -2309,11 +2366,10 @@ PROCESO OBLIGATORIO:
               <div className="w-full flex justify-center items-center">
                 {/* Cartes normales (Trial + Plan Pro) */}
                 <div
-                  className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${
-                    showTimeCapsuleCard
-                      ? 'opacity-0 -translate-y-full absolute'
-                      : 'opacity-100 translate-y-0'
-                  }`}
+                  className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${showTimeCapsuleCard
+                    ? 'opacity-0 -translate-y-full absolute'
+                    : 'opacity-100 translate-y-0'
+                    }`}
                 >
                   <TrialBadge theme={theme} />
                   <button
@@ -2330,11 +2386,10 @@ PROCESO OBLIGATORIO:
 
                 {/* Carte Message à moi - Centré */}
                 <div
-                  className={`w-full flex justify-center transition-all duration-500 ease-in-out ${
-                    showTimeCapsuleCard
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-full absolute'
-                  }`}
+                  className={`w-full flex justify-center transition-all duration-500 ease-in-out ${showTimeCapsuleCard
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-full absolute'
+                    }`}
                 >
                   <TimeCapsule
                     theme={theme}
@@ -2355,11 +2410,10 @@ PROCESO OBLIGATORIO:
 
             {/* Carte Flow Personnalisé - Affichée pour tous les utilisateurs */}
             <Card
-              className={`border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-[2rem] overflow-hidden relative ${
-                personalizedFlow?.isActive 
-                  ? 'bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50' 
-                  : 'bg-gradient-to-br from-gray-100 via-gray-50 to-white border-2 border-dashed border-gray-300'
-              }`}
+              className={`border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-[2rem] overflow-hidden relative ${personalizedFlow?.isActive
+                ? 'bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50'
+                : 'bg-gradient-to-br from-gray-100 via-gray-50 to-white border-2 border-dashed border-gray-300'
+                }`}
               onClick={() => {
                 if (personalizedFlow?.isActive) {
                   setCurrentView('flow-challenge');
@@ -2530,14 +2584,14 @@ PROCESO OBLIGATORIO:
                       {language === 'fr' ? 'Tout ce dont vous avez besoin pour rester productif' : language === 'en' ? 'Everything you need to stay productive' : 'Todo lo que necesitas para mantenerte productivo'}
                     </p>
                   </div>
-                  
+
                   {/* Image/Mascotte */}
                   <div className="flex-1 flex items-center justify-center my-1">
                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
                       <span className="text-4xl">🧘‍♀️</span>
                     </div>
                   </div>
-                  
+
                   {/* Bouton */}
                   <button className="w-full bg-gray-900 text-white text-xs font-semibold py-2 px-4 rounded-full hover:bg-gray-800 transition-colors mt-1">
                     {language === 'fr' ? 'Commencer' : language === 'en' ? 'Get Started' : 'Empezar'}
@@ -2749,11 +2803,11 @@ PROCESO OBLIGATORIO:
 
                 <div className="mt-6 text-center">
                   <p className="text-xs text-gray-400 mb-4">
-                    {language === 'fr' 
+                    {language === 'fr'
                       ? 'Prochain Glow Mirror disponible dans 7 jours'
                       : language === 'en'
-                      ? 'Next Glow Mirror available in 7 days'
-                      : 'Próximo Glow Mirror disponible en 7 días'}
+                        ? 'Next Glow Mirror available in 7 days'
+                        : 'Próximo Glow Mirror disponible en 7 días'}
                   </p>
                   <button
                     onClick={() => setShowGlowMirror(false)}
@@ -2847,7 +2901,7 @@ PROCESO OBLIGATORIO:
                 const completedCount = completedNewMe + completedCustom;
                 const totalCount = newMeHabits.length + customHabits.length;
                 const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-                
+
                 return (
                   <div className="bg-white rounded-2xl p-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                     <div className="flex items-center justify-between mb-2">
@@ -2855,9 +2909,9 @@ PROCESO OBLIGATORIO:
                       <span className="text-xs font-bold" style={{ color: '#10b981' }}>{progressPercent}%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full rounded-full transition-all duration-500"
-                        style={{ 
+                        style={{
                           width: `${progressPercent}%`,
                           background: 'linear-gradient(90deg, #34d399, #14b8a6)'
                         }}
@@ -2873,7 +2927,7 @@ PROCESO OBLIGATORIO:
                   <span>🎯</span>
                   {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                 </h3>
-                
+
                 {dailyIntention ? (
                   <div className="bg-violet-50 rounded-xl p-3">
                     <p className="text-sm font-semibold text-violet-700">
@@ -2923,21 +2977,20 @@ PROCESO OBLIGATORIO:
                       <button
                         key={mood.id}
                         onClick={() => setDailyFeeling(label)}
-                        className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all active:scale-95 ${
-                          isSelected ? `bg-gradient-to-br ${mood.gradient} shadow-sm` : 'bg-gray-50'
-                        }`}
+                        className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all active:scale-95 ${isSelected ? `bg-gradient-to-br ${mood.gradient} shadow-sm` : 'bg-gray-50'
+                          }`}
                       >
-          <mood.icon 
-            className={`w-5 h-5 transition-all duration-200 ${isSelected ? "text-white drop-shadow-sm" : ""}`}
-            style={{ 
-              filter: isSelected ? "none" : "grayscale(100%) brightness(1.3)",
-              opacity: isSelected ? 1 : 0.5,
-              transform: isSelected ? "scale(1.1)" : "scale(1)",
-            }}
-          />
-          <span className={`text-[10px] font-medium ${isSelected ? 'text-white' : 'text-gray-500'}`}>
-            {label}
-          </span>
+                        <mood.icon
+                          className={`w-5 h-5 transition-all duration-200 ${isSelected ? "text-white drop-shadow-sm" : ""}`}
+                          style={{
+                            filter: isSelected ? "none" : "grayscale(100%) brightness(1.3)",
+                            opacity: isSelected ? 1 : 0.5,
+                            transform: isSelected ? "scale(1.1)" : "scale(1)",
+                          }}
+                        />
+                        <span className={`text-[10px] font-medium ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                          {label}
+                        </span>
                       </button>
                     );
                   })}
@@ -2964,12 +3017,12 @@ PROCESO OBLIGATORIO:
                       key={habit.id}
                       onClick={() => {
                         const newCompletedState = !habit.completed;
-                        
+
                         // Mettre à jour le state
                         setNewMeHabits(newMeHabits.map(h =>
                           h.id === habit.id ? { ...h, completed: newCompletedState } : h
                         ));
-                        
+
                         // Enregistrer dans localStorage pour la page de progression
                         const today = getLocalDateString();
                         const storageKey = `newme_${habit.id}_${today}`;
@@ -2983,26 +3036,23 @@ PROCESO OBLIGATORIO:
                         e.preventDefault();
                         // TODO: Ouvrir la vue détail 30 jours
                       }}
-                      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
-                        habit.completed
-                          ? 'bg-emerald-50'
-                          : 'hover:bg-gray-50'
-                      }`}
+                      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${habit.completed
+                        ? 'bg-emerald-50'
+                        : 'hover:bg-gray-50'
+                        }`}
                     >
                       <div className="flex items-center gap-3 flex-1">
                         <span className="text-xl">{habit.icon}</span>
-                        <span className={`text-sm font-medium flex-1 text-left ${
-                          habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
-                        }`}>
+                        <span className={`text-sm font-medium flex-1 text-left ${habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
+                          }`}>
                           {habit.label}
                         </span>
                       </div>
-                      <div 
-                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
-                          habit.completed 
-                            ? 'bg-emerald-400' 
-                            : 'bg-gray-200'
-                        }`}
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${habit.completed
+                          ? 'bg-emerald-400'
+                          : 'bg-gray-200'
+                          }`}
                       >
                         {habit.completed ? (
                           <Check className="w-4 h-4 text-white" />
@@ -3033,7 +3083,7 @@ PROCESO OBLIGATORIO:
                   </div>
                 </div>
                 <div className="h-px bg-gray-200 mx-4" />
-                
+
                 {customHabits.length === 0 ? (
                   <div className="p-4">
                     <button
@@ -3052,7 +3102,7 @@ PROCESO OBLIGATORIO:
                       const today = getLocalDateString();
                       const tracker = trackers.find(t => t.date === today);
                       const isCompleted = tracker?.habits?.[habit.id] || false;
-                      
+
                       return (
                         <div
                           key={habit.id}
@@ -3076,18 +3126,16 @@ PROCESO OBLIGATORIO:
                         >
                           <div className="flex items-center gap-3 flex-1">
                             <div
-                              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                                isCompleted
-                                  ? 'bg-white border-2 border-emerald-400 text-emerald-500'
-                                  : 'bg-gray-100 text-gray-400'
-                              }`}
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isCompleted
+                                ? 'bg-white border-2 border-emerald-400 text-emerald-500'
+                                : 'bg-gray-100 text-gray-400'
+                                }`}
                             >
                               {isCompleted && <Check className="w-4 h-4" />}
                             </div>
                             <div className="flex flex-col flex-1">
-                              <span className={`text-sm font-bold ${
-                                isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'
-                              }`}>
+                              <span className={`text-sm font-bold ${isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'
+                                }`}>
                                 {habit.label}
                               </span>
                             </div>
@@ -3190,25 +3238,25 @@ PROCESO OBLIGATORIO:
                     ...newMeHabits.map(h => ({ ...h, source: 'newme' as const })),
                     ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
                   ];
-                  
+
                   // Récupérer firstOpenDate
-                  const firstOpenStr = typeof window !== 'undefined' 
-                    ? localStorage.getItem('firstOpenDate') 
+                  const firstOpenStr = typeof window !== 'undefined'
+                    ? localStorage.getItem('firstOpenDate')
                     : null;
                   const firstOpenDate = firstOpenStr ? new Date(firstOpenStr) : new Date();
-                  
+
                   return allHabits.map((habit) => {
                     // Generate 30 days of completion data depuis firstOpenDate
                     const daysData = [];
-                    
+
                     for (let i = 0; i < 30; i++) {
                       const date = new Date(firstOpenDate);
                       date.setDate(firstOpenDate.getDate() + i);
                       const dateStr = getLocalDateString(date);
                       const dayNumber = i + 1; // 1-30
-                      
+
                       let wasCompleted = false;
-                      
+
                       if (habit.source === 'newme') {
                         // For New Me habits: check localStorage
                         const saved = localStorage.getItem(`newme_${habit.id}_${dateStr}`);
@@ -3218,21 +3266,21 @@ PROCESO OBLIGATORIO:
                         const tracker = trackers.find(t => t.date === dateStr);
                         wasCompleted = tracker?.habits?.[habit.id] || false;
                       }
-                      
+
                       daysData.push({ dayNumber, wasCompleted, dateStr });
                     }
-                    
+
                     // Split into two rows: days 1-15 and days 16-30
                     const firstRow = daysData.slice(0, 15);
                     const secondRow = daysData.slice(15, 30);
-                    
+
                     return (
                       <div key={`${habit.source}-${habit.id}`} className="bg-white rounded-2xl p-4 shadow-sm">
                         {/* Habit Header */}
                         <div className="flex items-center gap-3 mb-4">
                           <div className={`
                             w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-sm flex-shrink-0
-                            ${habit.source === 'newme' ? 'bg-gradient-to-br from-purple-100 to-pink-100' : 
+                            ${habit.source === 'newme' ? 'bg-gradient-to-br from-purple-100 to-pink-100' :
                               habit.type === 'good' ? 'bg-emerald-100' : 'bg-rose-100'}
                           `}>
                             {habit.source === 'newme' ? (
@@ -3256,7 +3304,7 @@ PROCESO OBLIGATORIO:
                             </p>
                           </div>
                         </div>
-                        
+
                         {/* 30 Days Grid - 2 rows of 15 */}
                         <div className="space-y-2">
                           {/* First row: days 1-15 */}
@@ -3266,15 +3314,15 @@ PROCESO OBLIGATORIO:
                                 key={day.dayNumber}
                                 className={`
                                   aspect-square rounded
-                                  ${day.wasCompleted 
-                                    ? 'bg-emerald-500 shadow-sm' 
+                                  ${day.wasCompleted
+                                    ? 'bg-emerald-500 shadow-sm'
                                     : 'bg-gray-100 border border-gray-200'}
                                 `}
                                 title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Complété' : 'Non complété'}`}
                               />
                             ))}
                           </div>
-                          
+
                           {/* Second row: days 16-30 */}
                           <div className="grid" style={{ gridTemplateColumns: 'repeat(15, minmax(0, 1fr))', gap: '4px' }}>
                             {secondRow.map((day) => (
@@ -3282,8 +3330,8 @@ PROCESO OBLIGATORIO:
                                 key={day.dayNumber}
                                 className={`
                                   aspect-square rounded
-                                  ${day.wasCompleted 
-                                    ? 'bg-emerald-500 shadow-sm' 
+                                  ${day.wasCompleted
+                                    ? 'bg-emerald-500 shadow-sm'
                                     : 'bg-gray-100 border border-gray-200'}
                                 `}
                                 title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Complété' : 'Non complété'}`}
@@ -3352,10 +3400,10 @@ PROCESO OBLIGATORIO:
                         {currentWeekOffset === 0
                           ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
                           : currentWeekOffset === 1
-                          ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
-                          : currentWeekOffset === -1
-                          ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
-                          : formatWeekRange(currentWeekOffset)
+                            ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
+                            : currentWeekOffset === -1
+                              ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
+                              : formatWeekRange(currentWeekOffset)
                         }
                       </p>
                     </div>
@@ -3399,9 +3447,8 @@ PROCESO OBLIGATORIO:
                     return prioritiesToShow.map((priority) => (
                       <div
                         key={priority.id}
-                        className={`flex items-center gap-2 p-2 rounded-lg ${
-                          theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
-                        }`}
+                        className={`flex items-center gap-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
+                          }`}
                       >
                         <span className={`flex-1 text-xs ${priority.completed ? 'line-through text-stone-500' : ''}`}>
                           {priority.text}
@@ -3484,11 +3531,10 @@ PROCESO OBLIGATORIO:
                                 return (
                                   <div
                                     key={task.id}
-                                    className={`relative p-1.5 pr-5 rounded-md text-[10px] flex items-start gap-1.5 ${
-                                      task.type === 'glowee' && taskGradient
-                                        ? `bg-gradient-to-r ${taskGradient}`
-                                        : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
-                                    }`}
+                                    className={`relative p-1.5 pr-5 rounded-md text-[10px] flex items-start gap-1.5 ${task.type === 'glowee' && taskGradient
+                                      ? `bg-gradient-to-r ${taskGradient}`
+                                      : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
+                                      }`}
                                   >
                                     {/* Indicateur de couleur de l'objectif */}
                                     {task.goalColor && (
@@ -3720,11 +3766,10 @@ PROCESO OBLIGATORIO:
                     return (
                       <button
                         key={index}
-                        className={`relative flex flex-col items-center cursor-pointer transition-all px-3 py-2 rounded-full ${
-                          isSelected 
-                            ? 'bg-gray-900 text-white scale-105' 
-                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                        }`}
+                        className={`relative flex flex-col items-center cursor-pointer transition-all px-3 py-2 rounded-full ${isSelected
+                          ? 'bg-gray-900 text-white scale-105'
+                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                          }`}
                         onClick={() => setBeautySelectedDate(dateString)}
                       >
                         <span className={`text-[10px] uppercase font-bold ${isSelected ? 'text-white' : 'text-gray-500'}`}>
@@ -3751,13 +3796,12 @@ PROCESO OBLIGATORIO:
               <div className="flex gap-1.5 max-w-lg mx-auto">
                 <button
                   onClick={() => setNewMeActiveTab('daily')}
-                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
-                    newMeActiveTab === 'daily'
-                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                      : theme === 'dark'
-                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                  }`}
+                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'daily'
+                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                    : theme === 'dark'
+                      ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                    }`}
                 >
                   <div className="flex items-center gap-1 justify-center">
                     <CheckSquare className="w-3 h-3" />
@@ -3767,13 +3811,12 @@ PROCESO OBLIGATORIO:
                 </button>
                 <button
                   onClick={() => setNewMeActiveTab('progress')}
-                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
-                    newMeActiveTab === 'progress'
-                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                      : theme === 'dark'
-                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                  }`}
+                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'progress'
+                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                    : theme === 'dark'
+                      ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                    }`}
                 >
                   <div className="flex items-center gap-1 justify-center">
                     <TrendingUp className="w-3 h-3" />
@@ -3783,13 +3826,12 @@ PROCESO OBLIGATORIO:
                 </button>
                 <button
                   onClick={() => setNewMeActiveTab('badges')}
-                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${
-                    newMeActiveTab === 'badges'
-                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                      : theme === 'dark'
-                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                  }`}
+                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'badges'
+                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                    : theme === 'dark'
+                      ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                    }`}
                 >
                   <div className="flex items-center gap-1 justify-center">
                     <Award className="w-3 h-3" />
@@ -3810,14 +3852,14 @@ PROCESO OBLIGATORIO:
                       <CardContent className="p-4 pl-20">
                         <p className="text-xs text-gray-700 leading-relaxed font-medium mb-3">
                           {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
-                           language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
-                           '30 días. 3 gestos al día. Para un verdadero glow up.'}
+                            language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
+                              '30 días. 3 gestos al día. Para un verdadero glow up.'}
                         </p>
                         {/* Barre de progression en bas à droite */}
                         <div className="flex items-center gap-2 justify-end">
                           <div className="flex-1 max-w-[150px]">
                             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div 
+                              <div
                                 className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
                                 style={{
                                   width: `${(() => {
@@ -3868,9 +3910,8 @@ PROCESO OBLIGATORIO:
                         <div key={pillar.id}>
                           {/* Pillar Card */}
                           <div
-                            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${
-                              isCompleted ? 'opacity-60' : ''
-                            }`}
+                            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''
+                              }`}
                             onClick={() => {
                               if (isChoicePillar) {
                                 setBeautyChoiceExpanded(!beautyChoiceExpanded);
@@ -3890,45 +3931,43 @@ PROCESO OBLIGATORIO:
                                 </p>
                               </div>
                               {/* Flèche d'ouverture pour tous les piliers */}
-                              <div 
+                              <div
                                 className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors"
                                 onClick={(e) => {
                                   e.stopPropagation(); // Empêcher la propagation pour ne pas cocher la tâche
                                   setExpandedPillar(isExpanded ? null : pillar.id);
                                 }}
                               >
-                                <ChevronDown 
-                                  className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${
-                                    (isChoicePillar && beautyChoiceExpanded) || (!isChoicePillar && isExpanded) ? 'rotate-180' : ''
-                                  }`} 
+                                <ChevronDown
+                                  className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${(isChoicePillar && beautyChoiceExpanded) || (!isChoicePillar && isExpanded) ? 'rotate-180' : ''
+                                    }`}
                                 />
                               </div>
                             </div>
                           </div>
-                          
+
                           {/* Section dépliable avec explications pour tous les piliers */}
                           {!isChoicePillar && (
                             <div
-                              className={`overflow-hidden transition-all duration-300 ease-out ${
-                                isExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'
-                              }`}
+                              className={`overflow-hidden transition-all duration-300 ease-out ${isExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+                                }`}
                             >
                               <div className="bg-pink-50/50 rounded-xl p-4 mx-2">
                                 <h5 className="font-semibold text-sm text-pink-700 mb-2">
                                   {language === 'fr' ? 'Conseils & Explications' : language === 'en' ? 'Tips & Explanations' : 'Consejos y Explicaciones'}
                                 </h5>
                                 <p className="text-xs text-gray-600 leading-relaxed">
-                                  {pillar.id === 'walk-sport' && (language === 'fr' 
+                                  {pillar.id === 'walk-sport' && (language === 'fr'
                                     ? 'La marche rapide ou le sport quotidien améliorent la circulation sanguine, boostent l\'énergie et favorisent un sommeil réparateur. 30 minutes suffisent pour activer le métabolisme et libérer des endorphines.'
-                                    : language === 'en' 
-                                    ? 'Brisk walking or daily sport improve blood circulation, boost energy and promote restorative sleep. 30 minutes is enough to activate metabolism and release endorphins.'
-                                    : 'Caminar rápido o hacer deporte diariamente mejora la circulación sanguínea, aumenta la energía y favorece un sueño reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
+                                    : language === 'en'
+                                      ? 'Brisk walking or daily sport improve blood circulation, boost energy and promote restorative sleep. 30 minutes is enough to activate metabolism and release endorphins.'
+                                      : 'Caminar rápido o hacer deporte diariamente mejora la circulación sanguínea, aumenta la energía y favorece un sueño reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
                                   )}
                                   {pillar.id === 'water' && (language === 'fr'
                                     ? 'Boire 2 litres d\'eau par jour hydrate la peau de l\'intérieur, réduit les cernes et améliore l\'élasticité de la peau. L\'hydratation optimale favorise aussi l\'élimination des toxines et la brillance des cheveux.'
                                     : language === 'en'
-                                    ? 'Drinking 2 liters of water per day hydrates skin from within, reduces dark circles and improves skin elasticity. Optimal hydration also promotes toxin elimination and hair shine.'
-                                    : 'Beber 2 litros de agua al día hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidratación óptima también favorece la eliminación de toxinas y el brillo del cabello.'
+                                      ? 'Drinking 2 liters of water per day hydrates skin from within, reduces dark circles and improves skin elasticity. Optimal hydration also promotes toxin elimination and hair shine.'
+                                      : 'Beber 2 litros de agua al día hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidratación óptima también favorece la eliminación de toxinas y el brillo del cabello.'
                                   )}
                                 </p>
                                 <div className="mt-3 flex items-center justify-between">
@@ -3937,13 +3976,12 @@ PROCESO OBLIGATORIO:
                                   </span>
                                   <button
                                     onClick={() => toggleBeautyPillar(beautySelectedDate, pillar.id)}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                                      isCompleted 
-                                        ? 'bg-gray-200 text-gray-600' 
-                                        : 'bg-pink-500 text-white hover:bg-pink-600'
-                                    }`}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${isCompleted
+                                      ? 'bg-gray-200 text-gray-600'
+                                      : 'bg-pink-500 text-white hover:bg-pink-600'
+                                      }`}
                                   >
-                                    {isCompleted 
+                                    {isCompleted
                                       ? (language === 'fr' ? 'Annuler' : language === 'en' ? 'Undo' : 'Deshacer')
                                       : (language === 'fr' ? 'Valider' : language === 'en' ? 'Complete' : 'Completar')
                                     }
@@ -3956,38 +3994,37 @@ PROCESO OBLIGATORIO:
                           {/* Slide content for choice pillar */}
                           {isChoicePillar && (
                             <div
-                              className={`overflow-hidden transition-all duration-300 ease-out ${
-                                beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
-                              }`}
+                              className={`overflow-hidden transition-all duration-300 ease-out ${beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                                }`}
                             >
-                                <div className="space-y-3">
-                                 {/* Message Glowee - With typing effect */}
-                                 <div className="relative">
-                                   <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
-                                     <CardContent className="p-0">
-                                       <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
-                                         <div className="flex-1 min-w-0">
-                                           <p className="text-[10px] text-gray-700 leading-tight font-medium">
-                                             {beautyGloweeDisplayedMessage}
-                                             {beautyGloweeIsTyping && <span className="animate-pulse">|</span>}
-                                           </p>
-                                         </div>
-                                       </div>
-                                     </CardContent>
-                                   </Card>
+                              <div className="space-y-3">
+                                {/* Message Glowee - With typing effect */}
+                                <div className="relative">
+                                  <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                                    <CardContent className="p-0">
+                                      <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-[10px] text-gray-700 leading-tight font-medium">
+                                            {beautyGloweeDisplayedMessage}
+                                            {beautyGloweeIsTyping && <span className="animate-pulse">|</span>}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
 
-                                   {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
-                                   <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
-                                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
-                                     <Image
-                                       src="/Glowee/glowee.webp"
-                                       alt="Glowee"
-                                       width={96}
-                                       height={104}
-                                       className="object-contain relative z-10 drop-shadow-2xl"
-                                     />
-                                   </div>
-                                 </div>
+                                  {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
+                                  <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
+                                    <Image
+                                      src="/Glowee/glowee.webp"
+                                      alt="Glowee"
+                                      width={96}
+                                      height={104}
+                                      className="object-contain relative z-10 drop-shadow-2xl"
+                                    />
+                                  </div>
+                                </div>
 
                                 {/* Barre verticale */}
                                 <div className="flex justify-center">
@@ -4003,11 +4040,10 @@ PROCESO OBLIGATORIO:
                                   return (
                                     <div key={choice.id}>
                                       <div
-                                        className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
-                                          isSelected
-                                            ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
-                                            : 'bg-white shadow-md hover:shadow-lg'
-                                        }`}
+                                        className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${isSelected
+                                          ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
+                                          : 'bg-white shadow-md hover:shadow-lg'
+                                          }`}
                                         onClick={() => selectBeautyChoice(beautySelectedDate, choice.id)}
                                       >
                                         <div className="flex items-center gap-3">
@@ -4078,17 +4114,15 @@ PROCESO OBLIGATORIO:
                                             return (
                                               <div
                                                 key={subtask.id}
-                                                className={`p-3 rounded-xl cursor-pointer transition-all duration-300 ${
-                                                  isSubtaskCompleted
-                                                    ? 'bg-green-50 opacity-60'
-                                                    : 'bg-pink-50 hover:bg-pink-100'
-                                                }`}
+                                                className={`p-3 rounded-xl cursor-pointer transition-all duration-300 ${isSubtaskCompleted
+                                                  ? 'bg-green-50 opacity-60'
+                                                  : 'bg-pink-50 hover:bg-pink-100'
+                                                  }`}
                                                 onClick={() => toggleBeautySubtask(beautySelectedDate, subtask.id)}
                                               >
                                                 <div className="flex items-center gap-2">
-                                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                                                    isSubtaskCompleted ? 'bg-green-500 border-green-500' : 'border-pink-300'
-                                                  }`}>
+                                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isSubtaskCompleted ? 'bg-green-500 border-green-500' : 'border-pink-300'
+                                                    }`}>
                                                     {isSubtaskCompleted && <Check className="w-3 h-3 text-white" />}
                                                   </div>
                                                   <span className={`text-xs font-medium ${isSubtaskCompleted ? 'line-through text-gray-400' : 'text-gray-700'}`}>
@@ -4118,7 +4152,7 @@ PROCESO OBLIGATORIO:
                         const dayProgress = getBeautyProgressForDate(beautySelectedDate);
                         const completedCount = dayProgress ?
                           [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
-                        
+
                         if (completedCount === 3) {
                           setShowBeautyStreakPopup(true);
                           validateBeautyDate(beautySelectedDate);
@@ -4179,7 +4213,7 @@ PROCESO OBLIGATORIO:
                               const validatedDates = Array.from(beautyValidatedDates).sort();
                               let maxStreak = 0;
                               let currentStreak = 0;
-                              
+
                               for (let i = 0; i < validatedDates.length; i++) {
                                 if (i === 0) {
                                   currentStreak = 1;
@@ -4187,7 +4221,7 @@ PROCESO OBLIGATORIO:
                                   const prevDate = new Date(validatedDates[i - 1]);
                                   const currDate = new Date(validatedDates[i]);
                                   const diffDays = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
-                                  
+
                                   if (diffDays === 1) {
                                     currentStreak++;
                                   } else {
@@ -4219,7 +4253,7 @@ PROCESO OBLIGATORIO:
                             const thisDate = new Date(startDate);
                             thisDate.setDate(startDate.getDate() + dayIndex - 1);
                             const dateString = getLocalDateString(thisDate);
-                            
+
                             const isValidated = beautyValidatedDates.includes(dateString);
                             const dayProgress = beautyPillarsProgress[dateString];
                             const hasProgress = dayProgress && (dayProgress['walk-sport'] || dayProgress['water'] || dayProgress['self-care-choice']);
@@ -4253,13 +4287,13 @@ PROCESO OBLIGATORIO:
                         <h3 className="text-sm font-semibold text-gray-700">
                           {language === 'fr' ? 'Détail par pilier' : language === 'en' ? 'Details by pillar' : 'Detalles por pilar'}
                         </h3>
-                        
+
                         {beautyPillars.map(pillar => {
                           const completedDays = Object.keys(beautyPillarsProgress).filter(date => {
                             const dayProgress = beautyPillarsProgress[date];
                             return dayProgress && dayProgress[pillar.id];
                           }).length;
-                          
+
                           return (
                             <div key={pillar.id} className="p-3 rounded-lg bg-gradient-to-r from-pink-50 to-rose-50">
                               <div className="flex items-center gap-2 mb-2">
@@ -4270,7 +4304,7 @@ PROCESO OBLIGATORIO:
                                 </div>
                               </div>
                               <div className="h-2 bg-white rounded-full overflow-hidden">
-                                <div 
+                                <div
                                   className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
                                   style={{ width: `${(completedDays / 30) * 100}%` }}
                                 />
@@ -4299,10 +4333,12 @@ PROCESO OBLIGATORIO:
                         <div className="h-3 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500 rounded-full"
-                            style={{ width: `${(Object.keys(newMeProgress).filter(day => {
-                              const dayProgress = newMeProgress[parseInt(day)];
-                              return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
-                            }).length / 30) * 100}%` }}
+                            style={{
+                              width: `${(Object.keys(newMeProgress).filter(day => {
+                                const dayProgress = newMeProgress[parseInt(day)];
+                                return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                              }).length / 30) * 100}%`
+                            }}
                           />
                         </div>
                       </div>
@@ -4326,7 +4362,7 @@ PROCESO OBLIGATORIO:
                         // Calculs pour le challenge beauté
                         const validatedDays = beautyValidatedDates.length;
                         const allDates = Object.keys(beautyPillarsProgress);
-                        
+
                         const perfectDays = allDates.filter(date => {
                           const dayProgress = beautyPillarsProgress[date];
                           return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
@@ -4351,12 +4387,12 @@ PROCESO OBLIGATORIO:
                         const sortedDates = beautyValidatedDates.sort();
                         let currentStreak = 0;
                         const today = getLocalDateString(new Date());
-                        
+
                         for (let i = 0; i >= -29; i--) {
                           const checkDate = new Date();
                           checkDate.setDate(checkDate.getDate() + i);
                           const checkDateString = getLocalDateString(checkDate);
-                          
+
                           if (beautyValidatedDates.includes(checkDateString)) {
                             currentStreak++;
                           } else {
@@ -4502,13 +4538,12 @@ PROCESO OBLIGATORIO:
                           return (
                             <div
                               key={index}
-                              className={`p-4 rounded-lg transition-all ${
-                                isUnlocked
-                                  ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 shadow-lg'
-                                  : theme === 'dark'
-                                    ? 'bg-stone-800/50 opacity-40'
-                                    : 'bg-stone-100 opacity-40'
-                              }`}
+                              className={`p-4 rounded-lg transition-all ${isUnlocked
+                                ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 shadow-lg'
+                                : theme === 'dark'
+                                  ? 'bg-stone-800/50 opacity-40'
+                                  : 'bg-stone-100 opacity-40'
+                                }`}
                             >
                               <div className="flex items-start gap-3">
                                 <div className={`text-4xl ${!isUnlocked && 'grayscale'}`}>{badge.icon}</div>
@@ -4536,33 +4571,33 @@ PROCESO OBLIGATORIO:
                                 const dayProgress = beautyPillarsProgress[date];
                                 return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
                               }).length;
-                              
+
                               if (perfectDaysCount >= 20) {
-                                return language === 'fr' 
-                                  ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨" 
+                                return language === 'fr'
+                                  ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨"
                                   : language === 'en'
-                                  ? "You're a real inspiration! Keep up this incredible pace ✨"
-                                  : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
+                                    ? "You're a real inspiration! Keep up this incredible pace ✨"
+                                    : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
                               }
                               if (perfectDaysCount >= 10) {
                                 return language === 'fr'
                                   ? "Wow ! Tu brilles déjà tellement plus 🌟"
                                   : language === 'en'
-                                  ? "Wow! You're already shining so much brighter 🌟"
-                                  : "¡Wow! Ya brillas mucho más 🌟";
+                                    ? "Wow! You're already shining so much brighter 🌟"
+                                    : "¡Wow! Ya brillas mucho más 🌟";
                               }
                               if (perfectDaysCount >= 3) {
                                 return language === 'fr'
                                   ? "Je suis fière de toi ! Chaque jour compte 💖"
                                   : language === 'en'
-                                  ? "I'm proud of you! Every day counts 💖"
-                                  : "¡Estoy orgullosa de ti! Cada día cuenta 💖";
+                                    ? "I'm proud of you! Every day counts 💖"
+                                    : "¡Estoy orgullosa de ti! Cada día cuenta 💖";
                               }
                               return language === 'fr'
                                 ? "Tu es au début d'un parcours magnifique. Je suis là pour toi ! 🌸"
                                 : language === 'en'
-                                ? "You're at the start of a beautiful journey. I'm here for you! 🌸"
-                                : "Estás al comienzo de un hermoso viaje. ¡Estoy aquí para ti! 🌸";
+                                  ? "You're at the start of a beautiful journey. I'm here for you! 🌸"
+                                  : "Estás al comienzo de un hermoso viaje. ¡Estoy aquí para ti! 🌸";
                             })()}
                           </p>
                         </div>
@@ -4598,44 +4633,44 @@ PROCESO OBLIGATORIO:
 
               {/* Sections Bonus Principales */}
               <div className="space-y-4">
-              {bonusSections
-                .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir' && section.id !== 'limites-paix' && section.id !== '50-choses-seule')
-                .map((section) => {
-                const weeklyCompletion = getSectionWeeklyCompletion(section.id);
-                return (
-                  <Card
-                    key={section.id}
-                    onClick={() => setSelectedBonusSection(section)}
-                    className={`border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
-                  >
-                    <CardContent className="p-5">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${section.color} flex items-center justify-center text-3xl shadow-lg flex-shrink-0`}>
-                          {section.icon}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold text-base text-gray-800">{section.title}</h3>
-                            {weeklyCompletion > 0 && (
-                              <Badge variant="outline" className="text-[10px] px-2 py-0.5 bg-pink-50 text-pink-600 border-pink-200 font-semibold">
-                                {weeklyCompletion}/4
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-600 font-medium">{section.description}</p>
-                          <p className="text-xs text-gray-500 mt-1 italic">{section.duration}</p>
-                          {weeklyCompletion > 0 && (
-                            <div className="mt-2">
-                              <Progress value={(weeklyCompletion / 4) * 100} className="h-2 bg-pink-100" />
+                {bonusSections
+                  .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir' && section.id !== 'limites-paix' && section.id !== '50-choses-seule')
+                  .map((section) => {
+                    const weeklyCompletion = getSectionWeeklyCompletion(section.id);
+                    return (
+                      <Card
+                        key={section.id}
+                        onClick={() => setSelectedBonusSection(section)}
+                        className={`border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
+                      >
+                        <CardContent className="p-5">
+                          <div className="flex items-center gap-4">
+                            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${section.color} flex items-center justify-center text-3xl shadow-lg flex-shrink-0`}>
+                              {section.icon}
                             </div>
-                          )}
-                        </div>
-                        <ChevronRight className={`w-5 h-5 text-pink-400 flex-shrink-0`} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="font-bold text-base text-gray-800">{section.title}</h3>
+                                {weeklyCompletion > 0 && (
+                                  <Badge variant="outline" className="text-[10px] px-2 py-0.5 bg-pink-50 text-pink-600 border-pink-200 font-semibold">
+                                    {weeklyCompletion}/4
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-600 font-medium">{section.description}</p>
+                              <p className="text-xs text-gray-500 mt-1 italic">{section.duration}</p>
+                              {weeklyCompletion > 0 && (
+                                <div className="mt-2">
+                                  <Progress value={(weeklyCompletion / 4) * 100} className="h-2 bg-pink-100" />
+                                </div>
+                              )}
+                            </div>
+                            <ChevronRight className={`w-5 h-5 text-pink-400 flex-shrink-0`} />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
               </div>
 
               {/* Checklists - Glassmorphism */}
@@ -4656,16 +4691,14 @@ PROCESO OBLIGATORIO:
                       <div
                         key={checklist.id}
                         onClick={() => setSelectedChecklist(checklist)}
-                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer hover:scale-[1.02] transition-all shadow-md ${
-                          isCompleted
-                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400'
-                            : 'bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50'
-                        }`}
+                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer hover:scale-[1.02] transition-all shadow-md ${isCompleted
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400'
+                          : 'bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50'
+                          }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow-sm ${
-                            isCompleted ? 'bg-gradient-to-br from-green-400 to-emerald-400' : 'bg-gradient-to-br from-blue-400 to-cyan-400'
-                          }`}>
+                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow-sm ${isCompleted ? 'bg-gradient-to-br from-green-400 to-emerald-400' : 'bg-gradient-to-br from-blue-400 to-cyan-400'
+                            }`}>
                             {checklist.icon}
                           </div>
                           <div>
@@ -4679,11 +4712,10 @@ PROCESO OBLIGATORIO:
                               e.stopPropagation();
                               toggleChecklistCompleted(checklist.id);
                             }}
-                            className={`w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-sm ${
-                              isCompleted
-                                ? 'bg-green-500 text-white'
-                                : 'bg-white border-2 border-gray-300 hover:border-blue-400'
-                            }`}
+                            className={`w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-sm ${isCompleted
+                              ? 'bg-green-500 text-white'
+                              : 'bg-white border-2 border-gray-300 hover:border-blue-400'
+                              }`}
                           >
                             {isCompleted && <Check className="w-4 h-4" />}
                           </div>
@@ -4775,20 +4807,20 @@ PROCESO OBLIGATORIO:
                     </div>
                     <div className="flex-1">
                       <h2 className="text-xl font-bold text-gray-800">
-                        {user ? (user.email?.split('@')[0] || 'Utilisateur') : 
+                        {user ? (user.email?.split('@')[0] || 'Utilisateur') :
                           (language === 'fr' ? 'Invité' : language === 'en' ? 'Guest' : 'Invitado')}
                       </h2>
                       <p className="text-sm text-gray-500">
-                        {user ? user.email : 
-                          (language === 'fr' ? 'Connectez-vous pour synchroniser' : 
-                           language === 'en' ? 'Sign in to sync' : 
-                           'Inicia sesión para sincronizar')}
+                        {user ? user.email :
+                          (language === 'fr' ? 'Connectez-vous pour synchroniser' :
+                            language === 'en' ? 'Sign in to sync' :
+                              'Inicia sesión para sincronizar')}
                       </p>
                       {user && subscription.isSubscribed && (
                         <div className={`mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full ${subscription.planType === 'glow_plus' ? 'bg-gradient-to-r from-violet-100 to-purple-100' : 'bg-gradient-to-r from-amber-100 to-orange-100'}`}>
                           <Crown className={`w-3 h-3 ${subscription.planType === 'glow_plus' ? 'text-violet-600' : 'text-amber-600'}`} />
                           <span className={`text-xs font-semibold ${subscription.planType === 'glow_plus' ? 'text-violet-700' : 'text-amber-700'}`}>
-                            {subscription.planType === 'glow_plus' 
+                            {subscription.planType === 'glow_plus'
                               ? (language === 'fr' ? 'Glow Plus' : language === 'en' ? 'Glow Plus' : 'Glow Plus')
                               : subscription.planType === 'glow_start'
                                 ? (language === 'fr' ? 'Glow Start' : language === 'en' ? 'Glow Start' : 'Glow Start')
@@ -4859,9 +4891,9 @@ PROCESO OBLIGATORIO:
                       {language === 'fr' ? 'Apparence' : language === 'en' ? 'Appearance' : 'Apariencia'}
                     </h3>
                   </div>
-                  
+
                   {/* Thème */}
-                  <button 
+                  <button
                     onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
                     className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                   >
@@ -4879,7 +4911,7 @@ PROCESO OBLIGATORIO:
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500">
-                        {theme === 'light' 
+                        {theme === 'light'
                           ? (language === 'fr' ? 'Clair' : language === 'en' ? 'Light' : 'Claro')
                           : (language === 'fr' ? 'Sombre' : language === 'en' ? 'Dark' : 'Oscuro')
                         }
@@ -4907,11 +4939,10 @@ PROCESO OBLIGATORIO:
                         <button
                           key={lang.code}
                           onClick={() => setLanguage(lang.code)}
-                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-medium transition-all ${
-                            language === lang.code
-                              ? 'bg-gradient-to-r from-rose-400 to-pink-400 text-white shadow-md'
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          }`}
+                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-medium transition-all ${language === lang.code
+                            ? 'bg-gradient-to-r from-rose-400 to-pink-400 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
                         >
                           <span className="mr-1">{lang.flag}</span>
                           {lang.name}
@@ -4928,8 +4959,8 @@ PROCESO OBLIGATORIO:
                       {language === 'fr' ? 'Notifications' : language === 'en' ? 'Notifications' : 'Notificaciones'}
                     </h3>
                   </div>
-                  
-                  <button 
+
+                  <button
                     onClick={() => setNotificationsEnabled(!notificationsEnabled)}
                     className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                   >
@@ -4946,7 +4977,7 @@ PROCESO OBLIGATORIO:
                           {language === 'fr' ? 'Rappels quotidiens' : language === 'en' ? 'Daily reminders' : 'Recordatorios diarios'}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {notificationsEnabled 
+                          {notificationsEnabled
                             ? (language === 'fr' ? 'Activés' : language === 'en' ? 'Enabled' : 'Activados')
                             : (language === 'fr' ? 'Désactivés' : language === 'en' ? 'Disabled' : 'Desactivados')
                           }
@@ -4967,7 +4998,7 @@ PROCESO OBLIGATORIO:
                       {language === 'fr' ? 'Support' : language === 'en' ? 'Support' : 'Soporte'}
                     </h3>
                   </div>
-                  
+
                   <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
@@ -5000,7 +5031,7 @@ PROCESO OBLIGATORIO:
                       {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
                     </h3>
                   </div>
-                  
+
                   {user ? (
                     <>
                       <div className="p-4 border-b border-gray-100">
@@ -5016,7 +5047,7 @@ PROCESO OBLIGATORIO:
                           </div>
                         </div>
                       </div>
-                      <button 
+                      <button
                         onClick={() => {
                           if (confirm(language === 'fr' ? 'Voulez-vous vous déconnecter ?' : language === 'en' ? 'Sign out?' : '¿Cerrar sesión?')) {
                             signOut();
@@ -5035,7 +5066,7 @@ PROCESO OBLIGATORIO:
                       </button>
                     </>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => setShowAuthDialog(true)}
                       className="w-full flex items-center justify-between p-4 hover:bg-emerald-50 transition-colors text-emerald-600"
                     >
@@ -5059,7 +5090,7 @@ PROCESO OBLIGATORIO:
                       {language === 'fr' ? 'Moi' : language === 'en' ? 'Me' : 'Yo'}
                     </h3>
                   </div>
-                  
+
                   {/* Objectif Principal */}
                   {objectifPrincipal && (
                     <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-pink-50 to-rose-50">
@@ -5150,25 +5181,23 @@ PROCESO OBLIGATORIO:
               {/* Accueil */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'dashboard'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'dashboard'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  }`}
                 onClick={() => setCurrentView('dashboard')}
               >
                 <Home className="w-5 h-5" />
                 <span className="text-[10px] font-medium">{t.nav.home}</span>
               </Button>
 
-               {/* Habitudes */}
+              {/* Habitudes */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'trackers'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'trackers'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  }`}
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
                 <Target className="w-5 h-5" />
@@ -5180,11 +5209,10 @@ PROCESO OBLIGATORIO:
               {/* Journal - NOUVEAU */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'journal'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'journal'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  }`}
                 onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
               >
                 <BookOpen className="w-5 h-5" />
@@ -5194,11 +5222,10 @@ PROCESO OBLIGATORIO:
               {/* Ma Semaine */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'routine'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'routine'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  }`}
                 onClick={() => setCurrentView('routine')}
               >
                 <Calendar className="w-5 h-5" />
@@ -5210,11 +5237,10 @@ PROCESO OBLIGATORIO:
               {/* Profil */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${
-                  currentView === 'settings'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                }`}
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'settings'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  }`}
                 onClick={() => setCurrentView('settings')}
               >
                 <Settings className="w-5 h-5" />
@@ -5389,11 +5415,10 @@ PROCESO OBLIGATORIO:
                   <Card
                     key={step.number}
                     onClick={() => setSelectedGuideStep(selectedGuideStep === step.number ? null : step.number)}
-                    className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${
-                      isCompleted
-                        ? theme === 'dark' ? 'bg-green-900/20 border-2 border-green-500' : 'bg-green-50 border-2 border-green-500'
-                        : theme === 'dark' ? 'bg-stone-800' : 'bg-white'
-                    }`}
+                    className={`border-none shadow-md cursor-pointer transition-all hover:scale-[1.02] ${isCompleted
+                      ? theme === 'dark' ? 'bg-green-900/20 border-2 border-green-500' : 'bg-green-50 border-2 border-green-500'
+                      : theme === 'dark' ? 'bg-stone-800' : 'bg-white'
+                      }`}
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
@@ -5417,11 +5442,10 @@ PROCESO OBLIGATORIO:
                               e.stopPropagation();
                               toggleMiniGuideStep(step.number);
                             }}
-                            className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-all ${
-                              isCompleted
-                                ? 'bg-green-500 text-white'
-                                : 'bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600'
-                            }`}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-all ${isCompleted
+                              ? 'bg-green-500 text-white'
+                              : 'bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600'
+                              }`}
                           >
                             {isCompleted && <Check className="w-4 h-4" />}
                           </div>
@@ -5536,30 +5560,27 @@ PROCESO OBLIGATORIO:
                       <div
                         key={index}
                         onClick={() => toggleThingAlone(index)}
-                        className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all ${
-                          completedThingsAlone.includes(index)
-                            ? theme === 'dark'
-                              ? 'bg-cyan-900/20 hover:bg-cyan-900/30'
-                              : 'bg-cyan-50 hover:bg-cyan-100'
-                            : theme === 'dark'
-                              ? 'bg-stone-800 hover:bg-stone-700'
-                              : 'bg-stone-50 hover:bg-stone-100'
-                        }`}
+                        className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all ${completedThingsAlone.includes(index)
+                          ? theme === 'dark'
+                            ? 'bg-cyan-900/20 hover:bg-cyan-900/30'
+                            : 'bg-cyan-50 hover:bg-cyan-100'
+                          : theme === 'dark'
+                            ? 'bg-stone-800 hover:bg-stone-700'
+                            : 'bg-stone-50 hover:bg-stone-100'
+                          }`}
                       >
-                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                          completedThingsAlone.includes(index)
-                            ? 'bg-cyan-500 text-white'
-                            : theme === 'dark'
-                              ? 'bg-stone-700 text-stone-300'
-                              : 'bg-white text-stone-600'
-                        }`}>
+                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${completedThingsAlone.includes(index)
+                          ? 'bg-cyan-500 text-white'
+                          : theme === 'dark'
+                            ? 'bg-stone-700 text-stone-300'
+                            : 'bg-white text-stone-600'
+                          }`}>
                           {completedThingsAlone.includes(index) ? '✓' : index + 1}
                         </div>
-                        <p className={`text-sm flex-1 leading-relaxed transition-all ${
-                          completedThingsAlone.includes(index)
-                            ? 'line-through opacity-60'
-                            : ''
-                        }`}>
+                        <p className={`text-sm flex-1 leading-relaxed transition-all ${completedThingsAlone.includes(index)
+                          ? 'line-through opacity-60'
+                          : ''
+                          }`}>
                           {thing}
                         </p>
                       </div>
@@ -5644,20 +5665,18 @@ PROCESO OBLIGATORIO:
               {/* Priorité de la semaine */}
               <button
                 onClick={() => setNewTaskDestination('priority')}
-                className={`w-full p-4 rounded-xl text-left transition-all ${
-                  newTaskDestination === 'priority'
-                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                    : theme === 'dark'
-                      ? 'bg-stone-800 hover:bg-stone-700'
-                      : 'bg-stone-100 hover:bg-stone-200'
-                }`}
+                className={`w-full p-4 rounded-xl text-left transition-all ${newTaskDestination === 'priority'
+                  ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                  : theme === 'dark'
+                    ? 'bg-stone-800 hover:bg-stone-700'
+                    : 'bg-stone-100 hover:bg-stone-200'
+                  }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    newTaskDestination === 'priority'
-                      ? 'border-white bg-white'
-                      : 'border-stone-400'
-                  }`}>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${newTaskDestination === 'priority'
+                    ? 'border-white bg-white'
+                    : 'border-stone-400'
+                    }`}>
                     {newTaskDestination === 'priority' && <Check className="w-3 h-3 text-rose-400" />}
                   </div>
                   <div className="flex-1">
@@ -5701,21 +5720,19 @@ PROCESO OBLIGATORIO:
                       <button
                         key={day.key}
                         onClick={() => setNewTaskDestination(day.key as any)}
-                        className={`p-2.5 rounded-xl text-xs font-semibold transition-all ${
-                          newTaskDestination === day.key
-                            ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                            : theme === 'dark'
-                              ? 'bg-stone-800 hover:bg-stone-700'
-                              : 'bg-stone-100 hover:bg-stone-200'
-                        }`}
+                        className={`p-2.5 rounded-xl text-xs font-semibold transition-all ${newTaskDestination === day.key
+                          ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                          : theme === 'dark'
+                            ? 'bg-stone-800 hover:bg-stone-700'
+                            : 'bg-stone-100 hover:bg-stone-200'
+                          }`}
                       >
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-1.5">
-                            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                              newTaskDestination === day.key
-                                ? 'border-white bg-white'
-                                : 'border-stone-400'
-                            }`}>
+                            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${newTaskDestination === day.key
+                              ? 'border-white bg-white'
+                              : 'border-stone-400'
+                              }`}>
                               {newTaskDestination === day.key && <Check className="w-2 h-2 text-rose-400" />}
                             </div>
                             <span className="capitalize text-left flex-1">{day.dayLabel}</span>
@@ -5725,9 +5742,8 @@ PROCESO OBLIGATORIO:
                               {day.dateLabel}
                             </span>
                             {day.isToday && (
-                              <Badge variant="outline" className={`text-[9px] px-1 py-0 ${
-                                newTaskDestination === day.key ? 'border-white text-white' : 'border-rose-400 text-rose-400'
-                              }`}>
+                              <Badge variant="outline" className={`text-[9px] px-1 py-0 ${newTaskDestination === day.key ? 'border-white text-white' : 'border-rose-400 text-rose-400'
+                                }`}>
                                 {language === 'fr' ? "Auj." : language === 'en' ? 'Today' : 'Hoy'}
                               </Badge>
                             )}
@@ -5745,11 +5761,10 @@ PROCESO OBLIGATORIO:
                   setShowAddTask(false);
                   setShowCalendar(true);
                 }}
-                className={`w-full p-3 rounded-xl text-sm font-semibold transition-all ${
-                  theme === 'dark'
-                    ? 'bg-stone-800 hover:bg-stone-700 text-stone-300'
-                    : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
-                }`}
+                className={`w-full p-3 rounded-xl text-sm font-semibold transition-all ${theme === 'dark'
+                  ? 'bg-stone-800 hover:bg-stone-700 text-stone-300'
+                  : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+                  }`}
               >
                 <div className="flex items-center justify-center gap-2">
                   <Calendar className="w-4 h-4" />
@@ -6130,11 +6145,10 @@ PROCESO OBLIGATORIO:
                 setSelectedChallenge('beauty-body');
                 setShowChallengeDrawer(false);
               }}
-              className={`w-full p-4 rounded-2xl border-none shadow-soft transition-all hover:scale-[1.02] relative overflow-hidden ${
-                selectedChallenge === 'beauty-body'
-                  ? 'bg-gradient-to-br from-peach-200 to-peach-400'
-                  : 'bg-gradient-to-br from-peach-100 to-peach-200'
-              }`}
+              className={`w-full p-4 rounded-2xl border-none shadow-soft transition-all hover:scale-[1.02] relative overflow-hidden ${selectedChallenge === 'beauty-body'
+                ? 'bg-gradient-to-br from-peach-200 to-peach-400'
+                : 'bg-gradient-to-br from-peach-100 to-peach-200'
+                }`}
             >
               {/* Emoji décoratif */}
               <div className="absolute top-2 right-2 text-5xl opacity-20">
@@ -6174,7 +6188,7 @@ PROCESO OBLIGATORIO:
           setShowAuthDialog(false);
           // Si un plan est en attente et l'utilisateur est connecté, rediriger vers Stripe
           if (pendingPlan && user?.email) {
-            const stripeUrl = pendingPlan === 'glow_start' 
+            const stripeUrl = pendingPlan === 'glow_start'
               ? `https://buy.stripe.com/8x26oH178evq3KLgqNf3a03?prefilled_email=${encodeURIComponent(user.email)}`
               : `https://buy.stripe.com/9B69AT178gDybddgqNf3a02?prefilled_email=${encodeURIComponent(user.email)}`;
             setPendingPlan(null);
@@ -6227,11 +6241,10 @@ PROCESO OBLIGATORIO:
                             className={`flex flex-col items-center ${isToday ? 'animate-in zoom-in duration-700' : ''}`}
                           >
                             <span className="text-[9px] text-gray-500 mb-1">{day.slice(0, 3)}</span>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              isToday 
-                                ? 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-lg' 
-                                : 'bg-gray-200'
-                            }`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isToday
+                              ? 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-lg'
+                              : 'bg-gray-200'
+                              }`}>
                               {isToday && <Check className="w-4 h-4 text-white animate-in zoom-in duration-1000" />}
                             </div>
                           </div>
@@ -6280,11 +6293,11 @@ PROCESO OBLIGATORIO:
                     {language === 'fr' ? 'Hmm...' : language === 'en' ? 'Hmm...' : 'Hmm...'}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {language === 'fr' 
-                      ? 'Es-tu sûr·e de vouloir valider cette journée incomplète ?' 
-                      : language === 'en' 
-                      ? 'Are you sure you want to validate this incomplete day?' 
-                      : '¿Estás seguro de que quieres validar este día incompleto?'}
+                    {language === 'fr'
+                      ? 'Es-tu sûr·e de vouloir valider cette journée incomplète ?'
+                      : language === 'en'
+                        ? 'Are you sure you want to validate this incomplete day?'
+                        : '¿Estás seguro de que quieres validar este día incompleto?'}
                   </p>
                 </div>
 
@@ -6344,10 +6357,10 @@ PROCESO OBLIGATORIO:
                 </h1>
               </div>
             </div>
-            
+
             {/* Navigation Mois */}
             <div className="flex items-center justify-center gap-4 mt-3">
-              <button 
+              <button
                 onClick={() => changeJournalMonth('prev')}
                 className="p-2 rounded-full hover:bg-gray-100"
               >
@@ -6356,7 +6369,7 @@ PROCESO OBLIGATORIO:
               <span className="text-base font-semibold text-gray-800 capitalize">
                 {journalCurrentMonth.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
               </span>
-              <button 
+              <button
                 onClick={() => changeJournalMonth('next')}
                 className="p-2 rounded-full hover:bg-gray-100"
               >
@@ -6366,83 +6379,83 @@ PROCESO OBLIGATORIO:
           </div>
 
           {/* Journal Statistics */}
-            {(() => {
-              const monthEntries = getFilteredJournalEntries();
-              const totalEntries = monthEntries.length;
-              
-              // Calculate mood distribution
-              const moodCounts: Record<string, number> = {};
-              monthEntries.forEach(entry => {
-                moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1;
-              });
-              
-              // Find dominant mood
-              const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0];
-              
-              // Calculate streak
-              let currentStreak = 0;
-              const sortedEntries = [...journalEntries].sort((a, b) => 
-                new Date(b.date).getTime() - new Date(a.date).getTime()
-              );
-              
-              if (sortedEntries.length > 0) {
-                const today = new Date().toISOString().split('T')[0];
-                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-                
-                // Check if entry exists today or yesterday to start streak
-                const hasEntryToday = sortedEntries.some(e => e.date === today);
-                const hasEntryYesterday = sortedEntries.some(e => e.date === yesterday);
-                
-                if (hasEntryToday || hasEntryYesterday) {
-                  currentStreak = 1;
-                  let checkDate = new Date(hasEntryToday ? today : yesterday);
-                  
-                  for (let i = 1; i < sortedEntries.length; i++) {
-                    checkDate.setDate(checkDate.getDate() - 1);
-                    const checkDateStr = checkDate.toISOString().split('T')[0];
-                    
-                    if (sortedEntries.some(e => e.date === checkDateStr)) {
-                      currentStreak++;
-                    } else {
-                      break;
-                    }
+          {(() => {
+            const monthEntries = getFilteredJournalEntries();
+            const totalEntries = monthEntries.length;
+
+            // Calculate mood distribution
+            const moodCounts: Record<string, number> = {};
+            monthEntries.forEach(entry => {
+              moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1;
+            });
+
+            // Find dominant mood
+            const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0];
+
+            // Calculate streak
+            let currentStreak = 0;
+            const sortedEntries = [...journalEntries].sort((a, b) =>
+              new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+
+            if (sortedEntries.length > 0) {
+              const today = new Date().toISOString().split('T')[0];
+              const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+              // Check if entry exists today or yesterday to start streak
+              const hasEntryToday = sortedEntries.some(e => e.date === today);
+              const hasEntryYesterday = sortedEntries.some(e => e.date === yesterday);
+
+              if (hasEntryToday || hasEntryYesterday) {
+                currentStreak = 1;
+                let checkDate = new Date(hasEntryToday ? today : yesterday);
+
+                for (let i = 1; i < sortedEntries.length; i++) {
+                  checkDate.setDate(checkDate.getDate() - 1);
+                  const checkDateStr = checkDate.toISOString().split('T')[0];
+
+                  if (sortedEntries.some(e => e.date === checkDateStr)) {
+                    currentStreak++;
+                  } else {
+                    break;
                   }
                 }
               }
-              
-              return (
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {/* Total Entries */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-3 text-center">
-                    <p className="text-2xl font-bold text-blue-600">{totalEntries}</p>
-                    <p className="text-xs text-blue-600/70">
-                      {language === 'fr' ? 'Entrées' : language === 'en' ? 'Entries' : 'Entradas'}
-                    </p>
-                  </div>
-                  
-                  {/* Dominant Mood */}
-                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-3 text-center">
-                    <p className="text-2xl font-bold text-emerald-600">
-                      {dominantMood ? Math.round((dominantMood[1] / totalEntries) * 100) : 0}%
-                    </p>
-                    <p className="text-xs text-emerald-600/70 capitalize">
-                      {dominantMood 
-                        ? dominantMood[0] 
-                        : (language === 'fr' ? 'Humeur' : language === 'en' ? 'Mood' : 'Estado')
-                      }
-                    </p>
-                  </div>
-                  
-                  {/* Current Streak */}
-                  <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-3 text-center">
-                    <p className="text-2xl font-bold text-orange-600">{currentStreak}</p>
-                    <p className="text-xs text-orange-600/70">
-                      {language === 'fr' ? 'Jours' : language === 'en' ? 'Days' : 'Días'}
-                    </p>
-                  </div>
+            }
+
+            return (
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                {/* Total Entries */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-3 text-center">
+                  <p className="text-2xl font-bold text-blue-600">{totalEntries}</p>
+                  <p className="text-xs text-blue-600/70">
+                    {language === 'fr' ? 'Entrées' : language === 'en' ? 'Entries' : 'Entradas'}
+                  </p>
                 </div>
-              );
-            })()}
+
+                {/* Dominant Mood */}
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-3 text-center">
+                  <p className="text-2xl font-bold text-emerald-600">
+                    {dominantMood ? Math.round((dominantMood[1] / totalEntries) * 100) : 0}%
+                  </p>
+                  <p className="text-xs text-emerald-600/70 capitalize">
+                    {dominantMood
+                      ? dominantMood[0]
+                      : (language === 'fr' ? 'Humeur' : language === 'en' ? 'Mood' : 'Estado')
+                    }
+                  </p>
+                </div>
+
+                {/* Current Streak */}
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-3 text-center">
+                  <p className="text-2xl font-bold text-orange-600">{currentStreak}</p>
+                  <p className="text-xs text-orange-600/70">
+                    {language === 'fr' ? 'Jours' : language === 'en' ? 'Days' : 'Días'}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Liste des entrées */}
           <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
@@ -6452,35 +6465,35 @@ PROCESO OBLIGATORIO:
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     {/* Emoji humeur */}
-                    <div 
+                    <div
                       className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
                       style={{ backgroundColor: entry.moodColor + '20' }}
                     >
-                      {entry.mood === 'bien' || entry.mood === 'good' ? '😊' : 
-                       entry.mood === 'super' || entry.mood === 'great' ? '😄' :
-                       entry.mood === 'triste' || entry.mood === 'sad' ? '😢' :
-                       entry.mood === 'fatigué' || entry.mood === 'tired' ? '😴' : '😐'}
+                      {entry.mood === 'bien' || entry.mood === 'good' ? '😊' :
+                        entry.mood === 'super' || entry.mood === 'great' ? '😄' :
+                          entry.mood === 'triste' || entry.mood === 'sad' ? '😢' :
+                            entry.mood === 'fatigué' || entry.mood === 'tired' ? '😴' : '😐'}
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 uppercase tracking-wide">
-                        {entry.date === new Date().toISOString().split('T')[0] 
+                        {entry.date === new Date().toISOString().split('T')[0]
                           ? (language === 'fr' ? 'Aujourd\'hui' : language === 'en' ? 'Today' : 'Hoy')
                           : language === 'fr' ? 'Hier' : language === 'en' ? 'Yesterday' : 'Ayer'
                         }, {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
                       </p>
                       <div className="flex items-center gap-2">
-                      <span 
-                        className="text-lg font-semibold"
-                        style={{ color: entry.moodColor }}
-                      >
-                        {entry.mood}
-                      </span>
-                      <span className="text-xs text-gray-400">{entry.time}</span>
-                    </div>
+                        <span
+                          className="text-lg font-semibold"
+                          style={{ color: entry.moodColor }}
+                        >
+                          {entry.mood}
+                        </span>
+                        <span className="text-xs text-gray-400">{entry.time}</span>
+                      </div>
                     </div>
                   </div>
                   <div className="relative">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setOpenMenuEntryId(openMenuEntryId === entry.id ? null : entry.id);
@@ -6489,7 +6502,7 @@ PROCESO OBLIGATORIO:
                     >
                       <MoreHorizontal className="w-5 h-5 text-gray-400" />
                     </button>
-                    
+
                     {/* Menu déroulant */}
                     {openMenuEntryId === entry.id && (
                       <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 min-w-[140px]">
@@ -6523,7 +6536,7 @@ PROCESO OBLIGATORIO:
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   {entry.tags.map((tag, idx) => (
-                    <span 
+                    <span
                       key={idx}
                       className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full"
                     >
@@ -6589,7 +6602,7 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
           </div>
-          
+
           {/* Content */}
           <div className="p-5 max-w-lg mx-auto">
             {/* Description */}
@@ -6606,14 +6619,14 @@ PROCESO OBLIGATORIO:
                 </h2>
               </div>
               <p className="text-sm text-violet-700 leading-relaxed">
-                {language === 'fr' 
+                {language === 'fr'
                   ? 'Glow Mirror analyse vos données sur 7 jours pour créer un reflet personnalisé de qui vous êtes en train de devenir.'
                   : language === 'en'
-                  ? 'Glow Mirror analyzes your data over 7 days to create a personalized reflection of who you are becoming.'
-                  : 'Glow Mirror analiza tus datos durante 7 días para crear un reflejo personalizado de en quién te estás convirtiendo.'}
+                    ? 'Glow Mirror analyzes your data over 7 days to create a personalized reflection of who you are becoming.'
+                    : 'Glow Mirror analiza tus datos durante 7 días para crear un reflejo personalizado de en quién te estás convirtiendo.'}
               </p>
             </div>
-            
+
             {/* Status message */}
             {!isGlowMirrorReady ? (
               <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
@@ -6629,8 +6642,8 @@ PROCESO OBLIGATORIO:
                   {language === 'fr'
                     ? 'Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
                     : language === 'en'
-                    ? 'Use the app for 7 days, then come back to see who you\'re becoming.'
-                    : 'Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
+                      ? 'Use the app for 7 days, then come back to see who you\'re becoming.'
+                      : 'Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
                 </p>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
                   <span className="text-sm font-medium text-gray-600">
@@ -6649,11 +6662,11 @@ PROCESO OBLIGATORIO:
                   {language === 'fr' ? 'Prochain Glow Mirror' : language === 'en' ? 'Next Glow Mirror' : 'Próximo Glow Mirror'}
                 </h3>
                 <p className="text-gray-600">
-                  {language === 'fr' 
-                    ? 'Votre prochain Glow Mirror sera disponible dans 7 jours.' 
-                    : language === 'en' 
-                    ? 'Your next Glow Mirror will be available in 7 days.' 
-                    : 'Tu próximo Glow Mirror estará disponible en 7 días.'}
+                  {language === 'fr'
+                    ? 'Votre prochain Glow Mirror sera disponible dans 7 jours.'
+                    : language === 'en'
+                      ? 'Your next Glow Mirror will be available in 7 days.'
+                      : 'Tu próximo Glow Mirror estará disponible en 7 días.'}
                 </p>
               </div>
             ) : (
@@ -6676,7 +6689,7 @@ PROCESO OBLIGATORIO:
                     </div>
                   </div>
                 )}
-                
+
                 {/* Launch Button */}
                 <button
                   onClick={() => generateGlowMirror()}

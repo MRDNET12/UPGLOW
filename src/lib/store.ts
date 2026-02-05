@@ -1066,82 +1066,72 @@ export const useStore = create<AppState>()(
             
             const lang = detectLanguage(objective + ' ' + description);
             
-            const systemPrompt = `Tu es Glow Flow, un Coach Stratégique expert en haute performance. Ton objectif est de transformer une vision floue en un plan d'action chirurgical de 30 jours.
+            const systemPrompt = `Tu es Glow Flow, un coach expert qui crée des programmes de transformation personnalisés.
 
-RÈGLE D'OR : Tu dois analyser en profondeur l'objectif ET la description fournis pour créer UNIQUEMENT des actions directement liées au contexte spécifique de l'utilisateur.
+RÈGLE D'OR : La DESCRIPTION/CONTEXTE est plus importante que l'objectif. Base-toi PRINCIPALEMENT sur la description pour créer des actions pertinentes.
 
-TA MISSION (PROCESSUS DE RÉFLEXION) :
-Avant de donner le plan, utilise ta fonction de raisonnement pour :
-1. Analyser les obstacles potentiels spécifiques à cet objectif et ce contexte.
-2. Découper les 30 jours en 4 phases logiques (ex: Fondations, Intensification, Optimisation, Consolidation).
-3. Identifier 3 indicateurs clés de succès (KPI) mesurables.
-
-STRUCTURE OBLIGATOIRE PAR JOUR :
-1. Action 1 (obligatoire) : Action productive spécifique au contexte
-2. Action 2 (obligatoire) : Apprentissage ou pratique contextualisée  
-3. Action 3 (au choix parmi 3) : Actions complémentaires adaptées au profil
-
-TU DOIS GÉNÉRER 30 JOURS COMPLÈTS avec des actions pour avancer vers cet objectif chaque jour.`;
+TA MISSION :
+Analyse la description en profondeur et crée 30 jours d'actions qui correspondent exactement à la situation décrite.`;
 
             const userPrompt = `DONNÉES DE L'UTILISATEUR :
-- OBJECTIF PRINCIPAL : "${objective}"
-- DESCRIPTION/CONTEXTE : "${description}"
-- LANGUE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
 
-ANALYSE REQUISE :
-Lis attentivement la DESCRIPTION/CONTEXTE pour comprendre :
-- La situation actuelle de l'utilisateur
-- Ses contraintes spécifiques
-- Ses ressources disponibles
-- Ses blocages éventuels
+📋 DESCRIPTION/CONTEXTE (À ANALYSER EN PRIORITÉ) :
+"${description}"
 
-FORMAT JSON STRICT (30 jours) :
+🎯 OBJECTIF PRINCIPAL (RÉFÉRENCE SECONDaire) :
+"${objective}"
+
+🌍 LANGUE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
+
+⚠️ INSTRUCTIONS CRITIQUES :
+1. La DESCRIPTION/CONTEXTE est ta source principale - elle décrit la situation réelle
+2. L'objectif est juste le titre - la vraie substance est dans la description
+3. Crée des actions qui répondent EXACTEMENT à ce qui est décrit dans la description
+4. 30 jours avec des actions variées et cohérentes
+
+STRUCTURE OBLIGATOIRE PAR JOUR :
+- 2 actions obligatoires (mandatory1 et mandatory2)
+- 1 action au choix parmi 3 options (optionA, optionB, optionC)
+
+FORMAT JSON :
 {
-  "category": "catégorie spécifique",
-  "analysis": "Analyse rapide de la situation (2-3 phrases)",
-  "kpi": ["KPI 1", "KPI 2", "KPI 3"],
+  "category": "catégorie",
   "days": [
     {
       "day": 1,
-      "phase": "Nom de la phase (ex: Fondations)",
-      "title": "Titre inspirant et spécifique au contexte",
+      "title": "Titre du jour",
       "mandatory1": {
-        "icon": "emoji pertinent",
-        "title": "Action concrète tenant compte du contexte",
-        "description": "Instructions détaillées et personnalisées"
+        "icon": "emoji",
+        "title": "Nom de l'action",
+        "description": "Description détaillée"
       },
       "mandatory2": {
-        "icon": "emoji pertinent",
-        "title": "Deuxième action contextualisée",
-        "description": "Instructions précises adaptées à la situation"
+        "icon": "emoji",
+        "title": "Nom de l'action",
+        "description": "Description détaillée"
       },
       "choiceOptions": {
         "optionA": {
           "icon": "emoji",
-          "title": "Option A personnalisée",
-          "description": "Description tenant compte du contexte"
+          "title": "Option A",
+          "description": "Description"
         },
         "optionB": {
           "icon": "emoji",
-          "title": "Option B personnalisée",
-          "description": "Description tenant compte du contexte"
+          "title": "Option B",
+          "description": "Description"
         },
         "optionC": {
           "icon": "emoji",
-          "title": "Option C personnalisée",
-          "description": "Description tenant compte du contexte"
+          "title": "Option C",
+          "description": "Description"
         }
       }
     }
   ]
 }
 
-IMPORTANT : 
-- Chaque action doit refléter le CONTEXTE décrit par l'utilisateur
-- Pas d'actions génériques - sois spécifique à sa situation
-- Les descriptions doivent être actionnables et concrètes
-
-GÉNÈRE MAINTENANT LE JSON COMPLET :`;
+GÉNÈRE LE JSON COMPLET MAINtenant :`;
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',

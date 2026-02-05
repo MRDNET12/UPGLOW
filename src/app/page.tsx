@@ -2564,6 +2564,94 @@ PROCESO OBLIGATORIO:
               </Card>
             )}
 
+            {/* Carte Série - Tracking des victoires consécutives */}
+            <Card className="border-none shadow-lg bg-white rounded-2xl overflow-hidden mb-2">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 via-pink-500 to-purple-500 flex items-center justify-center shadow-lg animate-pulse">
+                        <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C10.5 2 9.5 3 9.5 4.5C9.5 6 10.5 7 12 7C13.5 7 14.5 6 14.5 4.5C14.5 3 13.5 2 12 2ZM12 22C16 22 19 19 19 15C19 11 16 8 12 8C8 8 5 11 5 15C5 19 8 22 12 22ZM12 20C9 20 7 18 7 15C7 12 9 10 12 10C15 10 17 12 17 15C17 18 15 20 12 20Z"/>
+                        </svg>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white border-2 border-pink-400 flex items-center justify-center text-sm font-bold text-pink-600">
+                        {(() => {
+                          const today = new Date().toISOString().split('T')[0];
+                          const wins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+                          let streak = 0;
+                          let checkDate = new Date();
+                          while (true) {
+                            const dateStr = checkDate.toISOString().split('T')[0];
+                            const hasWin = wins.some((w: any) => w.date === dateStr);
+                            if (hasWin) {
+                              streak++;
+                              checkDate.setDate(checkDate.getDate() - 1);
+                            } else if (dateStr === today && wins.some((w: any) => w.date === today)) {
+                              streak++;
+                              checkDate.setDate(checkDate.getDate() - 1);
+                            } else {
+                              break;
+                            }
+                          }
+                          return streak;
+                        })()}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-gray-800">{language === 'fr' ? 'Votre série' : language === 'en' ? 'Your streak' : 'Tu serie'}</h3>
+                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Garde le rythme !' : language === 'en' ? 'Keep it up!' : '¡Sigue así!'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                      <Share2 className="w-5 h-5 text-gray-400" />
+                    </button>
+                    <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                      <MoreHorizontal className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Jours de la semaine */}
+                <div className="flex items-center justify-between">
+                  {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => {
+                    const today = new Date();
+                    const currentDay = today.getDay() === 0 ? 6 : today.getDay() - 1; // 0 = Lundi
+                    const dayIndex = index;
+                    const diff = dayIndex - currentDay;
+                    const checkDate = new Date(today);
+                    checkDate.setDate(today.getDate() + diff);
+                    const dateStr = checkDate.toISOString().split('T')[0];
+                    const wins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+                    const hasWin = wins.some((w: any) => w.date === dateStr);
+                    const isToday = diff === 0;
+                    
+                    return (
+                      <div key={day} className="flex flex-col items-center gap-1">
+                        <span className={`text-xs ${isToday ? 'font-bold text-pink-600' : 'text-gray-400'}`}>
+                          {language === 'fr' ? day : language === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] : ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}
+                        </span>
+                        <div 
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
+                            hasWin 
+                              ? 'bg-gradient-to-br from-pink-400 to-purple-500 shadow-md scale-110' 
+                              : isToday 
+                                ? 'bg-pink-100 border-2 border-pink-300' 
+                                : 'bg-gray-100'
+                          }`}
+                        >
+                          {hasWin && (
+                            <Check className={`w-5 h-5 text-white animate-in zoom-in duration-300 ${isToday ? 'animate-bounce' : ''}`} />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Petits Succès Compact */}
             <SmallWinsCompact theme={theme} />
 

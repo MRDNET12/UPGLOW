@@ -4801,6 +4801,15 @@ PROCESO OBLIGATORIO:
                           {language === 'fr' ? 'Passer à Glow Plus →' : language === 'en' ? 'Upgrade to Glow Plus →' : 'Actualizar a Glow Plus →'}
                         </button>
                       )}
+                      {userData?.isAdmin && (
+                        <button
+                          onClick={() => window.location.href = '/admin/dashboard'}
+                          className="mt-2 text-xs text-red-600 hover:text-red-700 font-medium underline flex items-center gap-1"
+                        >
+                          <span>🎛️</span>
+                          {language === 'fr' ? 'Dashboard Admin' : language === 'en' ? 'Admin Dashboard' : 'Panel Admin'}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -80,6 +80,7 @@ export interface PersonalizedFlow {
   startDate: string;
   isActive: boolean;
   badges: string[];
+  isFromFallback?: boolean;  // ➕ Indique si le flow vient du fallback ou de l'IA
 }
 
 export interface Badge {
@@ -898,19 +899,19 @@ export const useStore = create<AppState>()(
       // Vérifier l'accès aux fonctionnalités payantes
       canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror') => {
         const { subscription } = get();
-        
+
         // Si abonné Glow Plus, tout est accessible
         if (subscription.planType === 'glow_plus') return true;
-        
+
         // Si abonné Glow Start, accès aux features sauf Glow Mirror
         if (subscription.planType === 'glow_start') {
           return feature !== 'glow_mirror';
         }
-        
+
         // Si pas abonné, vérifier les jours gratuits
         const remainingDays = get().getRemainingFreeDays();
         if (remainingDays > 0) return true;
-        
+
         // Essai terminé, pas d'accès
         return false;
       },
@@ -1099,7 +1100,43 @@ export const useStore = create<AppState>()(
 
       generatePersonalizedFlow: async (objective, description) => {
         set({ isGeneratingFlow: true });
-        
+
+        // Fonction de validation de la qualité du flow
+        const validateFlowQuality = (parsedFlow: any, objective: string): { valid: boolean; reason?: string } => {
+          // 1. Vérifier que les actions ne sont pas trop répétitives
+          const allActions = parsedFlow.days.flatMap((day: any) => [
+            day.mandatory1?.title,
+            day.mandatory2?.title
+          ]).filter(Boolean);
+
+          const uniqueActions = new Set(allActions);
+          if (uniqueActions.size < allActions.length * 0.6) {
+            return { valid: false, reason: 'Actions trop répétitives (moins de 60% d\'actions uniques)' };
+          }
+
+          // 2. Vérifier que les descriptions sont suffisamment détaillées
+          const hasDetailedDescriptions = parsedFlow.days.every((day: any) =>
+            day.mandatory1?.description?.length > 15 &&
+            day.mandatory2?.description?.length > 15
+          );
+
+          if (!hasDetailedDescriptions) {
+            return { valid: false, reason: 'Descriptions trop courtes (minimum 15 caractères requis)' };
+          }
+
+          // 3. Vérifier la pertinence par rapport à l'objectif
+          const objectiveKeywords = objective.toLowerCase().split(' ').filter(w => w.length > 3);
+          const flowText = JSON.stringify(parsedFlow).toLowerCase();
+          const relevanceScore = objectiveKeywords.filter(kw => flowText.includes(kw)).length;
+
+          if (relevanceScore < Math.max(1, objectiveKeywords.length * 0.2)) {
+            return { valid: false, reason: 'Flow pas assez pertinent par rapport à l\'objectif' };
+          }
+
+          console.log('[Flow Validation] ✓ Quality checks passed');
+          return { valid: true };
+        };
+
         const generateWithAI = async (): Promise<PersonalizedFlow | null> => {
           try {
             // Détecter la langue de l'objectif
@@ -1108,92 +1145,161 @@ export const useStore = create<AppState>()(
               if (/[áéíóúüñ¿¡]+/i.test(text)) return 'es';
               return 'en';
             };
-            
+
             const lang = detectLanguage(objective + ' ' + description);
-            
-            const systemPrompt = `Tu es Glow Flow, un coach expert qui crée des programmes de transformation personnalisés.
 
-RÈGLE D'OR ABSOLUE : Avant de générer quoi que ce soit, tu DOIS utiliser ta capacité de raisonnement.
+            const systemPrompt = `Tu es Glow Flow, un coach expert en transformation personnelle qui crée des programmes sur mesure.
 
-PROCESSUS OBLIGATOIRE - ÉTAPES À SUIVRE :
-1. ACTIVE ton raisonnement (<think>)
-2. ANALYSE en profondeur la description fournie
-3. IDENTIFIE les besoins spécifiques, les blocages et les ressources
-4. CONÇOIS une stratégie personnalisée
-5. GÉNÈRE ensuite le plan de 30 jours
+🎯 TA MISSION : Créer un programme de 30 jours ULTRA-PERSONNALISÉ qui mène à de VRAIS RÉSULTATS.
 
-Tu ne dois JAMAIS générer de flow sans passer par ce processus de réflexion.`;
+⚠️ RÈGLE ABSOLUE : Tu DOIS OBLIGATOIREMENT utiliser ta fonction de raisonnement <think> AVANT de générer quoi que ce soit.
 
-            const userPrompt = `DONNÉES DE L'UTILISATEUR :
+📋 CRITÈRES DE QUALITÉ OBLIGATOIRES :
 
-📋 DESCRIPTION/CONTEXTE (SOURCE PRINCIPALE) :
+1. ACTIONS CONCRÈTES ET ACTIONNABLES
+   ❌ Mauvais : "Réfléchir à ta confiance"
+   ✅ Bon : "Écrire 3 situations où tu t'es senti(e) confiant(e) cette semaine"
+
+2. PROGRESSION CLAIRE SUR 30 JOURS
+   - Jours 1-8 : Fondations et prise de conscience
+   - Jours 9-16 : Mise en pratique et expérimentation
+   - Jours 17-24 : Intensification et défis
+   - Jours 25-30 : Consolidation et autonomie
+
+3. ACTIONS DIRECTEMENT LIÉES À L'OBJECTIF
+   - Chaque action doit clairement contribuer à l'objectif
+   - Les descriptions doivent expliquer POURQUOI cette action aide
+
+4. VARIÉTÉ ET UNICITÉ
+   - Éviter les répétitions : chaque jour doit être unique
+   - Varier les types d'actions (physique, mental, social, créatif)
+
+5. ACTIONS SMART
+   - Spécifiques : pas de généralités
+   - Mesurables : l'utilisateur peut vérifier s'il l'a fait
+   - Atteignables : réalisable en 10-30 minutes
+   - Réalistes : adaptées au contexte décrit
+   - Temporelles : à faire dans la journée
+
+💡 EXEMPLES DE BONNES ACTIONS :
+- "Tenir 1 minute de planche + 10 squats (timer)"
+- "Écrire 5 choses que tu aimes chez toi dans un carnet"
+- "Appeler un ami et lui dire pourquoi tu l'apprécies"
+- "Préparer un smoothie vert avec épinards, banane, lait d'amande"
+
+❌ EXEMPLES DE MAUVAISES ACTIONS :
+- "Penser positif" (trop vague)
+- "Faire du sport" (pas assez spécifique)
+- "Être plus confiant" (pas actionnable)`;
+
+            const userPrompt = `CONTEXTE COMPLET DE L'UTILISATEUR :
+
+📋 DESCRIPTION DÉTAILLÉE (SOURCE PRINCIPALE - LIS ATTENTIVEMENT) :
 "${description}"
 
 🎯 OBJECTIF PRINCIPAL :
 "${objective}"
 
-🌍 LANGUE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
+🌍 LANGUE DE RÉPONSE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
 
-⚠️ PROCESSUS OBLIGATOIRE :
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ÉTAPE 1 - RAISONNEMENT (OBLIGATOIRE) :
-Avant de donner le JSON, tu DOIS fournir ton analyse entre balises <think> :
+⚠️ PROCESSUS OBLIGATOIRE EN 3 ÉTAPES :
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 1 - RAISONNEMENT APPROFONDI (OBLIGATOIRE - MINIMUM 200 CARACTÈRES)
+
+Tu DOIS fournir ton analyse complète entre balises <think> :
+
 <think>
-- Analyse de la situation : [décris ce que tu comprends du contexte]
-- Besoins identifiés : [quels sont les besoins spécifiques]
-- Stratégie globale : [ton approche pour ces 30 jours]
-- Type d'actions adaptées : [quelles catégories d'actions sont pertinentes]
+1. ANALYSE DE LA SITUATION :
+   - Que comprends-tu du contexte de cette personne ?
+   - Quels sont ses défis principaux ?
+   - Quelles sont ses ressources et forces ?
+
+2. BESOINS IDENTIFIÉS :
+   - Quels besoins spécifiques cette personne a-t-elle ?
+   - Quels blocages doit-elle surmonter ?
+   - Quel type de soutien lui serait le plus utile ?
+
+3. STRATÉGIE GLOBALE :
+   - Quelle approche vas-tu adopter pour ces 30 jours ?
+   - Comment vas-tu structurer la progression ?
+   - Quels types d'actions seront les plus efficaces ?
+
+4. PLAN DE PROGRESSION :
+   - Phase 1 (Jours 1-8) : [Objectif et approche]
+   - Phase 2 (Jours 9-16) : [Objectif et approche]
+   - Phase 3 (Jours 17-24) : [Objectif et approche]
+   - Phase 4 (Jours 25-30) : [Objectif et approche]
 </think>
 
-ÉTAPE 2 - PLAN DÉTAILLÉ (OBLIGATOIRE) :
-Donne un aperçu des 4 phases :
-- Phase 1 (Jours 1-8) : [thème et objectif]
-- Phase 2 (Jours 9-16) : [thème et objectif]
-- Phase 3 (Jours 17-24) : [thème et objectif]
-- Phase 4 (Jours 25-30) : [thème et objectif]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ÉTAPE 3 - JSON (OBLIGATOIRE) :
+ÉTAPE 2 - PLAN DÉTAILLÉ DES 4 PHASES
+
+Décris brièvement chaque phase :
+- Phase 1 (Jours 1-8) : [Thème, objectif, types d'actions]
+- Phase 2 (Jours 9-16) : [Thème, objectif, types d'actions]
+- Phase 3 (Jours 17-24) : [Thème, objectif, types d'actions]
+- Phase 4 (Jours 25-30) : [Thème, objectif, types d'actions]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 3 - GÉNÉRATION DU FLOW (FORMAT JSON)
+
+Génère maintenant les 30 jours au format JSON suivant :
+
 {
-  "category": "catégorie",
-  "analysis": "Résumé de l'analyse",
+  "category": "catégorie pertinente",
+  "analysis": "Résumé de ton analyse en 1-2 phrases",
   "days": [
     {
       "day": 1,
-      "title": "Titre du jour",
+      "title": "Titre inspirant du jour",
       "mandatory1": {
-        "icon": "emoji",
-        "title": "Nom de l'action",
-        "description": "Description détaillée"
+        "icon": "emoji pertinent",
+        "title": "Action concrète et spécifique",
+        "description": "Explication détaillée : quoi faire exactement et pourquoi ça aide l'objectif"
       },
       "mandatory2": {
-        "icon": "emoji",
-        "title": "Nom de l'action",
-        "description": "Description détaillée"
+        "icon": "emoji pertinent",
+        "title": "Action concrète et spécifique",
+        "description": "Explication détaillée : quoi faire exactement et pourquoi ça aide l'objectif"
       },
       "choiceOptions": {
         "optionA": {
           "icon": "emoji",
-          "title": "Option A",
-          "description": "Description"
+          "title": "Option A concrète",
+          "description": "Pourquoi cette option est bénéfique"
         },
         "optionB": {
           "icon": "emoji",
-          "title": "Option B",
-          "description": "Description"
+          "title": "Option B concrète",
+          "description": "Pourquoi cette option est bénéfique"
         },
         "optionC": {
           "icon": "emoji",
-          "title": "Option C",
-          "description": "Description"
+          "title": "Option C concrète",
+          "description": "Pourquoi cette option est bénéfique"
         }
       }
     }
+    // ... répéter pour les 30 jours avec PROGRESSION VISIBLE
   ]
 }
 
-⚠️ RAPPEL : AUCUN FLOW NE DOIT ÊTRE GÉNÉRÉ SANS L'ÉTAPE DE RAISONNEMENT <think> !
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚨 RAPPELS CRITIQUES :
+1. Le raisonnement <think> est OBLIGATOIRE - sans lui, ta réponse sera rejetée
+2. Chaque action doit être CONCRÈTE et UNIQUE
+3. La progression doit être VISIBLE du jour 1 au jour 30
+4. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
 
 GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
+
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
@@ -1209,29 +1315,64 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }
                 ],
-                temperature: 0.8,
-                max_tokens: 4000
+                temperature: 0.4,           // ⬇️ Réduit de 0.8 à 0.4 pour plus de cohérence
+                max_tokens: 10000,          // ⬆️ Augmenté de 4000 à 10000 pour raisonnement complet
+                top_p: 0.9,                 // ➕ Ajout pour meilleure qualité
+                frequency_penalty: 0.3      // ➕ Réduit les répétitions
               })
             });
 
             if (!response.ok) {
+              console.error('[API Error]', response.status, response.statusText);
               throw new Error(`API Error: ${response.status}`);
             }
 
             const data = await response.json();
             const content = data.choices?.[0]?.message?.content || '';
-            
-            console.log('[AI Response] Full content:', content);
-            console.log('[AI Response] Content length:', content.length);
-            
-            // Vérifier si le raisonnement <think> est présent
+
+            console.log('[AI Response] Full content length:', content.length);
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // VALIDATION STRICTE DU RAISONNEMENT (BLOQUANTE)
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
             const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
-            if (thinkMatch) {
-              console.log('[AI Response] ✓ Reasoning detected:', thinkMatch[1].substring(0, 200) + '...');
-            } else {
-              console.warn('[AI Response] ⚠️ No <think> reasoning found in response!');
+
+            if (!thinkMatch) {
+              console.error('[AI Response] ❌ REJECTED: No <think> reasoning found!');
+              console.error('[AI Response] Content preview:', content.substring(0, 500));
+              throw new Error('AI did not provide reasoning - using fallback');
             }
-            
+
+            const reasoning = thinkMatch[1].trim();
+
+            if (reasoning.length < 200) {
+              console.error('[AI Response] ❌ REJECTED: Reasoning too short!');
+              console.error('[AI Response] Reasoning length:', reasoning.length);
+              console.error('[AI Response] Reasoning content:', reasoning);
+              throw new Error('AI reasoning insufficient (< 200 chars) - using fallback');
+            }
+
+            // Vérifier que le raisonnement contient les éléments clés
+            const hasAnalysis = /analyse|situation|contexte/i.test(reasoning);
+            const hasNeeds = /besoin|blocage|défi|challenge/i.test(reasoning);
+            const hasStrategy = /stratégie|approche|plan|progression/i.test(reasoning);
+
+            if (!hasAnalysis || !hasNeeds || !hasStrategy) {
+              console.error('[AI Response] ❌ REJECTED: Reasoning missing key elements!');
+              console.error('[AI Response] Has analysis:', hasAnalysis);
+              console.error('[AI Response] Has needs:', hasNeeds);
+              console.error('[AI Response] Has strategy:', hasStrategy);
+              throw new Error('AI reasoning incomplete - using fallback');
+            }
+
+            console.log('[AI Response] ✅ Valid reasoning detected');
+            console.log('[AI Response] Reasoning preview:', reasoning.substring(0, 300) + '...');
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // EXTRACTION DU JSON
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
             // Extract JSON from response - try to find JSON block
             let jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
             if (!jsonMatch) {
@@ -1240,27 +1381,44 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               jsonMatch = afterThink.match(/\{[\s\S]*\}/);
             }
             if (!jsonMatch) {
-              console.error('[AI Response] No JSON found in:', content);
-              throw new Error('No JSON found in response');
+              console.error('[AI Response] ❌ No JSON found in response');
+              console.error('[AI Response] Content after think:', content.split(/<\/think>/).pop()?.substring(0, 500));
+              throw new Error('No JSON found in response - using fallback');
             }
-            
+
             const jsonContent = jsonMatch[1] || jsonMatch[0];
-            console.log('[AI Response] JSON extracted:', jsonContent.substring(0, 500));
-            
+            console.log('[AI Response] JSON extracted, length:', jsonContent.length);
+
             let parsed;
             try {
               parsed = JSON.parse(jsonContent);
             } catch (parseError) {
-              console.error('[AI Response] JSON parse error:', parseError);
-              console.error('[AI Response] Content was:', jsonContent);
-              throw new Error('Invalid JSON format');
+              console.error('[AI Response] ❌ JSON parse error:', parseError);
+              console.error('[AI Response] JSON content preview:', jsonContent.substring(0, 500));
+              throw new Error('Invalid JSON format - using fallback');
             }
-            
+
             if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 1) {
-              console.error('[AI Response] Invalid days data:', parsed);
-              throw new Error('Invalid days data');
+              console.error('[AI Response] ❌ Invalid days data:', parsed);
+              throw new Error('Invalid days data - using fallback');
             }
-            
+
+            console.log('[AI Response] ✅ Successfully parsed', parsed.days.length, 'days');
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // VALIDATION DE LA QUALITÉ DU FLOW
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+            const qualityCheck = validateFlowQuality(parsed, objective);
+            if (!qualityCheck.valid) {
+              console.error('[Flow Validation] ❌ Quality check failed:', qualityCheck.reason);
+              throw new Error(`Flow quality validation failed: ${qualityCheck.reason} - using fallback`);
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            // PADDING À 30 JOURS SI NÉCESSAIRE
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
             // Ensure we have 30 days
             if (parsed.days.length < 30) {
               console.warn(`[AI Response] Only ${parsed.days.length} days received, padding to 30`);
@@ -1273,11 +1431,11 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 });
               }
             }
-            
-            console.log('[AI Response] Successfully parsed', parsed.days.length, 'days');
+
+            console.log('[AI Response] ✅ Flow generation successful with', parsed.days.length, 'days');
 
             const today = new Date().toISOString().split('T')[0];
-            
+
             return {
               id: crypto.randomUUID(),
               objective,
@@ -1336,27 +1494,34 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               completedDays: [],
               startDate: today,
               isActive: true,
-              badges: []
+              badges: [],
+              isFromFallback: false  // ➕ Flow généré par l'IA avec raisonnement validé
             };
           } catch (error) {
-            console.error('Kimi API Error:', error);
+            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.error('[Flow Generation] ❌ AI generation failed');
+            console.error('[Flow Generation] Error:', error);
+            console.error('[Flow Generation] Objective:', objective);
+            console.error('[Flow Generation] Description length:', description.length);
+            console.error('[Flow Generation] Timestamp:', new Date().toISOString());
+            console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             return null;
           }
         };
 
         try {
           // Try to generate with Kimi API
-           let newFlow = await generateWithAI();
-          
+          let newFlow = await generateWithAI();
+
           // Fallback: generate default content if API fails
           if (!newFlow) {
             console.log('Using fallback flow generation');
             const today = new Date().toISOString().split('T')[0];
-            
+
             // Détecter la catégorie de l'objectif pour le fallback
             const objectiveLower = objective.toLowerCase();
             let category = 'bien-etre';
-            
+
             if (objectiveLower.includes('argent') || objectiveLower.includes('€') || objectiveLower.includes('business') || objectiveLower.includes('entreprise') || objectiveLower.includes('revenu') || objectiveLower.includes('salaire')) {
               category = 'finance';
             } else if (objectiveLower.includes('confiance') || objectiveLower.includes('estime') || objectiveLower.includes('anxieux') || objectiveLower.includes('peur') || objectiveLower.includes('stress')) {
@@ -1368,7 +1533,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             } else if (objectiveLower.includes('relation') || objectiveLower.includes('amour') || objectiveLower.includes('ami') || objectiveLower.includes('social') || objectiveLower.includes('rencontrer')) {
               category = 'relations';
             }
-            
+
             // Actions par catégorie pour le fallback
             const actionsByCategory = {
               finance: {
@@ -1414,9 +1579,9 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 c3: ['✨ Masque cheveux', '💇 Soin capillaire', '🎀 Coiffure soignée']
               }
             };
-            
+
             const actions = actionsByCategory[category] || actionsByCategory['bien-etre'];
-            
+
             newFlow = {
               id: crypto.randomUUID(),
               objective,

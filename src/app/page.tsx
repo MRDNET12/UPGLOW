@@ -60,6 +60,7 @@ import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
+import { useInstallTracking } from '@/hooks/useInstallTracking';
 
 // Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
 const getLocalDateString = (date: Date = new Date()): string => {
@@ -211,6 +212,9 @@ isActionCompleted,
       setShowPlanSelection(true);
     }
   };
+
+  // Tracker les installations
+  useInstallTracking();
 
   // Charger les objectifs depuis localStorage
   useEffect(() => {

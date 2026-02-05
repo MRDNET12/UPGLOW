@@ -2572,7 +2572,7 @@ PROCESO OBLIGATORIO:
                     <div className="relative">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 via-pink-500 to-purple-500 flex items-center justify-center shadow-lg animate-pulse">
                         <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2C10.5 2 9.5 3 9.5 4.5C9.5 6 10.5 7 12 7C13.5 7 14.5 6 14.5 4.5C14.5 3 13.5 2 12 2ZM12 22C16 22 19 19 19 15C19 11 16 8 12 8C8 8 5 11 5 15C5 19 8 22 12 22ZM12 20C9 20 7 18 7 15C7 12 9 10 12 10C15 10 17 12 17 15C17 18 15 20 12 20Z"/>
+                          <path d="M12 2C10.5 2 9.5 3 9.5 4.5C9.5 6 10.5 7 12 7C13.5 7 14.5 6 14.5 4.5C14.5 3 13.5 2 12 2ZM12 22C16 22 19 19 19 15C19 11 16 8 12 8C8 8 5 11 5 15C5 19 8 22 12 22ZM12 20C9 20 7 18 7 15C7 12 9 10 12 10C15 10 17 12 17 15C17 18 15 20 12 20Z" />
                         </svg>
                       </div>
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white border-2 border-pink-400 flex items-center justify-center text-sm font-bold text-pink-600">
@@ -2626,20 +2626,19 @@ PROCESO OBLIGATORIO:
                     const wins = JSON.parse(localStorage.getItem('smallWins') || '[]');
                     const hasWin = wins.some((w: any) => w.date === dateStr);
                     const isToday = diff === 0;
-                    
+
                     return (
                       <div key={day} className="flex flex-col items-center gap-1">
                         <span className={`text-xs ${isToday ? 'font-bold text-pink-600' : 'text-gray-400'}`}>
                           {language === 'fr' ? day : language === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] : ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}
                         </span>
-                        <div 
-                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
-                            hasWin 
-                              ? 'bg-gradient-to-br from-pink-400 to-purple-500 shadow-md scale-110' 
-                              : isToday 
-                                ? 'bg-pink-100 border-2 border-pink-300' 
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${hasWin
+                              ? 'bg-gradient-to-br from-pink-400 to-purple-500 shadow-md scale-110'
+                              : isToday
+                                ? 'bg-pink-100 border-2 border-pink-300'
                                 : 'bg-gray-100'
-                          }`}
+                            }`}
                         >
                           {hasWin && (
                             <Check className={`w-5 h-5 text-white animate-in zoom-in duration-300 ${isToday ? 'animate-bounce' : ''}`} />
@@ -4946,9 +4945,9 @@ PROCESO OBLIGATORIO:
                         {language === 'fr' ? '✨ Passe à la vitesse supérieure' : language === 'en' ? '✨ Take it to the next level' : '✨ Llévalo al siguiente nivel'}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        {language === 'fr' 
+                        {language === 'fr'
                           ? 'Débloque tout le potentiel de ton évolution personnelle'
-                          : language === 'en' 
+                          : language === 'en'
                             ? 'Unlock the full potential of your personal growth'
                             : 'Desbloquea todo el potencial de tu crecimiento personal'}
                       </p>
@@ -5030,9 +5029,9 @@ PROCESO OBLIGATORIO:
                     </button>
 
                     <p className="text-center text-xs text-gray-500 mt-3">
-                      {language === 'fr' 
+                      {language === 'fr'
                         ? '3 jours gratuits sur tous les plans • Annule quand tu veux'
-                        : language === 'en' 
+                        : language === 'en'
                           ? '3 free days on all plans • Cancel anytime'
                           : '3 días gratis en todos los planes • Cancela cuando quieras'}
                     </p>
@@ -6530,7 +6529,7 @@ PROCESO OBLIGATORIO:
       {currentView === 'journal' && canAccessFeature('journal') && (
         <div className="pb-24 min-h-screen bg-white overflow-y-auto">
           {/* Header */}
-          <div className="p-4 pb-0 bg-white">
+          <div className="px-4 pt-0 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">
               <Button
                 variant="ghost"

@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/lib/store';
-import { Sparkles, CheckCircle2, Heart, Target, Star, ArrowRight, Share2, Users } from 'lucide-react';
+import { Sparkles, CheckCircle2, Heart, Star, ArrowRight, Share2, Users } from 'lucide-react';
 
-export default function PaymentConfirmation() {
+function PaymentConfirmationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, updateUserPaidStatus } = useAuth();
@@ -16,7 +16,7 @@ export default function PaymentConfirmation() {
   const [error, setError] = useState('');
   
   // Get plan from URL params
-  const planType = (searchParams.get('plan') as 'glow_start' | 'glow_plus') || 'glow_plus';
+  const planType = (searchParams?.get('plan') as 'glow_start' | 'glow_plus') || 'glow_plus';
 
   const texts = {
     fr: {
@@ -81,7 +81,7 @@ export default function PaymentConfirmation() {
 
       try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await updateUserPaidStatus();
+        await updateUserPaidStatus(planType);
         const endDate = new Date();
         endDate.setMonth(endDate.getMonth() + 1); // 1 month subscription
         subscribeToPlan(planType, endDate.toISOString().split('T')[0]);
@@ -242,5 +242,25 @@ export default function PaymentConfirmation() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentConfirmation() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 border-4 border-rose-200 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-transparent border-t-rose-500 rounded-full animate-spin"></div>
+            </div>
+          </div>
+          <p className="text-stone-600">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <PaymentConfirmationContent />
+    </Suspense>
   );
 }

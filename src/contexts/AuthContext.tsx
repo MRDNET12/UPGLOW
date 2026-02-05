@@ -14,6 +14,7 @@ import { auth, db } from '@/lib/firebase';
 interface UserData {
   email: string;
   hasPaid: boolean;
+  planType?: 'glow_start' | 'glow_plus';
   isAdmin?: boolean;
   createdAt: string;
   registrationDate: string;
@@ -26,7 +27,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  updateUserPaidStatus: () => Promise<void>;
+  updateUserPaidStatus: (planType?: 'glow_start' | 'glow_plus') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -155,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Mettre à jour le statut de paiement
-  const updateUserPaidStatus = async () => {
+  const updateUserPaidStatus = async (planType?: 'glow_start' | 'glow_plus') => {
     if (!user) {
       throw new Error('Utilisateur non connecté');
     }
@@ -165,12 +166,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      await setDoc(doc(db, 'users', user.uid), {
-        hasPaid: true
-      }, { merge: true });
+      const updateData: any = {
+        hasPaid: true,
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (planType) {
+        updateData.planType = planType;
+        updateData.subscriptionDate = new Date().toISOString();
+      }
+      
+      await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
 
       // Mettre à jour l'état local
-      setUserData(prev => prev ? { ...prev, hasPaid: true } : null);
+      setUserData(prev => prev ? { ...prev, hasPaid: true, planType } : null);
     } catch (error: any) {
       console.error('Update paid status error:', error);
       throw new Error(error.message || 'Erreur lors de la mise à jour');

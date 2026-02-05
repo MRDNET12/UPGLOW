@@ -2127,7 +2127,7 @@ isActionCompleted,
         onCreate={(description) => {
           setFlowDescription(description);
           generatePersonalizedFlow(objectifPrincipal, description).then(() => {
-            setCurrentView('flow-challenge');
+            setCurrentView('dashboard');
           });
         }}
       />

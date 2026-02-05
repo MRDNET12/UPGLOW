@@ -73,6 +73,7 @@ export interface PersonalizedFlow {
   id: string;
   objective: string;
   objectiveDescription: string;
+  category?: string;
   days: FlowDay[];
   currentDay: number;
   completedDays: number[];
@@ -1054,50 +1055,91 @@ export const useStore = create<AppState>()(
       generatePersonalizedFlow: async (objective, description) => {
         set({ isGeneratingFlow: true });
         
-        const generateWithKimi = async (): Promise<PersonalizedFlow | null> => {
+        const generateWithAI = async (): Promise<PersonalizedFlow | null> => {
           try {
-            const systemPrompt = `Tu es Glow Flow, un coach bien-être expert spécialisé dans les programmes de transformation de 30 jours.
-Tu crées des programmes personnalisés qui combinent :
-- Activité physique douce (marche ou sport)
-- Soins du visage
-- Rituels beauté corporelle
+            const systemPrompt = `Tu es Glow Flow, un coach expert spécialisé dans les programmes de transformation de 30 jours.
 
-Chaque jour doit être unique, progressif et motivant. Les descriptions doivent être encourageantes et spécifiques à l'objectif de l'utilisateur.`;
+ANALYSE INTELLIGENTE DE L'OBJECTIF :
+Tu dois analyser l'objectif principal et la description pour déterminer la CATÉGORIE et créer des actions PERTINENTES :
 
-            const userPrompt = `Crée un programme de 30 jours personnalisé pour cet objectif :
+CATÉGORIES D'OBJECTIFS :
+1. FINANCE / BUSINESS (ex: gagner 10000€, créer entreprise, investir)
+   - Action 1: Tâche productive (analyse marché, business plan, pitch, networking)
+   - Action 2: Apprentissage (lecture business, veille, formation)
+   - Action 3: Networking ou action concrète (appel, email, prospection)
 
-OBJECTIF PRINCIPAL : "${objective}"
+2. DÉVELOPPEMENT PERSONNEL / CONFiance (ex: confiance en soi, communication)
+   - Action 1: Exposition progressive (défi social, prise de parole)
+   - Action 2: Pratique quotidienne (affirmations, visualisation, journaling)
+   - Action 3: Action de reconfort ou célébration
+
+3. SANTÉ / FORME PHYSIQUE (ex: perdre du poids, musculation)
+   - Action 1: Sport adapté (cardio, muscu, yoga, sport)
+   - Action 2: Alimentation / Hydratation
+   - Action 3: Récupération ou soin du corps
+
+4. COMPÉTENCES / APPRENTISSAGE (ex: apprendre langue, codage)
+   - Action 1: Pratique active (exercices, projet concret)
+   - Action 2: Théorie / Veille (lecture, vidéos, cours)
+   - Action 3: Application créative ou révision
+
+5. RELATIONS / SOCIAL (ex: rencontrer quelqu'un, améliorer relations)
+   - Action 1: Action sociale (sortir, appeler, message)
+   - Action 2: Travail intérieur (gratitude, pardon, introspection)
+   - Action 3: Auto-soin ou célébration
+
+6. BIEN-ÊTRE / BEAUTÉ (ex: meilleure peau, cheveux, prendre soin de soi)
+   - Action 1: Activité physique douce
+   - Action 2: Rituel beauté
+   - Action 3: Choix entre plusieurs soins
+
+STRUCTURE : 2 actions obligatoires + 1 action au choix parmi 3 options
+IMPORTANT : Adapte TOUTES les actions à la langue de l'utilisateur.`;
+
+            const userPrompt = `Analyse cet objectif et crée un programme de 30 jours PERSONNALISÉ :
+
+OBJECTIF : "${objective}"
 DESCRIPTION : "${description}"
 
-STRUCTURE STRICTE POUR CHAQUE JOUR (respecte exactement ce format) :
+INSTRUCTIONS :
+1. Détecte la catégorie de l'objectif (finance, développement perso, santé, compétences, relations, bien-être)
+2. Crée des actions VRAIMENT pertinentes pour CET objectif spécifique
+3. Sois créatif et original - pas de génériques
+4. Adapte à la langue de saisie
 
-1. MARCHE 30 MIN OU SPORT (obligatoire)
-   - Alterne entre : marche rapide, yoga, fitness léger, étirements actifs, natation, vélo
-   - Donne des suggestions différentes selon les jours
-   - Adapte à l'objectif (perte de poids = cardio, bien-être = yoga/étirements, etc.)
-
-2. MASSAGE VISAGE (obligatoire)
-   - Varie les techniques : drainage lymphatique, acupression, massage tonifiant, gua sha, roller
-   - Mentionne les bienfaits spécifiques
-   - Durée : 3-5 minutes
-
-3. GESTE POUR SOI AU CHOIX (l'utilisateur doit en choisir un)
-   Option A : BROSSAGE À SEC - Exfolie et stimule la circulation
-   Option B : CRÈME CORPS - Hydrate et nourrit la peau
-   Option C : SOIN CHEVEUX - Masque ou huile pour nourrir
-
-RÉPONDS UNIQUEMENT AU FORMAT JSON SUIVANT (30 jours complets) :
+FORMAT JSON (30 jours complets) :
 {
+  "category": "catégorie détectée",
   "days": [
     {
       "day": 1,
-      "title": "Titre inspirant du jour",
-      "walkOrSport": "Description détaillée de l'activité avec type et durée",
-      "faceMassage": "Technique de massage spécifique et bienfaits",
-      "selfCareOptions": {
-        "dryBrushing": "Description et bienfaits du brossage à sec",
-        "bodyCream": "Description et bienfaits de la crème corps", 
-        "hairCare": "Description et bienfaits du soin cheveux"
+      "title": "Titre inspirant et original",
+      "mandatory1": {
+        "icon": "emoji",
+        "title": "Titre action 1",
+        "description": "Description détaillée et motivante"
+      },
+      "mandatory2": {
+        "icon": "emoji", 
+        "title": "Titre action 2",
+        "description": "Description détaillée et motivante"
+      },
+      "choiceOptions": {
+        "optionA": {
+          "icon": "emoji",
+          "title": "Titre option A",
+          "description": "Description"
+        },
+        "optionB": {
+          "icon": "emoji",
+          "title": "Titre option B", 
+          "description": "Description"
+        },
+        "optionC": {
+          "icon": "emoji",
+          "title": "Titre option C",
+          "description": "Description"
+        }
       }
     }
   ]
@@ -1147,49 +1189,50 @@ RÉPONDS UNIQUEMENT AU FORMAT JSON SUIVANT (30 jours complets) :
               id: crypto.randomUUID(),
               objective,
               objectiveDescription: description,
+              category: parsed.category || 'general',
               days: parsed.days.map((day: any) => ({
                 day: day.day,
                 title: day.title,
                 mandatoryActions: [
                   {
-                    id: 'walk-sport',
-                    title: '🚶‍♀️ Marcher 30 min OU sport',
-                    description: day.walkOrSport,
-                    icon: '🚶‍♀️',
+                    id: 'mandatory-1',
+                    title: `${day.mandatory1?.icon || '✨'} ${day.mandatory1?.title || 'Action 1'}`,
+                    description: day.mandatory1?.description || '',
+                    icon: day.mandatory1?.icon || '✨',
                     isMandatory: true,
                     isCompleted: false
                   },
                   {
-                    id: 'face-massage',
-                    title: '💆‍♀️ Massage visage',
-                    description: day.faceMassage,
-                    icon: '💆‍♀️',
+                    id: 'mandatory-2',
+                    title: `${day.mandatory2?.icon || '🎯'} ${day.mandatory2?.title || 'Action 2'}`,
+                    description: day.mandatory2?.description || '',
+                    icon: day.mandatory2?.icon || '🎯',
                     isMandatory: true,
                     isCompleted: false
                   }
                 ],
                 choiceActions: [
                   {
-                    id: 'dry-brushing',
-                    title: '🧽 Brossage à sec',
-                    description: day.selfCareOptions?.dryBrushing || 'Exfoliation naturelle qui stimule la circulation',
-                    icon: '🧽',
+                    id: 'choice-a',
+                    title: `${day.choiceOptions?.optionA?.icon || '🔸'} ${day.choiceOptions?.optionA?.title || 'Option A'}`,
+                    description: day.choiceOptions?.optionA?.description || '',
+                    icon: day.choiceOptions?.optionA?.icon || '🔸',
                     isMandatory: false,
                     isCompleted: false
                   },
                   {
-                    id: 'body-cream',
-                    title: '🧴 Crème corps',
-                    description: day.selfCareOptions?.bodyCream || 'Hydratation profonde pour une peau douce',
-                    icon: '🧴',
+                    id: 'choice-b',
+                    title: `${day.choiceOptions?.optionB?.icon || '🔹'} ${day.choiceOptions?.optionB?.title || 'Option B'}`,
+                    description: day.choiceOptions?.optionB?.description || '',
+                    icon: day.choiceOptions?.optionB?.icon || '🔹',
                     isMandatory: false,
                     isCompleted: false
                   },
                   {
-                    id: 'hair-care',
-                    title: '✨ Soin cheveux',
-                    description: day.selfCareOptions?.hairCare || 'Masque nourrissant pour des cheveux brillants',
-                    icon: '✨',
+                    id: 'choice-c',
+                    title: `${day.choiceOptions?.optionC?.icon || '🔺'} ${day.choiceOptions?.optionC?.title || 'Option C'}`,
+                    description: day.choiceOptions?.optionC?.description || '',
+                    icon: day.choiceOptions?.optionC?.icon || '🔺',
                     isMandatory: false,
                     isCompleted: false
                   }
@@ -1210,110 +1253,124 @@ RÉPONDS UNIQUEMENT AU FORMAT JSON SUIVANT (30 jours complets) :
 
         try {
           // Try to generate with Kimi API
-          let newFlow = await generateWithKimi();
+           let newFlow = await generateWithAI();
           
           // Fallback: generate default content if API fails
           if (!newFlow) {
             console.log('Using fallback flow generation');
             const today = new Date().toISOString().split('T')[0];
             
-            // Generate diverse content for 30 days
-            const walkOptions = [
-              'Marche rapide en plein air - 30 min de cardio doux',
-              'Yoga flow matinal - 30 min pour éveiller le corps',
-              'Fitness léger à la maison - 30 min sans matériel',
-              'Natation ou aquagym - 30 min sans impact',
-              'Vélo ou elliptique - 30 min à allure modérée',
-              'Étirements actifs - 30 min de mobilité',
-              'Danse fitness - 30 min de fun et cardio',
-              'Marche en côte - 30 min pour renforcer',
-              'Pilates débutant - 30 min de renforcement doux',
-              'Marche méditative - 30 min en conscience'
-            ];
+            // Détecter la catégorie de l'objectif pour le fallback
+            const objectiveLower = objective.toLowerCase();
+            let category = 'bien-etre';
             
-            const massageOptions = [
-              'Drainage lymphatique : mouvements doux vers les ganglions pour décongestionner',
-              'Acupression : appuyez sur les points de tension du front et des tempes',
-              'Massage tonifiant : tapotements légers pour réveiller la peau',
-              'Gua Sha : mouvements vers l\'extérieur pour sculpturer le visage',
-              'Roller jade : mouvements ascendants pour détendre les muscles',
-              'Massage des sinus : cercles autour des yeux pour décongestionner',
-              'Auto-massage lifting : pétrissages doux pour tonifier',
-              'Massage du cou : étirements pour relâcher les tensions',
-              'Tapotements énergisants : pour stimuler la microcirculation',
-              'Massage relaxant : mouvements lents pour détendre'
-            ];
+            if (objectiveLower.includes('argent') || objectiveLower.includes('€') || objectiveLower.includes('business') || objectiveLower.includes('entreprise') || objectiveLower.includes('revenu') || objectiveLower.includes('salaire')) {
+              category = 'finance';
+            } else if (objectiveLower.includes('confiance') || objectiveLower.includes('estime') || objectiveLower.includes('anxieux') || objectiveLower.includes('peur') || objectiveLower.includes('stress')) {
+              category = 'developpement';
+            } else if (objectiveLower.includes('poids') || objectiveLower.includes('muscle') || objectiveLower.includes('sport') || objectiveLower.includes('fitness') || objectiveLower.includes('maigrir')) {
+              category = 'sante';
+            } else if (objectiveLower.includes('langue') || objectiveLower.includes('apprendre') || objectiveLower.includes('cours') || objectiveLower.includes('étudier') || objectiveLower.includes('compétence')) {
+              category = 'competences';
+            } else if (objectiveLower.includes('relation') || objectiveLower.includes('amour') || objectiveLower.includes('ami') || objectiveLower.includes('social') || objectiveLower.includes('rencontrer')) {
+              category = 'relations';
+            }
             
-            const dryBrushOptions = [
-              'Brossage vers le cœur pour activer la circulation',
-              'Brossage avant la douche pour exfolier en profondeur',
-              'Technique douce sur peau sèche pour stimuler',
-              'Brossage circulaire sur les zones sensibles',
-              'Rituel énergisant le matin pour réveiller le corps'
-            ];
+            // Actions par catégorie pour le fallback
+            const actionsByCategory = {
+              finance: {
+                m1: ['💰 Analyser une opportunité business', '📊 Faire un bilan financier', '💼 Contacter 3 prospects', '📈 Étudier un cas de succès', '💡 Brainstormer des idées revenus'],
+                m2: ['📚 Lire 20 min sur l\'entrepreneuriat', '🎧 Podcast business', '📺 Regarder une vidéo formation', '📝 Prendre des notes stratégiques', '🧮 Calculer ses projections'],
+                c1: ['📧 Envoyer un email pro', '🤝 Faire du networking', '📱 Poster sur LinkedIn'],
+                c2: ['⏰ Se lever 1h plus tôt', '🧘 Méditation pour la créativité', '📝 Tenir un journal de bord'],
+                c3: ['🎁 S\'offrir un petit luxe', '🍰 Célébrer une micro-victoire', '🎵 Écouter de la musique motivante']
+              },
+              developpement: {
+                m1: ['🎯 Défi de confiance du jour', '🗣️ Parler à un inconnu', '💪 Action qui fait peur', '🌟 Se mettre en avant', '✨ Sortir de sa zone'],
+                m2: ['📝 Affirmations positives', '🌅 Visualisation du succès', '📔 Journaling introspectif', '🧘 Méditation guidée', '💭 Réflexion sur ses forces'],
+                c1: ['📱 Appeler un proche', '🤗 Câlin ou affection', '💌 Écrire une lettre de gratitude'],
+                c2: ['🎨 Activité créative', '🎵 Chant ou expression', '📖 Lecture inspirante'],
+                c3: ['🛁 Bain relaxant', '🍵 Thé et moment de calme', '🎬 Film inspirant']
+              },
+              sante: {
+                m1: ['🏃‍♀️ 30 min cardio ou sport', '💪 Séance musculation', '🧘 Yoga ou étirements', '🚴 Vélo ou natation', '🏊 45 min d\'activité'],
+                m2: ['💧 Boire 2L d\'eau', '🥗 Manger 5 fruits/légumes', '😴 Dormir 8h ce soir', '🚫 Pas de sucre raffiné', '🍎 Smoothie healthy'],
+                c1: ['🛁 Bain de récupération', '🧖‍♀️ Spa ou sauna', '💆 Massage auto'],
+                c2: ['📱 Appel vidéo avec un proche', '🎵 Playlist motivation', '📺 Documentaire santé'],
+                c3: ['🛒 Courses alimentaires', '🍳 Cuisiner un nouveau plat', '📝 Planifier ses repas']
+              },
+              competences: {
+                m1: ['📚 30 min de pratique active', '💻 Projet concret', '🎯 Exercices pratiques', '📝 Écrire ou créer', '🎨 Application créative'],
+                m2: ['📖 Théorie ou veille', '🎧 Podcast éducatif', '📺 Tutoriel vidéo', '🗒️ Revue de notes', '🧠 Anki ou flashcards'],
+                c1: ['👥 Rejoindre une communauté', '🤝 Trouver un partenaire', '💬 Partager son progrès'],
+                c2: ['🎵 Musique de concentration', '🧘 Méditation focus', '📱 Bloquer distractions'],
+                c3: ['🏆 Se récompenser', '🎁 Petit cadeau à soi', '🎉 Célébrer l\'effort']
+              },
+              relations: {
+                m1: ['💬 Initier une conversation', '📱 Envoyer un message', '🤝 Sortir de sa zone sociale', '🎯 Action sociale proactive', '🌟 Complimenter quelqu\'un'],
+                m2: ['📝 Gratitude relations', '🧘 Visualisation connexion', '📔 Journal émotionnel', '💭 Réflexion sur ses besoins', '🌱 Travail intérieur'],
+                c1: ['📞 Appeler un ami', '🍕 Sortir avec quelqu\'un', '💌 Écrire une lettre'],
+                c2: ['🎨 Activité créative solo', '📖 Lecture feel-good', '🎵 Musique joyeuse'],
+                c3: ['🛁 Spa day', '🍰 Gourmandise', '🎬 Comédie romantique']
+              },
+              'bien-etre': {
+                m1: ['🚶‍♀️ 30 min marche ou sport', '🏃‍♀️ Activité physique', '🧘 Yoga ou stretching', '💃 Danse cardio', '🏊 Nage ou aquagym'],
+                m2: ['💆‍♀️ Rituel beauté', '🧴 Soin visage', '🛁 Bain relaxant', '🌸 Aromathérapie', '🧘 Méditation'],
+                c1: ['🧽 Brossage à sec', '🦵 Gommage corps', '🧖‍♀️ Exfoliation'],
+                c2: ['🧴 Crème hydratante', '🌺 Huile corporelle', '💅 Manucure'],
+                c3: ['✨ Masque cheveux', '💇 Soin capillaire', '🎀 Coiffure soignée']
+              }
+            };
             
-            const creamOptions = [
-              'Application après la douche sur peau humide',
-              'Massage long pour faire pénétrer la crème',
-              'Hydratation des zones sensibles (genoux, coudes)',
-              'Crème enrichie pour les jours froids',
-              'Rituel du soir pour une peau réparée'
-            ];
-            
-            const hairOptions = [
-              'Huile de coco ou ricin sur longueurs et pointes',
-              'Masque hydratant avant shampooing',
-              'Sérum nourrissant sur cuir chevelu',
-              'Bain d\'huile chaud pour réparation profonde',
-              'Soin express 10 min pour cheveux brillants'
-            ];
+            const actions = actionsByCategory[category] || actionsByCategory['bien-etre'];
             
             newFlow = {
               id: crypto.randomUUID(),
               objective,
               objectiveDescription: description,
+              category,
               days: Array.from({ length: 30 }, (_, i) => ({
                 day: i + 1,
-                title: `Jour ${i + 1} : ${['Ton nouveau départ', 'En route vers le changement', 'C\'est déjà une habitude', 'Tu es sur la bonne voie', 'Continue comme ça', 'Petit à petit', 'L\'effet boule', 'Transformation en cours', 'Tu brilles déjà', 'Jamais sans mon Flow'][i % 10]}`,
+                title: `${['✨ Jour', '🌟 Jour', '💫 Jour', '🎯 Jour', '🔥 Jour', '⚡ Jour', '🌈 Jour', '💪 Jour', '🚀 Jour', '⭐ Jour'][i % 10]} ${i + 1}`,
                 mandatoryActions: [
                   {
-                    id: 'walk-sport',
-                    title: '🚶‍♀️ Marcher 30 min OU sport',
-                    description: walkOptions[i % walkOptions.length],
-                    icon: '🚶‍♀️',
+                    id: 'mandatory-1',
+                    title: actions.m1[i % actions.m1.length],
+                    description: 'Action essentielle pour progresser vers ton objectif',
+                    icon: '🔥',
                     isMandatory: true,
                     isCompleted: false
                   },
                   {
-                    id: 'face-massage',
-                    title: '💆‍♀️ Massage visage',
-                    description: massageOptions[i % massageOptions.length],
-                    icon: '💆‍♀️',
+                    id: 'mandatory-2',
+                    title: actions.m2[i % actions.m2.length],
+                    description: 'Renforce tes bases et ta motivation quotidienne',
+                    icon: '💎',
                     isMandatory: true,
                     isCompleted: false
                   }
                 ],
                 choiceActions: [
                   {
-                    id: 'dry-brushing',
-                    title: '🧽 Brossage à sec',
-                    description: dryBrushOptions[i % dryBrushOptions.length],
-                    icon: '🧽',
+                    id: 'choice-a',
+                    title: actions.c1[i % actions.c1.length],
+                    description: 'Option qui enrichit ton parcours',
+                    icon: '🌟',
                     isMandatory: false,
                     isCompleted: false
                   },
                   {
-                    id: 'body-cream',
-                    title: '🧴 Crème corps',
-                    description: creamOptions[i % creamOptions.length],
-                    icon: '🧴',
+                    id: 'choice-b',
+                    title: actions.c2[i % actions.c2.length],
+                    description: 'Une approche complémentaire',
+                    icon: '💫',
                     isMandatory: false,
                     isCompleted: false
                   },
                   {
-                    id: 'hair-care',
-                    title: '✨ Soin cheveux',
-                    description: hairOptions[i % hairOptions.length],
+                    id: 'choice-c',
+                    title: actions.c3[i % actions.c3.length],
+                    description: 'Pour te récompenser et avancer sereinement',
                     icon: '✨',
                     isMandatory: false,
                     isCompleted: false

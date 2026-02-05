@@ -374,23 +374,86 @@ export function FlowChallengePage({
     </div>
   );
 
-  // Section Badges
+  // Section Badges personnalisés selon la catégorie
   const renderBadgesSection = () => {
-    const badges = [
-      { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
-      { id: 'week-warrior', name: language === 'fr' ? 'Guerrier Semaine' : language === 'en' ? 'Week Warrior' : 'Guerrero Semana', icon: '⚡', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
-      { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : language === 'en' ? 'Halfway' : 'Mitad', icon: '🎯', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 15 },
-      { id: 'consistent', name: language === 'fr' ? 'Cohérent' : language === 'en' ? 'Consistent' : 'Consistente', icon: '🔥', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 21 },
-      { id: 'flow-master', name: language === 'fr' ? 'Maître Flow' : language === 'en' ? 'Flow Master' : 'Maestro Flow', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
-      { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : language === 'en' ? 'Early Bird' : 'Madrugador', icon: '🌅', color: 'from-pink-100 to-rose-200', unlocked: false },
-      { id: 'action-hero', name: language === 'fr' ? 'Héros' : language === 'en' ? 'Hero' : 'Héroe', icon: '🦸', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
-      { id: 'perfectionist', name: language === 'fr' ? 'Perfect' : language === 'en' ? 'Perfect' : 'Perfecto', icon: '💎', color: 'from-cyan-100 to-blue-200', unlocked: false },
-      { id: 'champion', name: language === 'fr' ? 'Champion' : language === 'en' ? 'Champion' : 'Campeón', icon: '🏅', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
-      { id: 'choice-maker', name: language === 'fr' ? 'Décideur' : language === 'en' ? 'Decider' : 'Decisor', icon: '✨', color: 'from-indigo-100 to-purple-200', unlocked: completedCount >= 5 },
-      { id: 'comeback', name: language === 'fr' ? 'Retour' : language === 'en' ? 'Comeback' : 'Regreso', icon: '🚀', color: 'from-red-100 to-pink-200', unlocked: false },
-      { id: 'reflection', name: language === 'fr' ? 'Réfléchi' : language === 'en' ? 'Reflective' : 'Reflexivo', icon: '🤔', color: 'from-teal-100 to-teal-200', unlocked: false },
-    ];
+    // Détecter la catégorie depuis le flow ou l'objectif
+    const category = personalizedFlow?.category || 'general';
+    
+    // Badges par catégorie
+    const badgesByCategory: Record<string, any[]> = {
+      finance: [
+        { id: 'first-deal', name: language === 'fr' ? 'Premier Deal' : 'First Deal', icon: '💰', color: 'from-green-100 to-green-200', unlocked: completedCount >= 1 },
+        { id: 'week-hustler', name: language === 'fr' ? 'Hustler' : 'Hustler', icon: '💼', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'money-maker', name: language === 'fr' ? 'Money Maker' : 'Money Maker', icon: '💵', color: 'from-green-200 to-emerald-300', unlocked: completedCount >= 15 },
+        { id: 'business-mind', name: language === 'fr' ? 'Business Mind' : 'Business Mind', icon: '🧠', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 21 },
+        { id: 'ceo-vibes', name: language === 'fr' ? 'CEO Vibes' : 'CEO Vibes', icon: '👔', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 30 },
+        { id: 'networker', name: language === 'fr' ? 'Networker' : 'Networker', icon: '🤝', color: 'from-pink-100 to-rose-200', unlocked: false },
+        { id: 'investor', name: language === 'fr' ? 'Investisseur' : 'Investor', icon: '📈', color: 'from-cyan-100 to-blue-200', unlocked: completedCount >= 10 },
+        { id: 'entrepreneur', name: language === 'fr' ? 'Entrepreneur' : 'Entrepreneur', icon: '🚀', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
+      ],
+      developpement: [
+        { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : 'First Step', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+        { id: 'confidence-boost', name: language === 'fr' ? 'Confiance +' : 'Confidence +', icon: '💪', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'fearless', name: language === 'fr' ? 'Sans Peur' : 'Fearless', icon: '🦁', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 15 },
+        { id: 'authentic-self', name: language === 'fr' ? 'Authentique' : 'Authentic', icon: '✨', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 21 },
+        { id: 'transformed', name: language === 'fr' ? 'Transformé' : 'Transformed', icon: '🦋', color: 'from-pink-200 to-rose-300', unlocked: completedCount >= 30 },
+        { id: 'mirror-star', name: language === 'fr' ? 'Star du Miroir' : 'Mirror Star', icon: '🪞', color: 'from-pink-100 to-rose-200', unlocked: false },
+        { id: 'growth-mindset', name: language === 'fr' ? 'Mindset +' : 'Growth Mindset', icon: '🌱', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
+        { id: 'warrior', name: language === 'fr' ? 'Guerrier' : 'Warrior', icon: '⚔️', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
+      ],
+      sante: [
+        { id: 'first-workout', name: language === 'fr' ? 'Premier WOD' : 'First Workout', icon: '🏃', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+        { id: 'week-warrior', name: language === 'fr' ? 'Warrior' : 'Warrior', icon: '⚡', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'fit-life', name: language === 'fr' ? 'Fit Life' : 'Fit Life', icon: '💪', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 15 },
+        { id: 'health-guru', name: language === 'fr' ? 'Health Guru' : 'Health Guru', icon: '🥗', color: 'from-green-100 to-green-200', unlocked: completedCount >= 21 },
+        { id: 'body-goals', name: language === 'fr' ? 'Body Goals' : 'Body Goals', icon: '🔥', color: 'from-red-100 to-rose-200', unlocked: completedCount >= 30 },
+        { id: 'hydration', name: language === 'fr' ? 'Hydraté' : 'Hydrated', icon: '💧', color: 'from-cyan-100 to-blue-200', unlocked: false },
+        { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : 'Early Bird', icon: '🌅', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 10 },
+        { id: 'gym-rat', name: language === 'fr' ? 'Gym Rat' : 'Gym Rat', icon: '🏋️', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 30 },
+      ],
+      competences: [
+        { id: 'first-lesson', name: language === 'fr' ? 'Première Leçon' : 'First Lesson', icon: '📚', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+        { id: 'knowledge-seeker', name: language === 'fr' ? 'Curieux' : 'Knowledge Seeker', icon: '🔍', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'skill-builder', name: language === 'fr' ? 'Builder' : 'Skill Builder', icon: '🛠️', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 15 },
+        { id: 'expert-mode', name: language === 'fr' ? 'Expert' : 'Expert Mode', icon: '🎓', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 21 },
+        { id: 'master', name: language === 'fr' ? 'Maître' : 'Master', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
+        { id: 'bookworm', name: language === 'fr' ? 'Rat de Bib' : 'Bookworm', icon: '📖', color: 'from-green-100 to-green-200', unlocked: false },
+        { id: 'polyglot', name: language === 'fr' ? 'Polyglotte' : 'Polyglot', icon: '🗣️', color: 'from-pink-100 to-rose-200', unlocked: completedCount >= 10 },
+        { id: 'genius', name: language === 'fr' ? 'Génie' : 'Genius', icon: '🧠', color: 'from-cyan-100 to-blue-200', unlocked: completedCount >= 30 },
+      ],
+      relations: [
+        { id: 'first-contact', name: language === 'fr' ? 'Premier Contact' : 'First Contact', icon: '💬', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+        { id: 'social-butterfly', name: language === 'fr' ? 'Social' : 'Social Butterfly', icon: '🦋', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'heart-opener', name: language === 'fr' ? 'Cœur Ouvert' : 'Heart Opener', icon: '❤️', color: 'from-red-100 to-pink-200', unlocked: completedCount >= 15 },
+        { id: 'connector', name: language === 'fr' ? 'Connecteur' : 'Connector', icon: '🤝', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 21 },
+        { id: 'love-guru', name: language === 'fr' ? 'Love Guru' : 'Love Guru', icon: '💕', color: 'from-pink-200 to-rose-300', unlocked: completedCount >= 30 },
+        { id: 'listener', name: language === 'fr' ? 'Auditeur' : 'Listener', icon: '👂', color: 'from-green-100 to-green-200', unlocked: false },
+        { id: 'best-friend', name: language === 'fr' ? 'Bestie' : 'Best Friend', icon: '👯', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 10 },
+        { id: 'heartbreaker', name: language === 'fr' ? 'Séducteur' : 'Heartbreaker', icon: '💘', color: 'from-red-200 to-rose-300', unlocked: completedCount >= 30 },
+      ],
+      'bien-etre': [
+        { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : 'First Step', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+        { id: 'week-warrior', name: language === 'fr' ? 'Guerrier' : 'Week Warrior', icon: '⚡', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : 'Halfway', icon: '🎯', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 15 },
+        { id: 'consistent', name: language === 'fr' ? 'Cohérent' : 'Consistent', icon: '🔥', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 21 },
+        { id: 'flow-master', name: language === 'fr' ? 'Maître' : 'Flow Master', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
+        { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : 'Early Bird', icon: '🌅', color: 'from-pink-100 to-rose-200', unlocked: false },
+        { id: 'action-hero', name: language === 'fr' ? 'Héros' : 'Hero', icon: '🦸', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
+        { id: 'perfectionist', name: language === 'fr' ? 'Perfect' : 'Perfect', icon: '💎', color: 'from-cyan-100 to-blue-200', unlocked: false },
+      ],
+      general: [
+        { id: 'first-step', name: language === 'fr' ? 'Premier Pas' : 'First Step', icon: '👣', color: 'from-blue-100 to-blue-200', unlocked: completedCount >= 1 },
+        { id: 'week-warrior', name: language === 'fr' ? 'Guerrier' : 'Week Warrior', icon: '⚡', color: 'from-yellow-100 to-orange-200', unlocked: completedCount >= 7 },
+        { id: 'halfway', name: language === 'fr' ? 'Mi-Parcours' : 'Halfway', icon: '🎯', color: 'from-purple-100 to-purple-200', unlocked: completedCount >= 15 },
+        { id: 'consistent', name: language === 'fr' ? 'Cohérent' : 'Consistent', icon: '🔥', color: 'from-orange-100 to-red-200', unlocked: completedCount >= 21 },
+        { id: 'flow-master', name: language === 'fr' ? 'Maître' : 'Flow Master', icon: '👑', color: 'from-yellow-200 to-yellow-400', unlocked: completedCount >= 30 },
+        { id: 'early-bird', name: language === 'fr' ? 'Lève-Tôt' : 'Early Bird', icon: '🌅', color: 'from-pink-100 to-rose-200', unlocked: false },
+        { id: 'action-hero', name: language === 'fr' ? 'Héros' : 'Hero', icon: '🦸', color: 'from-green-100 to-green-200', unlocked: completedCount >= 10 },
+        { id: 'champion', name: language === 'fr' ? 'Champion' : 'Champion', icon: '🏅', color: 'from-yellow-300 to-yellow-500', unlocked: completedCount >= 30 },
+      ]
+    };
 
+    const badges = badgesByCategory[category] || badgesByCategory['general'];
     const unlockedCount = badges.filter(b => b.unlocked).length;
 
     return (

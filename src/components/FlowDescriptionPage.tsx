@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Sparkles, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sparkles, ChevronRight, Loader2, Wand2, Lightbulb, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language } from '@/lib/translations';
 
@@ -15,6 +15,7 @@ interface FlowDescriptionPageProps {
 export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCreate }: FlowDescriptionPageProps) {
   const [flowDescription, setFlowDescription] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState(0);
 
   const title = language === 'fr' ? 'Parfait, dis-nous en un peu plus' : language === 'en' ? 'Perfect, tell us a bit more' : 'Perfecto, cuéntanos un poco más';
   const subtitle = language === 'fr' ? 'Sur ton objectif et ta situation actuelle...' : language === 'en' ? 'About your goal and current situation...' : 'Sobre tu objetivo y tu situación actual...';
@@ -23,17 +24,94 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
   const backButton = language === 'fr' ? 'Retour' : language === 'en' ? 'Back' : 'Volver';
   const labelText = language === 'fr' ? 'Décris ton objectif et ta situation' : language === 'en' ? 'Describe your goal and situation' : 'Describe tu objetivo y tu situación';
   const objectiveLabel = language === 'fr' ? 'Ton objectif principal' : language === 'en' ? 'Your main goal' : 'Tu objetivo principal';
-  const preparingText = language === 'fr' ? 'Préparation de ton Flow...' : language === 'en' ? 'Preparing your Flow...' : 'Preparando tu Flow...';
+
+  const generationSteps = {
+    fr: [
+      { text: 'Analyse de ton objectif...', icon: Target },
+      { text: 'Génération des 30 jours...', icon: Wand2 },
+      { text: 'Personnalisation de ton parcours...', icon: Lightbulb },
+      { text: 'Finalisation...', icon: Sparkles },
+    ],
+    en: [
+      { text: 'Analyzing your goal...', icon: Target },
+      { text: 'Generating 30 days...', icon: Wand2 },
+      { text: 'Personalizing your journey...', icon: Lightbulb },
+      { text: 'Finalizing...', icon: Sparkles },
+    ],
+    es: [
+      { text: 'Analizando tu objetivo...', icon: Target },
+      { text: 'Generando 30 días...', icon: Wand2 },
+      { text: 'Personalizando tu camino...', icon: Lightbulb },
+      { text: 'Finalizando...', icon: Sparkles },
+    ],
+  };
+
+  const currentSteps = generationSteps[language];
+
+  useEffect(() => {
+    if (isGenerating) {
+      const interval = setInterval(() => {
+        setGenerationStep((prev) => (prev + 1) % currentSteps.length);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating, currentSteps.length]);
 
   const handleCreate = () => {
     if (!flowDescription.trim()) return;
     setIsGenerating(true);
-    // Simuler la génération
-    setTimeout(() => {
-      setIsGenerating(false);
-      onCreate(flowDescription);
-    }, 2000);
+    setGenerationStep(0);
+    onCreate(flowDescription);
   };
+
+  if (isGenerating) {
+    const CurrentIcon = currentSteps[generationStep].icon;
+    
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+        <div className="text-center space-y-8 max-w-md mx-auto">
+          {/* Animation circulaire */}
+          <div className="relative w-40 h-40 mx-auto">
+            {/* Cercles animés */}
+            <div className="absolute inset-0 rounded-full border-4 border-pink-200 opacity-20 animate-ping" />
+            <div className="absolute inset-2 rounded-full border-4 border-rose-300 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
+            <div className="absolute inset-4 rounded-full border-4 border-pink-400 opacity-60 animate-ping" style={{ animationDelay: '0.4s' }} />
+            
+            {/* Icône centrale */}
+            <div className="absolute inset-6 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-2xl animate-pulse">
+              <CurrentIcon className="w-12 h-12 text-white" />
+            </div>
+          </div>
+
+          {/* Texte de l'étape */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-gray-800">
+              {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
+            </h2>
+            <p className="text-lg text-pink-600 font-medium animate-fade-in">
+              {currentSteps[generationStep].text}
+            </p>
+          </div>
+
+          {/* Barre de progression */}
+          <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto">
+            <div 
+              className="h-full bg-gradient-to-r from-pink-400 to-rose-500 rounded-full transition-all duration-500"
+              style={{ width: `${((generationStep + 1) / currentSteps.length) * 100}%` }}
+            />
+          </div>
+
+          {/* Objectif affiché */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 mt-8">
+            <p className="text-xs text-pink-600 font-medium mb-1">
+              {objectiveLabel}
+            </p>
+            <p className="font-medium text-gray-800">{objectifPrincipal}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col p-6 bg-white">
@@ -76,24 +154,15 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
         <div className="pt-4 space-y-3">
           <Button
             onClick={handleCreate}
-            disabled={!flowDescription.trim() || isGenerating}
+            disabled={!flowDescription.trim()}
             className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
-              flowDescription.trim() && !isGenerating
+              flowDescription.trim()
                 ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
-            {isGenerating ? (
-              <span className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                {preparingText}
-              </span>
-            ) : (
-              <>
-                {createButton}
-                <ChevronRight className="ml-2 w-5 h-5" />
-              </>
-            )}
+            {createButton}
+            <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
           
           <Button

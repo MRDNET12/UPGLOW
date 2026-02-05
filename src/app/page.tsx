@@ -4850,6 +4850,107 @@ PROCESO OBLIGATORIO:
                   </div>
                 </div>
 
+                {/* Carte Promotion Plans - Visible pour tous */}
+                {!subscription.isSubscribed && (
+                  <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-pink-50 rounded-3xl p-6 shadow-lg border-2 border-amber-200 mb-6">
+                    <div className="text-center mb-4">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        {language === 'fr' ? '✨ Passe à la vitesse supérieure' : language === 'en' ? '✨ Take it to the next level' : '✨ Llévalo al siguiente nivel'}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {language === 'fr' 
+                          ? 'Débloque tout le potentiel de ton évolution personnelle'
+                          : language === 'en' 
+                            ? 'Unlock the full potential of your personal growth'
+                            : 'Desbloquea todo el potencial de tu crecimiento personal'}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      {/* Glow Start */}
+                      <div className="bg-white rounded-2xl p-3 shadow-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center">
+                            <Crown className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-800 text-sm">Glow Start</p>
+                            <p className="text-xs text-amber-600 font-semibold">1.99€/mois</p>
+                          </div>
+                        </div>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Message à Moi
+                          </li>
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Petites Victoires
+                          </li>
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Mes Habitudes
+                          </li>
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Mon Journal
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Glow Plus */}
+                      <div className="bg-white rounded-2xl p-3 shadow-sm border-2 border-violet-200 relative">
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gradient-to-r from-violet-500 to-purple-500 text-white text-[10px] font-bold rounded-full">
+                          {language === 'fr' ? 'POPULAIRE' : language === 'en' ? 'POPULAR' : 'POPULAR'}
+                        </div>
+                        <div className="flex items-center gap-2 mb-2 mt-1">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+                            <Crown className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-800 text-sm">Glow Plus</p>
+                            <p className="text-xs text-violet-600 font-semibold">3.99€/mois</p>
+                          </div>
+                        </div>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            TOUT Glow Start
+                          </li>
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Glow Mirror AI
+                          </li>
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Analyses perso.
+                          </li>
+                          <li className="flex items-center gap-1">
+                            <Check className="w-3 h-3 text-green-500" />
+                            Conseils sur mesure
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setShowPlanSelection(true)}
+                      className="w-full py-3 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-xl shadow-lg shadow-pink-200/50 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Crown className="w-5 h-5" />
+                      {language === 'fr' ? 'Choisir mon plan' : language === 'en' ? 'Choose my plan' : 'Elegir mi plan'}
+                    </button>
+
+                    <p className="text-center text-xs text-gray-500 mt-3">
+                      {language === 'fr' 
+                        ? '3 jours gratuits sur tous les plans • Annule quand tu veux'
+                        : language === 'en' 
+                          ? '3 free days on all plans • Cancel anytime'
+                          : '3 días gratis en todos los planes • Cancela cuando quieras'}
+                    </p>
+                  </div>
+                )}
+
                 {/* Stats rapides */}
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div className="bg-white rounded-2xl p-4 shadow-sm text-center" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>

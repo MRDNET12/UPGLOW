@@ -56,28 +56,44 @@ export function FlowChallengePage({
     hair: language === 'fr' ? 'Soin cheveux' : language === 'en' ? 'Hair care' : 'Cuidado del cabello',
   };
 
-  // Actions par défaut si pas de Flow généré
+  // Actions dynamiques depuis le Flow généré
   const mandatoryActions = [
     { 
       id: 'walk-sport', 
       title: t.walkTitle, 
-      description: t.walkDesc,
+      description: currentFlowDay?.mandatoryActions.find(a => a.id === 'walk-sport')?.description || t.walkDesc,
       icon: '🚶‍♀️',
       isCompleted: currentFlowDay?.mandatoryActions.find(a => a.id === 'walk-sport')?.isCompleted || false
     },
     { 
       id: 'face-massage', 
       title: t.massageTitle, 
-      description: t.massageDesc,
+      description: currentFlowDay?.mandatoryActions.find(a => a.id === 'face-massage')?.description || t.massageDesc,
       icon: '💆‍♀️',
       isCompleted: currentFlowDay?.mandatoryActions.find(a => a.id === 'face-massage')?.isCompleted || false
     }
   ];
 
+  const choiceActionsFromFlow = currentFlowDay?.choiceActions || [];
   const choiceActions = [
-    { id: 'dry-brushing', title: t.dryBrush, icon: '🧽', description: 'Exfoliation naturelle' },
-    { id: 'body-cream', title: t.bodyCream, icon: '🧴', description: 'Hydratation profonde' },
-    { id: 'hair-care', title: t.hair, icon: '✨', description: 'Masque nourrissant' }
+    { 
+      id: 'dry-brushing', 
+      title: t.dryBrush, 
+      icon: '🧽', 
+      description: choiceActionsFromFlow.find(a => a.id === 'dry-brushing')?.description || 'Exfoliation naturelle' 
+    },
+    { 
+      id: 'body-cream', 
+      title: t.bodyCream, 
+      icon: '🧴', 
+      description: choiceActionsFromFlow.find(a => a.id === 'body-cream')?.description || 'Hydratation profonde' 
+    },
+    { 
+      id: 'hair-care', 
+      title: t.hair, 
+      icon: '✨', 
+      description: choiceActionsFromFlow.find(a => a.id === 'hair-care')?.description || 'Masque nourrissant' 
+    }
   ];
 
   const selectedChoiceId = currentFlowDay?.selectedChoiceId || '';
@@ -94,9 +110,12 @@ export function FlowChallengePage({
         <Badge className="bg-pink-100 text-pink-700 mb-2">
           {t.day} {currentDay} / 30
         </Badge>
-        <h2 className="text-2xl font-bold text-gray-800">
-          {personalizedFlow?.objective || objectifPrincipal}
+        <h2 className="text-xl font-bold text-gray-800 mb-1">
+          {currentFlowDay?.title || `${t.day} ${currentDay}`}
         </h2>
+        <p className="text-sm text-gray-600">
+          {personalizedFlow?.objective || objectifPrincipal}
+        </p>
       </div>
 
       {/* Action 1: Marche/Sport */}

@@ -1053,54 +1053,279 @@ export const useStore = create<AppState>()(
 
       generatePersonalizedFlow: async (objective, description) => {
         set({ isGeneratingFlow: true });
-        try {
-          // Simulate API call - replace with actual AI generation
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+        
+        const generateWithKimi = async (): Promise<PersonalizedFlow | null> => {
+          try {
+            const systemPrompt = `Tu es Glow Flow, un coach bien-être expert spécialisé dans les programmes de transformation de 30 jours.
+Tu crées des programmes personnalisés qui combinent :
+- Activité physique douce (marche ou sport)
+- Soins du visage
+- Rituels beauté corporelle
 
-          const today = new Date().toISOString().split('T')[0];
-          const newFlow: PersonalizedFlow = {
-            id: crypto.randomUUID(),
-            objective,
-            objectiveDescription: description,
-            days: Array.from({ length: 30 }, (_, i) => ({
-              day: i + 1,
-              title: `Day ${i + 1}: ${objective}`,
-              mandatoryActions: [
-                {
-                  id: `action-${i + 1}-1`,
-                  title: 'Morning reflection',
-                  description: 'Take 5 minutes to reflect on your goal',
-                  icon: 'sun',
-                  isMandatory: true,
-                  isCompleted: false
-                }
-              ],
-              choiceActions: [
-                {
-                  id: `choice-${i + 1}-1`,
-                  title: 'Option A: Deep work session',
-                  description: 'Focus on your goal for 30 minutes',
-                  icon: 'target',
-                  isMandatory: false,
-                  isCompleted: false
-                },
-                {
-                  id: `choice-${i + 1}-2`,
-                  title: 'Option B: Learning time',
-                  description: 'Read or learn something related to your goal',
-                  icon: 'book',
-                  isMandatory: false,
-                  isCompleted: false
-                }
-              ],
-              completed: false
-            })),
-            currentDay: 1,
-            completedDays: [],
-            startDate: today,
-            isActive: true,
-            badges: []
-          };
+Chaque jour doit être unique, progressif et motivant. Les descriptions doivent être encourageantes et spécifiques à l'objectif de l'utilisateur.`;
+
+            const userPrompt = `Crée un programme de 30 jours personnalisé pour cet objectif :
+
+OBJECTIF PRINCIPAL : "${objective}"
+DESCRIPTION : "${description}"
+
+STRUCTURE STRICTE POUR CHAQUE JOUR (respecte exactement ce format) :
+
+1. MARCHE 30 MIN OU SPORT (obligatoire)
+   - Alterne entre : marche rapide, yoga, fitness léger, étirements actifs, natation, vélo
+   - Donne des suggestions différentes selon les jours
+   - Adapte à l'objectif (perte de poids = cardio, bien-être = yoga/étirements, etc.)
+
+2. MASSAGE VISAGE (obligatoire)
+   - Varie les techniques : drainage lymphatique, acupression, massage tonifiant, gua sha, roller
+   - Mentionne les bienfaits spécifiques
+   - Durée : 3-5 minutes
+
+3. GESTE POUR SOI AU CHOIX (l'utilisateur doit en choisir un)
+   Option A : BROSSAGE À SEC - Exfolie et stimule la circulation
+   Option B : CRÈME CORPS - Hydrate et nourrit la peau
+   Option C : SOIN CHEVEUX - Masque ou huile pour nourrir
+
+RÉPONDS UNIQUEMENT AU FORMAT JSON SUIVANT (30 jours complets) :
+{
+  "days": [
+    {
+      "day": 1,
+      "title": "Titre inspirant du jour",
+      "walkOrSport": "Description détaillée de l'activité avec type et durée",
+      "faceMassage": "Technique de massage spécifique et bienfaits",
+      "selfCareOptions": {
+        "dryBrushing": "Description et bienfaits du brossage à sec",
+        "bodyCream": "Description et bienfaits de la crème corps", 
+        "hairCare": "Description et bienfaits du soin cheveux"
+      }
+    }
+  ]
+}`;
+
+            const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer sk-kimi-wQWfSCmBauIFhz4h4K3WsFNTHbzhxvd2ieRqRfDNnZKdn1zwtYQwTvgTD8Bgwgiq'
+              },
+              body: JSON.stringify({
+                model: 'kimi-latest',
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: userPrompt }
+                ],
+                temperature: 0.8,
+                max_tokens: 4000
+              })
+            });
+
+            if (!response.ok) {
+              throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const content = data.choices?.[0]?.message?.content || '';
+            
+            // Extract JSON from response
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) {
+              throw new Error('No JSON found in response');
+            }
+            
+            const parsed = JSON.parse(jsonMatch[0]);
+            
+            if (!parsed.days || parsed.days.length !== 30) {
+              throw new Error('Invalid days data');
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            
+            return {
+              id: crypto.randomUUID(),
+              objective,
+              objectiveDescription: description,
+              days: parsed.days.map((day: any) => ({
+                day: day.day,
+                title: day.title,
+                mandatoryActions: [
+                  {
+                    id: 'walk-sport',
+                    title: '🚶‍♀️ Marcher 30 min OU sport',
+                    description: day.walkOrSport,
+                    icon: '🚶‍♀️',
+                    isMandatory: true,
+                    isCompleted: false
+                  },
+                  {
+                    id: 'face-massage',
+                    title: '💆‍♀️ Massage visage',
+                    description: day.faceMassage,
+                    icon: '💆‍♀️',
+                    isMandatory: true,
+                    isCompleted: false
+                  }
+                ],
+                choiceActions: [
+                  {
+                    id: 'dry-brushing',
+                    title: '🧽 Brossage à sec',
+                    description: day.selfCareOptions?.dryBrushing || 'Exfoliation naturelle qui stimule la circulation',
+                    icon: '🧽',
+                    isMandatory: false,
+                    isCompleted: false
+                  },
+                  {
+                    id: 'body-cream',
+                    title: '🧴 Crème corps',
+                    description: day.selfCareOptions?.bodyCream || 'Hydratation profonde pour une peau douce',
+                    icon: '🧴',
+                    isMandatory: false,
+                    isCompleted: false
+                  },
+                  {
+                    id: 'hair-care',
+                    title: '✨ Soin cheveux',
+                    description: day.selfCareOptions?.hairCare || 'Masque nourrissant pour des cheveux brillants',
+                    icon: '✨',
+                    isMandatory: false,
+                    isCompleted: false
+                  }
+                ],
+                completed: false
+              })),
+              currentDay: 1,
+              completedDays: [],
+              startDate: today,
+              isActive: true,
+              badges: []
+            };
+          } catch (error) {
+            console.error('Kimi API Error:', error);
+            return null;
+          }
+        };
+
+        try {
+          // Try to generate with Kimi API
+          let newFlow = await generateWithKimi();
+          
+          // Fallback: generate default content if API fails
+          if (!newFlow) {
+            console.log('Using fallback flow generation');
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Generate diverse content for 30 days
+            const walkOptions = [
+              'Marche rapide en plein air - 30 min de cardio doux',
+              'Yoga flow matinal - 30 min pour éveiller le corps',
+              'Fitness léger à la maison - 30 min sans matériel',
+              'Natation ou aquagym - 30 min sans impact',
+              'Vélo ou elliptique - 30 min à allure modérée',
+              'Étirements actifs - 30 min de mobilité',
+              'Danse fitness - 30 min de fun et cardio',
+              'Marche en côte - 30 min pour renforcer',
+              'Pilates débutant - 30 min de renforcement doux',
+              'Marche méditative - 30 min en conscience'
+            ];
+            
+            const massageOptions = [
+              'Drainage lymphatique : mouvements doux vers les ganglions pour décongestionner',
+              'Acupression : appuyez sur les points de tension du front et des tempes',
+              'Massage tonifiant : tapotements légers pour réveiller la peau',
+              'Gua Sha : mouvements vers l\'extérieur pour sculpturer le visage',
+              'Roller jade : mouvements ascendants pour détendre les muscles',
+              'Massage des sinus : cercles autour des yeux pour décongestionner',
+              'Auto-massage lifting : pétrissages doux pour tonifier',
+              'Massage du cou : étirements pour relâcher les tensions',
+              'Tapotements énergisants : pour stimuler la microcirculation',
+              'Massage relaxant : mouvements lents pour détendre'
+            ];
+            
+            const dryBrushOptions = [
+              'Brossage vers le cœur pour activer la circulation',
+              'Brossage avant la douche pour exfolier en profondeur',
+              'Technique douce sur peau sèche pour stimuler',
+              'Brossage circulaire sur les zones sensibles',
+              'Rituel énergisant le matin pour réveiller le corps'
+            ];
+            
+            const creamOptions = [
+              'Application après la douche sur peau humide',
+              'Massage long pour faire pénétrer la crème',
+              'Hydratation des zones sensibles (genoux, coudes)',
+              'Crème enrichie pour les jours froids',
+              'Rituel du soir pour une peau réparée'
+            ];
+            
+            const hairOptions = [
+              'Huile de coco ou ricin sur longueurs et pointes',
+              'Masque hydratant avant shampooing',
+              'Sérum nourrissant sur cuir chevelu',
+              'Bain d\'huile chaud pour réparation profonde',
+              'Soin express 10 min pour cheveux brillants'
+            ];
+            
+            newFlow = {
+              id: crypto.randomUUID(),
+              objective,
+              objectiveDescription: description,
+              days: Array.from({ length: 30 }, (_, i) => ({
+                day: i + 1,
+                title: `Jour ${i + 1} : ${['Ton nouveau départ', 'En route vers le changement', 'C\'est déjà une habitude', 'Tu es sur la bonne voie', 'Continue comme ça', 'Petit à petit', 'L\'effet boule', 'Transformation en cours', 'Tu brilles déjà', 'Jamais sans mon Flow'][i % 10]}`,
+                mandatoryActions: [
+                  {
+                    id: 'walk-sport',
+                    title: '🚶‍♀️ Marcher 30 min OU sport',
+                    description: walkOptions[i % walkOptions.length],
+                    icon: '🚶‍♀️',
+                    isMandatory: true,
+                    isCompleted: false
+                  },
+                  {
+                    id: 'face-massage',
+                    title: '💆‍♀️ Massage visage',
+                    description: massageOptions[i % massageOptions.length],
+                    icon: '💆‍♀️',
+                    isMandatory: true,
+                    isCompleted: false
+                  }
+                ],
+                choiceActions: [
+                  {
+                    id: 'dry-brushing',
+                    title: '🧽 Brossage à sec',
+                    description: dryBrushOptions[i % dryBrushOptions.length],
+                    icon: '🧽',
+                    isMandatory: false,
+                    isCompleted: false
+                  },
+                  {
+                    id: 'body-cream',
+                    title: '🧴 Crème corps',
+                    description: creamOptions[i % creamOptions.length],
+                    icon: '🧴',
+                    isMandatory: false,
+                    isCompleted: false
+                  },
+                  {
+                    id: 'hair-care',
+                    title: '✨ Soin cheveux',
+                    description: hairOptions[i % hairOptions.length],
+                    icon: '✨',
+                    isMandatory: false,
+                    isCompleted: false
+                  }
+                ],
+                completed: false
+              })),
+              currentDay: 1,
+              completedDays: [],
+              startDate: today,
+              isActive: true,
+              badges: []
+            };
+          }
 
           set({
             personalizedFlow: newFlow,

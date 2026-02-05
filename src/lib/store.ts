@@ -1068,34 +1068,49 @@ export const useStore = create<AppState>()(
             
             const systemPrompt = `Tu es Glow Flow, un coach expert qui crée des programmes de transformation personnalisés.
 
-RÈGLE D'OR : La DESCRIPTION/CONTEXTE est plus importante que l'objectif. Base-toi PRINCIPALEMENT sur la description pour créer des actions pertinentes.
+RÈGLE D'OR ABSOLUE : Avant de générer quoi que ce soit, tu DOIS utiliser ta capacité de raisonnement.
 
-TA MISSION :
-Analyse la description en profondeur et crée 30 jours d'actions qui correspondent exactement à la situation décrite.`;
+PROCESSUS OBLIGATOIRE - ÉTAPES À SUIVRE :
+1. ACTIVE ton raisonnement (<think>)
+2. ANALYSE en profondeur la description fournie
+3. IDENTIFIE les besoins spécifiques, les blocages et les ressources
+4. CONÇOIS une stratégie personnalisée
+5. GÉNÈRE ensuite le plan de 30 jours
+
+Tu ne dois JAMAIS générer de flow sans passer par ce processus de réflexion.`;
 
             const userPrompt = `DONNÉES DE L'UTILISATEUR :
 
-📋 DESCRIPTION/CONTEXTE (À ANALYSER EN PRIORITÉ) :
+📋 DESCRIPTION/CONTEXTE (SOURCE PRINCIPALE) :
 "${description}"
 
-🎯 OBJECTIF PRINCIPAL (RÉFÉRENCE SECONDaire) :
+🎯 OBJECTIF PRINCIPAL :
 "${objective}"
 
 🌍 LANGUE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
 
-⚠️ INSTRUCTIONS CRITIQUES :
-1. La DESCRIPTION/CONTEXTE est ta source principale - elle décrit la situation réelle
-2. L'objectif est juste le titre - la vraie substance est dans la description
-3. Crée des actions qui répondent EXACTEMENT à ce qui est décrit dans la description
-4. 30 jours avec des actions variées et cohérentes
+⚠️ PROCESSUS OBLIGATOIRE :
 
-STRUCTURE OBLIGATOIRE PAR JOUR :
-- 2 actions obligatoires (mandatory1 et mandatory2)
-- 1 action au choix parmi 3 options (optionA, optionB, optionC)
+ÉTAPE 1 - RAISONNEMENT (OBLIGATOIRE) :
+Avant de donner le JSON, tu DOIS fournir ton analyse entre balises <think> :
+<think>
+- Analyse de la situation : [décris ce que tu comprends du contexte]
+- Besoins identifiés : [quels sont les besoins spécifiques]
+- Stratégie globale : [ton approche pour ces 30 jours]
+- Type d'actions adaptées : [quelles catégories d'actions sont pertinentes]
+</think>
 
-FORMAT JSON :
+ÉTAPE 2 - PLAN DÉTAILLÉ (OBLIGATOIRE) :
+Donne un aperçu des 4 phases :
+- Phase 1 (Jours 1-8) : [thème et objectif]
+- Phase 2 (Jours 9-16) : [thème et objectif]
+- Phase 3 (Jours 17-24) : [thème et objectif]
+- Phase 4 (Jours 25-30) : [thème et objectif]
+
+ÉTAPE 3 - JSON (OBLIGATOIRE) :
 {
   "category": "catégorie",
+  "analysis": "Résumé de l'analyse",
   "days": [
     {
       "day": 1,
@@ -1131,7 +1146,9 @@ FORMAT JSON :
   ]
 }
 
-GÉNÈRE LE JSON COMPLET MAINtenant :`;
+⚠️ RAPPEL : AUCUN FLOW NE DOIT ÊTRE GÉNÉRÉ SANS L'ÉTAPE DE RAISONNEMENT <think> !
+
+GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',

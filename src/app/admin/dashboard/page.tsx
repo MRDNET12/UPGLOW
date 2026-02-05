@@ -13,7 +13,11 @@ import {
   ArrowLeft,
   Loader2,
   BarChart3,
-  Calendar
+  Calendar,
+  Smartphone,
+  UserPlus,
+  Timer,
+  Target
 } from 'lucide-react';
 
 interface Stats {
@@ -25,6 +29,12 @@ interface Stats {
   conversionRate: number;
   freeUsers: number;
   activeToday: number;
+  // Nouvelles stats
+  conversion3Days: number; // Taux de conversion après 3 jours
+  androidInstalls: number;
+  newRegistrations: number; // Inscriptions des 7 derniers jours
+  usersExceeded3Days: number; // Utilisateurs ayant dépassé 3 jours
+  subscribedAfter3Days: number; // Abonnés après avoir dépassé 3 jours
 }
 
 export default function AdminDashboard() {
@@ -48,6 +58,10 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       
+      if (!db) {
+        throw new Error('Firebase non configuré');
+      }
+      
       // Récupérer tous les utilisateurs
       const usersRef = collection(db, 'users');
       const usersSnapshot = await getDocs(usersRef);
@@ -57,9 +71,15 @@ export default function AdminDashboard() {
       let glowPlusSubscribers = 0;
       let freeUsers = 0;
       let activeToday = 0;
+      let usersExceeded3Days = 0;
+      let subscribedAfter3Days = 0;
+      let newRegistrations = 0;
       
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       
       usersSnapshot.forEach((doc) => {
         const data = doc.data();
@@ -86,15 +106,59 @@ export default function AdminDashboard() {
             activeToday++;
           }
         }
+        
+        // Vérifier si l'utilisateur a dépassé 3 jours
+        if (data.firstOpenDate) {
+          const firstOpen = new Date(data.firstOpenDate);
+          const daysSince = Math.floor((today.getTime() - firstOpen.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysSince >= 3) {
+            usersExceeded3Days++;
+            if (data.hasPaid) {
+              subscribedAfter3Days++;
+            }
+          }
+        }
+        
+        // Compter les nouvelles inscriptions (7 derniers jours)
+        if (data.createdAt) {
+          const created = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+          if (created >= sevenDaysAgo) {
+            newRegistrations++;
+          }
+        } else if (data.registrationDate) {
+          const regDate = new Date(data.registrationDate);
+          if (regDate >= sevenDaysAgo) {
+            newRegistrations++;
+          }
+        }
       });
       
       // Calculer les revenus mensuels
       const monthlyRevenue = (glowStartSubscribers * 1.99) + (glowPlusSubscribers * 3.99);
       
-      // Calculer le taux de conversion
-      // Nombre d'utilisateurs qui ont dépassé les 3 jours et sont devenus payants
+      // Calculer le taux de conversion global
       const totalSubscribers = glowStartSubscribers + glowPlusSubscribers;
       const conversionRate = totalUsers > 0 ? (totalSubscribers / totalUsers) * 100 : 0;
+      
+      // Calculer le taux de conversion après 3 jours
+      const conversion3Days = usersExceeded3Days > 0 ? (subscribedAfter3Days / usersExceeded3Days) * 100 : 0;
+      
+      // Récupérer les installations Android (depuis analytics ou collection dédiée)
+      let androidInstalls = 0;
+      try {
+        const installsRef = collection(db, 'installs');
+        const installsSnapshot = await getDocs(installsRef);
+        installsSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.platform === 'android') {
+            androidInstalls++;
+          }
+        });
+      } catch (e) {
+        // La collection n'existe peut-être pas encore
+        androidInstalls = 0;
+      }
       
       setStats({
         totalUsers,
@@ -104,7 +168,12 @@ export default function AdminDashboard() {
         monthlyRevenue,
         conversionRate,
         freeUsers,
-        activeToday
+        activeToday,
+        conversion3Days,
+        androidInstalls,
+        newRegistrations,
+        usersExceeded3Days,
+        subscribedAfter3Days
       });
       
     } catch (err) {
@@ -168,7 +237,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Stats Grid */}
+        {/* Stats Grid Principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Utilisateurs */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border">
@@ -219,31 +288,82 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Stats Secondaires */}
+        {/* NOUVELLES STATS - Section Acquisition */}
+        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <Target className="w-6 h-6 text-pink-500" />
+          Acquisition & Conversion
+        </h2>
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Taux de Conversion */}
-          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-pink-100 rounded-xl">
-                <TrendingUp className="w-6 h-6 text-pink-600" />
+          {/* Installations Android */}
+          <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-emerald-100 rounded-xl">
+                <Smartphone className="w-6 h-6 text-emerald-600" />
               </div>
-              <h3 className="font-bold text-gray-800">Taux de Conversion</h3>
+              <span className="text-sm text-gray-500">Android</span>
             </div>
-            <p className="text-4xl font-bold text-pink-600">{stats.conversionRate.toFixed(1)}%</p>
+            <p className="text-3xl font-bold text-emerald-600">{stats.androidInstalls}</p>
+            <p className="text-sm text-gray-600 mt-1">Installations de l'app</p>
+          </div>
+
+          {/* Nouvelles Inscriptions */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <UserPlus className="w-6 h-6 text-blue-600" />
+              </div>
+              <span className="text-sm text-gray-500">7 derniers jours</span>
+            </div>
+            <p className="text-3xl font-bold text-blue-600">{stats.newRegistrations}</p>
+            <p className="text-sm text-gray-600 mt-1">Nouvelles inscriptions</p>
+          </div>
+
+          {/* Conversion après 3 jours */}
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-pink-100 rounded-xl">
+                <Timer className="w-6 h-6 text-pink-600" />
+              </div>
+              <span className="text-sm text-gray-500">Après 3 jours</span>
+            </div>
+            <p className="text-3xl font-bold text-pink-600">{stats.conversion3Days.toFixed(1)}%</p>
+            <p className="text-sm text-gray-600 mt-1">
+              {stats.subscribedAfter3Days || Math.round((stats.conversion3Days / 100) * stats.usersExceeded3Days)} / {stats.usersExceeded3Days} utilisateurs
+            </p>
+          </div>
+        </div>
+
+        {/* Stats Secondaires */}
+        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-gray-600" />
+          Statistiques Générales
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Taux de Conversion Global */}
+          <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-purple-100 rounded-xl">
+                <TrendingUp className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="font-bold text-gray-800">Taux Global</h3>
+            </div>
+            <p className="text-4xl font-bold text-purple-600">{stats.conversionRate.toFixed(1)}%</p>
             <p className="text-sm text-gray-600 mt-2">
               {stats.totalSubscribers} abonnés sur {stats.totalUsers} utilisateurs
             </p>
           </div>
 
           {/* Utilisateurs Gratuits */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+          <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 border border-gray-100">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-xl">
+                <Users className="w-6 h-6 text-gray-600" />
               </div>
-              <h3 className="font-bold text-gray-800">Utilisateurs Gratuits</h3>
+              <h3 className="font-bold text-gray-800">Gratuits</h3>
             </div>
-            <p className="text-4xl font-bold text-blue-600">{stats.freeUsers}</p>
+            <p className="text-4xl font-bold text-gray-600">{stats.freeUsers}</p>
             <p className="text-sm text-gray-600 mt-2">
               Potentiel de conversion
             </p>
@@ -255,11 +375,11 @@ export default function AdminDashboard() {
               <div className="p-3 bg-green-100 rounded-xl">
                 <Calendar className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="font-bold text-gray-800">Actifs Aujourd'hui</h3>
+              <h3 className="font-bold text-gray-800">Actifs</h3>
             </div>
             <p className="text-4xl font-bold text-green-600">{stats.activeToday}</p>
             <p className="text-sm text-gray-600 mt-2">
-              Utilisateurs connectés
+              Utilisateurs connectés aujourd'hui
             </p>
           </div>
         </div>

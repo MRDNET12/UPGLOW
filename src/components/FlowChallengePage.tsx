@@ -79,44 +79,6 @@ export function FlowChallengePage({
         </p>
       </div>
 
-      {/* ⚠️ Bandeau d'avertissement si flow généré par fallback */}
-      {personalizedFlow?.isFromFallback && (
-        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-lg shadow-sm">
-          <div className="flex items-start gap-3">
-            <span className="text-yellow-600 text-xl flex-shrink-0">⚠️</span>
-            <div className="flex-1">
-              <p className="text-sm text-yellow-800 font-semibold">
-                {language === 'fr'
-                  ? 'Ce flow a été généré avec un modèle standard'
-                  : language === 'en'
-                    ? 'This flow was generated with a standard template'
-                    : 'Este flow fue generado con una plantilla estándar'}
-              </p>
-              <p className="text-xs text-yellow-700 mt-1 leading-relaxed">
-                {language === 'fr'
-                  ? 'Pour un programme vraiment personnalisé à votre situation, vous pouvez le régénérer avec notre IA.'
-                  : language === 'en'
-                    ? 'For a truly personalized program for your situation, you can regenerate it with our AI.'
-                    : 'Para un programa verdaderamente personalizado para tu situación, puedes regenerarlo con nuestra IA.'}
-              </p>
-              {onRegenerateFlow && (
-                <button
-                  onClick={onRegenerateFlow}
-                  className="mt-3 w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  {language === 'fr'
-                    ? 'Régénérer avec l\'IA'
-                    : language === 'en'
-                      ? 'Regenerate with AI'
-                      : 'Regenerar con IA'}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Liste des actions avec design des piliers beauté */}
       <div className="space-y-4">
         {/* Action 1: Première action obligatoire */}

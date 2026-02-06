@@ -2739,31 +2739,31 @@ PROCESO OBLIGATORIO:
 
             {/* Grille de cartes - Layout moderne compact */}
             {/* Grille de cartes - Layout moderne compact */}
-            <div className="grid grid-cols-2 gap-3">
-              {/* Carte Mes Habitudes - Grande carte à gauche */}
+            <div className="grid grid-cols-5 gap-3">
+              {/* Carte Mes Habitudes - Grande carte à gauche (60%) */}
               <Card
-                className="border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
+                className="col-span-3 border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
-                <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
+                <CardContent className="p-5 h-full flex flex-col justify-between relative z-10">
                   {/* Header */}
-                  <div className="flex items-start gap-2">
-                    <div className="p-1.5 bg-white/20 rounded-full backdrop-blur-sm">
-                      <span className="text-lg">🧘‍♀️</span>
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+                      <span className="text-xl">🧘‍♀️</span>
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white mb-0.5">
+                      <h3 className="text-base font-bold text-white mb-0.5">
                         {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                       </h3>
                     </div>
                   </div>
 
-                  {/* Bar Chart Visualization */}
-                  <div className="flex items-end justify-between gap-1 h-20 mt-2">
+                  {/* Bar Chart Visualization - Fixed Display */}
+                  <div className="flex items-end justify-between gap-2 h-24 mt-2 px-2">
                     {[65, 45, 75, 55, 85, 60, 90].map((h, i) => (
-                      <div key={i} className="w-2 bg-white/30 rounded-full h-full relative overflow-hidden">
+                      <div key={i} className="flex-1 max-w-[12px] bg-blue-400/30 rounded-full h-full relative overflow-hidden flex flex-col justify-end">
                         <div
-                          className="absolute bottom-0 left-0 w-full bg-white rounded-full transition-all duration-1000"
+                          className="w-full bg-white rounded-full transition-all duration-1000 shadow-sm"
                           style={{ height: `${h}%` }}
                         />
                       </div>
@@ -2787,16 +2787,16 @@ PROCESO OBLIGATORIO:
                         <span className="text-xl">%</span>
                       </span>
                     </div>
-                    <p className="text-[10px] text-blue-100 opacity-80">
+                    <p className="text-[10px] text-blue-100 opacity-80 font-medium">
                       {language === 'fr' ? 'Complété' : language === 'en' ? 'Completed' : 'Completado'}
                     </p>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Carte Ma Semaine */}
+              {/* Carte Ma Semaine (40%) */}
               <Card
-                className="border-none shadow-lg bg-[#facc15] text-amber-950 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
+                className="col-span-2 border-none shadow-lg bg-[#facc15] text-amber-950 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
                 onClick={() => setCurrentView('routine')}
               >
                 {/* Wave Background */}

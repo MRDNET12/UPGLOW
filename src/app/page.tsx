@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2 } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -2623,13 +2623,14 @@ PROCESO OBLIGATORIO:
                     const checkDate = new Date(today);
                     checkDate.setDate(today.getDate() + diff);
                     const dateStr = checkDate.toISOString().split('T')[0];
+                    const dayNumber = checkDate.getDate();
                     const wins = JSON.parse(localStorage.getItem('smallWins') || '[]');
                     const hasWin = wins.some((w: any) => w.date === dateStr);
                     const isToday = diff === 0;
 
                     return (
                       <div key={day} className="flex flex-col items-center gap-1">
-                        <span className={`text-xs ${isToday ? 'font-bold text-pink-600' : 'text-gray-400'}`}>
+                        <span className={`text-[10px] ${isToday ? 'font-bold text-pink-600' : 'text-gray-400'}`}>
                           {language === 'fr' ? day : language === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] : ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}
                         </span>
                         <div
@@ -2640,8 +2641,12 @@ PROCESO OBLIGATORIO:
                                 : 'bg-gray-100'
                             }`}
                         >
-                          {hasWin && (
+                          {hasWin ? (
                             <Check className={`w-5 h-5 text-white animate-in zoom-in duration-300 ${isToday ? 'animate-bounce' : ''}`} />
+                          ) : (
+                            <span className={`text-xs font-semibold ${isToday ? 'text-pink-600' : 'text-gray-400'}`}>
+                              {dayNumber}
+                            </span>
                           )}
                         </div>
                       </div>

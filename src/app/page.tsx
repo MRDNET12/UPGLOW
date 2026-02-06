@@ -2857,29 +2857,48 @@ PROCESO OBLIGATORIO:
             </Card> */}
 
 
-            {/* Carte Mon Journal */}
+            {/* Carte Mon Journal - Style Daily Challenge (Purple 3D) */}
             <Card
-              className="border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
+              className="border-none shadow-xl bg-[#a78bfa] text-white rounded-[2rem] cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative min-h-[180px]"
               onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
             >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
-                    <BookOpen className="w-6 h-6 text-amber-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-sm text-gray-800">
-                      {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
-                    </h3>
-                    <p className="text-[10px] text-gray-500 mt-0.5">
-                      {language === 'fr' ? 'Ma journée, mes humeurs, mes photos' : language === 'en' ? 'My day, my moods, my photos' : 'Mi día, mis estados de ánimo, mis fotos'}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-                    <span className="text-[10px] text-gray-400">
-                      {journalEntries.length} {language === 'fr' ? 'entrées' : language === 'en' ? 'entries' : 'entradas'}
-                    </span>
+              {/* Decorative 3D Shapes Simulation */}
+              <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 w-48 h-48 pointer-events-none transform scale-90">
+                {/* Orange Ring/Cylinder */}
+                <div className="absolute right-10 top-0 w-20 h-20 rounded-full border-[12px] border-amber-400 transform rotate-45 shadow-lg" style={{ boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)' }}></div>
+                {/* Grey Cube-ish */}
+                <div className="absolute right-20 top-12 w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl transform -rotate-12 shadow-2xl z-10"></div>
+                {/* Purple Sphere */}
+                <div className="absolute right-4 top-16 w-14 h-14 bg-gradient-to-br from-violet-200 to-violet-400 rounded-full shadow-xl z-20"></div>
+                {/* Dark Cylinder */}
+                <div className="absolute right-24 top-4 w-16 h-16 bg-slate-700 rounded-full shadow-lg -z-10"></div>
+                {/* Yellow Ring */}
+                <div className="absolute right-12 bottom-0 w-12 h-12 border-[8px] border-yellow-300 rounded-full transform rotate-12"></div>
+              </div>
+
+              <CardContent className="p-6 relative z-10 h-full flex flex-col justify-center">
+                <div className="max-w-[60%]">
+                  <h3 className="text-3xl font-black leading-tight mb-2 text-white drop-shadow-sm">
+                    {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
+                  </h3>
+                  <p className="text-sm font-medium text-purple-100 mb-6">
+                    {language === 'fr' ? 'Notez vos pensées avant 21h' : language === 'en' ? 'Write your thoughts before 9 PM' : 'Escribe tus pensamientos antes de las 9 PM'}
+                  </p>
+
+                  {/* Avatars / Users */}
+                  <div className="flex items-center -space-x-3">
+                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-pink-300 flex items-center justify-center text-[10px] overflow-hidden">
+                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
+                    </div>
+                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-blue-300 flex items-center justify-center text-[10px] overflow-hidden">
+                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" alt="User" />
+                    </div>
+                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-emerald-300 flex items-center justify-center text-[10px] overflow-hidden">
+                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Milo" alt="User" />
+                    </div>
+                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-white flex items-center justify-center text-xs font-bold text-violet-600">
+                      +{Math.max(0, journalEntries.length)}
+                    </div>
                   </div>
                 </div>
               </CardContent>

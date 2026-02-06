@@ -16,6 +16,7 @@ interface FlowChallengePageProps {
   onToggleAction: (day: number, actionId: string) => void;
   onSelectChoice: (day: number, choiceId: string) => void;
   onCompleteDay: (day: number) => void;
+  onRegenerateFlow?: () => void;
 }
 
 export function FlowChallengePage({
@@ -25,7 +26,8 @@ export function FlowChallengePage({
   onBack,
   onToggleAction,
   onSelectChoice,
-  onCompleteDay
+  onCompleteDay,
+  onRegenerateFlow
 }: FlowChallengePageProps) {
   const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
   const [showChoiceCard, setShowChoiceCard] = useState(true);
@@ -79,24 +81,37 @@ export function FlowChallengePage({
 
       {/* ⚠️ Bandeau d'avertissement si flow généré par fallback */}
       {personalizedFlow?.isFromFallback && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 rounded-r-lg">
-          <div className="flex items-start gap-2">
-            <span className="text-yellow-600 text-lg flex-shrink-0">⚠️</span>
+        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-lg shadow-sm">
+          <div className="flex items-start gap-3">
+            <span className="text-yellow-600 text-xl flex-shrink-0">⚠️</span>
             <div className="flex-1">
-              <p className="text-sm text-yellow-800 font-medium">
+              <p className="text-sm text-yellow-800 font-semibold">
                 {language === 'fr'
-                  ? 'Ce flow a été généré avec un modèle standard.'
+                  ? 'Ce flow a été généré avec un modèle standard'
                   : language === 'en'
-                    ? 'This flow was generated with a standard template.'
-                    : 'Este flow fue generado con una plantilla estándar.'}
+                    ? 'This flow was generated with a standard template'
+                    : 'Este flow fue generado con una plantilla estándar'}
               </p>
-              <p className="text-xs text-yellow-700 mt-1">
+              <p className="text-xs text-yellow-700 mt-1 leading-relaxed">
                 {language === 'fr'
-                  ? 'Pour un flow plus personnalisé, essayez de fournir plus de détails sur votre situation lors de la prochaine création.'
+                  ? 'Pour un programme vraiment personnalisé à votre situation, vous pouvez le régénérer avec notre IA.'
                   : language === 'en'
-                    ? 'For a more personalized flow, try providing more details about your situation next time.'
-                    : 'Para un flow más personalizado, intenta proporcionar más detalles sobre tu situación la próxima vez.'}
+                    ? 'For a truly personalized program for your situation, you can regenerate it with our AI.'
+                    : 'Para un programa verdaderamente personalizado para tu situación, puedes regenerarlo con nuestra IA.'}
               </p>
+              {onRegenerateFlow && (
+                <button
+                  onClick={onRegenerateFlow}
+                  className="mt-3 w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {language === 'fr'
+                    ? 'Régénérer avec l\'IA'
+                    : language === 'en'
+                      ? 'Regenerate with AI'
+                      : 'Regenerar con IA'}
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -153,6 +153,7 @@ export default function GlowUpChallengeApp() {
     toggleFlowAction,
     selectFlowChoice,
     generatePersonalizedFlow,
+    regenerateFlow,
     unlockBadge
   } = useStore();
 
@@ -2283,6 +2284,10 @@ PROCESO OBLIGATORIO:
         onToggleAction={toggleFlowAction}
         onSelectChoice={selectFlowChoice}
         onCompleteDay={completeFlowDay}
+        onRegenerateFlow={() => {
+          regenerateFlow();
+          setCurrentView('flow-description');
+        }}
       />
     );
   }

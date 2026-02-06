@@ -296,7 +296,10 @@ interface AppState {
   toggleFlowAction: (day: number, actionId: string) => void;
   selectFlowChoice: (day: number, choiceId: string) => void;
   generatePersonalizedFlow: (objective: string, description: string) => Promise<void>;
-  unlockBadge: (badgeId: string) => void;
+      unlockBadge: (badgeId: string) => void;
+
+  // Flow regeneration
+  regenerateFlow: () => void;
 }
 
 // Helper function to get week number
@@ -1534,108 +1537,610 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               category = 'relations';
             }
 
-            // Actions par catégorie pour le fallback
-            const actionsByCategory = {
-              finance: {
-                m1: ['💰 Analyser une opportunité business', '📊 Faire un bilan financier', '💼 Contacter 3 prospects', '📈 Étudier un cas de succès', '💡 Brainstormer des idées revenus'],
-                m2: ['📚 Lire 20 min sur l\'entrepreneuriat', '🎧 Podcast business', '📺 Regarder une vidéo formation', '📝 Prendre des notes stratégiques', '🧮 Calculer ses projections'],
-                c1: ['📧 Envoyer un email pro', '🤝 Faire du networking', '📱 Poster sur LinkedIn'],
-                c2: ['⏰ Se lever 1h plus tôt', '🧘 Méditation pour la créativité', '📝 Tenir un journal de bord'],
-                c3: ['🎁 S\'offrir un petit luxe', '🍰 Célébrer une micro-victoire', '🎵 Écouter de la musique motivante']
-              },
-              developpement: {
-                m1: ['🎯 Défi de confiance du jour', '🗣️ Parler à un inconnu', '💪 Action qui fait peur', '🌟 Se mettre en avant', '✨ Sortir de sa zone'],
-                m2: ['📝 Affirmations positives', '🌅 Visualisation du succès', '📔 Journaling introspectif', '🧘 Méditation guidée', '💭 Réflexion sur ses forces'],
-                c1: ['📱 Appeler un proche', '🤗 Câlin ou affection', '💌 Écrire une lettre de gratitude'],
-                c2: ['🎨 Activité créative', '🎵 Chant ou expression', '📖 Lecture inspirante'],
-                c3: ['🛁 Bain relaxant', '🍵 Thé et moment de calme', '🎬 Film inspirant']
-              },
-              sante: {
-                m1: ['🏃‍♀️ 30 min cardio ou sport', '💪 Séance musculation', '🧘 Yoga ou étirements', '🚴 Vélo ou natation', '🏊 45 min d\'activité'],
-                m2: ['💧 Boire 2L d\'eau', '🥗 Manger 5 fruits/légumes', '😴 Dormir 8h ce soir', '🚫 Pas de sucre raffiné', '🍎 Smoothie healthy'],
-                c1: ['🛁 Bain de récupération', '🧖‍♀️ Spa ou sauna', '💆 Massage auto'],
-                c2: ['📱 Appel vidéo avec un proche', '🎵 Playlist motivation', '📺 Documentaire santé'],
-                c3: ['🛒 Courses alimentaires', '🍳 Cuisiner un nouveau plat', '📝 Planifier ses repas']
-              },
-              competences: {
-                m1: ['📚 30 min de pratique active', '💻 Projet concret', '🎯 Exercices pratiques', '📝 Écrire ou créer', '🎨 Application créative'],
-                m2: ['📖 Théorie ou veille', '🎧 Podcast éducatif', '📺 Tutoriel vidéo', '🗒️ Revue de notes', '🧠 Anki ou flashcards'],
-                c1: ['👥 Rejoindre une communauté', '🤝 Trouver un partenaire', '💬 Partager son progrès'],
-                c2: ['🎵 Musique de concentration', '🧘 Méditation focus', '📱 Bloquer distractions'],
-                c3: ['🏆 Se récompenser', '🎁 Petit cadeau à soi', '🎉 Célébrer l\'effort']
-              },
-              relations: {
-                m1: ['💬 Initier une conversation', '📱 Envoyer un message', '🤝 Sortir de sa zone sociale', '🎯 Action sociale proactive', '🌟 Complimenter quelqu\'un'],
-                m2: ['📝 Gratitude relations', '🧘 Visualisation connexion', '📔 Journal émotionnel', '💭 Réflexion sur ses besoins', '🌱 Travail intérieur'],
-                c1: ['📞 Appeler un ami', '🍕 Sortir avec quelqu\'un', '💌 Écrire une lettre'],
-                c2: ['🎨 Activité créative solo', '📖 Lecture feel-good', '🎵 Musique joyeuse'],
-                c3: ['🛁 Spa day', '🍰 Gourmandise', '🎬 Comédie romantique']
-              },
-              'bien-etre': {
-                m1: ['🚶‍♀️ 30 min marche ou sport', '🏃‍♀️ Activité physique', '🧘 Yoga ou stretching', '💃 Danse cardio', '🏊 Nage ou aquagym'],
-                m2: ['💆‍♀️ Rituel beauté', '🧴 Soin visage', '🛁 Bain relaxant', '🌸 Aromathérapie', '🧘 Méditation'],
-                c1: ['🧽 Brossage à sec', '🦵 Gommage corps', '🧖‍♀️ Exfoliation'],
-                c2: ['🧴 Crème hydratante', '🌺 Huile corporelle', '💅 Manucure'],
-                c3: ['✨ Masque cheveux', '💇 Soin capillaire', '🎀 Coiffure soignée']
+            // Actions améliorées et variées par catégorie pour le fallback
+            const getActionsByCategory = (objective: string, description: string) => {
+              const objectiveLower = objective.toLowerCase();
+              const descLower = description.toLowerCase();
+              
+              // Détection fine de la catégorie
+              let category = 'bien-etre';
+              
+              if (objectiveLower.includes('argent') || objectiveLower.includes('€') || objectiveLower.includes('business') || objectiveLower.includes('entreprise') || objectiveLower.includes('revenu') || objectiveLower.includes('salaire') || objectiveLower.includes('finance') || objectiveLower.includes('investir') || descLower.includes('entreprendre') || descLower.includes('startup')) {
+                category = 'finance';
+              } else if (objectiveLower.includes('confiance') || objectiveLower.includes('estime') || objectiveLower.includes('anxieux') || objectiveLower.includes('peur') || objectiveLower.includes('stress') || objectiveLower.includes('timidité') || objectiveLower.includes('introverti') || objectiveLower.includes('anxiété') || descLower.includes('confiance en soi')) {
+                category = 'developpement';
+              } else if (objectiveLower.includes('poids') || objectiveLower.includes('muscle') || objectiveLower.includes('sport') || objectiveLower.includes('fitness') || objectiveLower.includes('maigrir') || objectiveLower.includes('course') || objectiveLower.includes('gym') || descLower.includes('perdre du poids') || descLower.includes('muscle')) {
+                category = 'sante';
+              } else if (objectiveLower.includes('langue') || objectiveLower.includes('apprendre') || objectiveLower.includes('cours') || objectiveLower.includes('étudier') || objectiveLower.includes('compétence') || objectiveLower.includes('diplôme') || objectiveLower.includes('certification') || descLower.includes('formation') || descLower.includes('apprendre')) {
+                category = 'competences';
+              } else if (objectiveLower.includes('relation') || objectiveLower.includes('amour') || objectiveLower.includes('ami') || objectiveLower.includes('social') || objectiveLower.includes('rencontrer') || objectiveLower.includes('couple') || objectiveLower.includes('famille') || descLower.includes('relation') || descLower.includes('social')) {
+                category = 'relations';
+              } else if (objectiveLower.includes('sommeil') || objectiveLower.includes('dormir') || objectiveLower.includes('insomnie') || objectiveLower.includes('fatigue')) {
+                category = 'sommeil';
+              } else if (objectiveLower.includes('créativité') || objectiveLower.includes('art') || objectiveLower.includes('dessin') || objectiveLower.includes('musique') || objectiveLower.includes('écriture') || objectiveLower.includes('photo') || descLower.includes('créer') || descLower.includes('artistique')) {
+                category = 'creativite';
+              } else if (objectiveLower.includes('carrière') || objectiveLower.includes('travail') || objectiveLower.includes('job') || objectiveLower.includes('promotion') || objectiveLower.includes('boss') || objectiveLower.includes('projet pro')) {
+                category = 'carriere';
+              } else if (objectiveLower.includes('productivité') || objectiveLower.includes('organisation') || objectiveLower.includes('focus') || objectiveLower.includes('concentration') || objectiveLower.includes('procrastination') || objectiveLower.includes('planning')) {
+                category = 'productivite';
+              } else if (objectiveLower.includes('alimentation') || objectiveLower.includes('manger') || objectiveLower.includes('régime') || objectiveLower.includes('nutrition') || objectiveLower.includes('repas') || objectiveLower.includes('cuisiner') || descLower.includes('manger') || descLower.includes('alimentation')) {
+                category = 'alimentation';
               }
+              
+              // Fonction de mélange aléatoire avec graine
+              const seededRandom = (seed: number) => {
+                const x = Math.sin(seed) * 10000;
+                return x - Math.floor(x);
+              };
+              
+              // Fonction pour mélanger un tableau avec graine
+              const seededShuffle = (array: string[], seed: number) => {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                  const j = Math.floor(seededRandom(seed + i) * (i + 1));
+                  [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+              };
+              
+              // Données contextuelles pour personnaliser les descriptions
+              const getContextualAction = (day: number, phase: number) => {
+                const contexts = {
+                  finance: {
+                    m1: [
+                      { action: '💰 Analyser une opportunité business', desc: 'Trouve 1 idée de revenu complémentaire et analyse sa faisabilité' },
+                      { action: '📊 Faire un bilan financier mensuel', desc: 'Calcule tes revenus et dépenses du mois passé' },
+                      { action: '💼 Contacter 3 prospects potentiels', desc: 'Envoie des messages personnalisés à 3 contacts pro' },
+                      { action: '📈 Étudier un cas de succès entrepreneurial', desc: 'Lis l\'histoire d\'un entrepreneur qui a réussi dans ton domaine' },
+                      { action: '💡 Brainstormer 10 idées de revenus', desc: 'Note toutes les idées, même les plus folles' },
+                      { action: '🎯 Définir ton offre de services', desc: 'Clarifie ce que tu proposes et à qui' },
+                      { action: '📧 Préparer ton pitch de vente', desc: 'Rédige un pitch de 30 secondes pour présenter ton offre' },
+                      { action: '🏢 Analyser tes concurrents', desc: 'Étudie 3 concurrents et identifie ce qui les différencie' }
+                    ],
+                    m2: [
+                      { action: '📚 Lire 20 min sur l\'entrepreneuriat', desc: 'Absorbe les connaissances des experts' },
+                      { action: '🎧 Écouter un podcast business', desc: 'Inspire-toi des conversations entrepreneuriales' },
+                      { action: '📺 Regarder une vidéo formation', desc: 'Apprends une nouvelle compétence business' },
+                      { action: '📝 Noter 3 leçons apprises', desc: 'Capitalise sur tes erreurs et succès' },
+                      { action: '🧮 Calculer tes projections financières', desc: 'Évalue ton potentiel de revenus à 3/6/12 mois' },
+                      { action: '📊 Créer un tableau de bord KPI', desc: 'Identifie 3 indicateurs à suivre chaque semaine' },
+                      { action: '💭 Visualiser ton succès financier', desc: 'Imagine ton compte bancaire avec tes objectifs atteints' },
+                      { action: '🎯 Prioriser tes tâches business', desc: 'Identifie les 3 actions qui génèrent le plus d\'impact' }
+                    ],
+                    c1: [
+                      { action: '📧 Envoyer un email professionnel', desc: 'Prends contact avec un potentiel client/partenaire' },
+                      { action: '🤝 Faire du networking en ligne', desc: 'Interagis avec 5 posts de personnes dans ton domaine' },
+                      { action: '📱 Poster du contenu LinkedIn', desc: 'Partage ta vision ou une expertise' },
+                      { action: '🗣️ Pitcher ton projet à quelqu\'un', desc: 'Entraîne-toi à présenter ton business' }
+                    ],
+                    c2: [
+                      { action: '⏰ Se lever 30 min plus tôt', desc: 'Gagne du temps pour ton projet business' },
+                      { action: '🧘 Méditation pour la créativité', desc: 'Laisse venir les idées innovantes' },
+                      { action: '📝 Tenir un journal de bord business', desc: 'Note tes idées et apprentissages quotidiens' },
+                      { action: '🌟 Faire une veille concurrentielle', desc: 'Surveille ce qui se passe dans ton marché' }
+                    ],
+                    c3: [
+                      { action: '🎁 S\'offrir un petit luxe', desc: 'Récompense-toi pour tes efforts' },
+                      { action: '🍰 Célébrer une micro-victoire', desc: 'Reconnais un pas de plus vers tes objectifs' },
+                      { action: '🎵 Écouter de la musique motivante', desc: 'Booste ton énergie pour continuer' },
+                      { action: '🛁 Bain relaxant', desc: 'Accorde-toi un moment de détente mérité' }
+                    ]
+                  },
+                  developpement: {
+                    m1: [
+                      { action: '🎯 Défi de confiance du jour', desc: 'Fais une action qui te met légèrement mal à l\'aise' },
+                      { action: '🗣️ Parler à un inconnu', desc: 'Initie une conversation avec quelqu\'un d\'inconnu' },
+                      { action: '💪 Faire une action qui fait peur', desc: 'Affronte une peur modérée aujourd\'hui' },
+                      { action: '🌟 Te mettre en avant', desc: 'Partage un de tes succès ou compétences' },
+                      { action: '✨ Sortir de ta zone de confort', desc: 'Essaye quelque chose de nouveau aujourd\'hui' },
+                      { action: '💪 Tenir un power pose 2 min', desc: 'Adopte une posture confiante devant le miroir' },
+                      { action: '📢 T\'exprimer clairement', desc: 'Affirme tes besoins dans une conversation' },
+                      { action: '🎤 Enregistrer une vidéo de toi', desc: 'Parle devant la caméra pendant 1 minute' }
+                    ],
+                    m2: [
+                      { action: '📝 Répéter tes affirmations positives', desc: 'Dis-toi 5 choses positives devant le miroir' },
+                      { action: '🌅 Visualiser ton succès', desc: 'Imagine ta vie idéale dans 1 an en détail' },
+                      { action: '📔 Journaling introspectif', desc: 'Écris tes pensées et émotions' },
+                      { action: '🧘 Méditation de pleine conscience', desc: '10 min pour te reconnecter à toi-même' },
+                      { action: '💭 Réfléchir à tes forces', desc: 'Liste 3 qualités qui te définissent' },
+                      { action: '📚 Lire un chapitre de développement perso', desc: 'Inspire-toi des experts en confiance' },
+                      { action: '🎧 Écouter un podcast motivation', desc: 'Absorbe l\'énergie positive' },
+                      { action: '🌟 Célébrer un petit succès', desc: 'Reconnais quelque chose que tu as bien fait aujourd\'hui' }
+                    ],
+                    c1: [
+                      { action: '📱 Appeler un proche aimant', desc: 'Recharge tes batteries affectives' },
+                      { action: '🤗 Se faire un câlin ou demander un contact', desc: 'Le toucher réduit l\'anxiété' },
+                      { action: '💌 Écrire une lettre de gratitude', desc: 'Remercie quelqu\'un qui compte pour toi' },
+                      { action: '🗣️ Partager tes émotions', desc: 'Exprime ce que tu ressens à quelqu\'un de confiance' }
+                    ],
+                    c2: [
+                      { action: '🎨 Activité créative', desc: 'Exprime-toi à travers l\'art' },
+                      { action: '🎵 Chanter ou s\'exprimer', desc: 'Libère tes émotions par la voix' },
+                      { action: '📖 Lire un passage inspirant', desc: 'Trouve du réconfort dans les mots' },
+                      { action: '🌱 Sortir dans la nature', desc: 'Reconnecte-toi au monde naturel' }
+                    ],
+                    c3: [
+                      { action: '🛁 Bain relaxant', desc: 'Détends ton corps et ton esprit' },
+                      { action: '🍵 Pause thé et calme', desc: 'Prends 10 min rien que pour toi' },
+                      { action: '🎬 Regarder un film inspirant', desc: 'Inspire-toi d\'histoires de résilience' },
+                      { action: '💆 Massage auto', desc: 'Soulage les tensions physiques' }
+                    ]
+                  },
+                  sante: {
+                    m1: [
+                      { action: '🏃‍♀️ 30 min de cardio ou sport', desc: 'Elève ton rythme cardiaque et transpire' },
+                      { action: '💪 Séance de musculation', desc: 'Renforce tes muscles avec exercices ciblés' },
+                      { action: '🧘 Yoga ou étirements profonds', desc: 'Gagne en souplesse et détends-toi' },
+                      { action: '🚴 Vélo ou natation', desc: 'Activité cardiovasculaire modérée' },
+                      { action: '🏊 45 min d\'activité physique', desc: 'Bouge ton corps pendant au moins 45 min' },
+                      { action: '💃 Danse cardio 20 min', desc: 'Danse sur tes musiques préférées' },
+                      { action: '🏃‍♂️ Course à pied ou marche rapide', desc: 'Sort pour une séance en plein air' },
+                      { action: '⚽ Sport collectif ou combat', desc: 'Joue avec d\'autres ou pratique un art martial' }
+                    ],
+                    m2: [
+                      { action: '💧 Boire 2L d\'eau', desc: 'Hydrate-toi tout au long de la journée' },
+                      { action: '🥗 Manger 5 fruits et légumes', desc: 'Assure ta dose de vitamines' },
+                      { action: '😴 Préparer un sommeil de 8h', desc: 'Commence ta routine du coucher tôt' },
+                      { action: '🚫 Éviter le sucre raffiné aujourd\'hui', desc: 'Choisis des aliments non transformés' },
+                      { action: '🍎 Préparer un smoothie healthy', desc: 'Mixe fruits, légumes verts et protéines' },
+                      { action: '🥦 Intégrer des protéines végétales', desc: 'Légumineuses, tofu ou tempeh au menu' },
+                      { action: '🥗 Salade composée maison', desc: 'Prépare un repas équilibré toi-même' },
+                      { action: '🍵 Infusion détox', desc: 'Green tea ou tisane bienfaisante' }
+                    ],
+                    c1: [
+                      { action: '🛁 Bain de récupération', desc: 'Eau chaude avec sels de bain' },
+                      { action: '🧖‍♀️ Spa ou sauna', desc: 'Chaleur pour détendre les muscles' },
+                      { action: '💆 Massage auto', desc: 'Rouleau ou automassage' },
+                      { action: '🧘 Stretching profond', desc: '20 min d\'étirements complets' }
+                    ],
+                    c2: [
+                      { action: '📱 Appel vidéo avec un proche', desc: 'Connecte-toi affectivement' },
+                      { action: '🎵 Playlist motivation sport', desc: 'Crée ta playlist d\'entraînement' },
+                      { action: '📺 Documentaire santé', desc: 'Inspire-toi d\'histoires de transformation' },
+                      { action: '📚 Lire un chapitre sur la nutrition', desc: 'Apprends à mieux manger' }
+                    ],
+                    c3: [
+                      { action: '🛒 Courses alimentaires planifiées', desc: 'Liste équilibrée et sans impulsion' },
+                      { action: '🍳 Cuisiner un nouveau plat healthy', desc: 'Découvre une recette nutritive' },
+                      { action: '📝 Planifier ses repas de la semaine', desc: 'Préparation pour manger équilibré' },
+                      { action: '🥗 Batch cooking', desc: 'Prépare tes repas pour les 3 prochains jours' }
+                    ]
+                  },
+                  competences: {
+                    m1: [
+                      { action: '📚 30 min de pratique active', desc: 'Exerce-toi concrètement sur ta compétence' },
+                      { action: '💻 Avancer sur un projet concret', desc: 'Applique ce que tu apprends à un cas réel' },
+                      { action: '🎯 Faire des exercices pratiques', desc: 'Répète pour intégrer' },
+                      { action: '📝 Écrire ou créer quelque chose', desc: 'Produis un output tangible' },
+                      { action: '🎨 Application créative', desc: 'Utilise ta compétence de façon créative' },
+                      { action: '🎤 T\'entraîner à l\'oral', desc: 'Présente ce que tu as appris' },
+                      { action: '🧪 Expérimenter librement', desc: 'Teste sans pression de résultat' },
+                      { action: '🎯 Fixer un mini-objectif d\'apprentissage', desc: 'Ce que tu veux maîtriser aujourd\'hui' }
+                    ],
+                    m2: [
+                      { action: '📖 Lire de la théorie', desc: 'Concepts fondamentaux de ta discipline' },
+                      { action: '🎧 Podcast éducatif', desc: 'Apprends en faisant autre chose' },
+                      { action: '📺 Tutoriel vidéo', desc: 'Visualise la technique' },
+                      { action: '🗒️ Relire et organiser tes notes', desc: 'Structure tes connaissances' },
+                      { action: '🧠 Utiliser Anki ou flashcards', desc: 'Mémorisation active' },
+                      { action: '💭 Faire un mind map', desc: 'Connecte les concepts entre eux' },
+                      { action: '📝 Résumer ce que tu as appris', desc: 'Explique avec tes mots' },
+                      { action: '🎯 Identifier tes lacunes', desc: 'Note ce qu\'il te reste à maîtriser' }
+                    ],
+                    c1: [
+                      { action: '👥 Rejoindre une communauté', desc: 'Discord, forum ou groupe d\'entraide' },
+                      { action: '🤝 Trouver un partenaire d\'apprentissage', desc: 'Apprenez ensemble' },
+                      { action: '💬 Partager ton progrès', desc: 'Montre ton travail en ligne' },
+                      { action: '🎓 Demander du feedback', desc: 'Fais-toi coacher par un expert' }
+                    ],
+                    c2: [
+                      { action: '🎵 Musique de concentration', desc: 'Playlist focus ou lo-fi' },
+                      { action: '🧘 Méditation avant apprentissage', desc: 'Prépare ton cerveau' },
+                      { action: '📱 Bloquer les distractions', desc: 'Mode avion ou app blocage' },
+                      { action: '⏱️ Technique Pomodoro', desc: '25 min focus, 5 min pause' }
+                    ],
+                    c3: [
+                      { action: '🏆 Te récompenser', desc: 'Accorde-toi un plaisir mérité' },
+                      { action: '🎁 Petit cadeau à toi-même', desc: 'Livre, sortie, ou achat' },
+                      { action: '🎉 Célébrer l\'effort', desc: 'Reconnais ton travail' },
+                      { action: '🌟 Partager ta victoire', desc: 'Dis au monde ce que tu as accompli' }
+                    ]
+                  },
+                  relations: {
+                    m1: [
+                      { action: '💬 Initier une conversation', desc: 'Prends la première initiative sociale' },
+                      { action: '📱 Envoyer un message bienveillant', desc: 'Contacte quelqu\'un avec un message positif' },
+                      { action: '🤝 Sortir de ta zone sociale', desc: 'Vas vers des gens que tu ne connais pas' },
+                      { action: '🎯 Action sociale proactive', desc: 'Organise quelque chose avec d\'autres' },
+                      { action: '🌟 Complimenter quelqu\'un sincèrement', desc: 'Dis quelque chose de gentil et authentique' },
+                      { action: '🎧 Écoute active', desc: 'Écoute pour comprendre, pas pour répondre' },
+                      { action: '🤗 Offrir ton aide', desc: 'Propose ton soutien à quelqu\'un' },
+                      { action: '💌 Écrire à quelqu\'un que tu apprécies', desc: 'Lettre ou long message' }
+                    ],
+                    m2: [
+                      { action: '📝 Gratitude relations', desc: 'Note 3 personnes qui enrichissent ta vie' },
+                      { action: '🧘 Visualisation de connexion', desc: 'Imagine des relations positives' },
+                      { action: '📔 Journal émotionnel relationnel', desc: 'Explore tes patterns relationnels' },
+                      { action: '💭 Réflexion sur tes besoins', desc: 'Qu\'attends-tu de tes relations ?' },
+                      { action: '🌱 Travail intérieur', desc: 'Quelles croyances limitantes affects tes relations ?' },
+                      { action: '📚 Lire sur la communication', desc: 'Apprends à mieux te faire comprendre' },
+                      { action: '🎧 Podcast relations', desc: 'Inspire-toi d\'experts en communication' },
+                      { action: '🎯 Définir tes limites', desc: 'Identifie ce que tu acceptes ou non' }
+                    ],
+                    c1: [
+                      { action: '📞 Appeler un ami proche', desc: 'Conversation de qualité' },
+                      { action: '🍕 Sortir manger avec quelqu\'un', desc: 'Partage un moment convivial' },
+                      { action: '💌 Écrire une lettre de reconnaissance', desc: 'Exprime ta gratitude' },
+                      { action: '🎁 Faire une surprise', desc: 'Petit geste pour quelqu\'un' }
+                    ],
+                    c2: [
+                      { action: '🎨 Activité créative solo', desc: 'Cultive ton individualité' },
+                      { action: '📖 Lecture feel-good', desc: 'Roman ou livre qui fait du bien' },
+                      { action: '🎵 Musique joyeuse', desc: 'Playlist qui met de bonne humeur' },
+                      { action: '🌳 Sortie en plein air', desc: 'Prends l\'air seul(e)' }
+                    ],
+                    c3: [
+                      { action: '🛁 Spa day maison', desc: 'Soin pour toi' },
+                      { action: '🍰 Gourmandise', desc: 'Traite-toi bien' },
+                      { action: '🎬 Comédie romantique', desc: 'Film léger et feel-good' },
+                      { action: '🎭 Sortie culturelle', desc: 'Expo, théâtre ou ciné' }
+                    ]
+                  },
+                  sommeil: {
+                    m1: [
+                      { action: '😴 Routine du coucher stricte', desc: 'Même heure, même rituel' },
+                      { action: '📵 Pas d\'écrans 1h avant le lit', desc: 'Blue light = mauvais sommeil' },
+                      { action: '🧘 Méditation pour s\'endormir', desc: 'Body scan ou visualisation' },
+                      { action: '📓 Journaling avant le coucher', desc: 'Vide ton esprit sur le papier' },
+                      { action: '🌙 Créer un environnement propice', desc: 'Obscurité, fraîcheur, silence' },
+                      { action: '⏰ Fixer une heure de réveil fixe', desc: 'Même le week-end' },
+                      { action: '🚫 Pas de caféine après 14h', desc: 'Protège ton sommeil' },
+                      { action: '🏃‍♀️ Sport le matin ou après-midi', desc: 'Pas dans les 3h avant le coucher' }
+                    ],
+                    m2: [
+                      { action: '📖 Lire un livre papier', desc: 'Pas d\'écran, juste une lecture calme' },
+                      { action: '🎧 Sons de la nature', desc: 'Pluie, forêt ou océan pour relaxer' },
+                      { action: '🌿 Tisane relaxante', desc: 'Camomille, tilleul ou valériane' },
+                      { action: '🛁 Bain chaud avant le lit', desc: 'Baisse la température corporelle' },
+                      { action: '💨 Aromathérapie', desc: 'Lavande ou autre huile relaxante' },
+                      { action: '🧘 Respiration 4-7-8', desc: 'Inspire 4s, retiens 7s, expire 8s' },
+                      { action: '🌅 Exposition lumière du jour', desc: 'Régule ton horloge biologique' },
+                      { action: '✍️ Liste des soucis', desc: 'Note-les pour ne plus y penser' }
+                    ],
+                    c1: [
+                      { action: '📱 Application de sommeil', desc: 'Suivi et analyse de tes cycles' },
+                      { action: '🎵 White noise ou bruit rose', desc: 'Pour masquer les bruits' },
+                      { action: '🧘 Yoga nidra', desc: 'Relaxation profonde guidée' },
+                      { action: '📖 Lecture audio', desc: 'Histoire calme pour s\'endormir' }
+                    ],
+                    c2: [
+                      { action: '🏠 Optimiser ta chambre', desc: 'Rideaux occultants, bon matelas' },
+                      { action: '🌡️ Température idéale', desc: '18-20°C recommandé' },
+                      { action: '🧴 Rituel soin du visage', desc: 'Douce routine relaxante' },
+                      { action: '📵 Mode avion sur téléphone', desc: 'Pas de notifications' }
+                    ],
+                    c3: [
+                      { action: '🎬 Film relaxant', desc: 'Pas d\'action ou de violence' },
+                      { action: '💆 Massage des tempes', desc: 'Soulage les tensions' },
+                      { action: '🍵 Lait chaud au miel', desc: 'Boisson réconfortante' },
+                      { action: '📓 Gratitude du soir', desc: 'Note 3 choses positives de la journée' }
+                    ]
+                  },
+                  creativite: {
+                    m1: [
+                      { action: '🎨 Créer sans jugement', desc: 'Dessine, peins ou écris librement' },
+                      { action: '🎵 Composer ou jouer de la musique', desc: 'Exprime-toi par les sons' },
+                      { action: '✍️ Écrire 500 mots', desc: 'Stream of consciousness' },
+                      { action: '📸 Photographier 10 sujets', desc: 'Capture la beauté autour de toi' },
+                      { action: '🎭 Improviser', desc: 'Danse, théâtre ou parole sans préparation' },
+                      { action: '💡 Brainstormer 20 idées', desc: 'Même les plus folles' },
+                      { action: '🎨 Essayer une nouvelle technique', desc: 'Étape hors de ta zone de confort artistique' },
+                      { action: '🎬 Créer un court métrage', desc: 'Même de 30 secondes' }
+                    ],
+                    m2: [
+                      { action: '📚 Lire un livre sur la créativité', desc: 'Inspire-toi des grands créateurs' },
+                      { action: '🎧 Podcast d\'artistes', desc: 'Processus créatifs des autres' },
+                      { action: '📺 Tutoriel artistique', desc: 'Apprends une nouvelle technique' },
+                      { action: '🎭 Aller voir une exposition', desc: 'Exposition, concert ou spectacle' },
+                      { action: '🌟 Collectionner l\'inspiration', desc: 'Crée un moodboard' },
+                      { action: '📝 Noter tes idées créatives', desc: 'Capture chaque étincelle' },
+                      { action: '🎵 Écouter un nouveau genre musical', desc: 'Ouvre ton horizon artistique' },
+                      { action: '📖 Étudier un artiste inspirant', desc: 'Comprends son processus' }
+                    ],
+                    c1: [
+                      { action: '👥 Partager ta création', desc: 'Montre ton travail, même imparfait' },
+                      { action: '🤝 Collaborer avec quelqu\'un', desc: 'Créez ensemble' },
+                      { action: '💬 Discuter avec un artiste', desc: 'Échange sur la création' },
+                      { action: '🎓 Prendre un cours', desc: 'Atelier ou cours particulier' }
+                    ],
+                    c2: [
+                      { action: '🎵 Playlist créative', desc: 'Musique qui stimule l\'imagination' },
+                      { action: '🧘 Méditation pour la créativité', desc: 'Laisse venir les idées' },
+                      { action: '📱 Éteindre les notifications', desc: 'Mode création sans interruption' },
+                      { action: '🌳 Changer d\'environnement', desc: 'Crée ailleurs pour voir différemment' }
+                    ],
+                    c3: [
+                      { action: '🎁 Matériel artistique', desc: 'Nouveau crayon, pinceau ou carnet' },
+                      { action: '🌟 Se féliciter', desc: 'Créer est déjà une victoire' },
+                      { action: '🎉 Célébrer une œuvre terminée', desc: 'Partage ou expose' },
+                      { action: '📸 Photographier son espace créatif', desc: 'Documente ton environnement' }
+                    ]
+                  },
+                  carriere: {
+                    m1: [
+                      { action: '💼 Avancer un projet important', desc: 'La tâche qui a le plus d\'impact' },
+                      { action: '📧 Répondre aux emails en retard', desc: 'Nettoie ta boîte de réception' },
+                      { action: '🎯 Fixer 3 priorités du jour', desc: 'Concentre-toi sur l\'essentiel' },
+                      { action: '📊 Analyser tes performances', desc: 'Qu\'est-ce qui fonctionne ?' },
+                      { action: '💪 Développer une compétence clé', desc: 'Ce qui te fera progresser' },
+                      { action: '📈 Proposer une idée', desc: 'Amélioration ou innovation' },
+                      { action: '🤝 Aider un collègue', desc: 'Renforce les liens pro' },
+                      { action: '📋 Mettre à jour ton CV/LinkedIn', desc: 'Documente tes nouvelles compétences' }
+                    ],
+                    m2: [
+                      { action: '📚 Lire sur le leadership', desc: 'Développe tes skills de manager' },
+                      { action: '🎧 Podcast management', desc: 'Inspire-toi des leaders' },
+                      { action: '📝 Réfléchir à ta vision pro', desc: 'Où veux-tu être dans 5 ans ?' },
+                      { action: '🎯 Identifier un mentor', desc: 'Quelqu\'un à qui tu veux ressembler' },
+                      { action: '💭 Feedback 360°', desc: 'Demande du feedback à plusieurs' },
+                      { action: '📖 Étudier un cas d\'entreprise', desc: 'Apprends des succès et échecs' },
+                      { action: '🧘 Visualiser ton succès pro', desc: 'Conférence, promotion ou projet' },
+                      { action: '📊 Créer un plan de carrière', desc: 'Étape par étape' }
+                    ],
+                    c1: [
+                      { action: '🤝 Networking professionnel', desc: 'Déjeuner ou café avec un contact' },
+                      { action: '📱 Poster sur LinkedIn', desc: 'Partage ton expertise' },
+                      { action: '💬 Demander conseil à un senior', desc: 'Apprends de l\'expérience' },
+                      { action: '🎓 Participer à un événement', desc: 'Conférence ou meetup' }
+                    ],
+                    c2: [
+                      { action: '⏰ Se lever tôt pour bosser', desc: 'Travaille sur ton projet perso' },
+                      { action: '🧘 Méditation avant travail', desc: 'Commence la journée focus' },
+                      { action: '📱 Bloquer les distractions', desc: 'Mode deep work' },
+                      { action: '🌟 Organiser ton espace de travail', desc: 'Environnement propice' }
+                    ],
+                    c3: [
+                      { action: '🎁 Se récompenser', desc: 'Pour une semaine bien travaillée' },
+                      { action: '🏆 Célébrer une victoire', desc: 'Petit ou grand succès' },
+                      { action: '🎬 Film sur le succès', desc: 'Inspiration entrepreneuriale' },
+                      { action: '🌟 Jour de congé mérité', desc: 'Accorde-toi une pause' }
+                    ]
+                  },
+                  productivite: {
+                    m1: [
+                      { action: '🎯 Technique Pomodoro 4 cycles', desc: '25 min focus, 5 min pause x 4' },
+                      { action: '📋 Manger la grenouille', desc: 'Commence par la tâche la plus difficile' },
+                      { action: '✅ Liste de 3 tâches prioritaires', desc: 'Pas plus, pas moins' },
+                      { action: '📧 Traiter les emails en batch', desc: '2-3 fois max par jour' },
+                      { action: '📊 Mesurer son temps', desc: 'Note où passe ton temps' },
+                      { action: '🚫 Désactiver toutes les notifications', desc: 'Mode focus total' },
+                      { action: '🏃‍♀️ Session de deep work', desc: '2h sans interruption' },
+                      { action: '📈 Revoir ses objectifs', desc: 'Aligne tes actions sur tes buts' }
+                    ],
+                    m2: [
+                      { action: '📚 Lire un chapitre sur la productivité', desc: 'Apprends de nouvelles techniques' },
+                      { action: '🎧 Podcast organisation', desc: 'Systèmes et méthodes' },
+                      { action: '📝 Réviser ses routines', desc: 'Optimise tes habitudes' },
+                      { action: '🎯 Créer un système de capture', desc: 'Où notes-tu tes idées ?' },
+                      { action: '💭 Analyser ses pics d\'énergie', desc: 'Quand es-tu le plus productif ?' },
+                      { action: '📊 Dashboard de productivité', desc: 'Visualise tes métriques' },
+                      { action: '🧘 Mindfulness pour focus', desc: 'Entraîne ton attention' },
+                      { action: '🌟 Déclutter son espace', desc: 'Moins d\'objets = plus de clarté' }
+                    ],
+                    c1: [
+                      { action: '🤝 Session de co-working', desc: 'Travaille avec d\'autres' },
+                      { action: '👥 Trouver un accountability partner', desc: 'Qui te motive à tenir tes objectifs' },
+                      { action: '💬 Partager tes objectifs', desc: 'Dit-le à quelqu\'un' },
+                      { action: '🎓 Formation productivité', desc: 'Cours sur une méthode spécifique' }
+                    ],
+                    c2: [
+                      { action: '🎵 Playlist concentration', desc: 'Musique sans parole' },
+                      { action: '🧘 Méditation avant travail', desc: 'Prépare ton esprit' },
+                      { action: '📱 App de blocage', desc: 'Bloque les sites distrayants' },
+                      { action: '⏰ Timer visible', desc: 'Conscience du temps qui passe' }
+                    ],
+                    c3: [
+                      { action: '🏆 Récompense après session', desc: 'Motivation positive' },
+                      { action: '🎉 Célébrer une journée productive', desc: 'Reconnais ton travail' },
+                      { action: '🎬 Documentaire sur le succès', desc: 'Inspiration haut niveau' },
+                      { action: '🌟 Journée de repos planifiée', desc: 'Recharge tes batteries' }
+                    ]
+                  },
+                  alimentation: {
+                    m1: [
+                      { action: '🥗 Préparer 3 repas équilibrés', desc: 'Protéines, légumes, glucides' },
+                      { action: '💧 Boire 2,5L d\'eau', desc: 'Hydratation tout au long de la journée' },
+                      { action: '🚫 Pas de sucre ajouté', desc: 'Évite les aliments transformés' },
+                      { action: '🥦 Intégrer 5 portions de légumes', desc: 'Variété de couleurs' },
+                      { action: '🍎 Snacks healthy', desc: 'Fruits secs, noix ou fruits frais' },
+                      { action: '🍳 Cuisiner un nouveau plat', desc: 'Découvre une recette saine' },
+                      { action: '📝 Tenir un food journal', desc: 'Note ce que tu manges' },
+                      { action: '⚖️ Contrôler les portions', desc: 'Mange à faim, pas plus' }
+                    ],
+                    m2: [
+                      { action: '📚 Lire sur la nutrition', desc: 'Comprends ce que tu manges' },
+                      { action: '🎧 Podcast alimentation', desc: 'Santé et nutrition' },
+                      { action: '📺 Documentaire food', desc: 'Inspire-toi de cultures saines' },
+                      { action: '🛒 Courses planifiées', desc: 'Liste basée sur des repas prévus' },
+                      { action: '📝 Apprendre 3 nouvelles recettes', desc: 'Élargis ton répertoire' },
+                      { action: '🧘 Manger en pleine conscience', desc: 'Pas devant un écran' },
+                      { action: '🌿 Découvrir un nouveau superfood', desc: 'Graines, légumineuses...' },
+                      { action: '💭 Réfléchir à ses habitudes', desc: 'Quand manges-tu émotionnellement ?' }
+                    ],
+                    c1: [
+                      { action: '👥 Cuisiner avec quelqu\'un', desc: 'Partage un moment convivial' },
+                      { action: '🍽️ Essayer un nouveau restaurant healthy', desc: 'Inspiration culinaire' },
+                      { action: '📱 Partager sa préparation', desc: 'Inspire les autres en ligne' },
+                      { action: '🎓 Cours de cuisine', desc: 'Apprends des techniques' }
+                    ],
+                    c2: [
+                      { action: '🎵 Musique pendant la cuisine', desc: 'Moment agréable' },
+                      { action: '🧘 Méditation avant repas', desc: 'Apprécie ton aliment' },
+                      { action: '📱 Appli de recettes', desc: 'Découvre de nouvelles idées' },
+                      { action: '🍽️ Dresser joliment son assiette', desc: 'Mange avec les yeux' }
+                    ],
+                    c3: [
+                      { action: '🎁 Nouveau livre de recettes', desc: 'Inspiration garantie' },
+                      { action: '🍰 Gourmandise occasionnelle', desc: '80/20 rule - sans culpabilité' },
+                      { action: '🎉 Célébrer une semaine équilibrée', desc: 'Reconnais tes efforts' },
+                      { action: '📸 Photographier ses plats', desc: 'Documente tes créations' }
+                    ]
+                  },
+                  'bien-etre': {
+                    m1: [
+                      { action: '🚶‍♀️ 30 min de marche active', desc: 'Bouge en plein air' },
+                      { action: '🏃‍♀️ Activité physique 20 min', desc: 'Cardio ou renforcement' },
+                      { action: '🧘 Yoga ou stretching 15 min', desc: 'Soulage les tensions' },
+                      { action: '💃 Danse libre 10 min', desc: 'Bouge sans jugement' },
+                      { action: '🏊 Nage ou aquagym', desc: 'Sport doux et complet' },
+                      { action: '🚴 Vélo ou randonnée', desc: 'Découvre tout en bougeant' },
+                      { action: '💪 Routine express 10 min', desc: 'Squats, pompes, abdos' },
+                      { action: '🤸 Étirements du réveil', desc: 'Réveille ton corps en douceur' }
+                    ],
+                    m2: [
+                      { action: '💆‍♀️ Rituel beauté complet', desc: 'Nettoyage, soin, hydratation' },
+                      { action: '🧴 Soin visage détaillé', desc: 'Gommage, masque, crème' },
+                      { action: '🛁 Bain relaxant 20 min', desc: 'Sels et bougies' },
+                      { action: '🌸 Aromathérapie', desc: 'Huiles essentielles relaxantes' },
+                      { action: '🧘 Méditation guidée 10 min', desc: 'Apaisement mental' },
+                      { action: '📖 Journaling positif', desc: 'Note 3 moments de joie' },
+                      { action: '🎵 Musique relaxante', desc: 'Playlist bien-être' },
+                      { action: '🌿 Tisane détente', desc: 'Camomille, tilleul, lavande' }
+                    ],
+                    c1: [
+                      { action: '🧽 Brossage à sec', desc: 'Stimule la circulation' },
+                      { action: '🦵 Gommage corps maison', desc: 'Sucre + huile végétale' },
+                      { action: '🧖‍♀️ Exfoliation douce', desc: 'Renouvelle ta peau' },
+                      { action: '🧴 Huile corporelle', desc: 'Massage hydratant' }
+                    ],
+                    c2: [
+                      { action: '🧴 Crème hydratante', desc: 'Après la douche' },
+                      { action: '🌺 Huile pour le corps', desc: 'Massage relaxant' },
+                      { action: '💅 Manucure soignée', desc: 'Ongles propres et lustrés' },
+                      { action: '🦶 Soin des pieds', desc: 'Pédicure maison' }
+                    ],
+                    c3: [
+                      { action: '✨ Masque cheveux nourrissant', desc: 'Huile de coco ou karité' },
+                      { action: '💇 Soin capillaire', desc: 'Masque ou sérum' },
+                      { action: '🎀 Coiffure soignée', desc: 'Chignon, tresses ou brushing' },
+                      { action: '👁️ Sourcils et cils', desc: 'Brosse et hydratation' }
+                    ]
+                  }
+                };
+                
+                const catActions = contexts[category as keyof typeof contexts] || contexts['bien-etre'];
+                
+                // Mélanger les actions pour chaque phase avec une graine différente
+                const seed = day * 1000 + (objective.length % 100);
+                const shuffledM1 = seededShuffle(catActions.m1.map(a => a.action), seed);
+                const shuffledM2 = seededShuffle(catActions.m2.map(a => a.action), seed + 1);
+                const shuffledC1 = seededShuffle(catActions.c1.map(a => a.action), seed + 2);
+                const shuffledC2 = seededShuffle(catActions.c2.map(a => a.action), seed + 3);
+                const shuffledC3 = seededShuffle(catActions.c3.map(a => a.action), seed + 4);
+                
+                // Obtenir la description contextuelle
+                const getDesc = (actionList: typeof catActions.m1, action: string) => {
+                  const found = actionList.find(a => a.action === action);
+                  return found?.desc || 'Action pour progresser vers ton objectif';
+                };
+                
+                return {
+                  category,
+                  m1: { action: shuffledM1[day % shuffledM1.length], desc: getDesc(catActions.m1, shuffledM1[day % shuffledM1.length]) },
+                  m2: { action: shuffledM2[day % shuffledM2.length], desc: getDesc(catActions.m2, shuffledM2[day % shuffledM2.length]) },
+                  c1: { action: shuffledC1[day % shuffledC1.length], desc: getDesc(catActions.c1, shuffledC1[day % shuffledC1.length]) },
+                  c2: { action: shuffledC2[day % shuffledC2.length], desc: getDesc(catActions.c2, shuffledC2[day % shuffledC2.length]) },
+                  c3: { action: shuffledC3[day % shuffledC3.length], desc: getDesc(catActions.c3, shuffledC3[day % shuffledC3.length]) }
+                };
+              };
+              
+              return getContextualAction;
             };
 
-            const actions = actionsByCategory[category] || actionsByCategory['bien-etre'];
+            const getActionForDay = getActionsByCategory(objective, description);
 
             newFlow = {
               id: crypto.randomUUID(),
               objective,
               objectiveDescription: description,
-              category,
-              days: Array.from({ length: 30 }, (_, i) => ({
-                day: i + 1,
-                title: `${['✨ Jour', '🌟 Jour', '💫 Jour', '🎯 Jour', '🔥 Jour', '⚡ Jour', '🌈 Jour', '💪 Jour', '🚀 Jour', '⭐ Jour'][i % 10]} ${i + 1}`,
-                mandatoryActions: [
-                  {
-                    id: 'mandatory-1',
-                    title: actions.m1[i % actions.m1.length],
-                    description: 'Action essentielle pour progresser vers ton objectif',
-                    icon: '🔥',
-                    isMandatory: true,
-                    isCompleted: false
-                  },
-                  {
-                    id: 'mandatory-2',
-                    title: actions.m2[i % actions.m2.length],
-                    description: 'Renforce tes bases et ta motivation quotidienne',
-                    icon: '💎',
-                    isMandatory: true,
-                    isCompleted: false
-                  }
-                ],
-                choiceActions: [
-                  {
-                    id: 'choice-a',
-                    title: actions.c1[i % actions.c1.length],
-                    description: 'Option qui enrichit ton parcours',
-                    icon: '🌟',
-                    isMandatory: false,
-                    isCompleted: false
-                  },
-                  {
-                    id: 'choice-b',
-                    title: actions.c2[i % actions.c2.length],
-                    description: 'Une approche complémentaire',
-                    icon: '💫',
-                    isMandatory: false,
-                    isCompleted: false
-                  },
-                  {
-                    id: 'choice-c',
-                    title: actions.c3[i % actions.c3.length],
-                    description: 'Pour te récompenser et avancer sereinement',
-                    icon: '✨',
-                    isMandatory: false,
-                    isCompleted: false
-                  }
-                ],
-                completed: false
-              })),
+              category: getActionForDay(1, 1).category,
+              days: Array.from({ length: 30 }, (_, i) => {
+                const day = i + 1;
+                const phase = Math.floor(day / 8) + 1; // Phase 1-4
+                const actions = getActionForDay(day, phase);
+                
+                // Titres progressifs selon la phase
+                const phaseEmojis = [
+                  ['🌱', '💧', '🌿', '🌸', '🌺', '🌻', '🌷', '🌹'], // Phase 1: Découverte
+                  ['🔥', '⚡', '💪', '🎯', '🚀', '⭐', '💫', '✨'], // Phase 2: Intensification
+                  ['👑', '🏆', '🎖️', '🥇', '💎', '🔮', '🌟', '⚜️'], // Phase 3: Maîtrise
+                  ['🦋', '🌈', '💐', '🎊', '🎉', '🌺', '✨', '👑']  // Phase 4: Transformation
+                ];
+                
+                const phaseTitles = [
+                  'Fondation', 'Exploration', 'Éveil', 'Prise de conscience',
+                  'Pratique', 'Expérimentation', 'Action', 'Défi',
+                  'Consolidation', 'Perfectionnement', 'Excellence', 'Maîtrise',
+                  'Intensification', 'Push', 'Transformation', 'Métamorphose',
+                  'Autonomie', 'Leadership', 'Rayonnement', 'Accomplissement',
+                  'Résilience', 'Persévérance', 'Dépassement', 'Victoire',
+                  'Célébration', 'Gratitude', 'Intégration', 'Vision'
+                ];
+                
+                const phaseIndex = Math.min(phase - 1, 3);
+                const emoji = phaseEmojis[phaseIndex][i % 8];
+                const titlePrefix = phaseTitles[i % phaseTitles.length];
+                
+                return {
+                  day,
+                  title: `${emoji} ${titlePrefix} - Jour ${day}`,
+                  mandatoryActions: [
+                    {
+                      id: 'mandatory-1',
+                      title: actions.m1.action,
+                      description: actions.m1.desc,
+                      icon: actions.m1.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '🔥',
+                      isMandatory: true,
+                      isCompleted: false
+                    },
+                    {
+                      id: 'mandatory-2',
+                      title: actions.m2.action,
+                      description: actions.m2.desc,
+                      icon: actions.m2.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '💎',
+                      isMandatory: true,
+                      isCompleted: false
+                    }
+                  ],
+                  choiceActions: [
+                    {
+                      id: 'choice-a',
+                      title: actions.c1.action,
+                      description: actions.c1.desc,
+                      icon: actions.c1.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '🌟',
+                      isMandatory: false,
+                      isCompleted: false
+                    },
+                    {
+                      id: 'choice-b',
+                      title: actions.c2.action,
+                      description: actions.c2.desc,
+                      icon: actions.c2.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '💫',
+                      isMandatory: false,
+                      isCompleted: false
+                    },
+                    {
+                      id: 'choice-c',
+                      title: actions.c3.action,
+                      description: actions.c3.desc,
+                      icon: actions.c3.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '✨',
+                      isMandatory: false,
+                      isCompleted: false
+                    }
+                  ],
+                  completed: false
+                };
+              }),
               currentDay: 1,
               completedDays: [],
               startDate: today,
@@ -1675,6 +2180,15 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             }
           });
         }
+      },
+
+      regenerateFlow: () => {
+        set({
+          personalizedFlow: null,
+          flowDescription: '',
+          isGeneratingFlow: false,
+          currentView: 'flow-description'
+        });
       }
     }),
     {

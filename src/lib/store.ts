@@ -1306,9 +1306,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
             // Liste des modèles à essayer par ordre de préférence
             const models = [
-              'deepseek/deepseek-r1-distill-llama-70b:free', // Souvent plus stable
-              'deepseek/deepseek-r1:free',                   // Modèle original
-              'google/gemini-2.0-flash-thinking-exp:free'    // Alternative performante (si disponible)
+              'tngtech/deepseek-r1t2-chimera:free',           // Premier choix
+              'arcee-ai/trinity-large-preview:free'          // Fallback si deepseek ne fonctionne pas
             ];
 
             let response;

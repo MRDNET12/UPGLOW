@@ -847,9 +847,8 @@ PROCESO OBLIGATORIO:
     try {
       // Liste des modèles
       const models = [
-        'deepseek/deepseek-r1-distill-llama-70b:free',
-        'deepseek/deepseek-r1:free',
-        'google/gemini-2.0-flash-thinking-exp:free'
+        'tngtech/deepseek-r1t2-chimera:free',
+        'arcee-ai/trinity-large-preview:free'
       ];
 
       let response;
@@ -1021,9 +1020,8 @@ PROCESO OBLIGATORIO:
 
     try {
       const models = [
-        'deepseek/deepseek-r1-distill-llama-70b:free',
-        'deepseek/deepseek-r1:free',
-        'google/gemini-2.0-flash-thinking-exp:free'
+        'tngtech/deepseek-r1t2-chimera:free',
+        'arcee-ai/trinity-large-preview:free'
       ];
 
       let response;

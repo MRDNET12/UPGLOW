@@ -864,7 +864,8 @@ PROCESO OBLIGATORIO:
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
               'HTTP-Referer': 'https://upglow.app',
-              'X-Title': 'UPGLOW Glow Mirror'
+              'X-Title': 'UPGLOW Glow Mirror',
+              'X-Data-Policy': 'standard'
             },
             body: JSON.stringify({
               model: model,
@@ -2479,11 +2480,11 @@ PROCESO OBLIGATORIO:
                           {language === 'fr' ? 'Ta Progression' : language === 'en' ? 'Your Progress' : 'Tu Progreso'}
                         </span>
                       </div>
-                      
+
                       <div className="text-4xl font-bold text-violet-800 mb-1">
                         {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
                       </div>
-                      
+
                       <div className="flex items-center gap-1 text-violet-600">
                         <span className="text-sm">
                           {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
@@ -2740,31 +2741,55 @@ PROCESO OBLIGATORIO:
             <div className="grid grid-cols-2 gap-2">
               {/* Carte Mes Habitudes - Grande carte à gauche */}
               <Card
-                className="row-span-2 border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden"
+                className="row-span-2 border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative"
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
-                <CardContent className="p-3 h-full flex flex-col justify-between">
+                <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
                   {/* Header */}
-                  <div className="mb-2">
-                    <h3 className="text-sm font-bold text-gray-800 mb-0.5">
-                      {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
-                    </h3>
-                    <p className="text-[10px] text-gray-500 leading-tight">
-                      {language === 'fr' ? 'Tout ce dont vous avez besoin pour rester productif' : language === 'en' ? 'Everything you need to stay productive' : 'Todo lo que necesitas para mantenerte productivo'}
-                    </p>
-                  </div>
-
-                  {/* Image/Mascotte */}
-                  <div className="flex-1 flex items-center justify-center my-1">
-                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
-                      <span className="text-4xl">🧘‍♀️</span>
+                  <div className="flex items-start gap-2">
+                    <div className="p-1.5 bg-white/20 rounded-full backdrop-blur-sm">
+                      <span className="text-lg">🧘‍♀️</span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-0.5">
+                        {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
+                      </h3>
                     </div>
                   </div>
 
-                  {/* Bouton */}
-                  <button className="w-full bg-gray-900 text-white text-xs font-semibold py-2 px-4 rounded-full hover:bg-gray-800 transition-colors mt-1">
-                    {language === 'fr' ? 'Commencer' : language === 'en' ? 'Get Started' : 'Empezar'}
-                  </button>
+                  {/* Bar Chart Visualization */}
+                  <div className="flex items-end justify-between gap-1 h-20 mt-2">
+                    {[65, 45, 75, 55, 85, 60, 90].map((h, i) => (
+                      <div key={i} className="w-2 bg-white/30 rounded-full h-full relative overflow-hidden">
+                        <div
+                          className="absolute bottom-0 left-0 w-full bg-white rounded-full transition-all duration-1000"
+                          style={{ height: `${h}%` }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer Stats */}
+                  <div className="mt-1">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-bold">
+                        {(() => {
+                          const completedNewMe = newMeHabits.filter(h => h.completed).length;
+                          const completedCustom = customHabits.filter(h => {
+                            const today = getLocalDateString();
+                            const tracker = trackers.find(t => t.date === today);
+                            return tracker?.habits?.[h.id] || false;
+                          }).length;
+                          const totalCount = newMeHabits.length + customHabits.length;
+                          return totalCount > 0 ? Math.round(((completedNewMe + completedCustom) / totalCount) * 100) : 0;
+                        })()}
+                        <span className="text-xl">%</span>
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-blue-100 opacity-80">
+                      {language === 'fr' ? 'Complété' : language === 'en' ? 'Completed' : 'Completado'}
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -2772,40 +2797,40 @@ PROCESO OBLIGATORIO:
               <div className="flex flex-col gap-2">
                 {/* Carte Ma Semaine */}
                 <Card
-                  className="row-span-2 border-none shadow-lg bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden h-full"
+                  className="row-span-2 border-none shadow-lg bg-[#facc15] text-amber-950 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden h-full relative"
                   onClick={() => setCurrentView('routine')}
                 >
-                  <CardContent className="p-3 h-full flex flex-col justify-between">
-                    {/* Header avec icône */}
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="text-xs font-bold text-gray-800">
+                  {/* Wave Background */}
+                  <div className="absolute bottom-0 left-0 right-0 h-24 opacity-40 pointer-events-none">
+                    <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
+                      <path fill="#ca8a04" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,160C960,139,1056,149,1152,160C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                    </svg>
+                  </div>
+
+                  <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
+                    {/* Header */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-black/10 rounded-full">
+                        <Calendar className="w-4 h-4 text-amber-900" />
+                      </div>
+                      <h3 className="text-sm font-bold text-amber-900">
                         {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
                       </h3>
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Calendar className="w-3 h-3 text-gray-600" />
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex-1 flex items-end mb-2">
+                      <div>
+                        <p className="text-4xl font-bold text-amber-950">
+                          {(() => {
+                            const weekDates = getWeekDates(0);
+                            return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
+                          })()}
+                          <span className="text-sm ml-1 text-amber-900/60 font-medium">
+                            {language === 'fr' ? 'tâches' : language === 'en' ? 'tasks' : 'tareas'}
+                          </span>
+                        </p>
                       </div>
-                    </div>
-
-                    {/* Valeur principale */}
-                    <div className="mb-1">
-                      <p className="text-xl font-bold text-gray-800">
-                        {(() => {
-                          const weekDates = getWeekDates(0); // Semaine actuelle
-                          return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
-                        })()}
-                      </p>
-                      <p className="text-[10px] text-gray-400">tâches</p>
-                    </div>
-
-                    {/* Indicateur */}
-                    <div className="flex items-center gap-1">
-                      <Check className="w-3 h-3 text-emerald-500" />
-                      <span className="text-[10px] text-gray-600">
-                        {(() => {
-                          const weekDates = getWeekDates(0); // Semaine actuelle
-                          return tasksWithDates.filter(t => t.completed && weekDates.includes(t.date)).length;
-                        })()} {language === 'fr' ? 'complétées' : 'completed'}
-                      </span>
                     </div>
                   </CardContent>
                 </Card>

@@ -1450,7 +1450,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 mandatoryActions: [
                   {
                     id: 'mandatory-1',
-                    title: `${day.mandatory1?.icon || '✨'} ${day.mandatory1?.title || 'Action 1'}`,
+                    title: day.mandatory1?.title || 'Action 1',
                     description: day.mandatory1?.description || '',
                     icon: day.mandatory1?.icon || '✨',
                     isMandatory: true,
@@ -1458,7 +1458,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   },
                   {
                     id: 'mandatory-2',
-                    title: `${day.mandatory2?.icon || '🎯'} ${day.mandatory2?.title || 'Action 2'}`,
+                    title: day.mandatory2?.title || 'Action 2',
                     description: day.mandatory2?.description || '',
                     icon: day.mandatory2?.icon || '🎯',
                     isMandatory: true,
@@ -1468,7 +1468,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 choiceActions: [
                   {
                     id: 'choice-a',
-                    title: `${day.choiceOptions?.optionA?.icon || '🔸'} ${day.choiceOptions?.optionA?.title || 'Option A'}`,
+                    title: day.choiceOptions?.optionA?.title || 'Option A',
                     description: day.choiceOptions?.optionA?.description || '',
                     icon: day.choiceOptions?.optionA?.icon || '🔸',
                     isMandatory: false,
@@ -1476,7 +1476,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   },
                   {
                     id: 'choice-b',
-                    title: `${day.choiceOptions?.optionB?.icon || '🔹'} ${day.choiceOptions?.optionB?.title || 'Option B'}`,
+                    title: day.choiceOptions?.optionB?.title || 'Option B',
                     description: day.choiceOptions?.optionB?.description || '',
                     icon: day.choiceOptions?.optionB?.icon || '🔹',
                     isMandatory: false,
@@ -1484,7 +1484,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   },
                   {
                     id: 'choice-c',
-                    title: `${day.choiceOptions?.optionC?.icon || '🔺'} ${day.choiceOptions?.optionC?.title || 'Option C'}`,
+                    title: day.choiceOptions?.optionC?.title || 'Option C',
                     description: day.choiceOptions?.optionC?.description || '',
                     icon: day.choiceOptions?.optionC?.icon || '🔺',
                     isMandatory: false,
@@ -2097,7 +2097,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   mandatoryActions: [
                     {
                       id: 'mandatory-1',
-                      title: actions.m1.action,
+                      title: actions.m1.action.replace(/^[\u{1F300}-\u{1F9FF}]\s*/u, ''),
                       description: actions.m1.desc,
                       icon: actions.m1.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '🔥',
                       isMandatory: true,
@@ -2105,7 +2105,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                     },
                     {
                       id: 'mandatory-2',
-                      title: actions.m2.action,
+                      title: actions.m2.action.replace(/^[\u{1F300}-\u{1F9FF}]\s*/u, ''),
                       description: actions.m2.desc,
                       icon: actions.m2.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '💎',
                       isMandatory: true,
@@ -2115,7 +2115,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   choiceActions: [
                     {
                       id: 'choice-a',
-                      title: actions.c1.action,
+                      title: actions.c1.action.replace(/^[\u{1F300}-\u{1F9FF}]\s*/u, ''),
                       description: actions.c1.desc,
                       icon: actions.c1.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '🌟',
                       isMandatory: false,
@@ -2123,7 +2123,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                     },
                     {
                       id: 'choice-b',
-                      title: actions.c2.action,
+                      title: actions.c2.action.replace(/^[\u{1F300}-\u{1F9FF}]\s*/u, ''),
                       description: actions.c2.desc,
                       icon: actions.c2.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '💫',
                       isMandatory: false,
@@ -2131,7 +2131,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                     },
                     {
                       id: 'choice-c',
-                      title: actions.c3.action,
+                      title: actions.c3.action.replace(/^[\u{1F300}-\u{1F9FF}]\s*/u, ''),
                       description: actions.c3.desc,
                       icon: actions.c3.action.match(/^[\u{1F300}-\u{1F9FF}]/u)?.[0] || '✨',
                       isMandatory: false,

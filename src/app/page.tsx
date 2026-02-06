@@ -849,7 +849,7 @@ PROCESO OBLIGATORIO:
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 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',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
           'HTTP-Referer': 'https://upglow.app',
           'X-Title': 'UPGLOW Glow Mirror'
         },
@@ -999,7 +999,7 @@ PROCESO OBLIGATORIO:
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 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',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
           'HTTP-Referer': 'https://upglow.app',
           'X-Title': 'UPGLOW Glow Mirror'
         },

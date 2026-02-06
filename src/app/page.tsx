@@ -2452,10 +2452,10 @@ PROCESO OBLIGATORIO:
               </button>
             </div>
 
-            {/* Carte Flow Personnalisé - Affichée pour tous les utilisateurs */}
+            {/* Carte Flow Personnalisé - Design moderne style capture */}
             <Card
-              className={`border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-[2rem] overflow-hidden relative ${personalizedFlow?.isActive
-                ? 'bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50'
+              className={`border-none shadow-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-3xl overflow-hidden relative ${personalizedFlow?.isActive
+                ? 'bg-gradient-to-br from-violet-200 via-purple-100 to-indigo-50'
                 : 'bg-gradient-to-br from-gray-100 via-gray-50 to-white border-2 border-dashed border-gray-300'
                 }`}
               onClick={() => {
@@ -2466,54 +2466,87 @@ PROCESO OBLIGATORIO:
                 }
               }}
             >
-              <CardContent className="p-4 relative z-10">
-                <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
-                  {personalizedFlow?.isActive ? '✨' : '🌟'}
-                </div>
-
-                <div className="mb-2">
-                  {personalizedFlow?.isActive ? (
-                    <>
-                      <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/60 backdrop-blur-sm mb-1.5">
-                        <span className="text-xs font-bold text-pink-600">
-                          {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {personalizedFlow.currentDay}/30
+              <CardContent className="p-5 relative z-10">
+                {personalizedFlow?.isActive ? (
+                  <div className="flex items-center justify-between">
+                    {/* Partie gauche - Info */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-xl bg-white/40 flex items-center justify-center">
+                          <TrendingUp className="w-4 h-4 text-violet-600" />
+                        </div>
+                        <span className="text-sm font-medium text-violet-700">
+                          {language === 'fr' ? 'Ta Progression' : language === 'en' ? 'Your Progress' : 'Tu Progreso'}
                         </span>
                       </div>
-                      <h2 className="text-lg font-bold text-gray-800 mb-1 pr-14 line-clamp-2">
-                        {personalizedFlow.objective}
-                      </h2>
-                      <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-pink-300/50">
-                        {language === 'fr' ? 'Mon Flow' : language === 'en' ? 'My Flow' : 'Mi Flow'}
-                      </Badge>
-                    </>
-                  ) : (
-                    <>
-                      <h2 className="text-lg font-bold text-gray-800 mb-2">
-                        {language === 'fr' ? 'Crée ton Flow personnalisé' : language === 'en' ? 'Create your personalized Flow' : 'Crea tu Flow personalizado'}
-                      </h2>
-                      <p className="text-xs text-gray-600 mb-2">
-                        {language === 'fr' ? 'Atteindre ses objectifs et ses rêves est le souhait de beaucoup. Les petites actions font la différence.' : language === 'en' ? 'Reaching your goals and dreams is the wish of many. Small actions make the difference.' : 'Alcanzar tus objetivos y sueños es el deseo de muchos. Las pequeñas acciones marcan la diferencia.'}
-                      </p>
-                      <Badge className="bg-gray-200 text-gray-600 text-[10px] px-2.5 py-0.5 rounded-full border-0">
-                        {language === 'fr' ? 'Clique pour commencer' : language === 'en' ? 'Click to start' : 'Haz clic para comenzar'}
-                      </Badge>
-                    </>
-                  )}
-                </div>
-
-                {personalizedFlow?.isActive && (
-                  <div className="space-y-1.5 mt-2">
-                    <div className="flex items-center justify-between text-xs text-gray-700">
-                      <span className="font-medium">{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
-                      <span className="font-bold text-pink-600">
+                      
+                      <div className="text-4xl font-bold text-violet-800 mb-1">
                         {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
-                      </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-1 text-violet-600">
+                        <span className="text-sm">
+                          {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
+                        </span>
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
                     </div>
-                    <div className="h-1.5 bg-white/60 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full transition-all duration-500 shadow-lg"
-                        style={{ width: `${(personalizedFlow.completedDays.length / 30) * 100}%` }}
-                      />
+
+                    {/* Partie droite - Cercle de progression */}
+                    <div className="relative w-24 h-24 flex-shrink-0">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="42"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.4)"
+                          strokeWidth="8"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="42"
+                          fill="none"
+                          stroke="url(#flowGradient)"
+                          strokeWidth="8"
+                          strokeLinecap="round"
+                          strokeDasharray={`${(personalizedFlow.completedDays.length / 30) * 264} 264`}
+                          className="transition-all duration-1000"
+                        />
+                        <defs>
+                          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#8B5CF6" />
+                            <stop offset="100%" stopColor="#EC4899" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl">🔥</span>
+                        <span className="text-sm font-bold text-violet-800">
+                          {personalizedFlow.completedDays.length}
+                        </span>
+                        <span className="text-[10px] text-violet-600">
+                          {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-200 to-purple-300 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-7 h-7 text-violet-700" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-lg font-bold text-gray-800 mb-1">
+                        {language === 'fr' ? 'Crée ton Flow' : language === 'en' ? 'Create your Flow' : 'Crea tu Flow'}
+                      </h2>
+                      <p className="text-xs text-gray-600">
+                        {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 días para transformar tus objetivos en hábitos'}
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center">
+                      <ChevronRight className="w-5 h-5 text-violet-600" />
                     </div>
                   </div>
                 )}

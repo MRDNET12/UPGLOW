@@ -495,7 +495,7 @@ export default function GlowUpChallengeApp() {
     const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
     const getDataForPeriod = (startDate: Date, endDate: Date) => {
-      const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+      const smallWins = bonusProgress?.smallWins || [];
       const journalEntriesData = JSON.parse(localStorage.getItem('journalEntries') || '[]');
       const weekTasks = JSON.parse(localStorage.getItem('weekTasks') || '[]');
       const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
@@ -570,7 +570,7 @@ export default function GlowUpChallengeApp() {
     const now = new Date();
 
     // Collecter toutes les données
-    const smallWins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+    const smallWins = bonusProgress?.smallWins || [];
     const recentWins = smallWins.filter((win: any) => {
       const winDate = new Date(win.date);
       const daysDiff = Math.floor((now.getTime() - winDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -2583,7 +2583,7 @@ PROCESO OBLIGATORIO:
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white border-2 border-pink-400 flex items-center justify-center text-sm font-bold text-pink-600">
                         {(() => {
                           const today = new Date().toISOString().split('T')[0];
-                          const wins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+                          const wins = bonusProgress?.smallWins || [];
                           let streak = 0;
                           let checkDate = new Date();
                           while (true) {
@@ -2629,7 +2629,7 @@ PROCESO OBLIGATORIO:
                     checkDate.setDate(today.getDate() + diff);
                     const dateStr = checkDate.toISOString().split('T')[0];
                     const dayNumber = checkDate.getDate();
-                    const wins = JSON.parse(localStorage.getItem('smallWins') || '[]');
+                    const wins = bonusProgress?.smallWins || [];
                     const hasWin = wins.some((w: any) => w.date === dateStr);
                     const isToday = diff === 0;
 

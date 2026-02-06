@@ -2749,7 +2749,7 @@ PROCESO OBLIGATORIO:
                   {/* Header */}
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
-                      <span className="text-xl">🧘‍♀️</span>
+                      <Target className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-white mb-0.5">
@@ -2759,7 +2759,7 @@ PROCESO OBLIGATORIO:
                   </div>
 
                   {/* Bar Chart Visualization - Fixed Display */}
-                  <div className="flex items-end justify-between gap-2 h-24 mt-2 px-2">
+                  <div className="flex items-end justify-between gap-2 h-16 mt-2 px-2">
                     {[65, 45, 75, 55, 85, 60, 90].map((h, i) => (
                       <div key={i} className="flex-1 max-w-[12px] bg-blue-400/30 rounded-full h-full relative overflow-hidden flex flex-col justify-end">
                         <div

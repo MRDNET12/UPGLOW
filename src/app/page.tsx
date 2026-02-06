@@ -2758,12 +2758,12 @@ PROCESO OBLIGATORIO:
                     </div>
                   </div>
 
-                  {/* Bar Chart Visualization - Fixed Display */}
-                  <div className="flex items-end justify-between gap-2 h-16 mt-2 px-2">
+                  {/* Bar Chart Visualization - Fixed Display with Grid */}
+                  <div className="grid grid-cols-7 gap-2 h-16 mt-4 items-end px-2 w-full">
                     {[65, 45, 75, 55, 85, 60, 90].map((h, i) => (
-                      <div key={i} className="flex-1 max-w-[12px] bg-blue-400/30 rounded-full h-full relative overflow-hidden flex flex-col justify-end">
+                      <div key={i} className="w-full bg-black/10 rounded-full h-full relative overflow-hidden">
                         <div
-                          className="w-full bg-white rounded-full transition-all duration-1000 shadow-sm"
+                          className="absolute bottom-0 left-0 w-full bg-white rounded-full transition-all duration-1000"
                           style={{ height: `${h}%` }}
                         />
                       </div>

@@ -2738,10 +2738,11 @@ PROCESO OBLIGATORIO:
             <SmallWinsCompact theme={theme} />
 
             {/* Grille de cartes - Layout moderne compact */}
-            <div className="grid grid-cols-2 gap-2">
+            {/* Grille de cartes - Layout moderne compact */}
+            <div className="grid grid-cols-2 gap-3">
               {/* Carte Mes Habitudes - Grande carte à gauche */}
               <Card
-                className="row-span-2 border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative"
+                className="border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
                 <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
@@ -2793,48 +2794,45 @@ PROCESO OBLIGATORIO:
                 </CardContent>
               </Card>
 
-              {/* Colonne droite - 2 cartes empilées */}
-              <div className="flex flex-col gap-2">
-                {/* Carte Ma Semaine */}
-                <Card
-                  className="row-span-2 border-none shadow-lg bg-[#facc15] text-amber-950 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden h-full relative"
-                  onClick={() => setCurrentView('routine')}
-                >
-                  {/* Wave Background */}
-                  <div className="absolute bottom-0 left-0 right-0 h-24 opacity-40 pointer-events-none">
-                    <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
-                      <path fill="#ca8a04" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,160C960,139,1056,149,1152,160C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-                    </svg>
+              {/* Carte Ma Semaine */}
+              <Card
+                className="border-none shadow-lg bg-[#facc15] text-amber-950 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
+                onClick={() => setCurrentView('routine')}
+              >
+                {/* Wave Background */}
+                <div className="absolute bottom-0 left-0 right-0 h-24 opacity-40 pointer-events-none">
+                  <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
+                    <path fill="#ca8a04" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,160C960,139,1056,149,1152,160C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                  </svg>
+                </div>
+
+                <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-black/10 rounded-full">
+                      <Calendar className="w-4 h-4 text-amber-900" />
+                    </div>
+                    <h3 className="text-sm font-bold text-amber-900">
+                      {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                    </h3>
                   </div>
 
-                  <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="p-1.5 bg-black/10 rounded-full">
-                        <Calendar className="w-4 h-4 text-amber-900" />
-                      </div>
-                      <h3 className="text-sm font-bold text-amber-900">
-                        {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
-                      </h3>
+                  {/* Stats */}
+                  <div className="flex-1 flex items-end mb-2">
+                    <div>
+                      <p className="text-4xl font-bold text-amber-950">
+                        {(() => {
+                          const weekDates = getWeekDates(0);
+                          return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
+                        })()}
+                        <span className="text-sm ml-1 text-amber-900/60 font-medium">
+                          {language === 'fr' ? 'tâches' : language === 'en' ? 'tasks' : 'tareas'}
+                        </span>
+                      </p>
                     </div>
-
-                    {/* Stats */}
-                    <div className="flex-1 flex items-end mb-2">
-                      <div>
-                        <p className="text-4xl font-bold text-amber-950">
-                          {(() => {
-                            const weekDates = getWeekDates(0);
-                            return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
-                          })()}
-                          <span className="text-sm ml-1 text-amber-900/60 font-medium">
-                            {language === 'fr' ? 'tâches' : language === 'en' ? 'tasks' : 'tareas'}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Carte Glow Up (Bonus) - MASQUÉE */}

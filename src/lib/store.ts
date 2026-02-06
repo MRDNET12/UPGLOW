@@ -1308,7 +1308,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer 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',
+                'Authorization': 'Bearer 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',
                 'HTTP-Referer': 'https://upglow.app',
                 'X-Title': 'UPGLOW Flow Generator'
               },

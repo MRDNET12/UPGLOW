@@ -43,7 +43,14 @@ export function useInstallTracking() {
             isPWA
           });
         }
-      } catch (error) {
+      } catch (error: any) {
+        // Ignorer silencieusement les erreurs de permission Firestore
+        // L'utilisateur n'est pas connecté ou les règles de sécurité bloquent l'accès
+        if (error?.code === 'permission-denied' || 
+            error?.message?.includes('Missing or insufficient permissions')) {
+          // Ne rien afficher - c'est normal si l'utilisateur n'est pas connecté
+          return;
+        }
         console.error('[Install Tracking] Error:', error);
       }
     };

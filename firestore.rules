@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permettre l'accès en lecture/écriture pour le développement
+    // ⚠️ À restreindre en production !
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Collection installs - accessible uniquement aux utilisateurs authentifiés
+    match /installs/{installId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Collection users - accessible uniquement aux utilisateurs authentifiés
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Collection goals - accessible uniquement aux utilisateurs authentifiés
+    match /goals/{goalId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Collection tasks - accessible uniquement aux utilisateurs authentifiés
+    match /tasks/{taskId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Collection user_data - accessible uniquement aux propriétaires
+    match /user_data/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

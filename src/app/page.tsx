@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2 } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -2453,12 +2453,9 @@ PROCESO OBLIGATORIO:
               </button>
             </div>
 
-            {/* Carte Flow Personnalisé - Design moderne style capture */}
+            {/* Carte Flow Personnalisé - Style "A series of Olympiads" (Purple + Trophy) */}
             <Card
-              className={`border-none shadow-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] rounded-3xl overflow-hidden relative ${personalizedFlow?.isActive
-                ? 'bg-gradient-to-br from-violet-200 via-purple-100 to-indigo-50'
-                : 'bg-gradient-to-br from-gray-100 via-gray-50 to-white border-2 border-dashed border-gray-300'
-                }`}
+              className="border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative min-h-[220px] group"
               onClick={() => {
                 if (personalizedFlow?.isActive) {
                   setCurrentView('flow-challenge');
@@ -2467,87 +2464,90 @@ PROCESO OBLIGATORIO:
                 }
               }}
             >
-              <CardContent className="p-5 relative z-10">
+              {/* Background Stars/Decorations */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-4 right-1/3 text-yellow-300 text-xl animate-pulse">✨</div>
+                <div className="absolute bottom-8 right-8 text-yellow-200 text-sm">✦</div>
+                <div className="absolute top-1/2 left-1/2 text-purple-300/30 text-4xl">★</div>
+                <div className="absolute top-6 left-6 text-yellow-300/50 text-xs">✦</div>
+              </div>
+
+              <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
                 {personalizedFlow?.isActive ? (
-                  <div className="flex items-center justify-between">
-                    {/* Partie gauche - Info */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-xl bg-white/40 flex items-center justify-center">
-                          <TrendingUp className="w-4 h-4 text-violet-600" />
+                  /* Active State - Adapted to Purple Theme */
+                  <div className="flex items-center justify-between h-full">
+                    <div className="flex-1 z-10">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+                          <TrendingUp className="w-5 h-5 text-white" />
                         </div>
-                        <span className="text-sm font-medium text-violet-700">
-                          {language === 'fr' ? 'Ta Progression' : language === 'en' ? 'Your Progress' : 'Tu Progreso'}
+                        <span className="text-sm font-bold text-purple-100 tracking-wide">
+                          {language === 'fr' ? 'TA PROGRESSION' : language === 'en' ? 'YOUR PROGRESS' : 'TU PROGRESO'}
                         </span>
                       </div>
 
-                      <div className="text-4xl font-bold text-violet-800 mb-1">
+                      <div className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-sm">
                         {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
                       </div>
 
-                      <div className="flex items-center gap-1 text-violet-600">
-                        <span className="text-sm">
+                      <div className="flex items-center gap-2 text-purple-200 text-sm font-medium bg-black/10 w-fit px-3 py-1 rounded-full">
+                        <span>
                           {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
                         </span>
-                        <ChevronDown className="w-4 h-4" />
                       </div>
                     </div>
 
-                    {/* Partie droite - Cercle de progression */}
-                    <div className="relative w-24 h-24 flex-shrink-0">
+                    {/* Progress Ring - White/Purple Theme */}
+                    <div className="relative w-28 h-28 flex-shrink-0">
                       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
                         <circle
-                          cx="50"
-                          cy="50"
-                          r="42"
-                          fill="none"
-                          stroke="rgba(255,255,255,0.4)"
-                          strokeWidth="8"
-                        />
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="42"
-                          fill="none"
-                          stroke="url(#flowGradient)"
-                          strokeWidth="8"
+                          cx="50" cy="50" r="42" fill="none" stroke="#fbbf24" strokeWidth="8"
                           strokeLinecap="round"
                           strokeDasharray={`${(personalizedFlow.completedDays.length / 30) * 264} 264`}
-                          className="transition-all duration-1000"
+                          className="transition-all duration-1000 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
                         />
-                        <defs>
-                          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#8B5CF6" />
-                            <stop offset="100%" stopColor="#EC4899" />
-                          </linearGradient>
-                        </defs>
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
                         <span className="text-2xl">🔥</span>
-                        <span className="text-sm font-bold text-violet-800">
-                          {personalizedFlow.completedDays.length}
-                        </span>
-                        <span className="text-[10px] text-violet-600">
-                          {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
-                        </span>
+                        <span className="text-sm font-bold text-white">{personalizedFlow.completedDays.length}j</span>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-200 to-purple-300 flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="w-7 h-7 text-violet-700" />
+                  /* Inactive State - The "Olympiad" Style */
+                  <div className="relative h-full flex flex-col justify-center">
+                    {/* CSS Trophy Illustration */}
+                    <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 transform scale-110 rotate-3 pointer-events-none group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
+                      <div className="relative w-32 h-32 flex items-center justify-center">
+                        {/* Cup Handles */}
+                        <div className="absolute top-8 left-0 w-32 h-16 border-4 border-indigo-400 rounded-full z-0"></div>
+                        {/* Cup Body */}
+                        <div className="relative z-10 w-20 h-20 bg-gradient-to-b from-yellow-300 to-amber-400 rounded-b-full shadow-lg border-t-4 border-yellow-200 flex items-center justify-center">
+                          <div className="text-amber-600 opacity-50 transform rotate-12">★</div>
+                          {/* Shine */}
+                          <div className="absolute top-2 right-4 w-3 h-8 bg-white/30 rounded-full transform rotate-12"></div>
+                        </div>
+                        {/* Cup Stem */}
+                        <div className="absolute bottom-8 w-4 h-6 bg-amber-500 z-0"></div>
+                        <div className="absolute bottom-10 w-6 h-2 bg-amber-600 z-10 rounded-full"></div>
+                        {/* Base */}
+                        <div className="absolute bottom-4 w-16 h-6 bg-amber-500 rounded-full shadow-md z-10 border-b-4 border-amber-600"></div>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h2 className="text-lg font-bold text-gray-800 mb-1">
-                        {language === 'fr' ? 'Crée ton Flow' : language === 'en' ? 'Create your Flow' : 'Crea tu Flow'}
+
+                    <div className="z-20 max-w-[65%]">
+                      <h2 className="text-3xl font-black text-white leading-none mb-3 drop-shadow-md">
+                        {language === 'fr' ? 'Crée ton\nFlow' : language === 'en' ? 'Create your\nFlow' : 'Crea tu\nFlow'}
                       </h2>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-sm font-medium text-purple-100 mb-6 leading-relaxed">
                         {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 días para transformar tus objetivos en hábitos'}
                       </p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center">
-                      <ChevronRight className="w-5 h-5 text-violet-600" />
+
+                      {/* Circular Button */}
+                      <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center shadow-lg group-hover:bg-black transition-colors">
+                        <ArrowRight className="w-5 h-5 text-white" />
+                      </div>
                     </div>
                   </div>
                 )}

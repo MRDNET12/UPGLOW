@@ -296,7 +296,7 @@ interface AppState {
   toggleFlowAction: (day: number, actionId: string) => void;
   selectFlowChoice: (day: number, choiceId: string) => void;
   generatePersonalizedFlow: (objective: string, description: string) => Promise<void>;
-      unlockBadge: (badgeId: string) => void;
+  unlockBadge: (badgeId: string) => void;
 
   // Flow regeneration
   regenerateFlow: () => void;
@@ -1304,30 +1304,66 @@ Génère maintenant les 30 jours au format JSON suivant :
 GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
 
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
-                'HTTP-Referer': 'https://upglow.app',
-                'X-Title': 'UPGLOW Flow Generator'
-              },
-              body: JSON.stringify({
-                model: 'deepseek/deepseek-r1:free',
-                messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: userPrompt }
-                ],
-                temperature: 0.4,           // ⬇️ Réduit de 0.8 à 0.4 pour plus de cohérence
-                max_tokens: 10000,          // ⬆️ Augmenté de 4000 à 10000 pour raisonnement complet
-                top_p: 0.9,                 // ➕ Ajout pour meilleure qualité
-                frequency_penalty: 0.3      // ➕ Réduit les répétitions
-              })
-            });
+            // Liste des modèles à essayer par ordre de préférence
+            const models = [
+              'deepseek/deepseek-r1-distill-llama-70b:free', // Souvent plus stable
+              'deepseek/deepseek-r1:free',                   // Modèle original
+              'google/gemini-2.0-flash-thinking-exp:free'    // Alternative performante (si disponible)
+            ];
 
-            if (!response.ok) {
-              console.error('[API Error]', response.status, response.statusText);
-              throw new Error(`API Error: ${response.status}`);
+            let response;
+            let usedModel;
+            let lastError;
+
+            // Essayer les modèles séquentiellement
+            for (const model of models) {
+              try {
+                console.log(`[Flow Generation] Trying model: ${model}`);
+                usedModel = model;
+
+                response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+                    'HTTP-Referer': 'https://upglow.app',
+                    'X-Title': 'UPGLOW Flow Generator'
+                  },
+                  body: JSON.stringify({
+                    model: model,
+                    messages: [
+                      { role: 'system', content: systemPrompt },
+                      { role: 'user', content: userPrompt }
+                    ],
+                    temperature: 0.6,
+                    max_tokens: 10000,
+                    top_p: 0.9,
+                    frequency_penalty: 0.3
+                  })
+                });
+
+                if (response.ok) {
+                  break; // Succès !
+                }
+
+                // Si erreur 404 (modèle introuvable) ou 5xx (serveur), on continue
+                const errorBody = await response.text();
+                console.warn(`[API Error] Model ${model} failed: ${response.status} - ${errorBody}`);
+                lastError = `API Error: ${response.status} - ${errorBody}`;
+
+                // Si c'est une 401 (Auth), pas la peine de réessayer
+                if (response.status === 401) {
+                  throw new Error('Invalid API Key');
+                }
+              } catch (e) {
+                console.warn(`[Flow Generation] Error with model ${model}:`, e);
+                lastError = e instanceof Error ? e.message : String(e);
+              }
+            }
+
+            if (!response || !response.ok) {
+              console.error('[API Error] All models failed. Last error:', lastError);
+              throw new Error(lastError || 'All models failed');
             }
 
             const data = await response.json();
@@ -1541,10 +1577,10 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             const getActionsByCategory = (objective: string, description: string) => {
               const objectiveLower = objective.toLowerCase();
               const descLower = description.toLowerCase();
-              
+
               // Détection fine de la catégorie
               let category = 'bien-etre';
-              
+
               if (objectiveLower.includes('argent') || objectiveLower.includes('€') || objectiveLower.includes('business') || objectiveLower.includes('entreprise') || objectiveLower.includes('revenu') || objectiveLower.includes('salaire') || objectiveLower.includes('finance') || objectiveLower.includes('investir') || descLower.includes('entreprendre') || descLower.includes('startup')) {
                 category = 'finance';
               } else if (objectiveLower.includes('confiance') || objectiveLower.includes('estime') || objectiveLower.includes('anxieux') || objectiveLower.includes('peur') || objectiveLower.includes('stress') || objectiveLower.includes('timidité') || objectiveLower.includes('introverti') || objectiveLower.includes('anxiété') || descLower.includes('confiance en soi')) {
@@ -1566,13 +1602,13 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               } else if (objectiveLower.includes('alimentation') || objectiveLower.includes('manger') || objectiveLower.includes('régime') || objectiveLower.includes('nutrition') || objectiveLower.includes('repas') || objectiveLower.includes('cuisiner') || descLower.includes('manger') || descLower.includes('alimentation')) {
                 category = 'alimentation';
               }
-              
+
               // Fonction de mélange aléatoire avec graine
               const seededRandom = (seed: number) => {
                 const x = Math.sin(seed) * 10000;
                 return x - Math.floor(x);
               };
-              
+
               // Fonction pour mélanger un tableau avec graine
               const seededShuffle = (array: string[], seed: number) => {
                 const shuffled = [...array];
@@ -1582,7 +1618,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 }
                 return shuffled;
               };
-              
+
               // Données contextuelles pour personnaliser les descriptions
               const getContextualAction = (day: number, phase: number) => {
                 const contexts = {
@@ -2027,9 +2063,9 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                     ]
                   }
                 };
-                
+
                 const catActions = contexts[category as keyof typeof contexts] || contexts['bien-etre'];
-                
+
                 // Mélanger les actions pour chaque phase avec une graine différente
                 const seed = day * 1000 + (objective.length % 100);
                 const shuffledM1 = seededShuffle(catActions.m1.map(a => a.action), seed);
@@ -2037,13 +2073,13 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 const shuffledC1 = seededShuffle(catActions.c1.map(a => a.action), seed + 2);
                 const shuffledC2 = seededShuffle(catActions.c2.map(a => a.action), seed + 3);
                 const shuffledC3 = seededShuffle(catActions.c3.map(a => a.action), seed + 4);
-                
+
                 // Obtenir la description contextuelle
                 const getDesc = (actionList: typeof catActions.m1, action: string) => {
                   const found = actionList.find(a => a.action === action);
                   return found?.desc || 'Action pour progresser vers ton objectif';
                 };
-                
+
                 return {
                   category,
                   m1: { action: shuffledM1[day % shuffledM1.length], desc: getDesc(catActions.m1, shuffledM1[day % shuffledM1.length]) },
@@ -2053,7 +2089,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   c3: { action: shuffledC3[day % shuffledC3.length], desc: getDesc(catActions.c3, shuffledC3[day % shuffledC3.length]) }
                 };
               };
-              
+
               return getContextualAction;
             };
 
@@ -2068,7 +2104,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 const day = i + 1;
                 const phase = Math.floor(day / 8) + 1; // Phase 1-4
                 const actions = getActionForDay(day, phase);
-                
+
                 // Titres progressifs selon la phase
                 const phaseEmojis = [
                   ['🌱', '💧', '🌿', '🌸', '🌺', '🌻', '🌷', '🌹'], // Phase 1: Découverte
@@ -2076,7 +2112,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   ['👑', '🏆', '🎖️', '🥇', '💎', '🔮', '🌟', '⚜️'], // Phase 3: Maîtrise
                   ['🦋', '🌈', '💐', '🎊', '🎉', '🌺', '✨', '👑']  // Phase 4: Transformation
                 ];
-                
+
                 const phaseTitles = [
                   'Fondation', 'Exploration', 'Éveil', 'Prise de conscience',
                   'Pratique', 'Expérimentation', 'Action', 'Défi',
@@ -2086,11 +2122,11 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   'Résilience', 'Persévérance', 'Dépassement', 'Victoire',
                   'Célébration', 'Gratitude', 'Intégration', 'Vision'
                 ];
-                
+
                 const phaseIndex = Math.min(phase - 1, 3);
                 const emoji = phaseEmojis[phaseIndex][i % 8];
                 const titlePrefix = phaseTitles[i % phaseTitles.length];
-                
+
                 return {
                   day,
                   title: `${emoji} ${titlePrefix} - Jour ${day}`,

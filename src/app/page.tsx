@@ -845,26 +845,51 @@ PROCESO OBLIGATORIO:
     setGlowMirrorRetryCount(forceRetry ? glowMirrorRetryCount + 1 : 0);
 
     try {
-      const response = await fetchWithRetry('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
-          'HTTP-Referer': 'https://upglow.app',
-          'X-Title': 'UPGLOW Glow Mirror'
-        },
-        body: JSON.stringify({
-          model: 'deepseek/deepseek-r1:free',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          temperature: 0.4,              // ⬇️ Réduit de 0.8 à 0.4 pour plus de cohérence
-          max_tokens: 3000,              // ⬆️ Augmenté pour raisonnement complet + message
-          top_p: 0.9,
-          frequency_penalty: 0.3         // ➕ Réduit les répétitions
-        })
-      }, 3);
+      // Liste des modèles
+      const models = [
+        'deepseek/deepseek-r1-distill-llama-70b:free',
+        'deepseek/deepseek-r1:free',
+        'google/gemini-2.0-flash-thinking-exp:free'
+      ];
+
+      let response;
+      let lastError;
+
+      for (const model of models) {
+        try {
+          console.log(`[Glow Mirror] Trying model: ${model}`);
+
+          response = await fetchWithRetry('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+              'HTTP-Referer': 'https://upglow.app',
+              'X-Title': 'UPGLOW Glow Mirror'
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+              ],
+              temperature: 0.4,
+              max_tokens: 3000,
+              top_p: 0.9,
+              frequency_penalty: 0.3
+            })
+          }, 3);
+
+          if (response.ok) break;
+        } catch (e) {
+          console.warn(`[Glow Mirror] Model ${model} failed:`, e);
+          lastError = e;
+        }
+      }
+
+      if (!response || !response.ok) {
+        throw lastError || new Error('All models failed');
+      }
 
       const data = await response.json();
       let aiMessage = data.choices?.[0]?.message?.content || '';
@@ -995,24 +1020,40 @@ PROCESO OBLIGATORIO:
         : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 líneas máx), amable y personalizada. Basándote en el contexto anterior.";
 
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
-          'HTTP-Referer': 'https://upglow.app',
-          'X-Title': 'UPGLOW Glow Mirror'
-        },
-        body: JSON.stringify({
-          model: 'deepseek/deepseek-r1:free',
-          messages: [
-            { role: 'system', content: qaSystemPrompt },
-            ...updatedMessages.map(m => ({ role: m.role, content: m.content }))
-          ],
-          temperature: 0.7,
-          max_tokens: 300
-        })
-      });
+      const models = [
+        'deepseek/deepseek-r1-distill-llama-70b:free',
+        'deepseek/deepseek-r1:free',
+        'google/gemini-2.0-flash-thinking-exp:free'
+      ];
+
+      let response;
+
+      for (const model of models) {
+        try {
+          response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+              'HTTP-Referer': 'https://upglow.app',
+              'X-Title': 'UPGLOW Glow Mirror'
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: [
+                { role: 'system', content: qaSystemPrompt },
+                ...updatedMessages.map(m => ({ role: m.role, content: m.content }))
+              ],
+              temperature: 0.7,
+              max_tokens: 300
+            })
+          });
+
+          if (response.ok) break;
+        } catch (e) {
+          console.warn(`[Glow Mirror Q&A] Model ${model} failed`);
+        }
+      }
 
       if (!response.ok) throw new Error('API Error');
 
@@ -2640,10 +2681,10 @@ PROCESO OBLIGATORIO:
                         </span>
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${hasWin
-                              ? 'bg-gradient-to-br from-pink-400 to-purple-500 shadow-md scale-110'
-                              : isToday
-                                ? 'bg-pink-100 border-2 border-pink-300'
-                                : 'bg-gray-100'
+                            ? 'bg-gradient-to-br from-pink-400 to-purple-500 shadow-md scale-110'
+                            : isToday
+                              ? 'bg-pink-100 border-2 border-pink-300'
+                              : 'bg-gray-100'
                             }`}
                         >
                           {hasWin ? (

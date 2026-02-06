@@ -854,7 +854,7 @@ PROCESO OBLIGATORIO:
           'X-Title': 'UPGLOW Glow Mirror'
         },
         body: JSON.stringify({
-          model: 'tngtech/deepseek-r1t2-chimera:free',
+          model: 'deepseek/deepseek-r1:free',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
@@ -1004,7 +1004,7 @@ PROCESO OBLIGATORIO:
           'X-Title': 'UPGLOW Glow Mirror'
         },
         body: JSON.stringify({
-          model: 'tngtech/deepseek-r1t2-chimera:free',
+          model: 'deepseek/deepseek-r1:free',
           messages: [
             { role: 'system', content: qaSystemPrompt },
             ...updatedMessages.map(m => ({ role: m.role, content: m.content }))

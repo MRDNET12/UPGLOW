@@ -1313,7 +1313,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 'X-Title': 'UPGLOW Flow Generator'
               },
               body: JSON.stringify({
-                model: 'tngtech/deepseek-r1t2-chimera:free',
+                model: 'deepseek/deepseek-r1:free',
                 messages: [
                   { role: 'system', content: systemPrompt },
                   { role: 'user', content: userPrompt }

@@ -230,6 +230,60 @@ export function FlowChallengePage({
     </div>
   );
 
+  const renderBadgesSection = () => {
+    // Définition locale des badges pour l'affichage
+    const allBadges = [
+      { id: 'first_step', icon: '🌱', title: language === 'fr' ? 'Premier Pas' : 'First Step', description: language === 'fr' ? 'Terminer le jour 1' : 'Complete Day 1', color: 'bg-green-100 text-green-600' },
+      { id: 'streak_3', icon: '🔥', title: language === 'fr' ? 'En Feu' : 'On Fire', description: language === 'fr' ? 'Série de 3 jours' : '3 Day Streak', color: 'bg-orange-100 text-orange-600' },
+      { id: 'hydration_master', icon: '💧', title: language === 'fr' ? 'Hydratation' : 'Hydration', description: language === 'fr' ? 'Objectif eau atteint' : 'Water goal reached', color: 'bg-blue-100 text-blue-600' },
+      { id: 'self_care_queen', icon: '👑', title: 'Self-Care Queen', description: language === 'fr' ? '5 actions bien-être' : '5 self-care actions', color: 'bg-purple-100 text-purple-600' },
+      { id: 'week_1', icon: '🌟', title: language === 'fr' ? 'Semaine 1' : 'Week 1', description: language === 'fr' ? '7 jours complétés' : '7 days completed', color: 'bg-yellow-100 text-yellow-600' },
+      { id: 'mindful', icon: '🧘‍♀️', title: language === 'fr' ? 'Pleine Conscience' : 'Mindful', description: language === 'fr' ? '3 sessions de méditation' : '3 meditation sessions', color: 'bg-indigo-100 text-indigo-600' },
+    ];
+
+    return (
+      <div className="space-y-6 pb-28">
+        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm text-center">
+          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+            🏆
+          </div>
+          <h3 className="text-xl font-bold text-slate-700 mb-2">{t.badges}</h3>
+          <p className="text-gray-400 text-sm px-4">
+            {language === 'fr' ? 'Complète tes journées pour débloquer ces récompenses uniques.' : 'Complete your days to unlock these unique rewards.'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {allBadges.map((badge) => {
+            // Logique de déblocage simulée pour l'UI, connectée aux données réelles si disponibles
+            const isUnlocked = personalizedFlow?.badges?.includes(badge.id) ||
+              (badge.id === 'first_step' && (personalizedFlow?.completedDays.length || 0) > 0) ||
+              (badge.id === 'streak_3' && (personalizedFlow?.completedDays.length || 0) >= 3) ||
+              (badge.id === 'week_1' && (personalizedFlow?.completedDays.length || 0) >= 7);
+
+            return (
+              <div
+                key={badge.id}
+                className={`rounded-[2rem] p-5 flex flex-col items-center text-center gap-3 transition-all duration-300 border-2 ${isUnlocked ? 'bg-white border-transparent shadow-sm' : 'bg-gray-50 border-transparent opacity-60 grayscale'
+                  }`}
+              >
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-1 ${isUnlocked ? badge.color : 'bg-gray-200 text-gray-400'}`}>
+                  {badge.icon}
+                </div>
+                <div>
+                  <h4 className={`font-bold text-sm leading-tight ${isUnlocked ? 'text-slate-800' : 'text-gray-400'}`}>{badge.title}</h4>
+                  <p className="text-[10px] text-gray-400 font-medium mt-1 leading-tight">{badge.description}</p>
+                </div>
+                {isUnlocked && <div className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full mt-1">Obtenu</div>}
+                {!isUnlocked && <div className="px-3 py-1 bg-gray-200 text-gray-500 text-[10px] font-bold rounded-full mt-1">Verrouillé</div>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#F0F4F8] text-slate-800 font-sans">
       {/* Soft Header */}

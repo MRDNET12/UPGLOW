@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Sparkles, Check, Crown, MessageCircle, Trophy, Target, BookOpen } from 'lucide-react';
+import { X, Sparkles, Check, Crown, Star, Heart, Zap, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Language } from '@/lib/translations';
@@ -41,13 +41,11 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
     switch (language) {
       case 'fr':
         return {
-          title: 'Choisis ton plan ✨',
-          subtitle: 'Passe à la vitesse supérieure avec nos formules',
-          freeFeatures: 'Toujours gratuits :',
-          trialInfo: '3 jours gratuits sur tous les plans',
+          title: 'Débloque tout ton potentiel',
+          subtitle: 'Choisis le plan qui te correspond',
           glowStart: {
             name: 'Glow Start',
-            price: '1,99€',
+            price: '1.99€',
             period: '/mois',
             features: [
               'Message à moi',
@@ -55,31 +53,29 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
               'Mes habitudes',
               'Mon journal'
             ],
-            cta: 'Choisir Glow Start'
+            cta: 'Commencer Glow Start'
           },
           glowPlus: {
             name: 'Glow Plus',
-            price: '3,99€',
+            price: '3.99€',
             period: '/mois',
+            description: 'L\'expérience ultime',
             features: [
               'Tout Glow Start',
-              'Glow Mirror AI',
-              'Analyses personnalisées',
-              'Conseils sur mesure'
+              'Glow Mirror (IA)',
+              'Analyses avancées'
             ],
-            cta: 'Choisir Glow Plus',
-            popular: 'Le plus populaire'
+            cta: 'Devenir Glow Plus',
+            popular: 'RECOMMANDÉ'
           }
         };
       case 'en':
         return {
-          title: 'Choose your plan ✨',
-          subtitle: 'Take it to the next level with our plans',
-          freeFeatures: 'Always free:',
-          trialInfo: '3 free days on all plans',
+          title: 'Unlock your full potential',
+          subtitle: 'Choose the plan that suits you',
           glowStart: {
             name: 'Glow Start',
-            price: '1,99€',
+            price: '1.99€',
             period: '/month',
             features: [
               'Message to myself',
@@ -87,31 +83,29 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
               'My habits',
               'My journal'
             ],
-            cta: 'Choose Glow Start'
+            cta: 'Start Glow Start'
           },
           glowPlus: {
             name: 'Glow Plus',
-            price: '3,99€',
+            price: '3.99€',
             period: '/month',
+            description: 'The ultimate experience',
             features: [
               'All Glow Start',
-              'Glow Mirror AI',
-              'Personalized analysis',
-              'Custom advice'
+              'Glow Mirror (AI)',
+              'Advanced analytics'
             ],
-            cta: 'Choose Glow Plus',
-            popular: 'Most popular'
+            cta: 'Become Glow Plus',
+            popular: 'RECOMMENDED'
           }
         };
       case 'es':
         return {
-          title: 'Elige tu plan ✨',
-          subtitle: 'Llévalo al siguiente nivel con nuestros planes',
-          freeFeatures: 'Siempre gratis:',
-          trialInfo: '3 días gratis en todos los planes',
+          title: 'Desbloquea todo tu potencial',
+          subtitle: 'Elige el plan que te convenga',
           glowStart: {
             name: 'Glow Start',
-            price: '1,99€',
+            price: '1.99€',
             period: '/mes',
             features: [
               'Mensaje a mí',
@@ -119,31 +113,29 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
               'Mis hábitos',
               'Mi diario'
             ],
-            cta: 'Elegir Glow Start'
+            cta: 'Comenzar Glow Start'
           },
           glowPlus: {
             name: 'Glow Plus',
-            price: '3,99€',
+            price: '3.99€',
             period: '/mes',
+            description: 'La experiencia definitiva',
             features: [
               'Todo Glow Start',
-              'Glow Mirror AI',
-              'Análisis personalizado',
-              'Consejos a medida'
+              'Glow Mirror (IA)',
+              'Análisis avanzados'
             ],
-            cta: 'Elegir Glow Plus',
-            popular: 'Más popular'
+            cta: 'Ser Glow Plus',
+            popular: 'RECOMENDADO'
           }
         };
       default:
         return {
-          title: 'Choose your plan ✨',
-          subtitle: 'Take it to the next level with our plans',
-          freeFeatures: 'Always free:',
-          trialInfo: '3 free days on all plans',
+          title: 'Unlock your full potential',
+          subtitle: 'Choose the plan that suits you',
           glowStart: {
             name: 'Glow Start',
-            price: '1,99€',
+            price: '1.99€',
             period: '/month',
             features: [
               'Message to myself',
@@ -151,20 +143,20 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
               'My habits',
               'My journal'
             ],
-            cta: 'Choose Glow Start'
+            cta: 'Start Glow Start'
           },
           glowPlus: {
             name: 'Glow Plus',
-            price: '3,99€',
+            price: '3.99€',
             period: '/month',
+            description: 'The ultimate experience',
             features: [
               'All Glow Start',
-              'Glow Mirror AI',
-              'Personalized analysis',
-              'Custom advice'
+              'Glow Mirror (AI)',
+              'Advanced analytics'
             ],
-            cta: 'Choose Glow Plus',
-            popular: 'Most popular'
+            cta: 'Become Glow Plus',
+            popular: 'RECOMMENDED'
           }
         };
     }
@@ -173,109 +165,131 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
   const texts = getTexts();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="relative w-full max-w-md rounded-[1.5rem] shadow-2xl shadow-pink-200/50 overflow-hidden bg-white/95 backdrop-blur-xl border border-pink-100/50 animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
-        {/* Premium Badge */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="relative w-full max-w-lg bg-[#F8F9FE] rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto border border-white/50">
+
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-50 to-[#F8F9FE]"></div>
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
 
         {/* Close Button */}
         <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="absolute top-2 right-2 z-10 rounded-full hover:bg-pink-100 w-7 h-7"
+          className="absolute top-4 right-4 z-10 rounded-full bg-white/50 hover:bg-white text-slate-400 hover:text-slate-600 transition-colors w-8 h-8"
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className="w-4 h-4" />
         </Button>
 
         {/* Content */}
-        <div className="px-5 py-6 pt-7">
+        <div className="relative px-6 py-8 pt-10">
+
           {/* Header */}
-          <div className="text-center mb-5">
-            <h2 className="text-xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent leading-tight">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white shadow-sm mb-4 text-2xl">
+              💎
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">
               {texts.title}
             </h2>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-slate-500 font-medium">
               {texts.subtitle}
             </p>
           </div>
 
-          {/* Features toujours gratuites */}
-          <div className="p-3 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 mb-4">
-            <p className="text-xs font-bold text-green-700 mb-2">{texts.freeFeatures}</p>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-xs text-green-600">
-                <Target className="w-3.5 h-3.5" />
-                <span>Flow</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-green-600">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>Ma Semaine</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Plan Glow Start */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 mb-3">
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-2xl font-bold text-gray-800">{texts.glowStart.price}</span>
-              <span className="text-sm text-gray-600">{texts.glowStart.period}</span>
-            </div>
-            <h3 className="font-bold text-gray-800 mb-2">{texts.glowStart.name}</h3>
-            <div className="space-y-1.5 mb-3">
-              {texts.glowStart.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
-                  <span className="text-xs text-gray-700">{feature}</span>
+          <div className="space-y-4">
+            {/* Plan 1: Glow Start */}
+            <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 hover:border-blue-100 transition-colors relative group">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">{texts.glowStart.name}</h3>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-2xl font-bold text-slate-900">{texts.glowStart.price}</span>
+                    <span className="text-xs text-slate-400 font-medium">{texts.glowStart.period}</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-            <Button
-              onClick={() => handleSelectPlan('glow_start')}
-              disabled={isLoading}
-              className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 text-sm rounded-xl"
-            >
-              {isLoading ? '...' : texts.glowStart.cta}
-            </Button>
-          </div>
-
-          {/* Plan Glow Plus */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-300 relative">
-            {/* Badge Popular */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-bold rounded-full">
-              {texts.glowPlus.popular}
-            </div>
-            
-            <div className="flex items-baseline gap-1 mb-2 mt-1">
-              <span className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">{texts.glowPlus.price}</span>
-              <span className="text-sm text-gray-600">{texts.glowPlus.period}</span>
-            </div>
-            <h3 className="font-bold text-gray-800 mb-2">{texts.glowPlus.name}</h3>
-            <div className="space-y-1.5 mb-3">
-              {texts.glowPlus.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
-                  <span className="text-xs text-gray-700">{feature}</span>
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+                  <Star className="w-5 h-5 fill-blue-500/20" />
                 </div>
-              ))}
+              </div>
+
+              <div className="space-y-2 mb-5">
+                {texts.glowStart.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2.5">
+                    <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-2.5 h-2.5 text-blue-600" />
+                    </div>
+                    <span className="text-sm text-slate-600 font-medium">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                onClick={() => handleSelectPlan('glow_start')}
+                disabled={isLoading}
+                variant="outline"
+                className="w-full h-12 rounded-xl border-2 border-slate-100 bg-transparent hover:bg-slate-50 text-slate-700 font-bold"
+              >
+                {isLoading ? '...' : texts.glowStart.cta}
+              </Button>
             </div>
-            <Button
-              onClick={() => handleSelectPlan('glow_plus')}
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold py-4 text-sm shadow-lg shadow-pink-200/50 rounded-xl"
-            >
-              {isLoading ? (
-                <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Crown className="w-4 h-4 mr-2" />
-              )}
-              {texts.glowPlus.cta}
-            </Button>
+
+            {/* Plan 2: Glow Plus */}
+            <div className="bg-white rounded-[2rem] p-1 shadow-md border border-purple-100 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50"></div>
+
+              <div className="relative bg-white/80 backdrop-blur-sm rounded-[1.8rem] p-5">
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-2xl">
+                  {texts.glowPlus.popular}
+                </div>
+
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                      {texts.glowPlus.name}
+                      <Crown className="w-4 h-4 text-purple-500 fill-purple-500/20" />
+                    </h3>
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        {texts.glowPlus.price}
+                      </span>
+                      <span className="text-xs text-slate-400 font-medium">{texts.glowPlus.period}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-6">
+                  {texts.glowPlus.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2.5">
+                      <div className="w-4 h-4 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 text-purple-600" />
+                      </div>
+                      <span className="text-sm text-slate-700 font-bold">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={() => handleSelectPlan('glow_plus')}
+                  disabled={isLoading}
+                  className="w-full h-12 rounded-xl bg-slate-900 hover:bg-black text-white font-bold shadow-lg shadow-purple-200"
+                >
+                  {isLoading ? (
+                    <Sparkles className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      {texts.glowPlus.cta} <Sparkles className="w-4 h-4" />
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </div>
           </div>
 
-          {/* Info essai */}
-          <p className="text-[10px] text-center text-gray-500 mt-4">
-            {texts.trialInfo}
+          <p className="text-center text-xs text-slate-400 mt-6 font-medium">
+            Secured by Stripe • Cancel anytime
           </p>
         </div>
       </div>

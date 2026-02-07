@@ -1305,6 +1305,7 @@ Génère maintenant les 30 jours au format JSON suivant :
 2. Chaque action doit être CONCRÈTE et UNIQUE
 3. La progression doit être VISIBLE du jour 1 au jour 30
 4. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
+5. FORMAT JSON STRICT OBLIGATOIRE : Utilise UNIQUEMENT des guillemets doubles pour toutes les proprietes et valeurs
 
 GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
@@ -1418,16 +1419,36 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               throw new Error('No JSON found in response - using fallback');
             }
 
-            const jsonContent = jsonMatch[1] || jsonMatch[0];
+            let jsonContent = jsonMatch[1] || jsonMatch[0];
             console.log('[AI Response] JSON extracted, length:', jsonContent.length);
+
+            // Nettoyer le JSON avant parsing
+            const cleanJson = (json: string): string => {
+              return json
+                // Remplacer les guillemets simples par des doubles dans les valeurs
+                .replace(/'/g, '"')
+                // Corriger les noms de propriétés sans guillemets
+                .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
+                // Échapper les guillemets dans les valeurs
+                .replace(/":\s*"([^"]*)"/g, (match, p1) => {
+                  return '": "' + p1.replace(/"/g, '\\"') + '"';
+                });
+            };
 
             let parsed;
             try {
               parsed = JSON.parse(jsonContent);
             } catch (parseError) {
-              console.error('[AI Response] ❌ JSON parse error:', parseError);
-              console.error('[AI Response] JSON content preview:', jsonContent.substring(0, 500));
-              throw new Error('Invalid JSON format - using fallback');
+              console.warn('[AI Response] ⚠️ Initial JSON parse failed, attempting cleanup...');
+              try {
+                const cleanedContent = cleanJson(jsonContent);
+                parsed = JSON.parse(cleanedContent);
+                console.log('[AI Response] ✅ JSON parsed successfully after cleanup');
+              } catch (cleanupError) {
+                console.error('[AI Response] ❌ JSON parse error even after cleanup:', cleanupError);
+                console.error('[AI Response] JSON content preview:', jsonContent.substring(0, 500));
+                throw new Error('Invalid JSON format - using fallback');
+              }
             }
 
             if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 1) {

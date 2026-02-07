@@ -186,6 +186,12 @@ interface AppState {
   // Challenge Selection
   selectedChallenge: ChallengeType | null;
   setSelectedChallenge: (challenge: ChallengeType) => void;
+  
+  // Visibility toggles for homepage cards
+  showChallengeCard: boolean;
+  showFlowCard: boolean;
+  toggleChallengeCard: () => void;
+  toggleFlowCard: () => void;
 
   // Onboarding
   hasStarted: boolean;
@@ -357,6 +363,12 @@ export const useStore = create<AppState>()(
       // Challenge Selection
       selectedChallenge: null,
       setSelectedChallenge: (challenge) => set({ selectedChallenge: challenge }),
+      
+      // Visibility toggles for homepage cards
+      showChallengeCard: true,
+      showFlowCard: true,
+      toggleChallengeCard: () => set({ showChallengeCard: !get().showChallengeCard }),
+      toggleFlowCard: () => set({ showFlowCard: !get().showFlowCard }),
 
       // Onboarding
       hasStarted: false,
@@ -1321,7 +1333,7 @@ Génère maintenant les 7 PREMIERS jours au format JSON suivant :
 5. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
 6. FORMAT JSON STRICT OBLIGATOIRE : Utilise UNIQUEMENT des guillemets doubles
 
-GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
+GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} :`;
 
 
             // Liste des modèles à essayer par ordre de préférence
@@ -2416,21 +2428,33 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
           const objective = flow.objective;
           const description = flow.objectiveDescription;
 
+          const langName = state.language === 'fr' ? 'Français' : state.language === 'es' ? 'Espagnol' : 'Anglais';
+
           const systemPrompt = `Tu es un coach de vie expert qui génère des plans d'action personnalisés PROGRESSIFS.
           
-L'utilisateur a déjà complété les ${flow.days.length} premiers jours de son parcours de 30 jours.
-Tu dois maintenant générer les 7 jours suivants (jours ${startDay} à ${endDay}).
+Tu dois générer les 7 jours suivants (jours ${startDay} à ${endDay}) pour l'utilisateur.
 
-HISTORIQUE DES TÂCHES VALIDÉES PAR L'UTILISATEUR :
+🌍 LANGUE OBLIGATOIRE : ${langName.toUpperCase()}
+Tu dois impérativement répondre en ${langName}.
+
+HISTORIQUE DES TÂCHES VALIDÉES :
 ${completedSummary}
 
-Basé sur cet historique, adapte la difficulté et le type d'actions pour les prochains jours.
-Si l'utilisateur a validé beaucoup de tâches, augmente légèrement la difficulté.
-Si l'utilisateur a validé peu de tâches, propose des actions plus accessibles.`;
+INSTRUCTIONS :
+1. Analyse la progression de l'utilisateur
+2. Adapte la difficulté (plus dur si succès, plus facile si échec)
+3. Utilise des balises <think> pour ton raisonnement AVANT le JSON
+4. Génère le JSON strict pour les jours demandés`;
 
           const userPrompt = `OBJECTIF : "${objective}"
 DESCRIPTION : "${description}"
 
+⚠️ Rappel : RÉPONDRE EN ${langName.toUpperCase()} UNIQUEMENT.
+
+ÉTAPE 1 : RAISONNEMENT <think>
+Explique comment tu adaptes le plan par rapport aux tâches validées.
+
+ÉTAPE 2 : JSON
 Génère les jours ${startDay} à ${endDay} au format JSON suivant :
 
 {

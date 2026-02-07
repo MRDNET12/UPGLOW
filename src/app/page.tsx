@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -159,7 +159,12 @@ export default function GlowUpChallengeApp() {
     unlockBadge,
     continueFlow,
     checkNeedsContinuation,
-    isGeneratingFlow
+    isGeneratingFlow,
+    // Visibility toggles
+    showChallengeCard,
+    showFlowCard,
+    toggleChallengeCard,
+    toggleFlowCard
   } = useStore();
 
   const { t } = useTranslation();
@@ -2688,7 +2693,7 @@ PROCESO OBLIGATORIO:
             </Card>
 
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
-            {selectedChallenge === 'mind-life' && (
+            {selectedChallenge === 'mind-life' && showChallengeCard && (
               <Card
                 className="border-none shadow-2xl shadow-purple-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-200 via-pink-100 to-purple-50 rounded-[2rem] overflow-hidden relative"
                 onClick={() => {
@@ -6645,6 +6650,53 @@ PROCESO OBLIGATORIO:
                 </div>
               </div>
             </button>
+
+            {/* Section Visibilité des cartes */}
+            <div className="border-t border-stone-200 pt-4 mt-4">
+              <h4 className="text-sm font-semibold text-stone-700 mb-3">
+                {language === 'fr' ? 'Visibilité des cartes' : language === 'en' ? 'Card visibility' : 'Visibilidad de tarjetas'}
+              </h4>
+              
+              {/* Toggle Challenge Card */}
+              <button
+                onClick={() => toggleChallengeCard()}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-white/60 hover:bg-white/80 transition-all mb-2"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-peach-200 to-peach-300 flex items-center justify-center">
+                    <span className="text-lg">💄</span>
+                  </div>
+                  <span className="text-sm font-medium text-stone-700">
+                    {language === 'fr' ? 'Carte Challenge' : language === 'en' ? 'Challenge Card' : 'Tarjeta Desafío'}
+                  </span>
+                </div>
+                <div className="w-10 h-6 rounded-full bg-stone-200 relative transition-colors" style={{ backgroundColor: showChallengeCard ? '#f472b6' : '#e5e7eb' }}>
+                  <div className="absolute top-1 w-4 h-4 rounded-full bg-white shadow-md transition-all" style={{ left: showChallengeCard ? 'calc(100% - 1.25rem)' : '0.25rem' }}>
+                    {showChallengeCard ? <Eye className="w-3 h-3 text-pink-400 absolute top-0.5 left-0.5" /> : <EyeOff className="w-3 h-3 text-gray-400 absolute top-0.5 left-0.5" />}
+                  </div>
+                </div>
+              </button>
+
+              {/* Toggle Flow Card */}
+              <button
+                onClick={() => toggleFlowCard()}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-white/60 hover:bg-white/80 transition-all"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center">
+                    <span className="text-lg">✨</span>
+                  </div>
+                  <span className="text-sm font-medium text-stone-700">
+                    {language === 'fr' ? 'Carte Flow' : language === 'en' ? 'Flow Card' : 'Tarjeta Flow'}
+                  </span>
+                </div>
+                <div className="w-10 h-6 rounded-full bg-stone-200 relative transition-colors" style={{ backgroundColor: showFlowCard ? '#8b5cf6' : '#e5e7eb' }}>
+                  <div className="absolute top-1 w-4 h-4 rounded-full bg-white shadow-md transition-all" style={{ left: showFlowCard ? 'calc(100% - 1.25rem)' : '0.25rem' }}>
+                    {showFlowCard ? <Eye className="w-3 h-3 text-violet-500 absolute top-0.5 left-0.5" /> : <EyeOff className="w-3 h-3 text-gray-400 absolute top-0.5 left-0.5" />}
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </DrawerContent>
       </Drawer>

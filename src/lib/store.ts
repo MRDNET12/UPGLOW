@@ -1346,10 +1346,10 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                       { role: 'system', content: systemPrompt },
                       { role: 'user', content: userPrompt }
                     ],
-                    temperature: 0.6,
-                    max_tokens: 10000,
-                    top_p: 0.9,
-                    frequency_penalty: 0.3
+                    temperature: 0.7,
+                    max_tokens: 32000,
+                    top_p: 0.95,
+                    frequency_penalty: 0.2
                   })
                 });
 
@@ -1366,8 +1366,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 const data = await response.json();
                 content = data.choices?.[0]?.message?.content || '';
 
-                // Vérifier que le contenu est suffisamment long (au moins 20000 caractères pour 30 jours complets)
-                if (content.length < 20000) {
+                // Vérifier que le contenu est suffisamment long (au moins 15000 caractères pour 30 jours)
+                if (content.length < 15000) {
                   console.warn(`[AI Response] ⚠️ Response too short (${content.length} chars), trying next model...`);
                   lastError = `Response too short: ${content.length} characters`;
                   continue; // Essayer le modèle suivant

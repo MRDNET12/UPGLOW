@@ -1319,6 +1319,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             let response;
             let usedModel;
             let lastError;
+            let content = '';
 
             // Essayer les modèles séquentiellement
             for (const model of models) {
@@ -1347,34 +1348,48 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   })
                 });
 
-                if (response.ok) {
-                  break; // Succès !
+                if (!response.ok) {
+                  const errorBody = await response.text();
+                  console.warn(`[API Error] Model ${model} failed: ${response.status} - ${errorBody}`);
+                  lastError = `API Error: ${response.status} - ${errorBody}`;
+                  if (response.status === 401) {
+                    throw new Error('Invalid API Key');
+                  }
+                  continue; // Essayer le modèle suivant
                 }
 
-                // Si erreur 404 (modèle introuvable) ou 5xx (serveur), on continue
-                const errorBody = await response.text();
-                console.warn(`[API Error] Model ${model} failed: ${response.status} - ${errorBody}`);
-                lastError = `API Error: ${response.status} - ${errorBody}`;
+                const data = await response.json();
+                content = data.choices?.[0]?.message?.content || '';
 
-                // Si c'est une 401 (Auth), pas la peine de réessayer
-                if (response.status === 401) {
-                  throw new Error('Invalid API Key');
+                // Vérifier que le contenu est suffisamment long (au moins 3000 caractères pour 30 jours)
+                if (content.length < 3000) {
+                  console.warn(`[AI Response] ⚠️ Response too short (${content.length} chars), trying next model...`);
+                  lastError = `Response too short: ${content.length} characters`;
+                  continue; // Essayer le modèle suivant
                 }
+
+                // Vérification rapide que le JSON semble complet
+                const openBraces = (content.match(/{/g) || []).length;
+                const closeBraces = (content.match(/}/g) || []).length;
+                if (openBraces > closeBraces + 5) { // Tolérance de 5 pour les cas limites
+                  console.warn(`[AI Response] ⚠️ JSON seems truncated (${openBraces} open vs ${closeBraces} close braces), trying next model...`);
+                  lastError = 'JSON truncated';
+                  continue; // Essayer le modèle suivant
+                }
+
+                console.log('[AI Response] Full content length:', content.length);
+                break; // Succès, on sort de la boucle
+
               } catch (e) {
                 console.warn(`[Flow Generation] Error with model ${model}:`, e);
                 lastError = e instanceof Error ? e.message : String(e);
               }
             }
 
-            if (!response || !response.ok) {
-              console.error('[API Error] All models failed. Last error:', lastError);
+            if (!content || content.length < 500) {
+              console.error('[API Error] All models failed or returned empty content. Last error:', lastError);
               throw new Error(lastError || 'All models failed');
             }
-
-            const data = await response.json();
-            const content = data.choices?.[0]?.message?.content || '';
-
-            console.log('[AI Response] Full content length:', content.length);
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             // VALIDATION DU RAISONNEMENT (OPTIONNELLE)

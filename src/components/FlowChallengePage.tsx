@@ -365,6 +365,31 @@ export function FlowChallengePage({
           </div>
         </div>
       )}
+
+      {/* Popup détails de la tâche */}
+      {selectedTask && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedTask(null)}>
+          <div className="bg-white rounded-[2rem] p-6 max-w-sm w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
+                {selectedTask.icon}
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">
+                {selectedTask.title}
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {selectedTask.description}
+              </p>
+            </div>
+            <Button
+              onClick={() => setSelectedTask(null)}
+              className="w-full h-14 rounded-[2rem] bg-slate-900 text-white font-bold hover:bg-black"
+            >
+              {language === 'fr' ? 'Fermer' : language === 'en' ? 'Close' : 'Cerrar'}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 

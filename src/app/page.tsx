@@ -2345,9 +2345,12 @@ PROCESO OBLIGATORIO:
         onBack={() => setCurrentView('flow-proposition')}
         onCreate={(description) => {
           setFlowDescription(description);
-          generatePersonalizedFlow(objectifPrincipal, description).then(() => {
+          // Lancer la génération en arrière-plan
+          generateFlowInBackground(objectifPrincipal, description);
+          // Attendre 5 secondes avec animation puis rediriger vers l'accueil
+          setTimeout(() => {
             setCurrentView('dashboard');
-          });
+          }, 5000);
         }}
       />
     );

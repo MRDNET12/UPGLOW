@@ -290,6 +290,7 @@ interface AppState {
   personalizedFlow: PersonalizedFlow | null;
   flowDescription: string;
   isGeneratingFlow: boolean;
+  isGeneratingFlowBackground: boolean;
   setPersonalizedFlow: (flow: PersonalizedFlow | null) => void;
   setFlowDescription: (description: string) => void;
   setIsGeneratingFlow: (isGenerating: boolean) => void;
@@ -297,6 +298,7 @@ interface AppState {
   toggleFlowAction: (day: number, actionId: string) => void;
   selectFlowChoice: (day: number, choiceId: string) => void;
   generatePersonalizedFlow: (objective: string, description: string) => Promise<void>;
+  generateFlowInBackground: (objective: string, description: string) => void;
   unlockBadge: (badgeId: string) => void;
 
   // Flow regeneration
@@ -965,6 +967,7 @@ export const useStore = create<AppState>()(
       personalizedFlow: null,
       flowDescription: "",
       isGeneratingFlow: false,
+      isGeneratingFlowBackground: false,
 
       validateBeautyDate: (date) => {
         const { beautyValidatedDates } = get();
@@ -2284,6 +2287,39 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             }
           });
         }
+      },
+
+      generateFlowInBackground: (objective, description) => {
+        set({ isGeneratingFlowBackground: true });
+        
+        // Lancer la génération en arrière-plan
+        const generateWithRetry = async (retryCount = 0, maxRetries = 3): Promise<void> => {
+          try {
+            console.log(`[Background Flow] Attempt ${retryCount + 1}/${maxRetries}`);
+            await get().generatePersonalizedFlow(objective, description);
+            
+            // Succès
+            set({ isGeneratingFlowBackground: false });
+            console.log('[Background Flow] ✅ Successfully generated');
+          } catch (error) {
+            console.error(`[Background Flow] Attempt ${retryCount + 1} failed:`, error);
+            
+            if (retryCount < maxRetries - 1) {
+              // Attendre 2 secondes avant de réessayer
+              console.log(`[Background Flow] Retrying in 2 seconds...`);
+              setTimeout(() => {
+                generateWithRetry(retryCount + 1, maxRetries);
+              }, 2000);
+            } else {
+              // Tous les retries ont échoué, utiliser le fallback
+              console.log('[Background Flow] All retries failed, using fallback');
+              set({ isGeneratingFlowBackground: false });
+            }
+          }
+        };
+
+        // Lancer la génération
+        generateWithRetry();
       },
 
       regenerateFlow: () => {

@@ -6683,7 +6683,7 @@ PROCESO OBLIGATORIO:
 
       {/* Journal View */}
       {currentView === 'journal' && canAccessFeature('journal') && (
-        <div className="pb-24 min-h-screen bg-white overflow-y-auto">
+        <div className="pb-32 min-h-screen bg-white overflow-y-auto">
           {/* Header */}
           <div className="px-4 pt-0 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">
@@ -6721,85 +6721,6 @@ PROCESO OBLIGATORIO:
               </button>
             </div>
           </div>
-
-          {/* Journal Statistics */}
-          {(() => {
-            const monthEntries = getFilteredJournalEntries();
-            const totalEntries = monthEntries.length;
-
-            // Calculate mood distribution
-            const moodCounts: Record<string, number> = {};
-            monthEntries.forEach(entry => {
-              moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1;
-            });
-
-            // Find dominant mood
-            const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0];
-
-            // Calculate streak
-            let currentStreak = 0;
-            const sortedEntries = [...journalEntries].sort((a, b) =>
-              new Date(b.date).getTime() - new Date(a.date).getTime()
-            );
-
-            if (sortedEntries.length > 0) {
-              const today = new Date().toISOString().split('T')[0];
-              const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
-              // Check if entry exists today or yesterday to start streak
-              const hasEntryToday = sortedEntries.some(e => e.date === today);
-              const hasEntryYesterday = sortedEntries.some(e => e.date === yesterday);
-
-              if (hasEntryToday || hasEntryYesterday) {
-                currentStreak = 1;
-                let checkDate = new Date(hasEntryToday ? today : yesterday);
-
-                for (let i = 1; i < sortedEntries.length; i++) {
-                  checkDate.setDate(checkDate.getDate() - 1);
-                  const checkDateStr = checkDate.toISOString().split('T')[0];
-
-                  if (sortedEntries.some(e => e.date === checkDateStr)) {
-                    currentStreak++;
-                  } else {
-                    break;
-                  }
-                }
-              }
-            }
-
-            return (
-              <div className="mt-4 grid grid-cols-3 gap-3">
-                {/* Total Entries */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-3 text-center">
-                  <p className="text-2xl font-bold text-blue-600">{totalEntries}</p>
-                  <p className="text-xs text-blue-600/70">
-                    {language === 'fr' ? 'Entrées' : language === 'en' ? 'Entries' : 'Entradas'}
-                  </p>
-                </div>
-
-                {/* Dominant Mood */}
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-3 text-center">
-                  <p className="text-2xl font-bold text-emerald-600">
-                    {dominantMood ? Math.round((dominantMood[1] / totalEntries) * 100) : 0}%
-                  </p>
-                  <p className="text-xs text-emerald-600/70 capitalize">
-                    {dominantMood
-                      ? dominantMood[0]
-                      : (language === 'fr' ? 'Humeur' : language === 'en' ? 'Mood' : 'Estado')
-                    }
-                  </p>
-                </div>
-
-                {/* Current Streak */}
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-3 text-center">
-                  <p className="text-2xl font-bold text-orange-600">{currentStreak}</p>
-                  <p className="text-xs text-orange-600/70">
-                    {language === 'fr' ? 'Jours' : language === 'en' ? 'Days' : 'Días'}
-                  </p>
-                </div>
-              </div>
-            );
-          })()}
 
           {/* Liste des entrées */}
           <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
@@ -6907,17 +6828,17 @@ PROCESO OBLIGATORIO:
                 )}
               </div>
             ))}
-          </div>
 
-          {/* Bouton Ajouter en bas */}
-          <div className="fixed bottom-20 left-0 right-0 px-4 max-w-lg mx-auto z-40">
-            <button
-              onClick={() => setShowJournalEntryModal(true)}
-              className="w-full bg-gray-900 text-white py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors text-sm"
-            >
-              <Plus className="w-5 h-5" />
-              {language === 'fr' ? 'Ma journée' : language === 'en' ? 'My day' : 'Mi día'}
-            </button>
+            {/* Bouton Ajouter en bas - Sur la page (sticky) */}
+            <div className="sticky bottom-4 mt-6 mb-8">
+              <button
+                onClick={() => setShowJournalEntryModal(true)}
+                className="w-full bg-gray-900 text-white py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors text-base font-semibold"
+              >
+                <Plus className="w-5 h-5" />
+                {language === 'fr' ? 'Ma journée' : language === 'en' ? 'My day' : 'Mi día'}
+              </button>
+            </div>
           </div>
         </div>
       )}

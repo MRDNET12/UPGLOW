@@ -2437,11 +2437,16 @@ PROCESO OBLIGATORIO:
                     : 'opacity-0 translate-y-full absolute'
                     }`}
                 >
-                  <TimeCapsule
-                    theme={theme}
-                    isExpanded={timeCapsuleExpanded}
-                    onToggle={() => setTimeCapsuleExpanded(!timeCapsuleExpanded)}
-                  />
+                  <div 
+                    className="w-full cursor-pointer"
+                    onClick={() => checkFeatureAccess('message_a_moi', () => setTimeCapsuleExpanded(!timeCapsuleExpanded))}
+                  >
+                    <TimeCapsule
+                      theme={theme}
+                      isExpanded={timeCapsuleExpanded}
+                      onToggle={() => {}}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -2736,7 +2741,12 @@ PROCESO OBLIGATORIO:
             </Card>
 
             {/* Petits Succès Compact */}
-            <SmallWinsCompact theme={theme} />
+            <div 
+              className="cursor-pointer"
+              onClick={() => checkFeatureAccess('petites_victoires', () => {})}
+            >
+              <SmallWinsCompact theme={theme} />
+            </div>
 
             {/* Grille de cartes - Layout moderne compact */}
             {/* Grille de cartes - Layout moderne compact */}

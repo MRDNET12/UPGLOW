@@ -302,37 +302,37 @@ export function FlowChallengePage({
       </div>
 
       <div className="grid grid-cols-2 gap-4">
+        {/* Streak Card */}
         <div className="bg-[#FFF4F4] rounded-[2rem] p-6 flex flex-col items-center justify-center gap-2">
           <div className="text-3xl">🔥</div>
           <div className="font-bold text-rose-900">{language === 'fr' ? 'Ta Série' : 'Your Streak'}</div>
           <div className="text-2xl font-black text-rose-400">{completedCount}</div>
         </div>
-        <div className="bg-[#2b7fff] rounded-[2rem] p-5 flex flex-col justify-between text-white shadow-lg shadow-blue-200 relative overflow-hidden group">
-          {/* Decorative background blur */}
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
 
-          <div className="flex items-center gap-2 mb-3 relative z-10">
-            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <Droplet className="w-4 h-4 text-white" />
+        {/* Hydration Card - Heart Rate Style */}
+        <div className="bg-[#EAF6FF] rounded-[2rem] p-6 relative overflow-hidden min-h-[180px] flex flex-col justify-between transition-all hover:shadow-lg">
+          <div className="flex justify-between items-start">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+              <Droplet className="w-6 h-6 text-slate-900" fill="currentColor" />
             </div>
-            <span className="font-semibold text-sm tracking-wide">{language === 'fr' ? 'Hydratation' : 'Hydration'}</span>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-slate-900 block leading-none">1.5L</span>
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1 block">{language === 'fr' ? 'Hydratation' : 'Hydration'}</span>
+            </div>
           </div>
 
-          {/* Bar Chart Visualization */}
-          <div className="flex items-end justify-between gap-1.5 h-16 mb-2 px-1 relative z-10">
-            {[90, 85, 95, 100, 92, 88, 98].map((height, i) => (
-              <div key={i} className="w-2 flex-1 bg-white/20 rounded-full h-full relative overflow-hidden">
+          <div className="flex items-end justify-between gap-2 h-20 mt-4 px-1">
+            {[35, 55, 40, 70, 50, 85, 60, 90, 45].map((h, i) => (
+              <div key={i} className="w-2 rounded-full h-full relative bg-slate-200/50">
                 <div
-                  className="absolute bottom-0 left-0 w-full bg-white rounded-full transition-all duration-1000 ease-out"
-                  style={{ height: `${height}%` }}
+                  className="absolute bottom-0 w-full bg-slate-900 rounded-full transition-all duration-1000 ease-out"
+                  style={{ height: `${h}%` }}
                 ></div>
               </div>
             ))}
-          </div>
-
-          <div className="flex items-baseline gap-1 relative z-10">
-            <span className="text-3xl font-bold tracking-tight">100%</span>
-            <span className="text-sm font-medium text-white/80"></span>
+            <div className="w-2 rounded-full h-full relative bg-slate-200/50">
+              <div className="absolute bottom-0 w-full bg-slate-900/40 rounded-full h-[30%]"></div>
+            </div>
           </div>
         </div>
       </div>

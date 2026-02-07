@@ -83,7 +83,7 @@ export function FlowChallengePage({
   // --- RENDERS ---
 
   const renderFlowSection = () => (
-    <div className="space-y-6 pb-28">
+    <div className="space-y-6 pb-36">
       {/* Top Banner Grid */}
       <div className="grid grid-cols-2 gap-4">
         {/* Day Card */}
@@ -200,7 +200,7 @@ export function FlowChallengePage({
       </div>
 
       {/* Validate Button - Sous les tâches */}
-      <div className="mt-6">
+      <div className="mt-6 mb-8">
         <Button
           onClick={handleValidateClick}
           className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-slate-900 text-white hover:bg-black hover:scale-[1.02]"

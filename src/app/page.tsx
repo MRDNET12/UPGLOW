@@ -1035,7 +1035,8 @@ PROCESO OBLIGATORIO:
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
               'HTTP-Referer': 'https://upglow.app',
-              'X-Title': 'UPGLOW Glow Mirror'
+              'X-Title': 'UPGLOW Glow Mirror',
+              'X-Data-Policy': 'standard'
             },
             body: JSON.stringify({
               model: model,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X } from 'lucide-react';
+import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X, Droplet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -209,7 +209,7 @@ export function FlowChallengePage({
             {t.validate} <Check className="w-5 h-5" />
           </span>
         </Button>
-        
+
         {/* Indicateur de progression */}
         <div className="mt-3 flex items-center justify-center gap-2 text-sm text-gray-400">
           <span>{completedTasksCount}/3 {language === 'fr' ? 'tâches complétées' : language === 'en' ? 'tasks completed' : 'tareas completadas'}</span>
@@ -230,14 +230,14 @@ export function FlowChallengePage({
                     {language === 'fr' ? 'Série validée !' : language === 'en' ? 'Streak validated!' : '¡Racha validada!'}
                   </h3>
                   <p className="text-gray-500 text-sm">
-                    {language === 'fr' 
-                      ? 'Bravo ! Tu as complété toutes tes tâches aujourd\'hui.' 
-                      : language === 'en' 
-                        ? 'Great job! You completed all your tasks today.' 
+                    {language === 'fr'
+                      ? 'Bravo ! Tu as complété toutes tes tâches aujourd\'hui.'
+                      : language === 'en'
+                        ? 'Great job! You completed all your tasks today.'
                         : '¡Excelente trabajo! Completaste todas tus tareas hoy.'}
                   </p>
                 </div>
-                <Button 
+                <Button
                   onClick={handleConfirmValidation}
                   className="w-full h-14 rounded-[2rem] bg-slate-900 text-white font-bold hover:bg-black"
                 >
@@ -254,21 +254,21 @@ export function FlowChallengePage({
                     {language === 'fr' ? 'Remise en question' : language === 'en' ? 'Double check' : 'Verificación'}
                   </h3>
                   <p className="text-gray-500 text-sm">
-                    {language === 'fr' 
-                      ? `Tu n'as complété que ${completedTasksCount}/3 tâches. Veux-tu vraiment valider sans avoir tout complété ?` 
-                      : language === 'en' 
-                        ? `You only completed ${completedTasksCount}/3 tasks. Do you really want to validate without completing everything?` 
+                    {language === 'fr'
+                      ? `Tu n'as complété que ${completedTasksCount}/3 tâches. Veux-tu vraiment valider sans avoir tout complété ?`
+                      : language === 'en'
+                        ? `You only completed ${completedTasksCount}/3 tasks. Do you really want to validate without completing everything?`
                         : `Solo completaste ${completedTasksCount}/3 tareas. ¿Realmente quieres validar sin completar todo?`}
                   </p>
                 </div>
                 <div className="space-y-3">
-                  <Button 
+                  <Button
                     onClick={handleConfirmValidation}
                     className="w-full h-14 rounded-[2rem] bg-slate-900 text-white font-bold hover:bg-black"
                   >
                     {language === 'fr' ? 'Oui, valider quand même' : language === 'en' ? 'Yes, validate anyway' : 'Sí, validar de todos modos'}
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handleCancelValidation}
                     variant="outline"
                     className="w-full h-14 rounded-[2rem] border-2 border-gray-200 text-gray-600 font-bold hover:bg-gray-50"
@@ -307,10 +307,33 @@ export function FlowChallengePage({
           <div className="font-bold text-rose-900">{language === 'fr' ? 'Ta Série' : 'Your Streak'}</div>
           <div className="text-2xl font-black text-rose-400">{completedCount}</div>
         </div>
-        <div className="bg-[#F2F7FF] rounded-[2rem] p-6 flex flex-col items-center justify-center gap-2">
-          <div className="text-3xl">💧</div>
-          <div className="font-bold text-blue-900">{language === 'fr' ? 'Hydratation' : 'Hydration'}</div>
-          <div className="text-2xl font-black text-blue-400">100%</div>
+        <div className="bg-[#2b7fff] rounded-[2rem] p-5 flex flex-col justify-between text-white shadow-lg shadow-blue-200 relative overflow-hidden group">
+          {/* Decorative background blur */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div className="flex items-center gap-2 mb-3 relative z-10">
+            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Droplet className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-semibold text-sm tracking-wide">{language === 'fr' ? 'Hydratation' : 'Hydration'}</span>
+          </div>
+
+          {/* Bar Chart Visualization */}
+          <div className="flex items-end justify-between gap-1.5 h-16 mb-2 px-1 relative z-10">
+            {[90, 85, 95, 100, 92, 88, 98].map((height, i) => (
+              <div key={i} className="w-2 flex-1 bg-white/20 rounded-full h-full relative overflow-hidden">
+                <div
+                  className="absolute bottom-0 left-0 w-full bg-white rounded-full transition-all duration-1000 ease-out"
+                  style={{ height: `${height}%` }}
+                ></div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-baseline gap-1 relative z-10">
+            <span className="text-3xl font-bold tracking-tight">100%</span>
+            <span className="text-sm font-medium text-white/80"></span>
+          </div>
         </div>
       </div>
     </div>

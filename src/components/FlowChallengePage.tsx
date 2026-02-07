@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +31,8 @@ export function FlowChallengePage({
 }: FlowChallengePageProps) {
   const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
   const [showChoiceCard, setShowChoiceCard] = useState(true);
+  const [showValidationPopup, setShowValidationPopup] = useState(false);
+  const [validationStatus, setValidationStatus] = useState<'complete' | 'incomplete' | null>(null);
 
   const currentFlowDay = personalizedFlow?.days.find(d => d.day === personalizedFlow.currentDay);
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;
@@ -41,7 +43,7 @@ export function FlowChallengePage({
   const t = {
     title: currentFlowDay?.title || `Jour ${currentDay}`,
     subtitle: personalizedFlow?.objective || objectifPrincipal,
-    validate: language === 'fr' ? 'Valider' : language === 'en' ? 'Complete' : 'Completar',
+    validate: language === 'fr' ? 'Valider ma journée' : language === 'en' ? 'Complete my day' : 'Completar mi día',
     progress: language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso',
     streak: language === 'fr' ? 'Série' : language === 'en' ? 'Streak' : 'Racha',
     actions: language === 'fr' ? 'Actions' : language === 'en' ? 'Actions' : 'Acciones',
@@ -55,7 +57,28 @@ export function FlowChallengePage({
   const isAction1Completed = mandatoryActions[0]?.isCompleted || false;
   const isAction2Completed = mandatoryActions[1]?.isCompleted || false;
   const isChoiceCompleted = !!selectedChoiceId;
-  const canCompleteDay = isAction1Completed && isAction2Completed && isChoiceCompleted;
+  const completedTasksCount = Number(isAction1Completed) + Number(isAction2Completed) + Number(isChoiceCompleted);
+  const canCompleteDay = completedTasksCount === 3;
+
+  const handleValidateClick = () => {
+    if (canCompleteDay) {
+      setValidationStatus('complete');
+    } else {
+      setValidationStatus('incomplete');
+    }
+    setShowValidationPopup(true);
+  };
+
+  const handleConfirmValidation = () => {
+    onCompleteDay(currentDay);
+    setShowValidationPopup(false);
+    setValidationStatus(null);
+  };
+
+  const handleCancelValidation = () => {
+    setShowValidationPopup(false);
+    setValidationStatus(null);
+  };
 
   // --- RENDERS ---
 
@@ -176,25 +199,88 @@ export function FlowChallengePage({
         )}
       </div>
 
-      {/* Validate Button */}
-      <div className="fixed bottom-24 left-6 right-6 z-20">
+      {/* Validate Button - Sous les tâches */}
+      <div className="mt-6">
         <Button
-          onClick={() => onCompleteDay(currentDay)}
-          disabled={!canCompleteDay}
-          className={`w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 ${canCompleteDay
-            ? 'bg-slate-900 text-white hover:bg-black hover:scale-[1.02]'
-            : 'bg-white text-gray-300 shadow-none border-2 border-gray-100'
-            }`}
+          onClick={handleValidateClick}
+          className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-slate-900 text-white hover:bg-black hover:scale-[1.02]"
         >
-          {canCompleteDay ? (
-            <span className="flex items-center gap-2">
-              {t.validate} <Check className="w-5 h-5" />
-            </span>
-          ) : (
-            <span>{Math.round(((Number(isAction1Completed) + Number(isAction2Completed) + Number(isChoiceCompleted)) / 3) * 100)}%</span>
-          )}
+          <span className="flex items-center gap-2">
+            {t.validate} <Check className="w-5 h-5" />
+          </span>
         </Button>
+        
+        {/* Indicateur de progression */}
+        <div className="mt-3 flex items-center justify-center gap-2 text-sm text-gray-400">
+          <span>{completedTasksCount}/3 {language === 'fr' ? 'tâches complétées' : language === 'en' ? 'tasks completed' : 'tareas completadas'}</span>
+        </div>
       </div>
+
+      {/* Popup de validation */}
+      {showValidationPopup && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-[2rem] p-6 max-w-sm w-full shadow-2xl">
+            {validationStatus === 'complete' ? (
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">
+                    {language === 'fr' ? 'Série validée !' : language === 'en' ? 'Streak validated!' : '¡Racha validada!'}
+                  </h3>
+                  <p className="text-gray-500 text-sm">
+                    {language === 'fr' 
+                      ? 'Bravo ! Tu as complété toutes tes tâches aujourd\'hui.' 
+                      : language === 'en' 
+                        ? 'Great job! You completed all your tasks today.' 
+                        : '¡Excelente trabajo! Completaste todas tus tareas hoy.'}
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleConfirmValidation}
+                  className="w-full h-14 rounded-[2rem] bg-slate-900 text-white font-bold hover:bg-black"
+                >
+                  {language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar'}
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-4xl">🤔</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">
+                    {language === 'fr' ? 'Remise en question' : language === 'en' ? 'Double check' : 'Verificación'}
+                  </h3>
+                  <p className="text-gray-500 text-sm">
+                    {language === 'fr' 
+                      ? `Tu n'as complété que ${completedTasksCount}/3 tâches. Veux-tu vraiment valider sans avoir tout complété ?` 
+                      : language === 'en' 
+                        ? `You only completed ${completedTasksCount}/3 tasks. Do you really want to validate without completing everything?` 
+                        : `Solo completaste ${completedTasksCount}/3 tareas. ¿Realmente quieres validar sin completar todo?`}
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={handleConfirmValidation}
+                    className="w-full h-14 rounded-[2rem] bg-slate-900 text-white font-bold hover:bg-black"
+                  >
+                    {language === 'fr' ? 'Oui, valider quand même' : language === 'en' ? 'Yes, validate anyway' : 'Sí, validar de todos modos'}
+                  </Button>
+                  <Button 
+                    onClick={handleCancelValidation}
+                    variant="outline"
+                    className="w-full h-14 rounded-[2rem] border-2 border-gray-200 text-gray-600 font-bold hover:bg-gray-50"
+                  >
+                    {language === 'fr' ? 'Non, je vais compléter' : language === 'en' ? 'No, I\'ll complete them' : 'No, las completaré'}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 

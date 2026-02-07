@@ -182,8 +182,8 @@ export function FlowChallengePage({
           onClick={() => onCompleteDay(currentDay)}
           disabled={!canCompleteDay}
           className={`w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 ${canCompleteDay
-              ? 'bg-slate-900 text-white hover:bg-black hover:scale-[1.02]'
-              : 'bg-white text-gray-300 shadow-none border-2 border-gray-100'
+            ? 'bg-slate-900 text-white hover:bg-black hover:scale-[1.02]'
+            : 'bg-white text-gray-300 shadow-none border-2 border-gray-100'
             }`}
         >
           {canCompleteDay ? (
@@ -252,8 +252,7 @@ export function FlowChallengePage({
       <div className="px-6">
         {activeTab === 'flow' && renderFlowSection()}
         {activeTab === 'progression' && renderProgressionSection()}
-        {/* Reuse existing badges section logic if needed, slightly adapted */}
-        {activeTab === 'badges' && renderFlowSection()} {/* Placeholder, reusing Flow for now for visual consistency check or implement specific badge view matching style */}
+        {activeTab === 'badges' && renderBadgesSection()}
       </div>
 
       {/* Floating Dock Navigation */}

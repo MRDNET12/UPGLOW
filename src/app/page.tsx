@@ -1998,7 +1998,7 @@ PROCESO OBLIGATORIO:
             onClick={() => {
               console.log('[DEBUG] Continue button clicked, confirming language and navigating to presentation-1');
               confirmLanguageSelection();
-              setCurrentView('presentation-1');
+              setCurrentView('project-glow-intro');
             }}
             className="w-full h-12 text-lg text-white font-bold rounded-2xl transition-all animate-in slide-in-from-bottom duration-700 delay-400 hover:scale-105"
             style={{ background: 'linear-gradient(135deg, #f472b6, #e11d48)', boxShadow: '0 4px 12px rgba(244, 114, 182, 0.25)' }}
@@ -2108,6 +2108,45 @@ PROCESO OBLIGATORIO:
               </div>
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Page d'introduction Project Glow
+  if (currentView === 'project-glow-intro') {
+    const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
+
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-white">
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          {/* Titre principal */}
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent leading-tight">
+              Project Glow
+            </h1>
+          </div>
+
+          {/* Texte explicatif */}
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 shadow-sm">
+            <p className="text-lg text-gray-700 leading-relaxed text-center">
+              {language === 'fr' 
+                ? "c'est l'app pour celles et ceux qui veulent provoquer un changement dans leur vie et devenir la personne qu'ils aspirent à être."
+                : language === 'en'
+                  ? "it's the app for those who want to create change in their lives and become the person they aspire to be."
+                  : "es la aplicación para quienes quieren provocar un cambio en su vida y convertirse en la persona que aspiran a ser."
+              }
+            </p>
+          </div>
+
+          {/* Bouton Continuer */}
+          <Button
+            onClick={() => setCurrentView('presentation-1')}
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+          >
+            {continueText}
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
         </div>
       </div>
     );

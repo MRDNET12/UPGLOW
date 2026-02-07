@@ -1424,15 +1424,22 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
             // Nettoyer le JSON avant parsing
             const cleanJson = (json: string): string => {
-              return json
-                // Remplacer les guillemets simples par des doubles dans les valeurs
-                .replace(/'/g, '"')
-                // Corriger les noms de propriétés sans guillemets
-                .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
-                // Échapper les guillemets dans les valeurs
-                .replace(/":\s*"([^"]*)"/g, (match, p1) => {
-                  return '": "' + p1.replace(/"/g, '\\"') + '"';
-                });
+              // 1. Remove comments if any (simple approach)
+              let cleaned = json.replace(/\/\/.*$/gm, '');
+
+              // 2. Fix unquoted property names (e.g. key: "value" -> "key": "value")
+              // Be careful not to match inside strings
+              // This is a heuristic and might not cover all cases, but better than before
+              cleaned = cleaned.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+
+              // 3. Remove trailing commas
+              cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
+
+              // 4. Try to fix single quotes ONLY for keys or if clearly wrapping a value, 
+              // BUT NEVER blindly replace all single quotes as it breaks French text (l'objectif)
+              // We'll skip the single quote replacement for values to avoid breaking text
+
+              return cleaned;
             };
 
             let parsed;

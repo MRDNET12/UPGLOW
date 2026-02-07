@@ -1315,8 +1315,10 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
             // Liste des modèles à essayer par ordre de préférence
             const models = [
-              'tngtech/deepseek-r1t2-chimera:free',           // Premier choix
-              'arcee-ai/trinity-large-preview:free'          // Fallback si deepseek ne fonctionne pas
+              'deepseek/deepseek-r1-0528:free',              // Premier choix
+              'tngtech/deepseek-r1t2-chimera:free',          // Deuxieme choix
+              'openrouter/pony-alpha',                        // Troisieme choix
+              'arcee-ai/trinity-large-preview:free'           // Dernier fallback
             ];
 
             let response;
@@ -1454,7 +1456,10 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 return `: "${escaped}"`;
               });
 
-              // 3. Fix unquoted property names (e.g. key: "value" -> "key": "value")
+              // 3. Remplacer les clés JSON avec guillemets simples
+              cleaned = cleaned.replace(/'([a-zA-Z0-9_]+)'\s*:/g, '"$1":');
+
+              // 4. Fix unquoted property names (e.g. key: "value" -> "key": "value")
               cleaned = cleaned.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
 
               // 4. Remove trailing commas

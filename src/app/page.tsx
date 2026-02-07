@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -308,6 +308,9 @@ export default function GlowUpChallengeApp() {
   const [showJournalEntryModal, setShowJournalEntryModal] = useState(false);
   const [journalCurrentMonth, setJournalCurrentMonth] = useState(new Date());
   const [editingEntry, setEditingEntry] = useState<typeof journalEntries[0] | null>(null);
+
+  // État pour l'animation du Flow en arrière-plan
+  const [flowGenerationStep, setFlowGenerationStep] = useState(0);
   const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
 
   // État pour Glow Mirror
@@ -458,6 +461,16 @@ export default function GlowUpChallengeApp() {
     const interval = setInterval(checkGlowMirrorAvailability, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, [lastGlowMirrorView, firstAppUseDate]);
+
+  // Animation du Flow en arrière-plan
+  useEffect(() => {
+    if (isGeneratingFlowBackground) {
+      const interval = setInterval(() => {
+        setFlowGenerationStep((prev) => (prev + 1) % 4);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [isGeneratingFlowBackground]);
 
   // Helper: Calculer les jours consécutifs d'une habitude
   const calculateHabitConsecutiveDays = (habitHistory: Array<{ date: string, completed: boolean }>) => {
@@ -2527,21 +2540,66 @@ PROCESO OBLIGATORIO:
 
               <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
                 {isGeneratingFlowBackground ? (
-                  /* Loading State - Génération en cours */
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <div className="relative mb-4">
-                      <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl">✨</span>
+                  /* Loading State - Animation identique à FlowDescriptionPage */
+                  (() => {
+                    const generationSteps = {
+                      fr: [
+                        { text: 'Analyse de ton objectif...', icon: Target },
+                        { text: 'Génération des 30 jours...', icon: Wand2 },
+                        { text: 'Personnalisation de ton parcours...', icon: Lightbulb },
+                        { text: 'Finalisation...', icon: Sparkles },
+                      ],
+                      en: [
+                        { text: 'Analyzing your goal...', icon: Target },
+                        { text: 'Generating 30 days...', icon: Wand2 },
+                        { text: 'Personalizing your journey...', icon: Lightbulb },
+                        { text: 'Finalizing...', icon: Sparkles },
+                      ],
+                      es: [
+                        { text: 'Analizando tu objetivo...', icon: Target },
+                        { text: 'Generando 30 días...', icon: Wand2 },
+                        { text: 'Personalizando tu camino...', icon: Lightbulb },
+                        { text: 'Finalizando...', icon: Sparkles },
+                      ],
+                    };
+                    const currentSteps = generationSteps[language as keyof typeof generationSteps] || generationSteps.fr;
+                    const CurrentIcon = currentSteps[flowGenerationStep].icon;
+                    
+                    return (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        {/* Animation circulaire */}
+                        <div className="relative w-32 h-32 mx-auto mb-4">
+                          {/* Cercles animés */}
+                          <div className="absolute inset-0 rounded-full border-4 border-white/20 opacity-30 animate-ping" />
+                          <div className="absolute inset-2 rounded-full border-4 border-white/30 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
+                          <div className="absolute inset-4 rounded-full border-4 border-white/40 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
+                          
+                          {/* Icône centrale */}
+                          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white/80 to-white/60 flex items-center justify-center shadow-2xl animate-pulse">
+                            <CurrentIcon className="w-10 h-10 text-purple-600" />
+                          </div>
+                        </div>
+
+                        {/* Texte de l'étape */}
+                        <div className="text-center space-y-2">
+                          <h3 className="text-xl font-bold text-white">
+                            {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
+                          </h3>
+                          <p className="text-base text-white/90 font-medium">
+                            {currentSteps[flowGenerationStep].text}
+                          </p>
+                        </div>
+
+                        {/* Barre de progression */}
+                        <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden mx-auto mt-4">
+                          <div 
+                            className="h-full bg-white rounded-full transition-all duration-500"
+                            style={{ width: `${((flowGenerationStep + 1) / currentSteps.length) * 100}%` }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">
-                      {language === 'fr' ? 'Création en cours...' : language === 'en' ? 'Creating...' : 'Creando...'}
-                    </h3>
-                    <p className="text-sm text-purple-200 text-center">
-                      {language === 'fr' ? 'Notre IA prépare ton Flow personnalisé' : language === 'en' ? 'Our AI is preparing your personalized Flow' : 'Nuestra IA está preparando tu Flow personalizado'}
-                    </p>
-                  </div>
+                    );
+                  })()
                 ) : personalizedFlow?.isActive ? (
                   /* Active State - Adapted to Purple Theme */
                   <div className="flex items-center justify-between h-full">

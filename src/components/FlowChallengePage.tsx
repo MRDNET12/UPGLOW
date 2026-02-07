@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X, Droplet } from 'lucide-react';
+import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X, Droplet, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +39,7 @@ export function FlowChallengePage({
   const [showChoiceCard, setShowChoiceCard] = useState(true);
   const [showValidationPopup, setShowValidationPopup] = useState(false);
   const [validationStatus, setValidationStatus] = useState<'complete' | 'incomplete' | null>(null);
+  const [selectedTask, setSelectedTask] = useState<{title: string, description: string, icon: string} | null>(null);
 
   const currentFlowDay = personalizedFlow?.days.find(d => d.day === personalizedFlow.currentDay);
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;
@@ -123,39 +124,71 @@ export function FlowChallengePage({
 
         {/* Action 1 */}
         {mandatoryActions[0] && (
-          <div
-            onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
-            className={`bg-white p-5 rounded-[2.5rem] shadow-sm flex items-center gap-4 cursor-pointer transition-all duration-300 ${isAction1Completed ? 'opacity-60 grayscale-[0.5]' : 'hover:shadow-md hover:scale-[1.01]'}`}
-          >
-            <div className={`p-4 rounded-3xl flex-shrink-0 ${isAction1Completed ? 'bg-green-100 text-green-600' : 'bg-rose-50 text-rose-500'}`}>
-              {isAction1Completed ? <Check className="w-6 h-6" /> : <div className="text-2xl">{mandatoryActions[0].icon}</div>}
+          <div className="relative group">
+            <div
+              onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
+              className={`bg-white p-5 rounded-[2.5rem] shadow-sm flex items-center gap-4 cursor-pointer transition-all duration-300 ${isAction1Completed ? 'opacity-60 grayscale-[0.5]' : 'hover:shadow-md hover:scale-[1.01]'}`}
+            >
+              <div className={`p-4 rounded-3xl flex-shrink-0 ${isAction1Completed ? 'bg-green-100 text-green-600' : 'bg-rose-50 text-rose-500'}`}>
+                {isAction1Completed ? <Check className="w-6 h-6" /> : <div className="text-2xl">{mandatoryActions[0].icon}</div>}
+              </div>
+              <div className="flex-1 pr-8">
+                <h4 className={`font-bold text-slate-800 ${isAction1Completed ? 'line-through text-gray-400' : ''}`}>{mandatoryActions[0].title}</h4>
+                <p className="text-xs text-gray-400 font-medium mt-0.5 line-clamp-1">{mandatoryActions[0].description}</p>
+              </div>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${isAction1Completed ? 'border-green-400 bg-green-50' : 'border-gray-100'}`}>
+                {isAction1Completed && <div className="w-4 h-4 rounded-full bg-green-400" />}
+              </div>
             </div>
-            <div className="flex-1">
-              <h4 className={`font-bold text-slate-800 ${isAction1Completed ? 'line-through text-gray-400' : ''}`}>{mandatoryActions[0].title}</h4>
-              <p className="text-xs text-gray-400 font-medium mt-0.5 line-clamp-1">{mandatoryActions[0].description}</p>
-            </div>
-            <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${isAction1Completed ? 'border-green-400 bg-green-50' : 'border-gray-100'}`}>
-              {isAction1Completed && <div className="w-4 h-4 rounded-full bg-green-400" />}
-            </div>
+            {/* Bouton + pour voir les détails */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTask({
+                  title: mandatoryActions[0].title,
+                  description: mandatoryActions[0].description,
+                  icon: mandatoryActions[0].icon
+                });
+              }}
+              className="absolute top-1/2 right-14 transform -translate-y-1/2 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-slate-700 transition-all z-10"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         )}
 
         {/* Action 2 */}
         {mandatoryActions[1] && (
-          <div
-            onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
-            className={`bg-white p-5 rounded-[2.5rem] shadow-sm flex items-center gap-4 cursor-pointer transition-all duration-300 ${isAction2Completed ? 'opacity-60 grayscale-[0.5]' : 'hover:shadow-md hover:scale-[1.01]'}`}
-          >
-            <div className={`p-4 rounded-3xl flex-shrink-0 ${isAction2Completed ? 'bg-green-100 text-green-600' : 'bg-purple-50 text-purple-500'}`}>
-              {isAction2Completed ? <Check className="w-6 h-6" /> : <div className="text-2xl">{mandatoryActions[1].icon}</div>}
+          <div className="relative group">
+            <div
+              onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
+              className={`bg-white p-5 rounded-[2.5rem] shadow-sm flex items-center gap-4 cursor-pointer transition-all duration-300 ${isAction2Completed ? 'opacity-60 grayscale-[0.5]' : 'hover:shadow-md hover:scale-[1.01]'}`}
+            >
+              <div className={`p-4 rounded-3xl flex-shrink-0 ${isAction2Completed ? 'bg-green-100 text-green-600' : 'bg-purple-50 text-purple-500'}`}>
+                {isAction2Completed ? <Check className="w-6 h-6" /> : <div className="text-2xl">{mandatoryActions[1].icon}</div>}
+              </div>
+              <div className="flex-1 pr-8">
+                <h4 className={`font-bold text-slate-800 ${isAction2Completed ? 'line-through text-gray-400' : ''}`}>{mandatoryActions[1].title}</h4>
+                <p className="text-xs text-gray-400 font-medium mt-0.5 line-clamp-1">{mandatoryActions[1].description}</p>
+              </div>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${isAction2Completed ? 'border-green-400 bg-green-50' : 'border-gray-100'}`}>
+                {isAction2Completed && <div className="w-4 h-4 rounded-full bg-green-400" />}
+              </div>
             </div>
-            <div className="flex-1">
-              <h4 className={`font-bold text-slate-800 ${isAction2Completed ? 'line-through text-gray-400' : ''}`}>{mandatoryActions[1].title}</h4>
-              <p className="text-xs text-gray-400 font-medium mt-0.5 line-clamp-1">{mandatoryActions[1].description}</p>
-            </div>
-            <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${isAction2Completed ? 'border-green-400 bg-green-50' : 'border-gray-100'}`}>
-              {isAction2Completed && <div className="w-4 h-4 rounded-full bg-green-400" />}
-            </div>
+            {/* Bouton + pour voir les détails */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTask({
+                  title: mandatoryActions[1].title,
+                  description: mandatoryActions[1].description,
+                  icon: mandatoryActions[1].icon
+                });
+              }}
+              className="absolute top-1/2 right-14 transform -translate-y-1/2 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-slate-700 transition-all z-10"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -183,19 +216,34 @@ export function FlowChallengePage({
                 {choiceActions.map((action) => {
                   const isSelected = selectedChoiceId === action.id;
                   return (
-                    <div
-                      key={action.id}
-                      onClick={() => {
-                        onSelectChoice(currentDay, action.id);
-                        onToggleAction(currentDay, action.id);
-                      }}
-                      className={`p-4 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${isSelected ? 'bg-amber-50 border-2 border-amber-100' : 'bg-gray-50 hover:bg-gray-100'}`}
-                    >
-                      <div className="text-xl">{action.icon}</div>
-                      <div className="flex-1">
-                        <h5 className={`text-sm font-bold ${isSelected ? 'text-amber-900' : 'text-slate-700'}`}>{action.title}</h5>
+                    <div key={action.id} className="relative group">
+                      <div
+                        onClick={() => {
+                          onSelectChoice(currentDay, action.id);
+                          onToggleAction(currentDay, action.id);
+                        }}
+                        className={`p-4 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${isSelected ? 'bg-amber-50 border-2 border-amber-100' : 'bg-gray-50 hover:bg-gray-100'}`}
+                      >
+                        <div className="text-xl">{action.icon}</div>
+                        <div className="flex-1 pr-8">
+                          <h5 className={`text-sm font-bold ${isSelected ? 'text-amber-900' : 'text-slate-700'}`}>{action.title}</h5>
+                        </div>
+                        {isSelected && <div className="w-3 h-3 rounded-full bg-amber-500"></div>}
                       </div>
-                      {isSelected && <div className="w-3 h-3 rounded-full bg-amber-500"></div>}
+                      {/* Bouton + pour voir les détails */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTask({
+                            title: action.title,
+                            description: action.description,
+                            icon: action.icon
+                          });
+                        }}
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-amber-600 transition-all z-10"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   )
                 })}

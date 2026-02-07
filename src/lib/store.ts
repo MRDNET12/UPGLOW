@@ -1347,8 +1347,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
 
             // Liste des modèles à essayer par ordre de préférence
             const models = [
-              'deepseek/deepseek-r1-0528:free',              // Premier choix
-              'tngtech/deepseek-r1t2-chimera:free',          // Deuxieme choix
+              'tngtech/deepseek-r1t2-chimera:free',          // Premier choix (Meilleur pour raisonnement)
+              'deepseek/deepseek-r1-0528:free',              // Deuxieme choix
               'openrouter/pony-alpha',                        // Troisieme choix
               'arcee-ai/trinity-large-preview:free'           // Dernier fallback
             ];
@@ -2486,8 +2486,8 @@ Génère les jours ${startDay} à ${endDay} au format JSON suivant :
 FORMAT JSON STRICT - Utilise uniquement des guillemets doubles.`;
 
           const models = [
-            'deepseek/deepseek-r1-0528:free',
-            'tngtech/deepseek-r1t2-chimera:free',
+              'tngtech/deepseek-r1t2-chimera:free',          // Premier choix
+              'deepseek/deepseek-r1-0528:free',
             'openrouter/pony-alpha',
             'arcee-ai/trinity-large-preview:free'
           ];

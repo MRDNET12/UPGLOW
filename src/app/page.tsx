@@ -153,6 +153,8 @@ export default function GlowUpChallengeApp() {
     toggleFlowAction,
     selectFlowChoice,
     generatePersonalizedFlow,
+    generateFlowInBackground,
+    isGeneratingFlowBackground,
     regenerateFlow,
     unlockBadge
   } = useStore();
@@ -2459,8 +2461,13 @@ PROCESO OBLIGATORIO:
 
             {/* Carte Flow Personnalisé - Style "A series of Olympiads" (Purple + Trophy) */}
             <Card
-              className="border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative min-h-[220px] group"
+              className={`border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] overflow-hidden relative min-h-[220px] group transition-all duration-300 ${
+                isGeneratingFlowBackground 
+                  ? 'cursor-not-allowed opacity-90' 
+                  : 'cursor-pointer hover:scale-[1.01]'
+              }`}
               onClick={() => {
+                if (isGeneratingFlowBackground) return; // Bloquer le clic pendant la génération
                 if (personalizedFlow?.isActive) {
                   setCurrentView('flow-challenge');
                 } else {
@@ -2477,7 +2484,23 @@ PROCESO OBLIGATORIO:
               </div>
 
               <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
-                {personalizedFlow?.isActive ? (
+                {isGeneratingFlowBackground ? (
+                  /* Loading State - Génération en cours */
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <div className="relative mb-4">
+                      <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl">✨</span>
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      {language === 'fr' ? 'Création en cours...' : language === 'en' ? 'Creating...' : 'Creando...'}
+                    </h3>
+                    <p className="text-sm text-purple-200 text-center">
+                      {language === 'fr' ? 'Notre IA prépare ton Flow personnalisé' : language === 'en' ? 'Our AI is preparing your personalized Flow' : 'Nuestra IA está preparando tu Flow personalizado'}
+                    </p>
+                  </div>
+                ) : personalizedFlow?.isActive ? (
                   /* Active State - Adapted to Purple Theme */
                   <div className="flex items-center justify-between h-full">
                     <div className="flex-1 z-10">

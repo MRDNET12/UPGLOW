@@ -1366,8 +1366,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 const data = await response.json();
                 content = data.choices?.[0]?.message?.content || '';
 
-                // Vérifier que le contenu est suffisamment long (au moins 3000 caractères pour 30 jours)
-                if (content.length < 3000) {
+                // Vérifier que le contenu est suffisamment long (au moins 20000 caractères pour 30 jours complets)
+                if (content.length < 20000) {
                   console.warn(`[AI Response] ⚠️ Response too short (${content.length} chars), trying next model...`);
                   lastError = `Response too short: ${content.length} characters`;
                   continue; // Essayer le modèle suivant
@@ -1376,9 +1376,17 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 // Vérification rapide que le JSON semble complet
                 const openBraces = (content.match(/{/g) || []).length;
                 const closeBraces = (content.match(/}/g) || []).length;
-                if (openBraces > closeBraces + 5) { // Tolérance de 5 pour les cas limites
+                if (openBraces > closeBraces + 2) { // Tolérance de 2 max
                   console.warn(`[AI Response] ⚠️ JSON seems truncated (${openBraces} open vs ${closeBraces} close braces), trying next model...`);
                   lastError = 'JSON truncated';
+                  continue; // Essayer le modèle suivant
+                }
+                
+                // Vérifier que le contenu se termine correctement (par } ou ])
+                const trimmedEnd = content.trim().slice(-10);
+                if (!trimmedEnd.endsWith('}') && !trimmedEnd.endsWith('```')) {
+                  console.warn(`[AI Response] ⚠️ JSON does not end properly, trying next model...`);
+                  lastError = 'JSON incomplete ending';
                   continue; // Essayer le modèle suivant
                 }
 

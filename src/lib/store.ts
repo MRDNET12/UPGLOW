@@ -1371,44 +1371,33 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             console.log('[AI Response] Full content length:', content.length);
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            // VALIDATION STRICTE DU RAISONNEMENT (BLOQUANTE)
+            // VALIDATION DU RAISONNEMENT (OPTIONNELLE)
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
             const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
+            let reasoning = '';
 
-            if (!thinkMatch) {
-              console.error('[AI Response] ❌ REJECTED: No <think> reasoning found!');
-              console.error('[AI Response] Content preview:', content.substring(0, 500));
-              throw new Error('AI did not provide reasoning - using fallback');
+            if (thinkMatch) {
+              reasoning = thinkMatch[1].trim();
+              console.log('[AI Response] ✅ Reasoning found, length:', reasoning.length);
+              
+              // Vérifier que le raisonnement contient les éléments clés (optionnel)
+              const hasAnalysis = /analyse|situation|contexte/i.test(reasoning);
+              const hasNeeds = /besoin|blocage|défi|challenge/i.test(reasoning);
+              const hasStrategy = /stratégie|approche|plan|progression/i.test(reasoning);
+              
+              if (reasoning.length >= 200 && hasAnalysis && hasNeeds && hasStrategy) {
+                console.log('[AI Response] ✅ Valid reasoning detected');
+                console.log('[AI Response] Reasoning preview:', reasoning.substring(0, 300) + '...');
+              } else {
+                console.warn('[AI Response] ⚠️ Reasoning incomplete but accepting anyway');
+              }
+            } else {
+              console.warn('[AI Response] ⚠️ No <think> reasoning found, but will try to extract JSON anyway');
             }
-
-            const reasoning = thinkMatch[1].trim();
-
-            if (reasoning.length < 200) {
-              console.error('[AI Response] ❌ REJECTED: Reasoning too short!');
-              console.error('[AI Response] Reasoning length:', reasoning.length);
-              console.error('[AI Response] Reasoning content:', reasoning);
-              throw new Error('AI reasoning insufficient (< 200 chars) - using fallback');
-            }
-
-            // Vérifier que le raisonnement contient les éléments clés
-            const hasAnalysis = /analyse|situation|contexte/i.test(reasoning);
-            const hasNeeds = /besoin|blocage|défi|challenge/i.test(reasoning);
-            const hasStrategy = /stratégie|approche|plan|progression/i.test(reasoning);
-
-            if (!hasAnalysis || !hasNeeds || !hasStrategy) {
-              console.error('[AI Response] ❌ REJECTED: Reasoning missing key elements!');
-              console.error('[AI Response] Has analysis:', hasAnalysis);
-              console.error('[AI Response] Has needs:', hasNeeds);
-              console.error('[AI Response] Has strategy:', hasStrategy);
-              throw new Error('AI reasoning incomplete - using fallback');
-            }
-
-            console.log('[AI Response] ✅ Valid reasoning detected');
-            console.log('[AI Response] Reasoning preview:', reasoning.substring(0, 300) + '...');
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            // EXTRACTION DU JSON
+            // EXTRACTION DU JSON (PRIORITAIRE)
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
             // Extract JSON from response - try to find JSON block

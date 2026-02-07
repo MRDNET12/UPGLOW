@@ -5589,18 +5589,32 @@ PROCESO OBLIGATORIO:
                 </span>
               </Button>
 
-              {/* Journal - NOUVEAU */}
-              <Button
-                variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'journal'
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                  }`}
-                onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
-              >
-                <BookOpen className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{t.nav.journal}</span>
-              </Button>
+              {/* Journal - Bouton + quand sur la page journal */}
+              {currentView === 'journal' ? (
+                <Button
+                  variant="ghost"
+                  className="flex-1 h-11 flex-col gap-0.5 rounded-xl bg-pink-500 text-white shadow-lg hover:bg-pink-600 animate-bounce"
+                  style={{ animationDuration: '2s' }}
+                  onClick={() => setShowJournalEntryModal(true)}
+                >
+                  <Plus className="w-6 h-6" />
+                  <span className="text-[10px] font-medium">
+                    {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Añadir'}
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'journal'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                    }`}
+                  onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
+                >
+                  <BookOpen className="w-5 h-5" />
+                  <span className="text-[10px] font-medium">{t.nav.journal}</span>
+                </Button>
+              )}
 
               {/* Ma Semaine */}
               <Button
@@ -6722,7 +6736,7 @@ PROCESO OBLIGATORIO:
 
       {/* Journal View */}
       {currentView === 'journal' && canAccessFeature('journal') && (
-        <div className="pb-32 min-h-screen bg-white overflow-y-auto">
+        <div className="pb-24 min-h-screen bg-white overflow-y-auto">
           {/* Header */}
           <div className="px-4 pt-0 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">
@@ -6868,16 +6882,6 @@ PROCESO OBLIGATORIO:
               </div>
             ))}
 
-            {/* Bouton Ajouter en bas - Sur la page (sticky) */}
-            <div className="sticky bottom-4 mt-6 mb-8">
-              <button
-                onClick={() => setShowJournalEntryModal(true)}
-                className="w-full bg-gray-900 text-white py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors text-base font-semibold"
-              >
-                <Plus className="w-5 h-5" />
-                {language === 'fr' ? 'Ma journée' : language === 'en' ? 'My day' : 'Mi día'}
-              </button>
-            </div>
           </div>
         </div>
       )}

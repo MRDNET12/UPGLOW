@@ -156,7 +156,10 @@ export default function GlowUpChallengeApp() {
     generateFlowInBackground,
     isGeneratingFlowBackground,
     regenerateFlow,
-    unlockBadge
+    unlockBadge,
+    continueFlow,
+    checkNeedsContinuation,
+    isGeneratingFlow
   } = useStore();
 
   const { t } = useTranslation();
@@ -2384,6 +2387,9 @@ PROCESO OBLIGATORIO:
           regenerateFlow();
           setCurrentView('flow-description');
         }}
+        onContinueFlow={continueFlow}
+        needsContinuation={checkNeedsContinuation()}
+        isGeneratingFlow={isGeneratingFlow}
       />
     );
   }

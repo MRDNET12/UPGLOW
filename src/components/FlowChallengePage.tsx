@@ -17,6 +17,9 @@ interface FlowChallengePageProps {
   onSelectChoice: (day: number, choiceId: string) => void;
   onCompleteDay: (day: number) => void;
   onRegenerateFlow?: () => void;
+  onContinueFlow?: () => void;        // Nouveau: continuer la génération
+  needsContinuation?: boolean;        // Nouveau: indique si on doit afficher le bouton
+  isGeneratingFlow?: boolean;         // Nouveau: indique si on génère
 }
 
 export function FlowChallengePage({
@@ -27,7 +30,10 @@ export function FlowChallengePage({
   onToggleAction,
   onSelectChoice,
   onCompleteDay,
-  onRegenerateFlow
+  onRegenerateFlow,
+  onContinueFlow,
+  needsContinuation,
+  isGeneratingFlow
 }: FlowChallengePageProps) {
   const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
   const [showChoiceCard, setShowChoiceCard] = useState(true);
@@ -214,6 +220,36 @@ export function FlowChallengePage({
         <div className="mt-3 flex items-center justify-center gap-2 text-sm text-gray-400">
           <span>{completedTasksCount}/3 {language === 'fr' ? 'tâches complétées' : language === 'en' ? 'tasks completed' : 'tareas completadas'}</span>
         </div>
+
+        {/* Bouton Continuer - Affiché quand on atteint le dernier jour du batch */}
+        {needsContinuation && onContinueFlow && (
+          <div className="mt-6">
+            <Button
+              onClick={onContinueFlow}
+              disabled={isGeneratingFlow}
+              className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 hover:scale-[1.02] disabled:opacity-50"
+            >
+              <span className="flex items-center gap-2">
+                {isGeneratingFlow ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    {language === 'fr' ? 'Génération en cours...' : 'Generating...'}
+                  </>
+                ) : (
+                  <>
+                    <Target className="w-5 h-5" />
+                    {language === 'fr' ? 'Avancer vers mon objectif' : language === 'en' ? 'Advance towards my goal' : 'Avanzar hacia mi objetivo'}
+                  </>
+                )}
+              </span>
+            </Button>
+            <p className="mt-2 text-center text-xs text-gray-400">
+              {language === 'fr' 
+                ? `${personalizedFlow?.days.length || 0}/30 jours générés • Clique pour débloquer les 7 prochains jours`
+                : `${personalizedFlow?.days.length || 0}/30 days generated • Click to unlock the next 7 days`}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Popup de validation */}

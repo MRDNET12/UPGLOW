@@ -81,6 +81,9 @@ export interface PersonalizedFlow {
   isActive: boolean;
   badges: string[];
   isFromFallback?: boolean;  // ➕ Indique si le flow vient du fallback ou de l'IA
+  currentBatch: number;       // ➕ Batch actuel (1 = jours 1-7, 2 = jours 8-14, etc.)
+  maxDays: number;            // ➕ Objectif final (30 jours)
+  needsContinuation?: boolean; // ➕ Indique si on doit générer le batch suivant
 }
 
 export interface Badge {
@@ -303,6 +306,10 @@ interface AppState {
 
   // Flow regeneration
   regenerateFlow: () => void;
+
+  // Flow continuation (génération par batch de 7 jours)
+  continueFlow: () => Promise<void>;
+  checkNeedsContinuation: () => boolean;
 }
 
 // Helper function to get week number
@@ -1260,7 +1267,10 @@ Décris brièvement chaque phase selon ta structure personnalisée :
 
 ÉTAPE 3 - GÉNÉRATION DU FLOW (FORMAT JSON)
 
-Génère maintenant les 30 jours au format JSON suivant :
+⚠️ IMPORTANT : L'objectif est à atteindre en 30 JOURS, mais tu génères UNIQUEMENT LES 7 PREMIERS JOURS.
+Les 7 jours suivants seront générés plus tard basés sur les progrès de l'utilisateur.
+
+Génère maintenant les 7 PREMIERS jours au format JSON suivant :
 
 {
   "category": "catégorie pertinente",
@@ -1297,7 +1307,7 @@ Génère maintenant les 30 jours au format JSON suivant :
         }
       }
     }
-    // ... répéter pour les 30 jours avec PROGRESSION VISIBLE
+    // ... répéter pour les jours 2 à 7 avec PROGRESSION VISIBLE (objectif 30 jours mais génère 7 à la fois)
   ]
 }
 
@@ -1306,9 +1316,10 @@ Génère maintenant les 30 jours au format JSON suivant :
 🚨 RAPPELS CRITIQUES :
 1. Le raisonnement <think> est OBLIGATOIRE - sans lui, ta réponse sera rejetée
 2. Chaque action doit être CONCRÈTE et UNIQUE
-3. La progression doit être VISIBLE du jour 1 au jour 30
-4. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
-5. FORMAT JSON STRICT OBLIGATOIRE : Utilise UNIQUEMENT des guillemets doubles pour toutes les proprietes et valeurs
+3. Génère EXACTEMENT 7 JOURS (pas plus, pas moins) - les suivants viendront après
+4. Prévois une progression sur 30 jours, mais ne génère que les 7 premiers
+5. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
+6. FORMAT JSON STRICT OBLIGATOIRE : Utilise UNIQUEMENT des guillemets doubles
 
 GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
@@ -1366,8 +1377,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                 const data = await response.json();
                 content = data.choices?.[0]?.message?.content || '';
 
-                // Vérifier que le contenu est suffisamment long (au moins 15000 caractères pour 30 jours)
-                if (content.length < 15000) {
+                // Vérifier que le contenu est suffisamment long (au moins 5000 caractères pour 7 jours)
+                if (content.length < 5000) {
                   console.warn(`[AI Response] ⚠️ Response too short (${content.length} chars), trying next model...`);
                   lastError = `Response too short: ${content.length} characters`;
                   continue; // Essayer le modèle suivant
@@ -1381,7 +1392,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                   lastError = 'JSON truncated';
                   continue; // Essayer le modèle suivant
                 }
-                
+
                 // Vérifier que le contenu se termine correctement (par } ou ])
                 const trimmedEnd = content.trim().slice(-10);
                 if (!trimmedEnd.endsWith('}') && !trimmedEnd.endsWith('```')) {
@@ -1521,9 +1532,9 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               }
             }
 
-            if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 1) {
-              console.error('[AI Response] ❌ Invalid days data:', parsed);
-              throw new Error('Invalid days data - using fallback');
+            if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 7) {
+              console.error('[AI Response] ❌ Invalid days data (need at least 7 days):', parsed.days?.length || 0);
+              throw new Error('Not enough days generated - using fallback');
             }
 
             console.log('[AI Response] ✅ Successfully parsed', parsed.days.length, 'days');
@@ -1542,10 +1553,11 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             // PADDING À 30 JOURS SI NÉCESSAIRE
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-            // Ensure we have 30 days
-            if (parsed.days.length < 30) {
-              console.warn(`[AI Response] Only ${parsed.days.length} days received, padding to 30`);
-              while (parsed.days.length < 30) {
+            // Ne pas padder automatiquement - on génère par batch de 7 jours
+            // Le padding se fera uniquement si on a moins de 7 jours
+            if (parsed.days.length < 7) {
+              console.warn(`[AI Response] Only ${parsed.days.length} days received, padding to 7`);
+              while (parsed.days.length < 7) {
                 const lastDay = parsed.days[parsed.days.length - 1];
                 parsed.days.push({
                   ...lastDay,
@@ -1618,7 +1630,10 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               startDate: today,
               isActive: true,
               badges: [],
-              isFromFallback: false  // ➕ Flow généré par l'IA avec raisonnement validé
+              isFromFallback: false,  // ➕ Flow généré par l'IA avec raisonnement validé
+              currentBatch: 1,         // ➕ Premier batch de 7 jours
+              maxDays: 30,             // ➕ Objectif final
+              needsContinuation: false // ➕ Sera true quand on atteint le jour 7, 14, 21
             };
           } catch (error) {
             console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -2266,7 +2281,10 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               startDate: today,
               isActive: true,
               badges: [],
-              isFromFallback: true  // ⚠️ Flow généré par le fallback (IA n'a pas pu générer)
+              isFromFallback: true,  // ⚠️ Flow généré par le fallback (IA n'a pas pu générer)
+              currentBatch: 1,       // Fallback génère les 30 jours d'un coup
+              maxDays: 30,
+              needsContinuation: false
             };
 
             console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -2304,19 +2322,19 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
       generateFlowInBackground: (objective, description) => {
         set({ isGeneratingFlowBackground: true });
-        
+
         // Lancer la génération en arrière-plan
         const generateWithRetry = async (retryCount = 0, maxRetries = 3): Promise<void> => {
           try {
             console.log(`[Background Flow] Attempt ${retryCount + 1}/${maxRetries}`);
             await get().generatePersonalizedFlow(objective, description);
-            
+
             // Succès
             set({ isGeneratingFlowBackground: false });
             console.log('[Background Flow] ✅ Successfully generated');
           } catch (error) {
             console.error(`[Background Flow] Attempt ${retryCount + 1} failed:`, error);
-            
+
             if (retryCount < maxRetries - 1) {
               // Attendre 2 secondes avant de réessayer
               console.log(`[Background Flow] Retrying in 2 seconds...`);
@@ -2342,6 +2360,238 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
           isGeneratingFlow: false,
           currentView: 'flow-description'
         });
+      },
+
+      // Vérifie si l'utilisateur a atteint le dernier jour du batch actuel
+      checkNeedsContinuation: () => {
+        const flow = get().personalizedFlow;
+        if (!flow) return false;
+
+        const currentDayNum = flow.currentDay;
+        const totalDays = flow.days.length;
+        const maxDays = flow.maxDays || 30;
+
+        // Si on est au dernier jour du batch actuel ET qu'on n'a pas encore atteint 30 jours
+        return currentDayNum === totalDays && totalDays < maxDays;
+      },
+
+      // Continue la génération du flow avec les 7 prochains jours
+      continueFlow: async () => {
+        const state = get();
+        const flow = state.personalizedFlow;
+        if (!flow) return;
+
+        console.log('[Continue Flow] Starting continuation for batch', flow.currentBatch + 1);
+
+        // Collecter les tâches validées des jours précédents
+        const completedTasks: string[] = [];
+        flow.days.forEach(day => {
+          day.mandatoryActions.forEach(action => {
+            if (action.isCompleted) {
+              completedTasks.push(`Jour ${day.day}: ${action.title}`);
+            }
+          });
+          day.choiceActions.forEach(action => {
+            if (action.isCompleted) {
+              completedTasks.push(`Jour ${day.day} (choix): ${action.title}`);
+            }
+          });
+        });
+
+        const completedSummary = completedTasks.length > 0
+          ? completedTasks.join('\n')
+          : 'Aucune tâche validée pour le moment';
+
+        const nextBatch = flow.currentBatch + 1;
+        const startDay = flow.days.length + 1;
+        const endDay = Math.min(startDay + 6, flow.maxDays);
+
+        console.log(`[Continue Flow] Generating days ${startDay} to ${endDay}`);
+
+        // Mettre à jour l'état pour indiquer qu'on génère
+        set({ isGeneratingFlow: true });
+
+        try {
+          const lang = state.language;
+          const objective = flow.objective;
+          const description = flow.objectiveDescription;
+
+          const systemPrompt = `Tu es un coach de vie expert qui génère des plans d'action personnalisés PROGRESSIFS.
+          
+L'utilisateur a déjà complété les ${flow.days.length} premiers jours de son parcours de 30 jours.
+Tu dois maintenant générer les 7 jours suivants (jours ${startDay} à ${endDay}).
+
+HISTORIQUE DES TÂCHES VALIDÉES PAR L'UTILISATEUR :
+${completedSummary}
+
+Basé sur cet historique, adapte la difficulté et le type d'actions pour les prochains jours.
+Si l'utilisateur a validé beaucoup de tâches, augmente légèrement la difficulté.
+Si l'utilisateur a validé peu de tâches, propose des actions plus accessibles.`;
+
+          const userPrompt = `OBJECTIF : "${objective}"
+DESCRIPTION : "${description}"
+
+Génère les jours ${startDay} à ${endDay} au format JSON suivant :
+
+{
+  "days": [
+    {
+      "day": ${startDay},
+      "title": "Titre du jour",
+      "mandatory1": { "icon": "emoji", "title": "Action 1", "description": "Description" },
+      "mandatory2": { "icon": "emoji", "title": "Action 2", "description": "Description" },
+      "choiceOptions": {
+        "optionA": { "icon": "emoji", "title": "Option A", "description": "Description" },
+        "optionB": { "icon": "emoji", "title": "Option B", "description": "Description" },
+        "optionC": { "icon": "emoji", "title": "Option C", "description": "Description" }
+      }
+    }
+    // ... répéter pour les jours ${startDay} à ${endDay}
+  ]
+}
+
+FORMAT JSON STRICT - Utilise uniquement des guillemets doubles.`;
+
+          const models = [
+            'deepseek/deepseek-r1-0528:free',
+            'tngtech/deepseek-r1t2-chimera:free',
+            'openrouter/pony-alpha',
+            'arcee-ai/trinity-large-preview:free'
+          ];
+
+          let response;
+          let content = '';
+
+          for (const model of models) {
+            try {
+              console.log(`[Continue Flow] Trying model: ${model}`);
+
+              response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+                  'HTTP-Referer': 'https://upglow.app',
+                  'X-Title': 'UPGLOW Flow Continuation'
+                },
+                body: JSON.stringify({
+                  model,
+                  messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                  ],
+                  temperature: 0.7,
+                  max_tokens: 16000,
+                  top_p: 0.95
+                })
+              });
+
+              if (!response.ok) continue;
+
+              const data = await response.json();
+              content = data.choices?.[0]?.message?.content || '';
+
+              if (content.length > 3000) break;
+            } catch (e) {
+              console.warn(`[Continue Flow] Model ${model} failed:`, e);
+            }
+          }
+
+          if (!content || content.length < 1000) {
+            console.error('[Continue Flow] All models failed');
+            set({ isGeneratingFlow: false });
+            return;
+          }
+
+          // Extraire le JSON
+          let jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
+          if (!jsonMatch) {
+            jsonMatch = content.match(/\{[\s\S]*"days"[\s\S]*\}/);
+          }
+
+          if (!jsonMatch) {
+            console.error('[Continue Flow] No JSON found');
+            set({ isGeneratingFlow: false });
+            return;
+          }
+
+          const jsonContent = jsonMatch[1] || jsonMatch[0];
+          const parsed = JSON.parse(jsonContent);
+
+          if (!parsed.days || !Array.isArray(parsed.days)) {
+            console.error('[Continue Flow] Invalid days data');
+            set({ isGeneratingFlow: false });
+            return;
+          }
+
+          // Convertir les nouveaux jours au format FlowDay
+          const newDays = parsed.days.map((day: any) => ({
+            day: day.day,
+            title: day.title,
+            mandatoryActions: [
+              {
+                id: 'mandatory-1',
+                title: day.mandatory1?.title || 'Action 1',
+                description: day.mandatory1?.description || '',
+                icon: day.mandatory1?.icon || '✨',
+                isMandatory: true,
+                isCompleted: false
+              },
+              {
+                id: 'mandatory-2',
+                title: day.mandatory2?.title || 'Action 2',
+                description: day.mandatory2?.description || '',
+                icon: day.mandatory2?.icon || '🎯',
+                isMandatory: true,
+                isCompleted: false
+              }
+            ],
+            choiceActions: [
+              {
+                id: 'choice-a',
+                title: day.choiceOptions?.optionA?.title || 'Option A',
+                description: day.choiceOptions?.optionA?.description || '',
+                icon: day.choiceOptions?.optionA?.icon || '🔸',
+                isMandatory: false,
+                isCompleted: false
+              },
+              {
+                id: 'choice-b',
+                title: day.choiceOptions?.optionB?.title || 'Option B',
+                description: day.choiceOptions?.optionB?.description || '',
+                icon: day.choiceOptions?.optionB?.icon || '🔹',
+                isMandatory: false,
+                isCompleted: false
+              },
+              {
+                id: 'choice-c',
+                title: day.choiceOptions?.optionC?.title || 'Option C',
+                description: day.choiceOptions?.optionC?.description || '',
+                icon: day.choiceOptions?.optionC?.icon || '🔺',
+                isMandatory: false,
+                isCompleted: false
+              }
+            ],
+            completed: false
+          }));
+
+          // Mettre à jour le flow avec les nouveaux jours
+          set({
+            personalizedFlow: {
+              ...flow,
+              days: [...flow.days, ...newDays],
+              currentBatch: nextBatch,
+              needsContinuation: false
+            },
+            isGeneratingFlow: false
+          });
+
+          console.log(`[Continue Flow] ✅ Added ${newDays.length} new days, total: ${flow.days.length + newDays.length}`);
+
+        } catch (error) {
+          console.error('[Continue Flow] Error:', error);
+          set({ isGeneratingFlow: false });
+        }
       }
     }),
     {

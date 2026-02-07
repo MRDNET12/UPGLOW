@@ -1428,16 +1428,37 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               let cleaned = json.replace(/\/\/.*$/gm, '');
 
               // 2. Fix unquoted property names (e.g. key: "value" -> "key": "value")
-              // Be careful not to match inside strings
-              // This is a heuristic and might not cover all cases, but better than before
               cleaned = cleaned.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
 
               // 3. Remove trailing commas
               cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
 
-              // 4. Try to fix single quotes ONLY for keys or if clearly wrapping a value, 
-              // BUT NEVER blindly replace all single quotes as it breaks French text (l'objectif)
-              // We'll skip the single quote replacement for values to avoid breaking text
+              // 4. Compter les accolades/crochets et fermer si nécessaire
+              const openBraces = (cleaned.match(/{/g) || []).length;
+              const closeBraces = (cleaned.match(/}/g) || []).length;
+              const openBrackets = (cleaned.match(/\[/g) || []).length;
+              const closeBrackets = (cleaned.match(/\]/g) || []).length;
+
+              // Si JSON tronqué, tenter de le fermer proprement
+              if (openBraces > closeBraces || openBrackets > closeBrackets) {
+                console.warn('[JSON Cleanup] ⚠️ JSON tronqué détecté, tentative de réparation...');
+
+                // Supprimer le dernier élément incomplet (propriété sans valeur ou valeur tronquée)
+                // Chercher la dernière propriété complète
+                cleaned = cleaned.replace(/,?\s*"[^"]*":\s*"[^"]*$/g, ''); // Valeur string tronquée
+                cleaned = cleaned.replace(/,?\s*"[^"]*":\s*\{[^}]*$/g, ''); // Objet tronqué
+                cleaned = cleaned.replace(/,?\s*"[^"]*":\s*$/g, ''); // Propriété sans valeur
+                cleaned = cleaned.replace(/,?\s*"[^"]*$/g, ''); // Clé tronquée
+                cleaned = cleaned.replace(/,\s*$/g, ''); // Virgule finale
+
+                // Ajouter les fermetures manquantes
+                for (let i = 0; i < (openBrackets - closeBrackets); i++) {
+                  cleaned += ']';
+                }
+                for (let i = 0; i < (openBraces - closeBraces); i++) {
+                  cleaned += '}';
+                }
+              }
 
               return cleaned;
             };
@@ -1449,11 +1470,13 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
               console.warn('[AI Response] ⚠️ Initial JSON parse failed, attempting cleanup...');
               try {
                 const cleanedContent = cleanJson(jsonContent);
+                console.log('[AI Response] Cleaned JSON preview:', cleanedContent.substring(cleanedContent.length - 100));
                 parsed = JSON.parse(cleanedContent);
                 console.log('[AI Response] ✅ JSON parsed successfully after cleanup');
               } catch (cleanupError) {
                 console.error('[AI Response] ❌ JSON parse error even after cleanup:', cleanupError);
                 console.error('[AI Response] JSON content preview:', jsonContent.substring(0, 500));
+                console.error('[AI Response] JSON content end:', jsonContent.substring(jsonContent.length - 200));
                 throw new Error('Invalid JSON format - using fallback');
               }
             }

@@ -5593,12 +5593,16 @@ PROCESO OBLIGATORIO:
               {currentView === 'journal' ? (
                 <Button
                   variant="ghost"
-                  className="flex-1 h-11 flex-col gap-0.5 rounded-xl bg-pink-500 text-white shadow-lg hover:bg-pink-600 animate-bounce"
-                  style={{ animationDuration: '2s' }}
+                  className="flex-1 h-11 flex-col gap-0.5 rounded-xl bg-gray-900 text-white shadow-lg hover:bg-gray-800 relative overflow-hidden"
                   onClick={() => setShowJournalEntryModal(true)}
                 >
-                  <Plus className="w-6 h-6" />
-                  <span className="text-[10px] font-medium">
+                  {/* Animation ondes */}
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="absolute w-full h-full bg-white/20 rounded-xl animate-ping" style={{ animationDuration: '2s' }}></span>
+                    <span className="absolute w-3/4 h-3/4 bg-white/30 rounded-xl animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }}></span>
+                  </span>
+                  <Plus className="w-6 h-6 relative z-10" />
+                  <span className="text-[10px] font-medium relative z-10">
                     {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Añadir'}
                   </span>
                 </Button>

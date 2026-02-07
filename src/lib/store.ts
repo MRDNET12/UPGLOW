@@ -1424,13 +1424,22 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
 
             // Nettoyer le JSON avant parsing
             const cleanJson = (json: string): string => {
-              // 1. Remove comments if any (simple approach)
+              // 1. Remove JS comments (// ... and /* ... */)
               let cleaned = json.replace(/\/\/.*$/gm, '');
+              cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
 
-              // 2. Fix unquoted property names (e.g. key: "value" -> "key": "value")
+              // 2. Remplacer les guillemets simples utilisés comme délimiteurs de valeur JSON
+              // Pattern: ': 'valeur'' => ': "valeur"'
+              // ATTENTION: Ne pas casser le français (l'objectif, etc.)
+              cleaned = cleaned.replace(/:\s*'([^']*?)'/g, (match, content) => {
+                const escaped = content.replace(/"/g, '\\"');
+                return `: "${escaped}"`;
+              });
+
+              // 3. Fix unquoted property names (e.g. key: "value" -> "key": "value")
               cleaned = cleaned.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
 
-              // 3. Remove trailing commas
+              // 4. Remove trailing commas
               cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
 
               // 4. Compter les accolades/crochets et fermer si nécessaire

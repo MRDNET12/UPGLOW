@@ -1326,8 +1326,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
                     'HTTP-Referer': 'https://upglow.app',
-                    'X-Title': 'UPGLOW Flow Generator',
-                    'X-Data-Policy': 'standard'
+                    'X-Title': 'UPGLOW Flow Generator'
                   },
                   body: JSON.stringify({
                     model: model,

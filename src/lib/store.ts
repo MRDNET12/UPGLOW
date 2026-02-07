@@ -1186,7 +1186,12 @@ export const useStore = create<AppState>()(
 
 🎯 TA MISSION : Créer un programme de 30 jours ULTRA-PERSONNALISÉ qui mène à de VRAIS RÉSULTATS.
 
-⚠️ RÈGLE ABSOLUE : Tu DOIS OBLIGATOIREMENT utiliser ta fonction de raisonnement <think> AVANT de générer quoi que ce soit.
+⚠️ RÈGLES ABSOLUES ET NON-NÉGOCIABLES :
+1. LANGUE : Tu DOIS répondre EXCLUSIVEMENT en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}.
+2. RAISONNEMENT : Tu DOIS OBLIGATOIREMENT utiliser ta fonction de raisonnement <think> AVANT de générer le JSON.
+   - Analyse le profil de l'utilisateur
+   - Définis la stratégie pour les 30 jours
+   - Justifie le choix des actions pour les 7 premiers jours
 
 📋 CRITÈRES DE QUALITÉ OBLIGATOIRES :
 
@@ -1227,13 +1232,17 @@ export const useStore = create<AppState>()(
 
             const userPrompt = `CONTEXTE COMPLET DE L'UTILISATEUR :
 
-📋 DESCRIPTION DÉTAILLÉE (SOURCE PRINCIPALE - LIS ATTENTIVEMENT) :
+📋 DESCRIPTION DÉTAILLÉE :
 "${description}"
 
 🎯 OBJECTIF PRINCIPAL :
 "${objective}"
 
-🌍 LANGUE DE RÉPONSE : ${lang === 'fr' ? 'Français' : lang === 'es' ? 'Espagnol' : 'Anglais'}
+🛑 STOP ! AVANT DE GÉNÉRER QUOI QUE CE SOIT :
+Tu dois IMPÉRATIVEMENT commencer par une analyse approfondie entre balises <think>.
+Cette étape est CRITIQUE. Si tu ne le fais pas, ta réponse sera REJETÉE.
+
+🌍 LANGUE DE RÉPONSE OBLIGATOIRE : ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

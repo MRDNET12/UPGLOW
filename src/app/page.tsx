@@ -2526,6 +2526,7 @@ PROCESO OBLIGATORIO:
             </div>
 
             {/* Carte Flow Personnalisé - Style "A series of Olympiads" (Purple + Trophy) */}
+            {showFlowCard && (
             <Card
               className={`border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] overflow-hidden relative min-h-[220px] group transition-all duration-300 ${
                 isGeneratingFlowBackground 
@@ -2691,6 +2692,7 @@ PROCESO OBLIGATORIO:
                 )}
               </CardContent>
             </Card>
+            )}
 
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
             {selectedChallenge === 'mind-life' && showChallengeCard && (
@@ -2739,7 +2741,7 @@ PROCESO OBLIGATORIO:
             )}
 
             {/* Grande carte Beauty & Body - Style glassmorphism */}
-            {selectedChallenge === 'beauty-body' && (
+            {selectedChallenge === 'beauty-body' && showChallengeCard && (
               <Card
                 className="border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50 rounded-[2rem] overflow-hidden relative"
                 onClick={() => setCurrentView('new-me')}

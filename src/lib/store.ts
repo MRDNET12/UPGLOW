@@ -1164,10 +1164,9 @@ export const useStore = create<AppState>()(
    ✅ Bon : "Écrire 3 situations où tu t'es senti(e) confiant(e) cette semaine"
 
 2. PROGRESSION CLAIRE SUR 30 JOURS
-   - Jours 1-8 : Fondations et prise de conscience
-   - Jours 9-16 : Mise en pratique et expérimentation
-   - Jours 17-24 : Intensification et défis
-   - Jours 25-30 : Consolidation et autonomie
+   - Structure adaptée selon l'objectif et le contexte de l'utilisateur
+   - Progression logique et cohérente du jour 1 au jour 30
+   - Chaque phase doit avoir un objectif clair et des actions pertinentes
 
 3. ACTIONS DIRECTEMENT LIÉES À L'OBJECTIF
    - Chaque action doit clairement contribuer à l'objectif
@@ -1232,21 +1231,18 @@ Tu DOIS fournir ton analyse complète entre balises <think> :
    - Quels types d'actions seront les plus efficaces ?
 
 4. PLAN DE PROGRESSION :
-   - Phase 1 (Jours 1-8) : [Objectif et approche]
-   - Phase 2 (Jours 9-16) : [Objectif et approche]
-   - Phase 3 (Jours 17-24) : [Objectif et approche]
-   - Phase 4 (Jours 25-30) : [Objectif et approche]
+   - Définis ta propre structure de phases adaptée à l'objectif
+   - Nombre de phases et durée de chaque phase selon ce qui est pertinent
+   - Chaque phase doit avoir un objectif clair et des actions cohérentes
 </think>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ÉTAPE 2 - PLAN DÉTAILLÉ DES 4 PHASES
+ÉTAPE 2 - PLAN DÉTAILLÉ DES PHASES
 
-Décris brièvement chaque phase :
-- Phase 1 (Jours 1-8) : [Thème, objectif, types d'actions]
-- Phase 2 (Jours 9-16) : [Thème, objectif, types d'actions]
-- Phase 3 (Jours 17-24) : [Thème, objectif, types d'actions]
-- Phase 4 (Jours 25-30) : [Thème, objectif, types d'actions]
+Décris brièvement chaque phase selon ta structure personnalisée :
+- Phase X (Jours X-Y) : [Thème, objectif, types d'actions]
+- Adapte le nombre de phases et leur durée selon l'objectif
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

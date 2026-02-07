@@ -62,8 +62,7 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
             description: 'L\'expérience ultime',
             features: [
               'Tout Glow Start',
-              'Glow Mirror (IA)',
-              'Analyses avancées'
+              'Glow Mirror'
             ],
             cta: 'Devenir Glow Plus',
             popular: 'RECOMMANDÉ'
@@ -92,8 +91,7 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
             description: 'The ultimate experience',
             features: [
               'All Glow Start',
-              'Glow Mirror (AI)',
-              'Advanced analytics'
+              'Glow Mirror'
             ],
             cta: 'Become Glow Plus',
             popular: 'RECOMMENDED'
@@ -122,8 +120,7 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
             description: 'La experiencia definitiva',
             features: [
               'Todo Glow Start',
-              'Glow Mirror (IA)',
-              'Análisis avanzados'
+              'Glow Mirror'
             ],
             cta: 'Ser Glow Plus',
             popular: 'RECOMENDADO'
@@ -152,8 +149,7 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
             description: 'The ultimate experience',
             features: [
               'All Glow Start',
-              'Glow Mirror (AI)',
-              'Advanced analytics'
+              'Glow Mirror'
             ],
             cta: 'Become Glow Plus',
             popular: 'RECOMMENDED'
@@ -166,7 +162,7 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="relative w-full max-w-lg bg-[#F8F9FE] rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto border border-white/50">
+      <div className="relative w-full max-w-lg bg-[#F8F9FE] rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto border border-white/50 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
         {/* Decorative Background Elements */}
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-50 to-[#F8F9FE]"></div>

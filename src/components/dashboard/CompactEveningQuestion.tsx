@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Moon, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Moon, Plus, ChevronDown, ChevronUp, Sun, Smile, Meh, Frown, CloudRain } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface CompactEveningQuestionProps {
@@ -50,16 +50,28 @@ export function CompactEveningQuestion({ theme = 'light' }: CompactEveningQuesti
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0"
-        >
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          )}
-        </button>
+        {/* Mood Icons */}
+        <div className="flex items-center gap-1">
+          {[
+            { icon: Sun, color: 'text-amber-400', label: 'Super' },
+            { icon: Smile, color: 'text-green-400', label: 'Bien' },
+            { icon: Meh, color: 'text-gray-400', label: 'Neutre' },
+            { icon: Frown, color: 'text-orange-400', label: 'Pas top' },
+            { icon: CloudRain, color: 'text-blue-400', label: 'Triste' }
+          ].map((Mood, index) => (
+            <button
+              key={index}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(true); // Open to write details
+              }}
+              className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title={Mood.label}
+            >
+              <Mood.icon className={`w-5 h-5 ${Mood.color}`} />
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Progress Bar */}

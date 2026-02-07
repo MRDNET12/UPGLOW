@@ -252,6 +252,7 @@ interface AppState {
   addEveningQuestion: (question: string, answer: string) => void;
   getEveningQuestionsThisMonth: () => EveningQuestion[];
   getEveningQuestionsHistory: () => EveningQuestion[];
+  removeEveningQuestion: (id: string) => void;
 
   // Boundaries
   addBoundaryEntry: (boundaryType: string) => void;
@@ -755,6 +756,14 @@ export const useStore = create<AppState>()(
       },
       getEveningQuestionsHistory: () => {
         return get().bonusProgress.eveningQuestions;
+      },
+      removeEveningQuestion: (id) => {
+        set({
+          bonusProgress: {
+            ...get().bonusProgress,
+            eveningQuestions: get().bonusProgress.eveningQuestions.filter((q) => q.id !== id)
+          }
+        });
       },
 
       // Boundaries
@@ -1376,12 +1385,12 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE :`;
             if (thinkMatch) {
               reasoning = thinkMatch[1].trim();
               console.log('[AI Response] ✅ Reasoning found, length:', reasoning.length);
-              
+
               // Vérifier que le raisonnement contient les éléments clés (optionnel)
               const hasAnalysis = /analyse|situation|contexte/i.test(reasoning);
               const hasNeeds = /besoin|blocage|défi|challenge/i.test(reasoning);
               const hasStrategy = /stratégie|approche|plan|progression/i.test(reasoning);
-              
+
               if (reasoning.length >= 200 && hasAnalysis && hasNeeds && hasStrategy) {
                 console.log('[AI Response] ✅ Valid reasoning detected');
                 console.log('[AI Response] Reasoning preview:', reasoning.substring(0, 300) + '...');

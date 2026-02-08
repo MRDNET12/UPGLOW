@@ -5819,7 +5819,6 @@ PROCESO OBLIGATORIO:
               <div className="p-5 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-100 shadow-lg border-l-4 border-pink-400">
                 <div className="flex items-start gap-4">
                   <div className="relative w-12 h-12 flex-shrink-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-2xl blur-md opacity-50"></div>
                     <Image src="/Glowee/glowee.webp" alt="Glowee" width={48} height={48} className="object-contain relative z-10 drop-shadow-2xl" />
                   </div>
                   <div className="flex-1">

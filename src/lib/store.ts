@@ -84,6 +84,7 @@ export interface PersonalizedFlow {
   currentBatch: number;       // ➕ Batch actuel (1 = jours 1-7, 2 = jours 8-14, etc.)
   maxDays: number;            // ➕ Objectif final (30 jours)
   needsContinuation?: boolean; // ➕ Indique si on doit générer le batch suivant
+  nextDayUnlockDate?: string; // ➕ Date de déblocage du jour suivant (minuit)
 }
 
 export interface Badge {
@@ -316,6 +317,7 @@ interface AppState {
   // Flow continuation (génération par batch de 7 jours)
   continueFlow: () => Promise<void>;
   checkNeedsContinuation: () => boolean;
+  checkAndUnlockNextDay: () => void;
 }
 
 // Helper function to get week number
@@ -1672,7 +1674,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
               isFromFallback: false,  // ➕ Flow généré par l'IA avec raisonnement validé
               currentBatch: 1,         // ➕ Premier batch de 7 jours
               maxDays: 30,             // ➕ Objectif final
-              needsContinuation: false // ➕ Sera true quand on atteint le jour 7, 14, 21
+              needsContinuation: false, // ➕ Sera true quand on atteint le jour 7, 14, 21
+              nextDayUnlockDate: undefined // ➕ Premier jour est accessible immédiatement
             };
           } catch (error) {
             console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -2415,6 +2418,26 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
         return currentDayNum === totalDays && totalDays < maxDays;
       },
 
+      // Vérifie si le jour suivant doit être débloqué (après minuit)
+      checkAndUnlockNextDay: () => {
+        const flow = get().personalizedFlow;
+        if (!flow || !flow.nextDayUnlockDate) return;
+
+        const now = new Date();
+        const unlockDate = new Date(flow.nextDayUnlockDate);
+
+        if (now >= unlockDate && flow.currentDay < flow.days.length) {
+          console.log('[Flow] 🔓 Unlocking next day:', flow.currentDay + 1);
+          set({
+            personalizedFlow: {
+              ...flow,
+              currentDay: flow.currentDay + 1,
+              nextDayUnlockDate: undefined
+            }
+          });
+        }
+      },
+
       // Continue la génération du flow avec les 7 prochains jours
       continueFlow: async () => {
         const state = get();
@@ -2627,18 +2650,25 @@ FORMAT JSON STRICT - Utilise uniquement des guillemets doubles.`;
             completed: false
           }));
 
+          // Calculer la date de déblocage (minuit demain)
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          tomorrow.setHours(0, 0, 0, 0);
+          const nextDayUnlockDate = tomorrow.toISOString();
+
           // Mettre à jour le flow avec les nouveaux jours
           set({
             personalizedFlow: {
               ...flow,
               days: [...flow.days, ...newDays],
               currentBatch: nextBatch,
-              needsContinuation: false
+              needsContinuation: false,
+              nextDayUnlockDate
             },
             isGeneratingFlow: false
           });
 
-          console.log(`[Continue Flow] ✅ Added 1 new day, total: ${flow.days.length + newDays.length}`);
+          console.log(`[Continue Flow] ✅ Added 1 new day, total: ${flow.days.length + newDays.length}, unlocks at: ${nextDayUnlockDate}`);
 
         } catch (error) {
           console.error('[Continue Flow] Error:', error);

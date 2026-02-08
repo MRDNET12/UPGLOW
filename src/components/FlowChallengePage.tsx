@@ -61,6 +61,18 @@ export function FlowChallengePage({
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;
   const completedCount = personalizedFlow?.completedDays.length || 0;
   const currentDay = personalizedFlow?.currentDay || 1;
+  
+  // Vérifier si le jour suivant est débloqué (après minuit)
+  const getNextDayUnlockTime = () => {
+    if (!personalizedFlow?.startDate) return null;
+    const start = new Date(personalizedFlow.startDate);
+    const today = new Date();
+    const daysSinceStart = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    return daysSinceStart + 1;
+  };
+  
+  const maxUnlockedDay = getNextDayUnlockTime() || currentDay;
+  const canViewNextDay = currentDay <= maxUnlockedDay;
 
   // Traductions minimalistes
   const t = {
@@ -374,13 +386,20 @@ export function FlowChallengePage({
             <h3 className="text-lg font-bold text-slate-800 mb-3">
               {language === 'fr' ? 'Analyse des flows validés' : language === 'en' ? 'Flow analysis validated' : 'Análisis de flows validados'}
             </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
               {language === 'fr' 
-                ? "Avant de donner vie au nouveau flow. On se retrouve demain pour continuer l'élan vers ton objectif."
+                ? "Ton prochain jour est prêt ! Il sera accessible à minuit pour te permettre de te concentrer sur aujourd'hui."
                 : language === 'en' 
-                  ? "Before bringing the new flow to life. See you tomorrow to continue the momentum towards your goal."
-                  : "Antes de dar vida al nuevo flow. Nos vemos mañana para continuar el impulso hacia tu objetivo."}
+                  ? "Your next day is ready! It will be accessible at midnight to let you focus on today."
+                  : "¡Tu próximo día está listo! Será accesible a medianoche para permitirte concentrarte en hoy."}
             </p>
+            <div className="bg-white/50 rounded-xl p-3 text-xs text-amber-700 font-medium">
+              {language === 'fr' 
+                ? `🔒 Jour ${(personalizedFlow?.days.length || 0) + 1} verrouillé jusqu'à minuit`
+                : language === 'en'
+                  ? `🔒 Day ${(personalizedFlow?.days.length || 0) + 1} locked until midnight`
+                  : `🔒 Día ${(personalizedFlow?.days.length || 0) + 1} bloqueado hasta medianoche`}
+            </div>
           </div>
         )}
       </div>

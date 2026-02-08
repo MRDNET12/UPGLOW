@@ -3008,51 +3008,41 @@ PROCESO OBLIGATORIO:
 
 
             {/* Carte Mon Journal - Style Daily Challenge (Purple 3D) */}
-            <Card
-              className="border-none shadow-xl bg-[#a78bfa] text-white rounded-[2rem] cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative min-h-[180px]"
+            {/* Carte Mon Journal - Redesign Soft UI/Cute */}
+            <div
               onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
+              className="bg-[#E9D8FD] rounded-[2.5rem] p-6 relative h-[180px] overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-98 shadow-sm group"
             >
-              {/* Decorative 3D Shapes Simulation */}
-              <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 w-48 h-48 pointer-events-none transform scale-90">
-                {/* Orange Ring/Cylinder */}
-                <div className="absolute right-10 top-0 w-20 h-20 rounded-full border-[12px] border-amber-400 transform rotate-45 shadow-lg" style={{ boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)' }}></div>
-                {/* Grey Cube-ish */}
-                <div className="absolute right-20 top-12 w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl transform -rotate-12 shadow-2xl z-10"></div>
-                {/* Purple Sphere */}
-                <div className="absolute right-4 top-16 w-14 h-14 bg-gradient-to-br from-violet-200 to-violet-400 rounded-full shadow-xl z-20"></div>
-                {/* Dark Cylinder */}
-                <div className="absolute right-24 top-4 w-16 h-16 bg-slate-700 rounded-full shadow-lg -z-10"></div>
-                {/* Yellow Ring */}
-                <div className="absolute right-12 bottom-0 w-12 h-12 border-[8px] border-yellow-300 rounded-full transform rotate-12"></div>
+              {/* Top Text */}
+              <h3 className="text-xl font-bold text-[#2D2a2e] max-w-[65%] leading-snug relative z-10">
+                {language === 'fr' ? 'Raconte ta journée & libère ton esprit' : language === 'en' ? 'Tell your day & free your mind' : 'Cuéntanos tu día y libera tu mente'}
+              </h3>
+
+              {/* Character Bottom Left - CSS Art */}
+              <div className="absolute bottom-[-20px] left-[-10px] transform rotate-[-5deg] transition-transform group-hover:rotate-0 duration-500">
+                <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Body */}
+                  <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#F0ABFC" />
+                  {/* Face */}
+                  <circle cx="65" cy="85" r="3.5" fill="#000" />
+                  <circle cx="95" cy="85" r="3.5" fill="#000" />
+                  <path d="M68 100 Q 80 115 92 100" stroke="#000" strokeWidth="3.5" strokeLinecap="round" />
+                  {/* Hair curl */}
+                  <path d="M50 45 Q 40 25 60 30" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+                  <path d="M55 40 Q 50 20 65 25" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" transform="translate(10, -5) rotate(20)" />
+                  {/* Cheeks */}
+                  <circle cx="58" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+                  <circle cx="102" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+                </svg>
               </div>
 
-              <CardContent className="p-6 relative z-10 h-full flex flex-col justify-center">
-                <div className="max-w-[60%]">
-                  <h3 className="text-3xl font-black leading-tight mb-2 text-white drop-shadow-sm">
-                    {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
-                  </h3>
-                  <p className="text-sm font-medium text-purple-100 mb-6">
-                    {language === 'fr' ? 'Notez vos pensées avant 21h' : language === 'en' ? 'Write your thoughts before 9 PM' : 'Escribe tus pensamientos antes de las 9 PM'}
-                  </p>
-
-                  {/* Avatars / Users */}
-                  <div className="flex items-center -space-x-3">
-                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-pink-300 flex items-center justify-center text-[10px] overflow-hidden">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-blue-300 flex items-center justify-center text-[10px] overflow-hidden">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" alt="User" />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-emerald-300 flex items-center justify-center text-[10px] overflow-hidden">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Milo" alt="User" />
-                    </div>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#a78bfa] bg-white flex items-center justify-center text-xs font-bold text-violet-600">
-                      +{Math.max(0, journalEntries.length)}
-                    </div>
-                  </div>
+              {/* Button Bottom Right */}
+              <div className="absolute bottom-6 right-6">
+                <div className="bg-black text-white text-xs font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
+                  {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Carte 50 choses à faire seule - MASQUÉE */}
             {/* <Card

@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { InAppBrowserHandler } from "@/components/shared/InAppBrowserHandler";
 
 const playfairDisplay = Playfair_Display({
   variable: "--font-playfair-display",
@@ -83,6 +84,7 @@ export default function RootLayout({
         className={`${playfairDisplay.variable} ${inter.variable} antialiased bg-background text-foreground`}
       >
         <AuthProvider>
+          <InAppBrowserHandler />
           {children}
           <Toaster />
         </AuthProvider>

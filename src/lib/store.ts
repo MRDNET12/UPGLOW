@@ -1244,10 +1244,14 @@ Cette étape est CRITIQUE. Si tu ne le fais pas, ta réponse sera REJETÉE.
 
 🌍 LANGUE DE RÉPONSE OBLIGATOIRE : ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
 
-⚠️ CRITIQUE : TOUTE TA RÉPONSE (raisonnement + JSON) DOIT ÊTRE UNIQUEMENT EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !
-- Pas d'anglais dans les titres
-- Pas d'anglais dans les descriptions
-- Tout doit être dans la langue demandée
+⚠️⚠️⚠️ CRITIQUE ABSOLU - LANGUE : TOUTE TA RÉPONSE DOIT ÊTRE EXCLUSIVEMENT EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !!!
+❌ INTERDIT : Aucun mot en anglais (no English words allowed)
+❌ INTERDIT : Pas de "Day" mais "Jour"
+❌ INTERDIT : Pas de "Goal" mais "Objectif"  
+❌ INTERDIT : Pas de "Action" mais "Action" (en français c'est pareil mais pas d'autres mots anglais)
+✅ OBLIGATOIRE : Tous les titres en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
+✅ OBLIGATOIRE : Toutes les descriptions en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
+✅ OBLIGATOIRE : L'objectif "${objective}" est en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}, donc toutes les actions doivent être cohérentes dans cette langue
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1356,6 +1360,11 @@ Génère maintenant les 7 PREMIERS jours au format JSON suivant :
    - JAMAIS de guillemets simples (') pour les propriétés ou valeurs
    - Si tu dois inclure des guillemets dans un texte, utilise des guillemets typographiques (« ») ou échappe-les
 7. ⚠️⚠️⚠️ LANGUE ULTRA-IMPORTANT : TOUT le JSON (titres, descriptions, analysis, category) en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} - AUCUN MOT EN ANGLAIS !
+8. EXEMPLE CONCRET DE CE QUI EST INTERDIT vs AUTORISÉ :
+   ❌ Mauvais titre : "Setup Pinterest Account" (anglais)
+   ✅ Bon titre : "Créer ton compte Pinterest" (français)
+   ❌ Mauvaise description : "Optimize your profile" (anglais)
+   ✅ Bonne description : "Optimise ton profil" (français)
 
 GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} (PAS UN SEUL MOT EN ANGLAIS) :`;
 

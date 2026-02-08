@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { doc, setDoc, getDoc, updateDoc, increment, collection, addDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { doc, setDoc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export type TrafficSource = 
@@ -69,17 +68,33 @@ function detectSourceFromReferrer(referrer: string): TrafficSource {
   return 'referral';
 }
 
+// Parser les paramètres UTM depuis l'URL
+function getUtmParams(): { source?: string; medium?: string; campaign?: string } {
+  if (typeof window === 'undefined') return {};
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  return {
+    source: urlParams.get('utm_source') || undefined,
+    medium: urlParams.get('utm_medium') || undefined,
+    campaign: urlParams.get('utm_campaign') || undefined,
+  };
+}
+
 // Hook pour tracker la source de trafic
 export function useTrafficTracking() {
-  const searchParams = useSearchParams();
+  const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  useEffect(() => {
+    if (!isClient) return;
+    
     const trackVisit = async () => {
       try {
         // Récupérer les paramètres UTM
-        const utmSource = searchParams.get('utm_source');
-        const utmMedium = searchParams.get('utm_medium');
-        const utmCampaign = searchParams.get('utm_campaign');
+        const { source: utmSource, medium: utmMedium, campaign: utmCampaign } = getUtmParams();
         
         // Récupérer le referrer
         const referrer = document.referrer || '';
@@ -95,7 +110,7 @@ export function useTrafficTracking() {
         // Données de tracking
         const trackingData: TrackingData = {
           source,
-          referrer: referrer.substring(0, 500), // Limiter la taille
+          referrer: referrer.substring(0, 500),
           utmSource: utmSource || undefined,
           utmMedium: utmMedium || undefined,
           utmCampaign: utmCampaign || undefined,
@@ -135,7 +150,7 @@ export function useTrafficTracking() {
     };
     
     trackVisit();
-  }, [searchParams]);
+  }, [isClient]);
 }
 
 // Fonction pour lier le tracking à un utilisateur après inscription

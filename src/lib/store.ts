@@ -186,7 +186,7 @@ interface AppState {
   // Challenge Selection
   selectedChallenge: ChallengeType | null;
   setSelectedChallenge: (challenge: ChallengeType) => void;
-  
+
   // Visibility toggles for homepage cards
   showChallengeCard: boolean;
   showFlowCard: boolean;
@@ -306,7 +306,7 @@ interface AppState {
   completeFlowDay: (day: number) => void;
   toggleFlowAction: (day: number, actionId: string) => void;
   selectFlowChoice: (day: number, choiceId: string) => void;
-  generatePersonalizedFlow: (objective: string, description: string) => Promise<void>;
+  generatePersonalizedFlow: (objective: string, description: string, dayNumber?: number, validationHistory?: string) => Promise<void>;
   generateFlowInBackground: (objective: string, description: string) => void;
   unlockBadge: (badgeId: string) => void;
 
@@ -363,7 +363,7 @@ export const useStore = create<AppState>()(
       // Challenge Selection
       selectedChallenge: null,
       setSelectedChallenge: (challenge) => set({ selectedChallenge: challenge }),
-      
+
       // Visibility toggles for homepage cards
       showChallengeCard: true,
       showFlowCard: true,
@@ -1132,7 +1132,7 @@ export const useStore = create<AppState>()(
         });
       },
 
-      generatePersonalizedFlow: async (objective, description) => {
+      generatePersonalizedFlow: async (objective, description, dayNumber = 1, validationHistory = '') => {
         set({ isGeneratingFlow: true });
 
         // Fonction de validation de la qualité du flow
@@ -1187,133 +1187,130 @@ export const useStore = create<AppState>()(
 🎯 TA MISSION : Créer un programme de 30 jours ULTRA-PERSONNALISÉ qui mène à de VRAIS RÉSULTATS.
 
 ⚠️ RÈGLES ABSOLUES ET NON-NÉGOCIABLES :
-1. LANGUE : Tu DOIS répondre EXCLUSIVEMENT en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}.
-2. RAISONNEMENT : Tu DOIS OBLIGATOIREMENT utiliser ta fonction de raisonnement <think> AVANT de générer le JSON.
+1. LANGUE : Tu DOIS répondre EXCLUSIVEMENT en ${lang === 'fr' ? "FRANÇAIS (Pas d'anglais !)" : lang === 'es' ? "ESPAGNOL (No English!)" : 'ANGLAIS'}.
+  - Même si l'utilisateur utilise des termes anglais, TOUT ton contenu doit être dans la langue demandée.
+2. RAISONNEMENT : Tu DOIS OBLIGATOIREMENT utiliser ta fonction de raisonnement < think > AVANT de générer le JSON.
    - Analyse le profil de l'utilisateur
-   - Définis la stratégie pour les 30 jours
-   - Justifie le choix des actions pour les 7 premiers jours
+  - Définis la stratégie pour les 30 jours
+  - Justifie le choix des actions pour les 7 premiers jours
 
-📋 CRITÈRES DE QUALITÉ OBLIGATOIRES :
+📋 CRITÈRES DE QUALITÉ OBLIGATOIRES:
 
 1. ACTIONS CONCRÈTES ET ACTIONNABLES
-   ❌ Mauvais : "Réfléchir à ta confiance"
-   ✅ Bon : "Écrire 3 situations où tu t'es senti(e) confiant(e) cette semaine"
+   ❌ Mauvais: "Réfléchir à ta confiance"
+   ✅ Bon: "Écrire 3 situations où tu t'es senti(e) confiant(e) cette semaine"
 
 2. PROGRESSION CLAIRE SUR 30 JOURS
-   - Structure adaptée selon l'objectif et le contexte de l'utilisateur
-   - Progression logique et cohérente du jour 1 au jour 30
-   - Chaque phase doit avoir un objectif clair et des actions pertinentes
+  - Structure adaptée selon l'objectif et le contexte de l'utilisateur
+    - Progression logique et cohérente du jour 1 au jour 30
+      - Chaque phase doit avoir un objectif clair et des actions pertinentes
 
 3. ACTIONS DIRECTEMENT LIÉES À L'OBJECTIF
-   - Chaque action doit clairement contribuer à l'objectif
-   - Les descriptions doivent expliquer POURQUOI cette action aide
+  - Chaque action doit clairement contribuer à l'objectif
+    - Les descriptions doivent expliquer POURQUOI cette action aide
 
 4. VARIÉTÉ ET UNICITÉ
-   - Éviter les répétitions : chaque jour doit être unique
-   - Varier les types d'actions (physique, mental, social, créatif)
+  - Éviter les répétitions: chaque jour doit être unique
+    - Varier les types d'actions (physique, mental, social, créatif)
 
 5. ACTIONS SMART
-   - Spécifiques : pas de généralités
-   - Mesurables : l'utilisateur peut vérifier s'il l'a fait
-   - Atteignables : réalisable en 10-30 minutes
-   - Réalistes : adaptées au contexte décrit
-   - Temporelles : à faire dans la journée
+  - Spécifiques : pas de généralités
+    - Mesurables : l'utilisateur peut vérifier s'il l'a fait
+      - Atteignables : réalisable en 10 - 30 minutes
+        - Réalistes : adaptées au contexte décrit
+          - Temporelles : à faire dans la journée
 
-💡 EXEMPLES DE BONNES ACTIONS :
+💡 EXEMPLES DE BONNES ACTIONS:
 - "Tenir 1 minute de planche + 10 squats (timer)"
-- "Écrire 5 choses que tu aimes chez toi dans un carnet"
-- "Appeler un ami et lui dire pourquoi tu l'apprécies"
-- "Préparer un smoothie vert avec épinards, banane, lait d'amande"
+  - "Écrire 5 choses que tu aimes chez toi dans un carnet"
+  - "Appeler un ami et lui dire pourquoi tu l'apprécies"
+  - "Préparer un smoothie vert avec épinards, banane, lait d'amande"
 
-❌ EXEMPLES DE MAUVAISES ACTIONS :
-- "Penser positif" (trop vague)
-- "Faire du sport" (pas assez spécifique)
-- "Être plus confiant" (pas actionnable)`;
+❌ EXEMPLES DE MAUVAISES ACTIONS:
+- "Penser positif"(trop vague)
+  - "Faire du sport"(pas assez spécifique)
+  - "Être plus confiant"(pas actionnable)`;
 
             const userPrompt = `CONTEXTE COMPLET DE L'UTILISATEUR :
 
-📋 DESCRIPTION DÉTAILLÉE :
+📋 DESCRIPTION DÉTAILLÉE:
 "${description}"
 
-🎯 OBJECTIF PRINCIPAL :
+🎯 OBJECTIF PRINCIPAL:
 "${objective}"
 
-🛑 STOP ! AVANT DE GÉNÉRER QUOI QUE CE SOIT :
+🛑 STOP! INSTRUCTION MAJEURE - LANGUE OBLIGATOIRE:
+TA RÉPONSE DOIT ÊTRE À 100 % EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}.
+C'est la règle la plus importante. Si tu réponds en anglais, ta réponse sera considérée comme FAUSSE.
+
+🛑 STOP! AVANT DE GÉNÉRER LE JSON:
 Tu dois IMPÉRATIVEMENT commencer par une analyse approfondie entre balises <think>.
-Cette étape est CRITIQUE. Si tu ne le fais pas, ta réponse sera REJETÉE.
+- Analyse le profil en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
+- Justifie tes choix en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
 
-🌍 LANGUE DE RÉPONSE OBLIGATOIRE : ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
-
-⚠️⚠️⚠️ CRITIQUE ABSOLU - LANGUE : TOUTE TA RÉPONSE DOIT ÊTRE EXCLUSIVEMENT EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !!!
-❌ INTERDIT : Aucun mot en anglais (no English words allowed)
-❌ INTERDIT : Pas de "Day" mais "Jour"
-❌ INTERDIT : Pas de "Goal" mais "Objectif"  
-❌ INTERDIT : Pas de "Action" mais "Action" (en français c'est pareil mais pas d'autres mots anglais)
-✅ OBLIGATOIRE : Tous les titres en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
-✅ OBLIGATOIRE : Toutes les descriptions en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
-✅ OBLIGATOIRE : L'objectif "${objective}" est en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}, donc toutes les actions doivent être cohérentes dans cette langue
+🌍 LANGUE CIBLE: ${lang === 'fr' ? 'FRANÇAIS (French only)' : lang === 'es' ? 'ESPAGNOL (Spanish only)' : 'ANGLAIS'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-⚠️ PROCESSUS OBLIGATOIRE EN 3 ÉTAPES :
+⚠️ PROCESSUS OBLIGATOIRE EN 3 ÉTAPES:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ÉTAPE 1 - RAISONNEMENT APPROFONDI (OBLIGATOIRE - MINIMUM 200 CARACTÈRES)
+ÉTAPE 1 - RAISONNEMENT APPROFONDI(OBLIGATOIRE - MINIMUM 200 CARACTÈRES)
 
-Tu DOIS fournir ton analyse complète entre balises <think> :
+Tu DOIS fournir ton analyse complète entre balises<think> :
 
 <think>
-1. ANALYSE DE LA SITUATION :
-   - Que comprends-tu du contexte de cette personne ?
-   - Quels sont ses défis principaux ?
-   - Quelles sont ses ressources et forces ?
+  1. ANALYSE DE LA SITUATION:
+- Que comprends - tu du contexte de cette personne ?
+  - Quels sont ses défis principaux ?
+    - Quelles sont ses ressources et forces ?
 
-2. BESOINS IDENTIFIÉS :
-   - Quels besoins spécifiques cette personne a-t-elle ?
-   - Quels blocages doit-elle surmonter ?
-   - Quel type de soutien lui serait le plus utile ?
+      2. BESOINS IDENTIFIÉS:
+- Quels besoins spécifiques cette personne a - t - elle ?
+  - Quels blocages doit - elle surmonter ?
+    - Quel type de soutien lui serait le plus utile ?
 
-3. STRATÉGIE GLOBALE :
-   - Quelle approche vas-tu adopter pour ces 30 jours ?
-   - Comment vas-tu structurer la progression ?
-   - Quels types d'actions seront les plus efficaces ?
+      3. STRATÉGIE GLOBALE:
+- Quelle approche vas - tu adopter pour ces 30 jours ?
+  - Comment vas - tu structurer la progression ?
+    - Quels types d'actions seront les plus efficaces ?
 
-4. PLAN DE PROGRESSION :
-   - Définis ta propre structure de phases adaptée à l'objectif
-   - Nombre de phases et durée de chaque phase selon ce qui est pertinent
-   - Chaque phase doit avoir un objectif clair et des actions cohérentes
-</think>
+4. PLAN DE PROGRESSION:
+- Définis ta propre structure de phases adaptée à l'objectif
+  - Nombre de phases et durée de chaque phase selon ce qui est pertinent
+    - Chaque phase doit avoir un objectif clair et des actions cohérentes
+      </think>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ÉTAPE 2 - PLAN DÉTAILLÉ DES PHASES
 
-Décris brièvement chaque phase selon ta structure personnalisée :
-- Phase X (Jours X-Y) : [Thème, objectif, types d'actions]
-- Adapte le nombre de phases et leur durée selon l'objectif
+Décris brièvement chaque phase selon ta structure personnalisée:
+- Phase X(Jours X - Y) : [Thème, objectif, types d'actions]
+  - Adapte le nombre de phases et leur durée selon l'objectif
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ÉTAPE 3 - GÉNÉRATION DU FLOW (FORMAT JSON)
+  ÉTAPE 3 - GÉNÉRATION DU FLOW(FORMAT JSON)
 
-⚠️ IMPORTANT : L'objectif est à atteindre en 30 JOURS, mais tu génères UNIQUEMENT LES 7 PREMIERS JOURS.
-Les 7 jours suivants seront générés plus tard basés sur les progrès de l'utilisateur.
+⚠️ IMPORTANT : L'objectif est à atteindre en 30 JOURS, mais tu génères UNIQUEMENT LE PROCHAIN JOUR (1 jour à la fois).
+Tu recevras l'historique des validations des jours précédents pour adapter le jour suivant en fonction des progrès réels de l'utilisateur.
 
-🚨 CRITIQUE - LANGUE : TOUT le contenu JSON (titres, descriptions, analysis, category) DOIT ÊTRE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !
-- PAS d'anglais dans les titres des actions
-- PAS d'anglais dans les descriptions
-- PAS d'anglais dans la catégorie
-- TOUT doit être en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
+🚨 CRITIQUE - LANGUE : TOUT le contenu JSON(titres, descriptions, analysis, category) DOIT ÊTRE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !
+  - PAS d'anglais dans les titres des actions
+  - PAS d'anglais dans les descriptions
+  - PAS d'anglais dans la catégorie
+  - TOUT doit être en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
 
-Génère maintenant les 7 PREMIERS jours au format JSON suivant :
+Génère maintenant UNIQUEMENT UN JOUR au format JSON suivant :
 
 {
   "category": "catégorie pertinente",
-  "analysis": "Résumé de ton analyse en 1-2 phrases",
+  "analysis": "Analyse adaptée tenant compte de la progression",
   "days": [
     {
-      "day": 1,
+      "day": NUMERO_JOUR,
       "title": "Titre inspirant du jour",
       "mandatory1": {
         "icon": "emoji pertinent",
@@ -1343,30 +1340,29 @@ Génère maintenant les 7 PREMIERS jours au format JSON suivant :
         }
       }
     }
-    // ... répéter pour les jours 2 à 7 avec PROGRESSION VISIBLE (objectif 30 jours mais génère 7 à la fois)
   ]
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🚨 RAPPELS CRITIQUES :
-1. Le raisonnement <think> est OBLIGATOIRE - sans lui, ta réponse sera rejetée
+  1. Le raisonnement < think > est OBLIGATOIRE - sans lui, ta réponse sera rejetée
 2. Chaque action doit être CONCRÈTE et UNIQUE
-3. Génère EXACTEMENT 7 JOURS (pas plus, pas moins) - les suivants viendront après
-4. Prévois une progression sur 30 jours, mais ne génère que les 7 premiers
+3. Génère EXACTEMENT 1 JOUR à la fois (pas plus, pas moins)
+4. Chaque jour généré doit s'appuyer sur la progression réelle de l'utilisateur
 5. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
-6. FORMAT JSON STRICT OBLIGATOIRE : 
-   - Utilise UNIQUEMENT des guillemets doubles (")
-   - JAMAIS de guillemets simples (') pour les propriétés ou valeurs
-   - Si tu dois inclure des guillemets dans un texte, utilise des guillemets typographiques (« ») ou échappe-les
-7. ⚠️⚠️⚠️ LANGUE ULTRA-IMPORTANT : TOUT le JSON (titres, descriptions, analysis, category) en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} - AUCUN MOT EN ANGLAIS !
+6. FORMAT JSON STRICT OBLIGATOIRE :
+  - Utilise UNIQUEMENT des guillemets doubles(")
+    - JAMAIS de guillemets simples(') pour les propriétés ou valeurs
+      - Si tu dois inclure des guillemets dans un texte, utilise des guillemets typographiques(« ») ou échappe - les
+7. ⚠️⚠️⚠️ LANGUE ULTRA - IMPORTANT : TOUT le JSON(titres, descriptions, analysis, category) en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} - AUCUN MOT EN ANGLAIS!
 8. EXEMPLE CONCRET DE CE QUI EST INTERDIT vs AUTORISÉ :
-   ❌ Mauvais titre : "Setup Pinterest Account" (anglais)
-   ✅ Bon titre : "Créer ton compte Pinterest" (français)
-   ❌ Mauvaise description : "Optimize your profile" (anglais)
-   ✅ Bonne description : "Optimise ton profil" (français)
+   ❌ Mauvais titre : "Setup Pinterest Account"(anglais)
+   ✅ Bon titre : "Créer ton compte Pinterest"(français)
+   ❌ Mauvaise description : "Optimize your profile"(anglais)
+   ✅ Bonne description : "Optimise ton profil"(français)
 
-GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} (PAS UN SEUL MOT EN ANGLAIS) :`;
+GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}(PAS UN SEUL MOT EN ANGLAIS) : `;
 
 
             // Liste des modèles à essayer par ordre de préférence
@@ -1384,14 +1380,14 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
             // Essayer les modèles séquentiellement
             for (const model of models) {
               try {
-                console.log(`[Flow Generation] Trying model: ${model}`);
+                console.log(`[Flow Generation] Trying model: ${model} `);
                 usedModel = model;
 
                 response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY} `,
                     'HTTP-Referer': 'https://upglow.app',
                     'X-Title': 'UPGLOW Flow Generator'
                   },
@@ -1410,8 +1406,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
 
                 if (!response.ok) {
                   const errorBody = await response.text();
-                  console.warn(`[API Error] Model ${model} failed: ${response.status} - ${errorBody}`);
-                  lastError = `API Error: ${response.status} - ${errorBody}`;
+                  console.warn(`[API Error] Model ${model} failed: ${response.status} - ${errorBody} `);
+                  lastError = `API Error: ${response.status} - ${errorBody} `;
                   if (response.status === 401) {
                     throw new Error('Invalid API Key');
                   }
@@ -1423,7 +1419,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
 
                 // Vérifier que le contenu est suffisamment long (au moins 5000 caractères pour 7 jours)
                 if (content.length < 5000) {
-                  console.warn(`[AI Response] ⚠️ Response too short (${content.length} chars), trying next model...`);
+                  console.warn(`[AI Response] ⚠️ Response too short(${content.length} chars), trying next model...`);
                   lastError = `Response too short: ${content.length} characters`;
                   continue; // Essayer le modèle suivant
                 }
@@ -1432,7 +1428,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
                 const openBraces = (content.match(/{/g) || []).length;
                 const closeBraces = (content.match(/}/g) || []).length;
                 if (openBraces > closeBraces + 2) { // Tolérance de 2 max
-                  console.warn(`[AI Response] ⚠️ JSON seems truncated (${openBraces} open vs ${closeBraces} close braces), trying next model...`);
+                  console.warn(`[AI Response] ⚠️ JSON seems truncated(${openBraces} open vs ${closeBraces} close braces), trying next model...`);
                   lastError = 'JSON truncated';
                   continue; // Essayer le modèle suivant
                 }
@@ -2487,10 +2483,12 @@ INSTRUCTIONS :
           const userPrompt = `OBJECTIF : "${objective}"
 DESCRIPTION : "${description}"
 
-⚠️ Rappel : RÉPONDRE EN ${langName.toUpperCase()} UNIQUEMENT.
+🛑 ORDRE PRIORITAIRE ABSOLU :
+TA RÉPONSE DOIT ÊTRE EN ${langName.toUpperCase()} À 100%.
+TOUT LE CONTENU (TITRES, DESCRIPTIONS, ANALYSE) DOIT ÊTRE EN ${langName.toUpperCase()}.
 
 ÉTAPE 1 : RAISONNEMENT <think>
-Explique comment tu adaptes le plan par rapport aux tâches validées.
+Explique EN ${langName.toUpperCase()} comment tu adaptes le plan.
 
 ÉTAPE 2 : JSON
 Génère les jours ${startDay} à ${endDay} au format JSON suivant :

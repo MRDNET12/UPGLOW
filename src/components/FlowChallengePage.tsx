@@ -168,7 +168,7 @@ export function FlowChallengePage({
                   icon: mandatoryActions[0].icon
                 });
               }}
-              className="absolute top-1/2 right-14 transform -translate-y-1/2 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-slate-700 transition-all z-10"
+              className="absolute top-1/2 right-14 transform -translate-y-1/2 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-800 transition-all z-10"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -203,7 +203,7 @@ export function FlowChallengePage({
                   icon: mandatoryActions[1].icon
                 });
               }}
-              className="absolute top-1/2 right-14 transform -translate-y-1/2 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-slate-700 transition-all z-10"
+              className="absolute top-1/2 right-14 transform -translate-y-1/2 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-800 transition-all z-10"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -217,12 +217,12 @@ export function FlowChallengePage({
               onClick={() => setShowChoiceCard(!showChoiceCard)}
               className="p-5 flex items-center gap-4 cursor-pointer"
             >
-              <div className={`p-4 rounded-3xl flex-shrink-0 ${isChoiceCompleted ? 'bg-green-100 text-green-600' : 'bg-amber-50 text-amber-500'}`}>
+              <div className={`p-4 rounded-3xl flex-shrink-0 ${isChoiceCompleted ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}`}>
                 {isChoiceCompleted ? <Check className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
               </div>
               <div className="flex-1">
                 <h4 className="font-bold text-slate-800">{language === 'fr' ? 'Instant Self-Care' : 'Self-Care Moment'}</h4>
-                <p className="text-xs text-amber-500 font-bold tracking-wide">{language === 'fr' ? 'CHOISIS TON INSTANT' : 'CHOOSE YOUR MOMENT'}</p>
+                <p className="text-xs text-green-600 font-bold tracking-wide">{language === 'fr' ? 'CHOISIS TON INSTANT' : 'CHOOSE YOUR MOMENT'}</p>
               </div>
               <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform ${showChoiceCard ? 'rotate-180' : ''}`} />
             </div>
@@ -237,16 +237,22 @@ export function FlowChallengePage({
                     <div key={action.id} className="relative group">
                       <div
                         onClick={() => {
-                          onSelectChoice(currentDay, action.id);
-                          onToggleAction(currentDay, action.id);
+                          if (isSelected) {
+                            // Désélectionner si déjà sélectionné
+                            onSelectChoice(currentDay, '');
+                            onToggleAction(currentDay, action.id);
+                          } else {
+                            onSelectChoice(currentDay, action.id);
+                            onToggleAction(currentDay, action.id);
+                          }
                         }}
-                        className={`p-4 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${isSelected ? 'bg-amber-50 border-2 border-amber-100' : 'bg-gray-50 hover:bg-gray-100'}`}
+                        className={`p-4 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${isSelected ? 'bg-green-50 border-2 border-green-100' : 'bg-gray-50 hover:bg-gray-100'}`}
                       >
                         <div className="text-xl">{action.icon}</div>
                         <div className="flex-1 pr-8">
-                          <h5 className={`text-sm font-bold ${isSelected ? 'text-amber-900' : 'text-slate-700'}`}>{action.title}</h5>
+                          <h5 className={`text-sm font-bold ${isSelected ? 'text-green-900' : 'text-slate-700'}`}>{action.title}</h5>
                         </div>
-                        {isSelected && <div className="w-3 h-3 rounded-full bg-amber-500"></div>}
+                        {isSelected && <div className="w-3 h-3 rounded-full bg-green-500"></div>}
                       </div>
                       {/* Bouton + pour voir les détails */}
                       <button
@@ -258,7 +264,7 @@ export function FlowChallengePage({
                             icon: action.icon
                           });
                         }}
-                        className="absolute top-1/2 right-3 transform -translate-y-1/2 w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-amber-600 transition-all z-10"
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 w-7 h-7 bg-black text-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-800 transition-all z-10"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>

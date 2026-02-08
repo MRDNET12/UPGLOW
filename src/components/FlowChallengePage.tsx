@@ -409,10 +409,10 @@ export function FlowChallengePage({
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">
               {language === 'fr' 
-                ? "Ton prochain jour est prêt ! Il sera accessible demain, pour éviter la surcharge mentale."
+                ? "Ton prochain jour sera accessible demain, pour éviter la surcharge mentale."
                 : language === 'en' 
-                  ? "Your next day is ready! It will be accessible tomorrow, to avoid mental overload."
-                  : "¡Tu próximo día está listo! Será accesible mañana, para evitar la sobrecarga mental."}
+                  ? "Your next day will be accessible tomorrow, to avoid mental overload."
+                  : "Tu próximo día será accesible mañana, para evitar la sobrecarga mental."}
             </p>
             <div className="bg-white/50 rounded-xl p-3 text-xs text-amber-700 font-medium">
               {language === 'fr' 

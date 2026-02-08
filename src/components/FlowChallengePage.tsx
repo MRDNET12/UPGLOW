@@ -38,7 +38,7 @@ export function FlowChallengePage({
   checkAndUnlockNextDay
 }: FlowChallengePageProps) {
   const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
-  const [showChoiceCard, setShowChoiceCard] = useState(true);
+  const [showChoiceCard, setShowChoiceCard] = useState(false);
   const [showValidationPopup, setShowValidationPopup] = useState(false);
   const [validationStatus, setValidationStatus] = useState<'complete' | 'incomplete' | null>(null);
   const [selectedTask, setSelectedTask] = useState<{title: string, description: string, icon: string} | null>(null);

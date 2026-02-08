@@ -1175,14 +1175,8 @@ export const useStore = create<AppState>()(
 
         const generateWithAI = async (): Promise<PersonalizedFlow | null> => {
           try {
-            // Détecter la langue de l'objectif
-            const detectLanguage = (text: string): string => {
-              if (/[àâäéèêëïîôöùûüç]+/i.test(text)) return 'fr';
-              if (/[áéíóúüñ¿¡]+/i.test(text)) return 'es';
-              return 'en';
-            };
-
-            const lang = detectLanguage(objective + ' ' + description);
+            // Utiliser la langue sélectionnée par l'utilisateur dans l'app
+            const lang = get().language || 'fr';
 
             const systemPrompt = `Tu es Glow Flow, un coach expert en transformation personnelle qui crée des programmes sur mesure.
 

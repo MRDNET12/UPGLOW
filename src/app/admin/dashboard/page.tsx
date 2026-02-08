@@ -45,14 +45,22 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Attendre que les données utilisateur soient chargées
+    if (loading) return;
+    
     // Vérifier si l'utilisateur est admin
+    console.log('Admin check - User:', user?.email);
+    console.log('Admin check - UserData:', userData);
+    console.log('Admin check - isAdmin:', userData?.isAdmin);
+    
     if (!user || !userData?.isAdmin) {
+      console.log('Redirecting to home - Not admin');
       router.push('/');
       return;
     }
 
     fetchStats();
-  }, [user, userData, router]);
+  }, [user, userData, router, loading]);
 
   const fetchStats = async () => {
     try {

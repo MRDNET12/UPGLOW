@@ -58,6 +58,8 @@ import { TimeCapsule } from '@/components/TimeCapsule';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
+import { ProfilePage } from '@/components/ProfilePage';
+
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
 import { useInstallTracking } from '@/hooks/useInstallTracking';
@@ -2154,7 +2156,7 @@ PROCESO OBLIGATORIO:
           {/* Texte explicatif */}
           <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 shadow-sm">
             <p className="text-lg text-gray-700 leading-relaxed text-center">
-              {language === 'fr' 
+              {language === 'fr'
                 ? "c'est l'app pour celles et ceux qui veulent provoquer un changement dans leur vie et devenir la personne qu'ils aspirent à être."
                 : language === 'en'
                   ? "it's the app for those who want to create change in their lives and become the person they aspire to be."
@@ -2507,14 +2509,14 @@ PROCESO OBLIGATORIO:
                     : 'opacity-0 translate-y-full absolute'
                     }`}
                 >
-                  <div 
+                  <div
                     className="w-full cursor-pointer"
                     onClick={() => checkFeatureAccess('message_a_moi', () => setTimeCapsuleExpanded(!timeCapsuleExpanded))}
                   >
                     <TimeCapsule
                       theme={theme}
                       isExpanded={timeCapsuleExpanded}
-                      onToggle={() => {}}
+                      onToggle={() => { }}
                     />
                   </div>
                 </div>
@@ -2531,171 +2533,170 @@ PROCESO OBLIGATORIO:
 
             {/* Carte Flow Personnalisé - Style "A series of Olympiads" (Purple + Trophy) */}
             {showFlowCard && (
-            <Card
-              className={`border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] overflow-hidden relative min-h-[220px] group transition-all duration-300 ${
-                isGeneratingFlowBackground 
-                  ? 'cursor-not-allowed opacity-90' 
+              <Card
+                className={`border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] overflow-hidden relative min-h-[220px] group transition-all duration-300 ${isGeneratingFlowBackground
+                  ? 'cursor-not-allowed opacity-90'
                   : 'cursor-pointer hover:scale-[1.01]'
-              }`}
-              onClick={() => {
-                if (isGeneratingFlowBackground) return; // Bloquer le clic pendant la génération
-                if (personalizedFlow?.isActive) {
-                  setCurrentView('flow-challenge');
-                } else {
-                  setCurrentView('flow-proposition');
-                }
-              }}
-            >
-              {/* Background Stars/Decorations */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-4 right-1/3 text-yellow-300 text-xl animate-pulse">✨</div>
-                <div className="absolute bottom-8 right-8 text-yellow-200 text-sm">✦</div>
-                <div className="absolute top-1/2 left-1/2 text-purple-300/30 text-4xl">★</div>
-                <div className="absolute top-6 left-6 text-yellow-300/50 text-xs">✦</div>
-              </div>
+                  }`}
+                onClick={() => {
+                  if (isGeneratingFlowBackground) return; // Bloquer le clic pendant la génération
+                  if (personalizedFlow?.isActive) {
+                    setCurrentView('flow-challenge');
+                  } else {
+                    setCurrentView('flow-proposition');
+                  }
+                }}
+              >
+                {/* Background Stars/Decorations */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-4 right-1/3 text-yellow-300 text-xl animate-pulse">✨</div>
+                  <div className="absolute bottom-8 right-8 text-yellow-200 text-sm">✦</div>
+                  <div className="absolute top-1/2 left-1/2 text-purple-300/30 text-4xl">★</div>
+                  <div className="absolute top-6 left-6 text-yellow-300/50 text-xs">✦</div>
+                </div>
 
-              <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
-                {isGeneratingFlowBackground ? (
-                  /* Loading State - Animation identique à FlowDescriptionPage */
-                  (() => {
-                    const generationSteps = {
-                      fr: [
-                        { text: 'Analyse de ton objectif...', icon: Target },
-                        { text: 'Génération des 30 jours...', icon: Wand2 },
-                        { text: 'Personnalisation de ton parcours...', icon: Lightbulb },
-                        { text: 'Finalisation...', icon: Sparkles },
-                      ],
-                      en: [
-                        { text: 'Analyzing your goal...', icon: Target },
-                        { text: 'Generating 30 days...', icon: Wand2 },
-                        { text: 'Personalizing your journey...', icon: Lightbulb },
-                        { text: 'Finalizing...', icon: Sparkles },
-                      ],
-                      es: [
-                        { text: 'Analizando tu objetivo...', icon: Target },
-                        { text: 'Generando 30 días...', icon: Wand2 },
-                        { text: 'Personalizando tu camino...', icon: Lightbulb },
-                        { text: 'Finalizando...', icon: Sparkles },
-                      ],
-                    };
-                    const currentSteps = generationSteps[language as keyof typeof generationSteps] || generationSteps.fr;
-                    const CurrentIcon = currentSteps[flowGenerationStep].icon;
-                    
-                    return (
-                      <div className="flex flex-col items-center justify-center h-full">
-                        {/* Animation circulaire */}
-                        <div className="relative w-32 h-32 mx-auto mb-4">
-                          {/* Cercles animés */}
-                          <div className="absolute inset-0 rounded-full border-4 border-white/20 opacity-30 animate-ping" />
-                          <div className="absolute inset-2 rounded-full border-4 border-white/30 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
-                          <div className="absolute inset-4 rounded-full border-4 border-white/40 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
-                          
-                          {/* Icône centrale */}
-                          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white/80 to-white/60 flex items-center justify-center shadow-2xl animate-pulse">
-                            <CurrentIcon className="w-10 h-10 text-purple-600" />
+                <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
+                  {isGeneratingFlowBackground ? (
+                    /* Loading State - Animation identique à FlowDescriptionPage */
+                    (() => {
+                      const generationSteps = {
+                        fr: [
+                          { text: 'Analyse de ton objectif...', icon: Target },
+                          { text: 'Génération des 30 jours...', icon: Wand2 },
+                          { text: 'Personnalisation de ton parcours...', icon: Lightbulb },
+                          { text: 'Finalisation...', icon: Sparkles },
+                        ],
+                        en: [
+                          { text: 'Analyzing your goal...', icon: Target },
+                          { text: 'Generating 30 days...', icon: Wand2 },
+                          { text: 'Personalizing your journey...', icon: Lightbulb },
+                          { text: 'Finalizing...', icon: Sparkles },
+                        ],
+                        es: [
+                          { text: 'Analizando tu objetivo...', icon: Target },
+                          { text: 'Generando 30 días...', icon: Wand2 },
+                          { text: 'Personalizando tu camino...', icon: Lightbulb },
+                          { text: 'Finalizando...', icon: Sparkles },
+                        ],
+                      };
+                      const currentSteps = generationSteps[language as keyof typeof generationSteps] || generationSteps.fr;
+                      const CurrentIcon = currentSteps[flowGenerationStep].icon;
+
+                      return (
+                        <div className="flex flex-col items-center justify-center h-full">
+                          {/* Animation circulaire */}
+                          <div className="relative w-32 h-32 mx-auto mb-4">
+                            {/* Cercles animés */}
+                            <div className="absolute inset-0 rounded-full border-4 border-white/20 opacity-30 animate-ping" />
+                            <div className="absolute inset-2 rounded-full border-4 border-white/30 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
+                            <div className="absolute inset-4 rounded-full border-4 border-white/40 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
+
+                            {/* Icône centrale */}
+                            <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white/80 to-white/60 flex items-center justify-center shadow-2xl animate-pulse">
+                              <CurrentIcon className="w-10 h-10 text-purple-600" />
+                            </div>
+                          </div>
+
+                          {/* Texte de l'étape */}
+                          <div className="text-center space-y-2">
+                            <h3 className="text-xl font-bold text-white">
+                              {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
+                            </h3>
+                            <p className="text-base text-white/90 font-medium">
+                              {currentSteps[flowGenerationStep].text}
+                            </p>
+                          </div>
+
+                          {/* Barre de progression */}
+                          <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden mx-auto mt-4">
+                            <div
+                              className="h-full bg-white rounded-full transition-all duration-500"
+                              style={{ width: `${((flowGenerationStep + 1) / currentSteps.length) * 100}%` }}
+                            />
                           </div>
                         </div>
-
-                        {/* Texte de l'étape */}
-                        <div className="text-center space-y-2">
-                          <h3 className="text-xl font-bold text-white">
-                            {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
-                          </h3>
-                          <p className="text-base text-white/90 font-medium">
-                            {currentSteps[flowGenerationStep].text}
-                          </p>
+                      );
+                    })()
+                  ) : personalizedFlow?.isActive ? (
+                    /* Active State - Adapted to Purple Theme */
+                    <div className="flex items-center justify-between h-full">
+                      <div className="flex-1 z-10">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+                            <TrendingUp className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="text-sm font-bold text-purple-100 tracking-wide">
+                            {language === 'fr' ? 'TA PROGRESSION' : language === 'en' ? 'YOUR PROGRESS' : 'TU PROGRESO'}
+                          </span>
                         </div>
 
-                        {/* Barre de progression */}
-                        <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden mx-auto mt-4">
-                          <div 
-                            className="h-full bg-white rounded-full transition-all duration-500"
-                            style={{ width: `${((flowGenerationStep + 1) / currentSteps.length) * 100}%` }}
+                        <div className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-sm">
+                          {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
+                        </div>
+
+                        <div className="flex items-center gap-2 text-purple-200 text-sm font-medium bg-black/10 w-fit px-3 py-1 rounded-full">
+                          <span>
+                            {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Progress Ring - White/Purple Theme */}
+                      <div className="relative w-28 h-28 flex-shrink-0">
+                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
+                          <circle
+                            cx="50" cy="50" r="42" fill="none" stroke="#fbbf24" strokeWidth="8"
+                            strokeLinecap="round"
+                            strokeDasharray={`${(personalizedFlow.completedDays.length / 30) * 264} 264`}
+                            className="transition-all duration-1000 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
                           />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-2xl">🔥</span>
+                          <span className="text-sm font-bold text-white">{personalizedFlow.completedDays.length}j</span>
                         </div>
                       </div>
-                    );
-                  })()
-                ) : personalizedFlow?.isActive ? (
-                  /* Active State - Adapted to Purple Theme */
-                  <div className="flex items-center justify-between h-full">
-                    <div className="flex-1 z-10">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
-                          <TrendingUp className="w-5 h-5 text-white" />
+                    </div>
+                  ) : (
+                    /* Inactive State - The "Olympiad" Style */
+                    <div className="relative h-full flex flex-col justify-center">
+                      {/* CSS Trophy Illustration */}
+                      <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 transform scale-110 rotate-3 pointer-events-none group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
+                        <div className="relative w-32 h-32 flex items-center justify-center">
+                          {/* Cup Handles */}
+                          <div className="absolute top-8 left-0 w-32 h-16 border-4 border-indigo-400 rounded-full z-0"></div>
+                          {/* Cup Body */}
+                          <div className="relative z-10 w-20 h-20 bg-gradient-to-b from-yellow-300 to-amber-400 rounded-b-full shadow-lg border-t-4 border-yellow-200 flex items-center justify-center">
+                            <div className="text-amber-600 opacity-50 transform rotate-12">★</div>
+                            {/* Shine */}
+                            <div className="absolute top-2 right-4 w-3 h-8 bg-white/30 rounded-full transform rotate-12"></div>
+                          </div>
+                          {/* Cup Stem */}
+                          <div className="absolute bottom-8 w-4 h-6 bg-amber-500 z-0"></div>
+                          <div className="absolute bottom-10 w-6 h-2 bg-amber-600 z-10 rounded-full"></div>
+                          {/* Base */}
+                          <div className="absolute bottom-4 w-16 h-6 bg-amber-500 rounded-full shadow-md z-10 border-b-4 border-amber-600"></div>
                         </div>
-                        <span className="text-sm font-bold text-purple-100 tracking-wide">
-                          {language === 'fr' ? 'TA PROGRESSION' : language === 'en' ? 'YOUR PROGRESS' : 'TU PROGRESO'}
-                        </span>
                       </div>
 
-                      <div className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-sm">
-                        {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
-                      </div>
+                      <div className="z-20 max-w-[65%]">
+                        <h2 className="text-3xl font-black text-white leading-none mb-3 drop-shadow-md">
+                          {language === 'fr' ? 'Crée ton\nFlow' : language === 'en' ? 'Create your\nFlow' : 'Crea tu\nFlow'}
+                        </h2>
+                        <p className="text-sm font-medium text-purple-100 mb-6 leading-relaxed">
+                          {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 días para transformar tus objetivos en hábitos'}
+                        </p>
 
-                      <div className="flex items-center gap-2 text-purple-200 text-sm font-medium bg-black/10 w-fit px-3 py-1 rounded-full">
-                        <span>
-                          {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Progress Ring - White/Purple Theme */}
-                    <div className="relative w-28 h-28 flex-shrink-0">
-                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
-                        <circle
-                          cx="50" cy="50" r="42" fill="none" stroke="#fbbf24" strokeWidth="8"
-                          strokeLinecap="round"
-                          strokeDasharray={`${(personalizedFlow.completedDays.length / 30) * 264} 264`}
-                          className="transition-all duration-1000 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-2xl">🔥</span>
-                        <span className="text-sm font-bold text-white">{personalizedFlow.completedDays.length}j</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  /* Inactive State - The "Olympiad" Style */
-                  <div className="relative h-full flex flex-col justify-center">
-                    {/* CSS Trophy Illustration */}
-                    <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 transform scale-110 rotate-3 pointer-events-none group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
-                      <div className="relative w-32 h-32 flex items-center justify-center">
-                        {/* Cup Handles */}
-                        <div className="absolute top-8 left-0 w-32 h-16 border-4 border-indigo-400 rounded-full z-0"></div>
-                        {/* Cup Body */}
-                        <div className="relative z-10 w-20 h-20 bg-gradient-to-b from-yellow-300 to-amber-400 rounded-b-full shadow-lg border-t-4 border-yellow-200 flex items-center justify-center">
-                          <div className="text-amber-600 opacity-50 transform rotate-12">★</div>
-                          {/* Shine */}
-                          <div className="absolute top-2 right-4 w-3 h-8 bg-white/30 rounded-full transform rotate-12"></div>
+                        {/* Circular Button */}
+                        <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center shadow-lg group-hover:bg-black transition-colors">
+                          <ArrowRight className="w-5 h-5 text-white" />
                         </div>
-                        {/* Cup Stem */}
-                        <div className="absolute bottom-8 w-4 h-6 bg-amber-500 z-0"></div>
-                        <div className="absolute bottom-10 w-6 h-2 bg-amber-600 z-10 rounded-full"></div>
-                        {/* Base */}
-                        <div className="absolute bottom-4 w-16 h-6 bg-amber-500 rounded-full shadow-md z-10 border-b-4 border-amber-600"></div>
                       </div>
                     </div>
-
-                    <div className="z-20 max-w-[65%]">
-                      <h2 className="text-3xl font-black text-white leading-none mb-3 drop-shadow-md">
-                        {language === 'fr' ? 'Crée ton\nFlow' : language === 'en' ? 'Create your\nFlow' : 'Crea tu\nFlow'}
-                      </h2>
-                      <p className="text-sm font-medium text-purple-100 mb-6 leading-relaxed">
-                        {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 días para transformar tus objetivos en hábitos'}
-                      </p>
-
-                      {/* Circular Button */}
-                      <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center shadow-lg group-hover:bg-black transition-colors">
-                        <ArrowRight className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  )}
+                </CardContent>
+              </Card>
             )}
 
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
@@ -2879,9 +2880,9 @@ PROCESO OBLIGATORIO:
             </Card>
 
             {/* Petits Succès Compact */}
-            <div 
+            <div
               className="cursor-pointer"
-              onClick={() => checkFeatureAccess('petites_victoires', () => {})}
+              onClick={() => checkFeatureAccess('petites_victoires', () => { })}
             >
               <SmallWinsCompact theme={theme} />
             </div>
@@ -5116,521 +5117,10 @@ PROCESO OBLIGATORIO:
 
         {/* Settings/Profil View - Design Moderne UX */}
         {currentView === 'settings' && (
-          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(180deg, #faf5f0 0%, #fdf8f3 100%)' }}>
-            <div className="max-w-lg mx-auto">
-              {/* Header avec profil */}
-              <div className="px-4 pt-6 pb-4">
-                <div className="flex items-center justify-between mb-6">
-                  <button
-                    onClick={() => setCurrentView('dashboard')}
-                    className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center hover:scale-105 transition-transform active:scale-95"
-                  >
-                    <ChevronLeft className="w-5 h-5 text-gray-700" />
-                  </button>
-                  <h1 className="text-lg font-bold text-gray-800">
-                    {language === 'fr' ? 'Mon Profil' : language === 'en' ? 'My Profile' : 'Mi Perfil'}
-                  </h1>
-                  <button
-                    onClick={() => {
-                      if (user) {
-                        if (confirm(language === 'fr' ? 'Voulez-vous vous déconnecter ?' : language === 'en' ? 'Sign out?' : '¿Cerrar sesión?')) {
-                          signOut();
-                        }
-                      } else {
-                        setShowAuthDialog(true);
-                      }
-                    }}
-                    className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center hover:scale-105 transition-transform active:scale-95"
-                  >
-                    {user ? (
-                      <LogOut className="w-5 h-5 text-rose-500" />
-                    ) : (
-                      <LogIn className="w-5 h-5 text-emerald-500" />
-                    )}
-                  </button>
-                </div>
-
-                {/* Carte profil utilisateur */}
-                <div className="bg-white rounded-3xl p-6 shadow-sm mb-4" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-300 via-pink-300 to-orange-300 flex items-center justify-center shadow-lg">
-                        {user ? (
-                          <span className="text-3xl">👩</span>
-                        ) : (
-                          <User className="w-10 h-10 text-white" />
-                        )}
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-400 border-2 border-white flex items-center justify-center">
-                        <Check className="w-3 h-3 text-white" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h2 className="text-xl font-bold text-gray-800">
-                        {user ? (user.email?.split('@')[0] || 'Utilisateur') :
-                          (language === 'fr' ? 'Invité' : language === 'en' ? 'Guest' : 'Invitado')}
-                      </h2>
-                      <p className="text-sm text-gray-500">
-                        {user ? user.email :
-                          (language === 'fr' ? 'Connectez-vous pour synchroniser' :
-                            language === 'en' ? 'Sign in to sync' :
-                              'Inicia sesión para sincronizar')}
-                      </p>
-                      {user && subscription.isSubscribed && (
-                        <div className={`mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full ${subscription.planType === 'glow_plus' ? 'bg-gradient-to-r from-violet-100 to-purple-100' : 'bg-gradient-to-r from-amber-100 to-orange-100'}`}>
-                          <Crown className={`w-3 h-3 ${subscription.planType === 'glow_plus' ? 'text-violet-600' : 'text-amber-600'}`} />
-                          <span className={`text-xs font-semibold ${subscription.planType === 'glow_plus' ? 'text-violet-700' : 'text-amber-700'}`}>
-                            {subscription.planType === 'glow_plus'
-                              ? (language === 'fr' ? 'Glow Plus' : language === 'en' ? 'Glow Plus' : 'Glow Plus')
-                              : subscription.planType === 'glow_start'
-                                ? (language === 'fr' ? 'Glow Start' : language === 'en' ? 'Glow Start' : 'Glow Start')
-                                : (language === 'fr' ? 'Membre Premium' : language === 'en' ? 'Premium Member' : 'Miembro Premium')
-                            }
-                          </span>
-                        </div>
-                      )}
-                      {user && subscription.planType === 'glow_start' && (
-                        <button
-                          onClick={() => setShowPlanSelection(true)}
-                          className="mt-2 text-xs text-violet-600 hover:text-violet-700 font-medium underline"
-                        >
-                          {language === 'fr' ? 'Passer à Glow Plus →' : language === 'en' ? 'Upgrade to Glow Plus →' : 'Actualizar a Glow Plus →'}
-                        </button>
-                      )}
-                      {userData?.isAdmin && (
-                        <button
-                          onClick={() => window.location.href = '/admin/dashboard'}
-                          className="mt-2 text-xs text-red-600 hover:text-red-700 font-medium underline flex items-center gap-1"
-                        >
-                          <span>🎛️</span>
-                          {language === 'fr' ? 'Dashboard Admin' : language === 'en' ? 'Admin Dashboard' : 'Panel Admin'}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Carte Promotion Plans - Visible pour tous */}
-                {!subscription.isSubscribed && (
-                  <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-pink-50 rounded-3xl p-6 shadow-lg border-2 border-amber-200 mb-6">
-                    <div className="text-center mb-4">
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">
-                        {language === 'fr' ? '✨ Passe à la vitesse supérieure' : language === 'en' ? '✨ Take it to the next level' : '✨ Llévalo al siguiente nivel'}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {language === 'fr'
-                          ? 'Débloque tout le potentiel de ton évolution personnelle'
-                          : language === 'en'
-                            ? 'Unlock the full potential of your personal growth'
-                            : 'Desbloquea todo el potencial de tu crecimiento personal'}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      {/* Glow Start */}
-                      <div className="bg-white rounded-2xl p-3 shadow-sm">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center">
-                            <Crown className="w-4 h-4 text-white" />
-                          </div>
-                          <div>
-                            <p className="font-bold text-gray-800 text-sm">Glow Start</p>
-                            <p className="text-xs text-amber-600 font-semibold">1.99€/mois</p>
-                          </div>
-                        </div>
-                        <ul className="text-xs text-gray-600 space-y-1">
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Message à Moi
-                          </li>
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Petites Victoires
-                          </li>
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Mes Habitudes
-                          </li>
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Mon Journal
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* Glow Plus */}
-                      <div className="bg-white rounded-2xl p-3 shadow-sm border-2 border-violet-200 relative">
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gradient-to-r from-violet-500 to-purple-500 text-white text-[10px] font-bold rounded-full">
-                          {language === 'fr' ? 'POPULAIRE' : language === 'en' ? 'POPULAR' : 'POPULAR'}
-                        </div>
-                        <div className="flex items-center gap-2 mb-2 mt-1">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
-                            <Crown className="w-4 h-4 text-white" />
-                          </div>
-                          <div>
-                            <p className="font-bold text-gray-800 text-sm">Glow Plus</p>
-                            <p className="text-xs text-violet-600 font-semibold">3.99€/mois</p>
-                          </div>
-                        </div>
-                        <ul className="text-xs text-gray-600 space-y-1">
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            TOUT Glow Start
-                          </li>
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Glow Mirror AI
-                          </li>
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Analyses perso.
-                          </li>
-                          <li className="flex items-center gap-1">
-                            <Check className="w-3 h-3 text-green-500" />
-                            Conseils sur mesure
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => setShowPlanSelection(true)}
-                      className="w-full py-3 bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white font-bold rounded-xl shadow-lg shadow-pink-200/50 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Crown className="w-5 h-5" />
-                      {language === 'fr' ? 'Choisir mon plan' : language === 'en' ? 'Choose my plan' : 'Elegir mi plan'}
-                    </button>
-
-                    <p className="text-center text-xs text-gray-500 mt-3">
-                      {language === 'fr'
-                        ? '3 jours gratuits sur tous les plans • Annule quand tu veux'
-                        : language === 'en'
-                          ? '3 free days on all plans • Cancel anytime'
-                          : '3 días gratis en todos los planes • Cancela cuando quieras'}
-                    </p>
-                  </div>
-                )}
-
-                {/* Stats rapides */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="bg-white rounded-2xl p-4 shadow-sm text-center" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mx-auto mb-2">
-                      <Check className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <p className="text-2xl font-bold text-gray-800">{challengeProgress.completedDays.length}</p>
-                    <p className="text-xs text-gray-500">
-                      {language === 'fr' ? 'Jours' : language === 'en' ? 'Days' : 'Días'}
-                    </p>
-                  </div>
-                  <div className="bg-white rounded-2xl p-4 shadow-sm text-center" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center mx-auto mb-2">
-                      <TrendingUp className="w-5 h-5 text-rose-600" />
-                    </div>
-                    <p className="text-2xl font-bold text-gray-800">{progressPercentage}%</p>
-                    <p className="text-xs text-gray-500">
-                      {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
-                    </p>
-                  </div>
-                  <div className="bg-white rounded-2xl p-4 shadow-sm text-center" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center mx-auto mb-2">
-                      <ImageIcon className="w-5 h-5 text-violet-600" />
-                    </div>
-                    <p className="text-2xl font-bold text-gray-800">{visionBoardImages.length}</p>
-                    <p className="text-xs text-gray-500">
-                      {language === 'fr' ? 'Visions' : language === 'en' ? 'Visions' : 'Visiones'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Menu des options */}
-              <div className="px-4 space-y-3">
-                {/* Section Apparence */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
-                      {language === 'fr' ? 'Apparence' : language === 'en' ? 'Appearance' : 'Apariencia'}
-                    </h3>
-                  </div>
-
-                  {/* Thème */}
-                  <button
-                    onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
-                        {theme === 'light' ? (
-                          <Sun className="w-5 h-5 text-amber-600" />
-                        ) : (
-                          <Moon className="w-5 h-5 text-indigo-600" />
-                        )}
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">
-                        {language === 'fr' ? 'Thème' : language === 'en' ? 'Theme' : 'Tema'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">
-                        {theme === 'light'
-                          ? (language === 'fr' ? 'Clair' : language === 'en' ? 'Light' : 'Claro')
-                          : (language === 'fr' ? 'Sombre' : language === 'en' ? 'Dark' : 'Oscuro')
-                        }
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </div>
-                  </button>
-
-                  {/* Langue */}
-                  <div className="p-4 border-t border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">
-                        {language === 'fr' ? 'Langue' : language === 'en' ? 'Language' : 'Idioma'}
-                      </span>
-                    </div>
-                    <div className="flex gap-2 ml-13">
-                      {[
-                        { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
-                        { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
-                        { code: 'es' as Language, name: 'Español', flag: '🇪🇸' }
-                      ].map((lang) => (
-                        <button
-                          key={lang.code}
-                          onClick={() => setLanguage(lang.code)}
-                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-medium transition-all ${language === lang.code
-                            ? 'bg-gradient-to-r from-rose-400 to-pink-400 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                        >
-                          <span className="mr-1">{lang.flag}</span>
-                          {lang.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section Notifications */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
-                      {language === 'fr' ? 'Notifications' : language === 'en' ? 'Notifications' : 'Notificaciones'}
-                    </h3>
-                  </div>
-
-                  <button
-                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center">
-                        {notificationsEnabled ? (
-                          <Bell className="w-5 h-5 text-rose-600" />
-                        ) : (
-                          <BellOff className="w-5 h-5 text-gray-500" />
-                        )}
-                      </div>
-                      <div className="text-left">
-                        <span className="text-sm font-medium text-gray-700 block">
-                          {language === 'fr' ? 'Rappels quotidiens' : language === 'en' ? 'Daily reminders' : 'Recordatorios diarios'}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {notificationsEnabled
-                            ? (language === 'fr' ? 'Activés' : language === 'en' ? 'Enabled' : 'Activados')
-                            : (language === 'fr' ? 'Désactivés' : language === 'en' ? 'Disabled' : 'Desactivados')
-                          }
-                        </span>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={notificationsEnabled}
-                      onCheckedChange={setNotificationsEnabled}
-                    />
-                  </button>
-                </div>
-
-                {/* Section Support */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
-                      {language === 'fr' ? 'Support' : language === 'en' ? 'Support' : 'Soporte'}
-                    </h3>
-                  </div>
-
-                  <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
-                        <HelpCircle className="w-5 h-5 text-violet-600" />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">
-                        {language === 'fr' ? 'FAQ & Aide' : language === 'en' ? 'FAQ & Help' : 'FAQ y Ayuda'}
-                      </span>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </button>
-
-                  <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
-                        <Star className="w-5 h-5 text-emerald-600" />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">
-                        {language === 'fr' ? 'Noter l\'application' : language === 'en' ? 'Rate the app' : 'Calificar la app'}
-                      </span>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </button>
-                </div>
-
-                {/* Section Compte */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
-                      {language === 'fr' ? 'Compte' : language === 'en' ? 'Account' : 'Cuenta'}
-                    </h3>
-                  </div>
-
-                  {user ? (
-                    <>
-                      <div className="p-4 border-b border-gray-100">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center">
-                            <Mail className="w-5 h-5 text-rose-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium text-gray-700 block truncate">{user.email}</span>
-                            <span className="text-xs text-emerald-600 font-medium">
-                              {language === 'fr' ? 'Connecté' : language === 'en' ? 'Connected' : 'Conectado'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => {
-                          if (confirm(language === 'fr' ? 'Voulez-vous vous déconnecter ?' : language === 'en' ? 'Sign out?' : '¿Cerrar sesión?')) {
-                            signOut();
-                          }
-                        }}
-                        className="w-full flex items-center justify-between p-4 hover:bg-red-50 transition-colors text-red-600"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-                            <LogOut className="w-5 h-5 text-red-600" />
-                          </div>
-                          <span className="text-sm font-medium">
-                            {language === 'fr' ? 'Se déconnecter' : language === 'en' ? 'Sign out' : 'Cerrar sesión'}
-                          </span>
-                        </div>
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => setShowAuthDialog(true)}
-                      className="w-full flex items-center justify-between p-4 hover:bg-emerald-50 transition-colors text-emerald-600"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                          <LogIn className="w-5 h-5 text-emerald-600" />
-                        </div>
-                        <span className="text-sm font-medium">
-                          {language === 'fr' ? 'Se connecter' : language === 'en' ? 'Sign in' : 'Iniciar sesión'}
-                        </span>
-                      </div>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Section Moi - Mes Objectifs */}
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
-                      {language === 'fr' ? 'Moi' : language === 'en' ? 'Me' : 'Yo'}
-                    </h3>
-                  </div>
-
-                  {/* Objectif Principal */}
-                  {objectifPrincipal && (
-                    <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-pink-50 to-rose-50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Star className="w-4 h-4 text-pink-500" />
-                        <span className="text-xs font-bold text-pink-600 uppercase tracking-wide">
-                          {language === 'fr' ? 'Ma priorité actuelle' : language === 'en' ? 'My current priority' : 'Mi prioridad actual'}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-800 pl-6">{objectifPrincipal}</p>
-                    </div>
-                  )}
-
-                  {/* Objectifs Prioritaires */}
-                  {objectifsPrioritaires.length > 0 && (
-                    <div className="p-4 border-b border-gray-100">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Layers className="w-4 h-4 text-rose-500" />
-                        <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">
-                          {language === 'fr' ? 'Mes 3 objectifs prioritaires' : language === 'en' ? 'My 3 priority goals' : 'Mis 3 objetivos prioritarios'}
-                        </span>
-                      </div>
-                      <div className="space-y-2 pl-6">
-                        {objectifsPrioritaires.map((objective, index) => (
-                          <div key={index} className="flex items-start gap-2">
-                            <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                              {index + 1}
-                            </span>
-                            <span className="text-sm text-gray-700">{objective}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Objectifs Initiaux */}
-                  {objectifsInitiaux.length > 0 && (
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Target className="w-4 h-4 text-gray-500" />
-                        <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">
-                          {language === 'fr' ? 'Mes 5 objectifs' : language === 'en' ? 'My 5 goals' : 'Mis 5 objetivos'}
-                        </span>
-                      </div>
-                      <div className="space-y-2 pl-6">
-                        {objectifsInitiaux.map((objective, index) => (
-                          <div key={index} className="flex items-start gap-2">
-                            <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                              {index + 1}
-                            </span>
-                            <span className="text-sm text-gray-600">{objective}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Message si aucun objectif */}
-                  {objectifsInitiaux.length === 0 && objectifsPrioritaires.length === 0 && !objectifPrincipal && (
-                    <div className="p-4 text-center">
-                      <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Aucun objectif défini pour le moment' : language === 'en' ? 'No goals defined yet' : 'Ningún objetivo definido aún'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Version app */}
-                <div className="text-center py-4">
-                  <p className="text-xs text-gray-400">
-                    Glow Up Challenge v2.0
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    © 2026 Glowee ✨
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProfilePage
+            setShowAuthDialog={setShowAuthDialog}
+            setShowPlanSelection={setShowPlanSelection}
+          />
         )}
       </main>
 
@@ -6661,7 +6151,7 @@ PROCESO OBLIGATORIO:
               <h4 className="text-sm font-semibold text-stone-700 mb-3">
                 {language === 'fr' ? 'Visibilité des cartes' : language === 'en' ? 'Card visibility' : 'Visibilidad de tarjetas'}
               </h4>
-              
+
               {/* Toggle Challenge Card */}
               <button
                 onClick={() => toggleChallengeCard()}

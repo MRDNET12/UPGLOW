@@ -1351,7 +1351,10 @@ Génère maintenant les 7 PREMIERS jours au format JSON suivant :
 3. Génère EXACTEMENT 7 JOURS (pas plus, pas moins) - les suivants viendront après
 4. Prévois une progression sur 30 jours, mais ne génère que les 7 premiers
 5. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
-6. FORMAT JSON STRICT OBLIGATOIRE : Utilise UNIQUEMENT des guillemets doubles
+6. FORMAT JSON STRICT OBLIGATOIRE : 
+   - Utilise UNIQUEMENT des guillemets doubles (")
+   - JAMAIS de guillemets simples (') pour les propriétés ou valeurs
+   - Si tu dois inclure des guillemets dans un texte, utilise des guillemets typographiques (« ») ou échappe-les
 7. ⚠️⚠️⚠️ LANGUE ULTRA-IMPORTANT : TOUT le JSON (titres, descriptions, analysis, category) en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} - AUCUN MOT EN ANGLAIS !
 
 GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} (PAS UN SEUL MOT EN ANGLAIS) :`;
@@ -1500,24 +1503,30 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
               let cleaned = json.replace(/\/\/.*$/gm, '');
               cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
 
-              // 2. Remplacer les guillemets simples utilisés comme délimiteurs de valeur JSON
-              // Pattern: ': 'valeur'' => ': "valeur"'
-              // ATTENTION: Ne pas casser le français (l'objectif, etc.)
-              cleaned = cleaned.replace(/:\s*'([^']*?)'/g, (match, content) => {
+              // 2. Échapper les guillemets doubles à l'intérieur des valeurs avec guillemets simples
+              // Pattern: '..."..."...' => '...\"...\"...'
+              cleaned = cleaned.replace(/'([^']*?)'/g, (match, content) => {
+                // Échapper les guillemets doubles à l'intérieur
                 const escaped = content.replace(/"/g, '\\"');
-                return `: "${escaped}"`;
+                return `'${escaped}'`;
               });
 
-              // 3. Remplacer les clés JSON avec guillemets simples
+              // 3. Remplacer les guillemets simples utilisés comme délimiteurs de valeur JSON
+              // Pattern: ': 'valeur'' => ': "valeur"'
+              cleaned = cleaned.replace(/:\s*'([^']*?)'/g, (match, content) => {
+                return `: "${content}"`;
+              });
+
+              // 4. Remplacer les clés JSON avec guillemets simples
               cleaned = cleaned.replace(/'([a-zA-Z0-9_]+)'\s*:/g, '"$1":');
 
-              // 4. Fix unquoted property names (e.g. key: "value" -> "key": "value")
+              // 5. Fix unquoted property names (e.g. key: "value" -> "key": "value")
               cleaned = cleaned.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
 
-              // 4. Remove trailing commas
+              // 6. Remove trailing commas
               cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
 
-              // 4. Compter les accolades/crochets et fermer si nécessaire
+              // 7. Compter les accolades/crochets et fermer si nécessaire
               const openBraces = (cleaned.match(/{/g) || []).length;
               const closeBraces = (cleaned.match(/}/g) || []).length;
               const openBrackets = (cleaned.match(/\[/g) || []).length;

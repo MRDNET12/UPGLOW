@@ -20,6 +20,7 @@ interface FlowChallengePageProps {
   onContinueFlow?: () => void;        // Nouveau: continuer la génération
   needsContinuation?: boolean;        // Nouveau: indique si on doit afficher le bouton
   isGeneratingFlow?: boolean;         // Nouveau: indique si on génère
+  checkAndUnlockNextDay?: () => void; // Nouveau: vérifie si le jour suivant doit être débloqué
 }
 
 export function FlowChallengePage({
@@ -33,7 +34,8 @@ export function FlowChallengePage({
   onRegenerateFlow,
   onContinueFlow,
   needsContinuation,
-  isGeneratingFlow
+  isGeneratingFlow,
+  checkAndUnlockNextDay
 }: FlowChallengePageProps) {
   const [activeTab, setActiveTab] = useState<'flow' | 'progression' | 'badges'>('flow');
   const [showChoiceCard, setShowChoiceCard] = useState(true);
@@ -56,6 +58,17 @@ export function FlowChallengePage({
       return () => clearInterval(interval);
     }
   }, [showContinuationAnimation]);
+
+  // Vérifier périodiquement si le jour suivant doit être débloqué (toutes les minutes)
+  useEffect(() => {
+    if (checkAndUnlockNextDay) {
+      checkAndUnlockNextDay(); // Vérification initiale
+      const interval = setInterval(() => {
+        checkAndUnlockNextDay();
+      }, 60000); // Vérifier toutes les minutes
+      return () => clearInterval(interval);
+    }
+  }, [checkAndUnlockNextDay]);
 
   const currentFlowDay = personalizedFlow?.days.find(d => d.day === personalizedFlow.currentDay);
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;

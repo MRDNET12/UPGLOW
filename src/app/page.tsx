@@ -159,6 +159,7 @@ export default function GlowUpChallengeApp() {
     unlockBadge,
     continueFlow,
     checkNeedsContinuation,
+    checkAndUnlockNextDay,
     isGeneratingFlow,
     // Visibility toggles
     showChallengeCard,
@@ -2397,6 +2398,7 @@ PROCESO OBLIGATORIO:
         onContinueFlow={continueFlow}
         needsContinuation={checkNeedsContinuation()}
         isGeneratingFlow={isGeneratingFlow}
+        checkAndUnlockNextDay={checkAndUnlockNextDay}
       />
     );
   }

@@ -288,7 +288,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 </div>
 
                 {/* Support & Legal */}
-                <div className="grid grid-cols-2 gap-4 mb-20">
+                <div className="grid grid-cols-2 gap-4 mb-8">
                     <button className="bg-white dark:bg-stone-800 p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 text-center text-slate-600 dark:text-slate-400">
                         <HelpCircle className="w-6 h-6 mb-1" />
                         <span className="text-xs font-bold">Help & FAQ</span>
@@ -298,6 +298,19 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         <span className="text-xs font-bold">Privacy</span>
                     </button>
                 </div>
+
+                {/* Dashboard Admin - Visible uniquement pour les admins */}
+                {userData?.isAdmin && (
+                    <div className="mb-20">
+                        <button 
+                            onClick={() => window.location.href = '/admin/dashboard'}
+                            className="w-full bg-gradient-to-r from-red-500 to-red-600 p-4 rounded-3xl shadow-lg shadow-red-500/30 hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-white"
+                        >
+                            <Crown className="w-6 h-6" />
+                            <span className="font-bold">Dashboard Admin</span>
+                        </button>
+                    </div>
+                )}
 
             </div>
         </div>

@@ -870,7 +870,8 @@ PROCESO OBLIGATORIO:
     try {
       // Liste des modèles
       const models = [
-        'tngtech/deepseek-r1t2-chimera:free',
+        'openrouter/pony-alpha',
+        'deepseek/deepseek-r1-0528:free',
         'arcee-ai/trinity-large-preview:free'
       ];
 
@@ -1043,7 +1044,8 @@ PROCESO OBLIGATORIO:
 
     try {
       const models = [
-        'tngtech/deepseek-r1t2-chimera:free',
+        'openrouter/pony-alpha',
+        'deepseek/deepseek-r1-0528:free',
         'arcee-ai/trinity-large-preview:free'
       ];
 

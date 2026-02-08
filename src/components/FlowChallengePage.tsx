@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X, Droplet, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, Check, Flame, Trophy, Target, ChevronDown, ChevronUp, Sparkles, X, Droplet, Plus, Wand2, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -40,6 +40,22 @@ export function FlowChallengePage({
   const [showValidationPopup, setShowValidationPopup] = useState(false);
   const [validationStatus, setValidationStatus] = useState<'complete' | 'incomplete' | null>(null);
   const [selectedTask, setSelectedTask] = useState<{title: string, description: string, icon: string} | null>(null);
+  
+  // États pour l'animation de continuation du Flow
+  const [showContinuationAnimation, setShowContinuationAnimation] = useState(false);
+  const [continuationStep, setContinuationStep] = useState(0);
+  const [showContinuationMessage, setShowContinuationMessage] = useState(false);
+  const [dayJustCompleted, setDayJustCompleted] = useState(false);
+  
+  // Animation des étapes de continuation
+  useEffect(() => {
+    if (showContinuationAnimation) {
+      const interval = setInterval(() => {
+        setContinuationStep((prev) => (prev + 1) % 4);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [showContinuationAnimation]);
 
   const currentFlowDay = personalizedFlow?.days.find(d => d.day === personalizedFlow.currentDay);
   const progressPercent = personalizedFlow ? Math.round((personalizedFlow.completedDays.length / 30) * 100) : 0;
@@ -80,6 +96,8 @@ export function FlowChallengePage({
     onCompleteDay(currentDay);
     setShowValidationPopup(false);
     setValidationStatus(null);
+    // Marquer que le jour vient d'être complété (pour afficher le bouton de continuation)
+    setDayJustCompleted(true);
   };
 
   const handleCancelValidation = () => {
@@ -269,32 +287,91 @@ export function FlowChallengePage({
           <span>{completedTasksCount}/3 {language === 'fr' ? 'tâches complétées' : language === 'en' ? 'tasks completed' : 'tareas completadas'}</span>
         </div>
 
-        {/* Bouton Continuer - Affiché quand on atteint le dernier jour du batch */}
-        {needsContinuation && onContinueFlow && (
+        {/* Bouton Continuer - Affiché après validation du jour quand on atteint le dernier jour du batch */}
+        {needsContinuation && onContinueFlow && dayJustCompleted && !showContinuationAnimation && !showContinuationMessage && (
           <div className="mt-6">
             <Button
-              onClick={onContinueFlow}
-              disabled={isGeneratingFlow}
-              className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 hover:scale-[1.02] disabled:opacity-50"
+              onClick={() => {
+                setShowContinuationAnimation(true);
+                // Lancer la génération en arrière-plan
+                onContinueFlow();
+                // Après 6 secondes d'animation, afficher le message
+                setTimeout(() => {
+                  setShowContinuationAnimation(false);
+                  setShowContinuationMessage(true);
+                }, 6000);
+              }}
+              className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 hover:scale-[1.02]"
             >
               <span className="flex items-center gap-2">
-                {isGeneratingFlow ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    {language === 'fr' ? 'Génération en cours...' : 'Generating...'}
-                  </>
-                ) : (
-                  <>
-                    <Target className="w-5 h-5" />
-                    {language === 'fr' ? 'Avancer vers mon objectif' : language === 'en' ? 'Advance towards my goal' : 'Avanzar hacia mi objetivo'}
-                  </>
-                )}
+                <Target className="w-5 h-5" />
+                {language === 'fr' ? 'Avancer vers mon objectif' : language === 'en' ? 'Advance towards my goal' : 'Avanzar hacia mi objetivo'}
               </span>
             </Button>
             <p className="mt-2 text-center text-xs text-gray-400">
               {language === 'fr' 
                 ? `${personalizedFlow?.days.length || 0}/30 jours générés • Clique pour débloquer les 7 prochains jours`
                 : `${personalizedFlow?.days.length || 0}/30 days generated • Click to unlock the next 7 days`}
+            </p>
+          </div>
+        )}
+
+        {/* Animation de continuation du Flow */}
+        {showContinuationAnimation && (
+          <div className="mt-6 flex flex-col items-center justify-center">
+            <div className="relative w-32 h-32 mx-auto mb-4">
+              {/* Cercles animés identiques à l'animation initiale */}
+              <div className="absolute inset-0 rounded-full border-4 border-amber-200 opacity-30 animate-ping" />
+              <div className="absolute inset-2 rounded-full border-4 border-orange-300 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
+              <div className="absolute inset-4 rounded-full border-4 border-amber-400 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
+              
+              {/* Icône centrale qui change */}
+              <div className="absolute inset-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-2xl animate-pulse">
+                {continuationStep === 0 && <Target className="w-10 h-10 text-white" />}
+                {continuationStep === 1 && <Wand2 className="w-10 h-10 text-white" />}
+                {continuationStep === 2 && <Lightbulb className="w-10 h-10 text-white" />}
+                {continuationStep === 3 && <Sparkles className="w-10 h-10 text-white" />}
+              </div>
+            </div>
+
+            {/* Texte de l'étape */}
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-slate-800">
+                {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
+              </h3>
+              <p className="text-base text-amber-600 font-medium">
+                {continuationStep === 0 && (language === 'fr' ? 'Analyse de ton objectif...' : language === 'en' ? 'Analyzing your goal...' : 'Analizando tu objetivo...')}
+                {continuationStep === 1 && (language === 'fr' ? 'Génération des 7 prochains jours...' : language === 'en' ? 'Generating next 7 days...' : 'Generando los próximos 7 días...')}
+                {continuationStep === 2 && (language === 'fr' ? 'Personnalisation de ton parcours...' : language === 'en' ? 'Personalizing your journey...' : 'Personalizando tu camino...')}
+                {continuationStep === 3 && (language === 'fr' ? 'Finalisation...' : language === 'en' ? 'Finalizing...' : 'Finalizando...')}
+              </p>
+            </div>
+
+            {/* Barre de progression */}
+            <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto mt-4">
+              <div 
+                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500"
+                style={{ width: `${((continuationStep + 1) / 4) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Message après continuation */}
+        {showContinuationMessage && (
+          <div className="mt-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] p-6 text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-800 mb-3">
+              {language === 'fr' ? 'Analyse des flows validés' : language === 'en' ? 'Flow analysis validated' : 'Análisis de flows validados'}
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              {language === 'fr' 
+                ? "Avant de donner vie au nouveau flow. On se retrouve demain pour continuer l'élan vers ton objectif."
+                : language === 'en' 
+                  ? "Before bringing the new flow to life. See you tomorrow to continue the momentum towards your goal."
+                  : "Antes de dar vida al nuevo flow. Nos vemos mañana para continuar el impulso hacia tu objetivo."}
             </p>
           </div>
         )}

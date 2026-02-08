@@ -35,6 +35,10 @@ interface Stats {
   newRegistrations: number; // Inscriptions des 7 derniers jours
   usersExceeded3Days: number; // Utilisateurs ayant dépassé 3 jours
   subscribedAfter3Days: number; // Abonnés après avoir dépassé 3 jours
+  // Stats de trafic
+  trafficBySource: { [key: string]: number };
+  conversionsBySource: { [key: string]: number };
+  subscriptionsBySource: { [key: string]: number };
 }
 
 export default function AdminDashboard() {
@@ -171,6 +175,36 @@ export default function AdminDashboard() {
         androidInstalls = 0;
       }
       
+      // Récupérer les stats de trafic
+      let trafficBySource: { [key: string]: number } = {};
+      let conversionsBySource: { [key: string]: number } = {};
+      let subscriptionsBySource: { [key: string]: number } = {};
+      
+      try {
+        const trafficStatsRef = collection(db, 'traffic_stats');
+        const trafficSnapshot = await getDocs(trafficStatsRef);
+        
+        trafficSnapshot.forEach((doc) => {
+          const data = doc.data();
+          // Agréger les stats par source
+          Object.keys(data).forEach((key) => {
+            if (key !== 'date' && key !== 'total') {
+              if (key.endsWith('_converted')) {
+                const source = key.replace('_converted', '');
+                conversionsBySource[source] = (conversionsBySource[source] || 0) + (data[key] || 0);
+              } else if (key.endsWith('_subscribed')) {
+                const source = key.replace('_subscribed', '');
+                subscriptionsBySource[source] = (subscriptionsBySource[source] || 0) + (data[key] || 0);
+              } else if (!key.includes('_')) {
+                trafficBySource[key] = (trafficBySource[key] || 0) + (data[key] || 0);
+              }
+            }
+          });
+        });
+      } catch (e) {
+        console.log('Traffic stats not available yet');
+      }
+      
       setStats({
         totalUsers,
         glowStartSubscribers,
@@ -184,7 +218,10 @@ export default function AdminDashboard() {
         androidInstalls,
         newRegistrations,
         usersExceeded3Days,
-        subscribedAfter3Days
+        subscribedAfter3Days,
+        trafficBySource,
+        conversionsBySource,
+        subscriptionsBySource
       });
       
     } catch (err) {
@@ -404,6 +441,88 @@ export default function AdminDashboard() {
             <p className="text-sm text-gray-600 mt-2">
               Utilisateurs connectés aujourd'hui
             </p>
+          </div>
+        </div>
+
+        {/* Stats de Trafic par Source */}
+        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <Smartphone className="w-6 h-6 text-indigo-500" />
+          Sources de Trafic
+        </h2>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Visites par Source */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Visites par Source</h3>
+            <div className="space-y-3">
+              {Object.entries(stats.trafficBySource).length > 0 ? (
+                Object.entries(stats.trafficBySource)
+                  .sort(([,a], [,b]) => b - a)
+                  .map(([source, count]) => (
+                    <div key={source} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-lg">
+                          {source === 'facebook' && '👥'}
+                          {source === 'instagram' && '📸'}
+                          {source === 'tiktok' && '🎵'}
+                          {source === 'pinterest' && '📌'}
+                          {source === 'google' && '🔍'}
+                          {source === 'youtube' && '📺'}
+                          {source === 'twitter' && '🐦'}
+                          {source === 'linkedin' && '💼'}
+                          {source === 'direct' && '🔗'}
+                          {source === 'organic' && '🌱'}
+                          {source === 'referral' && '🌐'}
+                          {!['facebook', 'instagram', 'tiktok', 'pinterest', 'google', 'youtube', 'twitter', 'linkedin', 'direct', 'organic', 'referral'].includes(source) && '📊'}
+                        </div>
+                        <span className="font-medium text-gray-700 capitalize">{source}</span>
+                      </div>
+                      <span className="text-xl font-bold text-indigo-600">{count}</span>
+                    </div>
+                  ))
+              ) : (
+                <p className="text-gray-500 text-center py-4">Aucune donnée de trafic disponible</p>
+              )}
+            </div>
+          </div>
+          
+          {/* Conversions par Source */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Conversions & Abonnements</h3>
+            <div className="space-y-3">
+              {Object.entries(stats.conversionsBySource).length > 0 ? (
+                Object.entries(stats.conversionsBySource)
+                  .sort(([,a], [,b]) => b - a)
+                  .map(([source, count]) => {
+                    const subscriptions = stats.subscriptionsBySource[source] || 0;
+                    const visits = stats.trafficBySource[source] || 1;
+                    const conversionRate = ((count / visits) * 100).toFixed(1);
+                    
+                    return (
+                      <div key={source} className="p-3 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-gray-700 capitalize">{source}</span>
+                          <div className="text-right">
+                            <span className="text-sm text-gray-500">{conversionRate}% conversion</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-emerald-600 font-medium">{count} inscriptions</span>
+                          <span className="text-amber-600 font-medium">{subscriptions} abonnements</span>
+                        </div>
+                        <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full"
+                            style={{ width: `${Math.min((count / visits) * 100 * 5, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })
+              ) : (
+                <p className="text-gray-500 text-center py-4">Aucune conversion enregistrée</p>
+              )}
+            </div>
           </div>
         </div>
 

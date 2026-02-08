@@ -63,6 +63,7 @@ import { ProfilePage } from '@/components/ProfilePage';
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
 import { useInstallTracking } from '@/hooks/useInstallTracking';
+import { useTrafficTracking, linkTrackingToUser, trackSubscription } from '@/hooks/useTrafficTracking';
 
 // Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
 const getLocalDateString = (date: Date = new Date()): string => {
@@ -229,6 +230,9 @@ export default function GlowUpChallengeApp() {
 
   // Tracker les installations
   useInstallTracking();
+
+  // Tracker la source de trafic
+  useTrafficTracking();
 
   // Charger les objectifs depuis localStorage
   useEffect(() => {

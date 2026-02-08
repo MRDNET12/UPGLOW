@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import { linkTrackingToUser } from '@/hooks/useTrafficTracking';
 
 interface UserData {
   email: string;
@@ -119,6 +120,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
 
       await setDoc(doc(db, 'users', user.uid), userData);
+      
+      // Lier le tracking de trafic à l'utilisateur
+      await linkTrackingToUser(user.uid);
+      
       setUserData(userData);
     } catch (error: any) {
       console.error('Sign up error:', error);

@@ -2389,23 +2389,25 @@ PROCESO OBLIGATORIO:
   // Page du Flow Challenge - Suivi jour après jour
   if (currentView === 'flow-challenge') {
     return (
-      <FlowChallengePage
-        language={language}
-        personalizedFlow={personalizedFlow}
-        objectifPrincipal={objectifPrincipal}
-        onBack={() => setCurrentView('dashboard')}
-        onToggleAction={toggleFlowAction}
-        onSelectChoice={selectFlowChoice}
-        onCompleteDay={completeFlowDay}
-        onRegenerateFlow={() => {
-          regenerateFlow();
-          setCurrentView('flow-description');
-        }}
-        onContinueFlow={continueFlow}
-        needsContinuation={checkNeedsContinuation()}
-        isGeneratingFlow={isGeneratingFlow}
-        checkAndUnlockNextDay={checkAndUnlockNextDay}
-      />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <FlowChallengePage
+          language={language}
+          personalizedFlow={personalizedFlow}
+          objectifPrincipal={objectifPrincipal}
+          onBack={() => setCurrentView('dashboard')}
+          onToggleAction={toggleFlowAction}
+          onSelectChoice={selectFlowChoice}
+          onCompleteDay={completeFlowDay}
+          onRegenerateFlow={() => {
+            regenerateFlow();
+            setCurrentView('flow-description');
+          }}
+          onContinueFlow={continueFlow}
+          needsContinuation={checkNeedsContinuation()}
+          isGeneratingFlow={isGeneratingFlow}
+          checkAndUnlockNextDay={checkAndUnlockNextDay}
+        />
+      </div>
     );
   }
 
@@ -2415,7 +2417,7 @@ PROCESO OBLIGATORIO:
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <div className="p-5 space-y-5 max-w-md mx-auto">
+          <div className="p-5 space-y-5 max-w-md mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header avec avatar et notification */}
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-3">
@@ -3191,7 +3193,7 @@ PROCESO OBLIGATORIO:
 
         {/* Trackers View - Project Glow Design System */}
         {currentView === 'trackers' && (
-          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+          <div className="pb-24 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">
@@ -3716,7 +3718,7 @@ PROCESO OBLIGATORIO:
 
         {/* Planning View - Ma Semaine */}
         {currentView === 'routine' && (
-          <div className="pb-24 relative z-0">
+          <div className="pb-24 relative z-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div className="p-4 pb-0">
               <div className="flex items-center gap-3 mb-3">
@@ -6348,7 +6350,7 @@ PROCESO OBLIGATORIO:
 
       {/* Journal View */}
       {currentView === 'journal' && canAccessFeature('journal') && (
-        <div className="pb-24 min-h-screen bg-white overflow-y-auto">
+        <div className="pb-24 min-h-screen bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Header */}
           <div className="px-4 pt-0 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">
@@ -6500,7 +6502,7 @@ PROCESO OBLIGATORIO:
 
       {/* Glow Mirror View */}
       {currentView === 'glow-mirror' && canAccessFeature('glow_mirror') && (
-        <div className="pb-24 min-h-screen bg-white">
+        <div className="pb-24 min-h-screen bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Header */}
           <div className="p-4 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">

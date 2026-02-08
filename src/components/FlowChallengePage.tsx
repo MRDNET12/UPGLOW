@@ -306,10 +306,18 @@ export function FlowChallengePage({
       <div className="mt-6 mb-8">
         <Button
           onClick={handleValidateClick}
-          className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-slate-900 text-white hover:bg-black hover:scale-[1.02]"
+          disabled={personalizedFlow?.completedDays.includes(currentDay)}
+          className={`w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 ${
+            personalizedFlow?.completedDays.includes(currentDay)
+              ? 'bg-green-600 text-white cursor-not-allowed'
+              : 'bg-slate-900 text-white hover:bg-black hover:scale-[1.02]'
+          }`}
         >
           <span className="flex items-center gap-2">
-            {t.validate} <Check className="w-5 h-5" />
+            {personalizedFlow?.completedDays.includes(currentDay) 
+              ? (language === 'fr' ? 'Journée validée ✓' : language === 'en' ? 'Day completed ✓' : 'Día completado ✓')
+              : t.validate} 
+            {!personalizedFlow?.completedDays.includes(currentDay) && <Check className="w-5 h-5" />}
           </span>
         </Button>
 
@@ -397,21 +405,21 @@ export function FlowChallengePage({
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-lg font-bold text-slate-800 mb-3">
-              {language === 'fr' ? 'Analyse des flows validés' : language === 'en' ? 'Flow analysis validated' : 'Análisis de flows validados'}
+              {language === 'fr' ? 'Analyse des flows validés en cours' : language === 'en' ? 'Flow analysis in progress' : 'Análisis de flows en curso'}
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-4">
               {language === 'fr' 
-                ? "Ton prochain jour est prêt ! Il sera accessible à minuit pour te permettre de te concentrer sur aujourd'hui."
+                ? "Ton prochain jour est prêt ! Il sera accessible demain, pour éviter la surcharge mentale."
                 : language === 'en' 
-                  ? "Your next day is ready! It will be accessible at midnight to let you focus on today."
-                  : "¡Tu próximo día está listo! Será accesible a medianoche para permitirte concentrarte en hoy."}
+                  ? "Your next day is ready! It will be accessible tomorrow, to avoid mental overload."
+                  : "¡Tu próximo día está listo! Será accesible mañana, para evitar la sobrecarga mental."}
             </p>
             <div className="bg-white/50 rounded-xl p-3 text-xs text-amber-700 font-medium">
               {language === 'fr' 
-                ? `🔒 Jour ${(personalizedFlow?.days.length || 0) + 1} verrouillé jusqu'à minuit`
+                ? `🔒 Jour ${(personalizedFlow?.days.length || 0) + 1} verrouillé, Tu as bien avancé`
                 : language === 'en'
-                  ? `🔒 Day ${(personalizedFlow?.days.length || 0) + 1} locked until midnight`
-                  : `🔒 Día ${(personalizedFlow?.days.length || 0) + 1} bloqueado hasta medianoche`}
+                  ? `🔒 Day ${(personalizedFlow?.days.length || 0) + 1} locked, Great progress`
+                  : `🔒 Día ${(personalizedFlow?.days.length || 0) + 1} bloqueado, Buen progreso`}
             </div>
           </div>
         )}

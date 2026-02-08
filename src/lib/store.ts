@@ -1231,13 +1231,17 @@ export const useStore = create<AppState>()(
   - "Faire du sport"(pas assez spécifique)
   - "Être plus confiant"(pas actionnable)`;
 
+            const historyText = validationHistory ? `\n\n📊 HISTORIQUE DES VALIDATIONS PRÉCÉDENTES :\n${validationHistory}` : '';
+            
             const userPrompt = `CONTEXTE COMPLET DE L'UTILISATEUR :
 
 📋 DESCRIPTION DÉTAILLÉE:
 "${description}"
 
 🎯 OBJECTIF PRINCIPAL:
-"${objective}"
+"${objective}"${historyText}
+
+🔢 JOUR À GÉNÉRER: Jour ${dayNumber} sur 30
 
 🛑 STOP! INSTRUCTION MAJEURE - LANGUE OBLIGATOIRE:
 TA RÉPONSE DOIT ÊTRE À 100 % EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}.
@@ -1578,8 +1582,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
               }
             }
 
-            if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 7) {
-              console.error('[AI Response] ❌ Invalid days data (need at least 7 days):', parsed.days?.length || 0);
+            if (!parsed.days || !Array.isArray(parsed.days) || parsed.days.length < 1) {
+              console.error('[AI Response] ❌ Invalid days data (need at least 1 day):', parsed.days?.length || 0);
               throw new Error('Not enough days generated - using fallback');
             }
 
@@ -1596,22 +1600,11 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
             }
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            // PADDING À 30 JOURS SI NÉCESSAIRE
+            // ACCEPTER 1 JOUR À LA FOIS
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-            // Ne pas padder automatiquement - on génère par batch de 7 jours
-            // Le padding se fera uniquement si on a moins de 7 jours
-            if (parsed.days.length < 7) {
-              console.warn(`[AI Response] Only ${parsed.days.length} days received, padding to 7`);
-              while (parsed.days.length < 7) {
-                const lastDay = parsed.days[parsed.days.length - 1];
-                parsed.days.push({
-                  ...lastDay,
-                  day: parsed.days.length + 1,
-                  title: lastDay.title + ' (suite)'
-                });
-              }
-            }
+            // On accepte maintenant 1 jour à la fois, pas besoin de padding
+            console.log(`[AI Response] Received ${parsed.days.length} day(s)`);
 
             console.log('[AI Response] ✅ Flow generation successful with', parsed.days.length, 'days');
 
@@ -2369,15 +2362,16 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
       generateFlowInBackground: (objective, description) => {
         set({ isGeneratingFlowBackground: true });
 
-        // Lancer la génération en arrière-plan
+        // Lancer la génération en arrière-plan pour le jour 1
         const generateWithRetry = async (retryCount = 0, maxRetries = 3): Promise<void> => {
           try {
             console.log(`[Background Flow] Attempt ${retryCount + 1}/${maxRetries}`);
-            await get().generatePersonalizedFlow(objective, description);
+            // Génère le jour 1 sans historique
+            await get().generatePersonalizedFlow(objective, description, 1, '');
 
             // Succès
             set({ isGeneratingFlowBackground: false });
-            console.log('[Background Flow] ✅ Successfully generated');
+            console.log('[Background Flow] ✅ Successfully generated day 1');
           } catch (error) {
             console.error(`[Background Flow] Attempt ${retryCount + 1} failed:`, error);
 
@@ -2448,11 +2442,11 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
           ? completedTasks.join('\n')
           : 'Aucune tâche validée pour le moment';
 
-        const nextBatch = flow.currentBatch + 1;
         const startDay = flow.days.length + 1;
-        const endDay = Math.min(startDay + 6, flow.maxDays);
+        const endDay = startDay; // Génère seulement 1 jour à la fois
+        const nextBatch = flow.currentBatch + 1;
 
-        console.log(`[Continue Flow] Generating days ${startDay} to ${endDay}`);
+        console.log(`[Continue Flow] Generating day ${startDay}`);
 
         // Mettre à jour l'état pour indiquer qu'on génère
         set({ isGeneratingFlow: true });
@@ -2466,7 +2460,7 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
 
           const systemPrompt = `Tu es un coach de vie expert qui génère des plans d'action personnalisés PROGRESSIFS.
           
-Tu dois générer les 7 jours suivants (jours ${startDay} à ${endDay}) pour l'utilisateur.
+Tu dois générer le JOUR SUIVANT (jour ${startDay}) pour l'utilisateur.
 
 🌍 LANGUE OBLIGATOIRE : ${langName.toUpperCase()}
 Tu dois impérativement répondre en ${langName}.
@@ -2478,7 +2472,7 @@ INSTRUCTIONS :
 1. Analyse la progression de l'utilisateur
 2. Adapte la difficulté (plus dur si succès, plus facile si échec)
 3. Utilise des balises <think> pour ton raisonnement AVANT le JSON
-4. Génère le JSON strict pour les jours demandés`;
+4. Génère le JSON strict pour UN SEUL JOUR` ;
 
           const userPrompt = `OBJECTIF : "${objective}"
 DESCRIPTION : "${description}"
@@ -2491,7 +2485,7 @@ TOUT LE CONTENU (TITRES, DESCRIPTIONS, ANALYSE) DOIT ÊTRE EN ${langName.toUpper
 Explique EN ${langName.toUpperCase()} comment tu adaptes le plan.
 
 ÉTAPE 2 : JSON
-Génère les jours ${startDay} à ${endDay} au format JSON suivant :
+Génère le jour ${startDay} au format JSON suivant :
 
 {
   "days": [
@@ -2506,7 +2500,6 @@ Génère les jours ${startDay} à ${endDay} au format JSON suivant :
         "optionC": { "icon": "emoji", "title": "Option C", "description": "Description" }
       }
     }
-    // ... répéter pour les jours ${startDay} à ${endDay}
   ]
 }
 
@@ -2645,7 +2638,7 @@ FORMAT JSON STRICT - Utilise uniquement des guillemets doubles.`;
             isGeneratingFlow: false
           });
 
-          console.log(`[Continue Flow] ✅ Added ${newDays.length} new days, total: ${flow.days.length + newDays.length}`);
+          console.log(`[Continue Flow] ✅ Added 1 new day, total: ${flow.days.length + newDays.length}`);
 
         } catch (error) {
           console.error('[Continue Flow] Error:', error);

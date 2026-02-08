@@ -293,14 +293,16 @@ export function FlowChallengePage({
           <span>{completedTasksCount}/3 {language === 'fr' ? 'tâches complétées' : language === 'en' ? 'tasks completed' : 'tareas completadas'}</span>
         </div>
 
-        {/* Bouton Continuer - Affiché après validation du jour quand on atteint le dernier jour du batch */}
-        {needsContinuation && onContinueFlow && dayJustCompleted && !showContinuationAnimation && !showContinuationMessage && (
+        {/* Bouton Continuer - Affiché après validation de chaque jour si on n'a pas atteint 30 jours */}
+        {dayJustCompleted && !showContinuationAnimation && !showContinuationMessage && personalizedFlow && personalizedFlow.days.length < 30 && (
           <div className="mt-6">
             <Button
               onClick={() => {
                 setShowContinuationAnimation(true);
-                // Lancer la génération en arrière-plan
-                onContinueFlow();
+                // Lancer la génération en arrière-plan avec l'historique
+                if (onContinueFlow) {
+                  onContinueFlow();
+                }
                 // Après 6 secondes d'animation, afficher le message
                 setTimeout(() => {
                   setShowContinuationAnimation(false);
@@ -316,8 +318,8 @@ export function FlowChallengePage({
             </Button>
             <p className="mt-2 text-center text-xs text-gray-400">
               {language === 'fr' 
-                ? `${personalizedFlow?.days.length || 0}/30 jours générés • Clique pour débloquer les 7 prochains jours`
-                : `${personalizedFlow?.days.length || 0}/30 days generated • Click to unlock the next 7 days`}
+                ? `${personalizedFlow?.days.length || 0}/30 jours générés • Clique pour débloquer le jour suivant`
+                : `${personalizedFlow?.days.length || 0}/30 days generated • Click to unlock the next day`}
             </p>
           </div>
         )}
@@ -347,7 +349,7 @@ export function FlowChallengePage({
               </h3>
               <p className="text-base text-amber-600 font-medium">
                 {continuationStep === 0 && (language === 'fr' ? 'Analyse de ton objectif...' : language === 'en' ? 'Analyzing your goal...' : 'Analizando tu objetivo...')}
-                {continuationStep === 1 && (language === 'fr' ? 'Génération des 7 prochains jours...' : language === 'en' ? 'Generating next 7 days...' : 'Generando los próximos 7 días...')}
+                {continuationStep === 1 && (language === 'fr' ? 'Génération du jour suivant...' : language === 'en' ? 'Generating next day...' : 'Generando el próximo día...')}
                 {continuationStep === 2 && (language === 'fr' ? 'Personnalisation de ton parcours...' : language === 'en' ? 'Personalizing your journey...' : 'Personalizando tu camino...')}
                 {continuationStep === 3 && (language === 'fr' ? 'Finalisation...' : language === 'en' ? 'Finalizing...' : 'Finalizando...')}
               </p>

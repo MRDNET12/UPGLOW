@@ -1244,6 +1244,11 @@ Cette étape est CRITIQUE. Si tu ne le fais pas, ta réponse sera REJETÉE.
 
 🌍 LANGUE DE RÉPONSE OBLIGATOIRE : ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
 
+⚠️ CRITIQUE : TOUTE TA RÉPONSE (raisonnement + JSON) DOIT ÊTRE UNIQUEMENT EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !
+- Pas d'anglais dans les titres
+- Pas d'anglais dans les descriptions
+- Tout doit être dans la langue demandée
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ⚠️ PROCESSUS OBLIGATOIRE EN 3 ÉTAPES :
@@ -1290,6 +1295,12 @@ Décris brièvement chaque phase selon ta structure personnalisée :
 
 ⚠️ IMPORTANT : L'objectif est à atteindre en 30 JOURS, mais tu génères UNIQUEMENT LES 7 PREMIERS JOURS.
 Les 7 jours suivants seront générés plus tard basés sur les progrès de l'utilisateur.
+
+🚨 CRITIQUE - LANGUE : TOUT le contenu JSON (titres, descriptions, analysis, category) DOIT ÊTRE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} !
+- PAS d'anglais dans les titres des actions
+- PAS d'anglais dans les descriptions
+- PAS d'anglais dans la catégorie
+- TOUT doit être en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'}
 
 Génère maintenant les 7 PREMIERS jours au format JSON suivant :
 
@@ -1341,8 +1352,9 @@ Génère maintenant les 7 PREMIERS jours au format JSON suivant :
 4. Prévois une progression sur 30 jours, mais ne génère que les 7 premiers
 5. Les descriptions doivent expliquer le LIEN avec l'objectif "${objective}"
 6. FORMAT JSON STRICT OBLIGATOIRE : Utilise UNIQUEMENT des guillemets doubles
+7. ⚠️⚠️⚠️ LANGUE ULTRA-IMPORTANT : TOUT le JSON (titres, descriptions, analysis, category) en ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} - AUCUN MOT EN ANGLAIS !
 
-GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} :`;
+GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lang === 'es' ? 'ESPAGNOL' : 'ANGLAIS'} (PAS UN SEUL MOT EN ANGLAIS) :`;
 
 
             // Liste des modèles à essayer par ordre de préférence

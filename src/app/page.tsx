@@ -2161,10 +2161,10 @@ PROCESO OBLIGATORIO:
           <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 shadow-sm">
             <p className="text-lg text-gray-700 leading-relaxed text-center">
               {language === 'fr'
-                ? "c'est l'app pour celles et ceux qui veulent provoquer un changement dans leur vie et devenir la personne qu'ils aspirent à être."
+                ? "Tu ne poursuis pas seulement des objectifs. Tu construis la personne capable de les atteindre."
                 : language === 'en'
-                  ? "it's the app for those who want to create change in their lives and become the person they aspire to be."
-                  : "es la aplicación para quienes quieren provocar un cambio en su vida y convertirse en la persona que aspiran a ser."
+                  ? "You're not just pursuing goals. You're building the person capable of achieving them."
+                  : "No solo persigues objetivos. Estás construyendo a la persona capaz de lograrlos."
               }
             </p>
           </div>

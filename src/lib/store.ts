@@ -1423,8 +1423,8 @@ GÉNÈRE MAINTENANT TA RÉPONSE COMPLÈTE EN ${lang === 'fr' ? 'FRANÇAIS' : lan
                 const data = await response.json();
                 content = data.choices?.[0]?.message?.content || '';
 
-                // Vérifier que le contenu est suffisamment long (au moins 5000 caractères pour 7 jours)
-                if (content.length < 5000) {
+                // Vérifier que le contenu est suffisamment long (au moins 1000 caractères pour 1 jour)
+                if (content.length < 1000) {
                   console.warn(`[AI Response] ⚠️ Response too short(${content.length} chars), trying next model...`);
                   lastError = `Response too short: ${content.length} characters`;
                   continue; // Essayer le modèle suivant

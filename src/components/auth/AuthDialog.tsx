@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, Mail, Lock, User, Sparkles } from 'lucide-react';
+import { Loader2, Mail, Lock, User, Sparkles, Heart } from 'lucide-react';
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -55,12 +55,9 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin', onSuccess 
         await signIn(email, password);
       }
 
-      // Afficher le succès brièvement
       setSuccess(true);
 
-      // Fermer le dialogue après un court délai
       setTimeout(() => {
-        // Réinitialiser le formulaire
         setEmail('');
         setPassword('');
         setConfirmPassword('');
@@ -70,8 +67,6 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin', onSuccess 
       }, 500);
     } catch (err: any) {
       console.error('Auth error:', err);
-
-      // Messages d'erreur en français
       if (err.message.includes('email-already-in-use')) {
         setError('Cet email est déjà utilisé');
       } else if (err.message.includes('invalid-email')) {
@@ -97,139 +92,157 @@ export function AuthDialog({ isOpen, onClose, defaultMode = 'signin', onSuccess 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border border-pink-100/50 shadow-2xl shadow-pink-200/50 rounded-[2rem]">
-        <DialogHeader className="pb-4 border-b border-pink-100">
-          <DialogTitle className="flex items-center gap-3 text-2xl text-gray-800 font-bold">
-            <Sparkles className="w-6 h-6 text-pink-500 drop-shadow-lg" />
-            {mode === 'signin' ? 'Connexion' : 'Créer un compte'}
-          </DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-5 mt-6">
-          {/* Email - Glassmorphism */}
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2 text-gray-800 font-bold text-sm">
-              <Mail className="w-4 h-4 text-pink-500" />
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="ton-email@exemple.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              required
-              className="bg-gradient-to-br from-white to-pink-50 border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl shadow-md h-12 text-gray-800 font-medium"
-            />
+      <DialogContent className="sm:max-w-md bg-[#E9D8FD] border-none shadow-2xl rounded-[2.5rem] p-0 overflow-hidden">
+        {/* Cute Header Graphic */}
+        <div className="relative h-32 bg-purple-200/50 flex items-center justify-center overflow-hidden">
+          {/* Character */}
+          <div className="absolute bottom-[-10px]">
+            <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#fff" />
+              <circle cx="65" cy="85" r="3.5" fill="#000" />
+              <circle cx="95" cy="85" r="3.5" fill="#000" />
+              <path d="M68 100 Q 80 115 92 100" stroke="#000" strokeWidth="3.5" strokeLinecap="round" />
+              <circle cx="58" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+              <circle cx="102" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+            </svg>
           </div>
 
-          {/* Password - Glassmorphism */}
-          <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center gap-2 text-gray-800 font-bold text-sm">
-              <Lock className="w-4 h-4 text-pink-500" />
-              Mot de passe
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              required
-              minLength={6}
-              className="bg-gradient-to-br from-white to-pink-50 border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl shadow-md h-12 text-gray-800 font-medium"
-            />
+          <div className="absolute top-4 right-4 animate-pulse">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
+        </div>
 
-          {/* Confirm Password (signup only) - Glassmorphism */}
-          {mode === 'signup' && (
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="flex items-center gap-2 text-gray-800 font-bold text-sm">
-                <Lock className="w-4 h-4 text-pink-500" />
-                Confirmer le mot de passe
-              </Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                required
-                minLength={6}
-                className="bg-gradient-to-br from-white to-pink-50 border-pink-200 focus:border-pink-400 focus:ring-pink-400 rounded-xl shadow-md h-12 text-gray-800 font-medium"
-              />
-            </div>
-          )}
-
-          {/* Error message - Glassmorphism */}
-          {error && (
-            <div className="p-4 rounded-xl bg-gradient-to-br from-red-50 to-red-100 border border-red-200 shadow-lg">
-              <p className="text-sm text-red-700 font-semibold">{error}</p>
-            </div>
-          )}
-
-          {/* Success message - Glassmorphism */}
-          {success && (
-            <div className="p-4 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 border border-pink-200 shadow-lg">
-              <p className="text-sm text-gray-800 flex items-center gap-2 font-bold">
-                <Sparkles className="w-5 h-5 text-pink-500 drop-shadow-lg" />
-                {mode === 'signin' ? 'Connexion réussie !' : 'Compte créé avec succès !'}
-              </p>
-            </div>
-          )}
-
-          {/* Submit button - Glassmorphism */}
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 hover:from-pink-500 hover:via-rose-500 hover:to-orange-400 text-white rounded-2xl py-7 shadow-2xl shadow-pink-200/50 hover:shadow-pink-300/50 hover:scale-[1.02] transition-all font-bold text-base"
-            disabled={loading || success}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                {mode === 'signin' ? 'Connexion...' : 'Création du compte...'}
-              </>
-            ) : success ? (
-              <>
-                <Sparkles className="w-5 h-5 mr-2 drop-shadow-lg" />
-                {mode === 'signin' ? 'Connecté !' : 'Compte créé !'}
-              </>
-            ) : (
-              <>
-                {mode === 'signin' ? (
-                  <>
-                    <User className="w-5 h-5 mr-2" />
-                    Se connecter
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Créer mon compte
-                  </>
-                )}
-              </>
-            )}
-          </Button>
-
-          {/* Switch mode - Glassmorphism */}
-          <div className="text-center pt-2">
-            <button
-              type="button"
-              onClick={switchMode}
-              className="text-sm text-pink-600 hover:text-pink-700 hover:underline font-bold transition-colors"
-              disabled={loading}
-            >
+        <div className="p-8 pt-4">
+          <DialogHeader className="mb-6 text-center">
+            <DialogTitle className="text-2xl font-black text-[#2D2a2e] flex items-center justify-center gap-2">
+              {mode === 'signin' ? 'Bon retour !' : 'Rejoins le club'}
+            </DialogTitle>
+            <p className="text-sm text-[#2D2a2e]/60 font-medium mt-1">
               {mode === 'signin'
-                ? "Pas encore de compte ? Créer un compte"
-                : "Déjà un compte ? Se connecter"}
-            </button>
-          </div>
-        </form>
+                ? 'Prête à continuer ton glow up ?'
+                : 'Commence ta transformation aujourd\'hui'
+              }
+            </p>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-bold text-[#2D2a2e] uppercase tracking-wider ml-1">
+                Email
+              </Label>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="hello@glowup.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  required
+                  className="bg-white/80 border-none rounded-2xl h-12 pl-10 text-[#2D2a2e] placeholder:text-gray-400 focus:ring-2 focus:ring-purple-400"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs font-bold text-[#2D2a2e] uppercase tracking-wider ml-1">
+                {mode === 'signin' ? 'Mot de passe' : 'Choisis un mot de passe'}
+              </Label>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  required
+                  minLength={6}
+                  className="bg-white/80 border-none rounded-2xl h-12 pl-10 text-[#2D2a2e] placeholder:text-gray-400 focus:ring-2 focus:ring-purple-400"
+                />
+              </div>
+            </div>
+
+            {/* Confirm Password (signup only) */}
+            {mode === 'signup' && (
+              <div className="space-y-1.5 animate-in slide-in-from-top-2">
+                <Label htmlFor="confirmPassword" className="text-xs font-bold text-[#2D2a2e] uppercase tracking-wider ml-1">
+                  Confirmer
+                </Label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                    minLength={6}
+                    className="bg-white/80 border-none rounded-2xl h-12 pl-10 text-[#2D2a2e] placeholder:text-gray-400 focus:ring-2 focus:ring-purple-400"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Error message */}
+            {error && (
+              <div className="p-3 rounded-xl bg-red-100 text-red-600 text-xs font-bold text-center animate-in shake">
+                {error}
+              </div>
+            )}
+
+            {/* Success message */}
+            {success && (
+              <div className="p-3 rounded-xl bg-emerald-100 text-emerald-600 text-xs font-bold text-center flex items-center justify-center gap-2 animate-in zoom-in">
+                <Sparkles className="w-4 h-4" />
+                {mode === 'signin' ? 'Connexion réussie !' : 'Compte créé !'}
+              </div>
+            )}
+
+            {/* Submit button */}
+            <Button
+              type="submit"
+              className="w-full bg-black hover:bg-gray-800 text-white rounded-2xl h-12 font-bold shadow-lg shadow-purple-900/10 mt-2 transition-all hover:scale-[1.02] active:scale-95"
+              disabled={loading || success}
+            >
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <span className="flex items-center gap-2">
+                  {mode === 'signin' ? 'Se connecter' : 'Créer mon compte'}
+                  <Heart className="w-4 h-4 fill-white" />
+                </span>
+              )}
+            </Button>
+
+            {/* Switch mode */}
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={switchMode}
+                className="text-xs text-[#2D2a2e]/60 hover:text-[#2D2a2e] font-bold transition-colors underline decoration-dotted"
+                disabled={loading}
+              >
+                {mode === 'signin'
+                  ? "Pas encore de compte ? Créer un compte"
+                  : "Déjà un compte ? Se connecter"}
+              </button>
+            </div>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
-

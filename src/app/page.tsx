@@ -3015,7 +3015,7 @@ PROCESO OBLIGATORIO:
             >
               {/* Top Text */}
               <h3 className="text-xl font-bold text-[#2D2a2e] max-w-[65%] leading-snug relative z-10">
-                {language === 'fr' ? 'Raconte ta journée & libère ton esprit' : language === 'en' ? 'Tell your day & free your mind' : 'Cuéntanos tu día y libera tu mente'}
+                {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
               </h3>
 
               {/* Character Bottom Left - CSS Art */}

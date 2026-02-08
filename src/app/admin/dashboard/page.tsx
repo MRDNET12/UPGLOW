@@ -39,14 +39,17 @@ interface Stats {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, userData } = useAuth();
+  const { user, userData, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     // Attendre que les données utilisateur soient chargées
-    if (loading) return;
+    if (authLoading) {
+      console.log('Waiting for auth to load...');
+      return;
+    }
     
     // Vérifier si l'utilisateur est admin
     console.log('Admin check - User:', user?.email);
@@ -54,13 +57,13 @@ export default function AdminDashboard() {
     console.log('Admin check - isAdmin:', userData?.isAdmin);
     
     if (!user || !userData?.isAdmin) {
-      console.log('Redirecting to home - Not admin');
+      console.log('Redirecting to home - Not admin or no user');
       router.push('/');
       return;
     }
 
     fetchStats();
-  }, [user, userData, router, loading]);
+  }, [user, userData, router, authLoading]);
 
   const fetchStats = async () => {
     try {
@@ -191,6 +194,18 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  // Afficher un loader pendant l'authentification
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-pink-500 mx-auto mb-4" />
+          <p className="text-gray-600">Vérification des droits admin...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

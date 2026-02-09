@@ -342,7 +342,7 @@ export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
       // Navigation
-      currentView: 'language-selection',
+      currentView: 'goal-setup-5',
       setCurrentView: (view) => set({ currentView: view }),
       currentDay: 1,
       setCurrentDay: (day) => set({ currentDay: day }),

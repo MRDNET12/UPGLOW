@@ -1450,6 +1450,11 @@ PROCESO OBLIGATORIO:
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
     setIsHydrated(true);
+    
+    // Rediriger vers le dashboard si l'utilisateur a déjà complété l'onboarding
+    if (hasStarted && currentView !== 'dashboard') {
+      setCurrentView('dashboard');
+    }
   }, []);
 
   // Gestion de l'installation PWA pour Android

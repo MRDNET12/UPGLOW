@@ -1450,7 +1450,7 @@ PROCESO OBLIGATORIO:
   // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
     setIsHydrated(true);
-    
+
     // Rediriger vers le dashboard si l'utilisateur a déjà complété l'onboarding
     if (hasStarted && currentView !== 'dashboard') {
       setCurrentView('dashboard');
@@ -2313,11 +2313,62 @@ PROCESO OBLIGATORIO:
     );
   }
 
+  // Page d'objectif 1: 3 objectifs (GoalSetup5)
+  // On gère aussi 'flow-proposition' comme fallback pour garder la compatibilité
+  if (currentView === 'goal-setup-5' || currentView === 'flow-proposition') {
+    return (
+      <GoalSetup5
+        language={language}
+        onContinue={(objectives) => {
+          setObjectifsPrioritaires(objectives);
+          setCurrentView('goal-setup-1');
+        }}
+      />
+    );
+  }
+
+  // Page d'objectif 2: Sélectionner l'objectif principal (GoalSetup1)
+  if (currentView === 'goal-setup-1') {
+    return (
+      <GoalSetup1
+        language={language}
+        objectifsPrioritaires={objectifsPrioritaires}
+        onStart={(selectedObjective) => {
+          setObjectifPrincipal(selectedObjective);
+          setCurrentView('flow-description');
+        }}
+      />
+    );
+  }
+
+  // Page de description: Détails et génération (FlowDescriptionPage)
+  if (currentView === 'flow-description') {
+    return (
+      <FlowDescriptionPage
+        language={language}
+        objectifPrincipal={objectifPrincipal}
+        onBack={() => setCurrentView('goal-setup-1')}
+        onCreate={async (description) => {
+          setFlowDescription(description);
+          try {
+            await generatePersonalizedFlow(objectifPrincipal, description);
+            setCurrentView('flow-challenge');
+          } catch (error) {
+            console.error("Erreur lors de la génération du flow:", error);
+            // Gérer l'erreur si nécessaire (peut-être rester sur la page avec un message ?)
+            // Pour l'instant on laisse l'UI gérer ou on redirige
+            setCurrentView('flow-challenge'); // Fallback pour voir le résultat même si partiel ou erreur
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-gradient-to-br from-white via-gray-50 to-gray-100 text-stone-900'}`}>
       {/* Indicateur de connexion */}
       <OfflineIndicator />
-      
+
       {/* Main Content */}
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
@@ -2454,7 +2505,7 @@ PROCESO OBLIGATORIO:
                   if (personalizedFlow?.isActive) {
                     setCurrentView('flow-challenge');
                   } else {
-                    setCurrentView('flow-proposition');
+                    setCurrentView('goal-setup-5');
                   }
                 }}
               >

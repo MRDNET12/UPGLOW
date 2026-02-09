@@ -108,18 +108,20 @@ export function useTrafficTracking() {
         }
         
         // Données de tracking
-        const trackingData: TrackingData = {
+        const trackingData: any = {
           source,
           referrer: referrer.substring(0, 500),
-          utmSource: utmSource || undefined,
-          utmMedium: utmMedium || undefined,
-          utmCampaign: utmCampaign || undefined,
           landingPage: window.location.pathname,
           timestamp: new Date().toISOString(),
           userAgent: navigator.userAgent.substring(0, 200),
           converted: false,
           subscribed: false,
         };
+        
+        // Ajouter les paramètres UTM uniquement s'ils existent (Firebase n'accepte pas undefined)
+        if (utmSource) trackingData.utmSource = utmSource;
+        if (utmMedium) trackingData.utmMedium = utmMedium;
+        if (utmCampaign) trackingData.utmCampaign = utmCampaign;
         
         // Stocker dans sessionStorage pour lier à l'utilisateur après inscription
         sessionStorage.setItem('traffic_source', JSON.stringify(trackingData));
@@ -172,16 +174,20 @@ export async function linkTrackingToUser(userId: string): Promise<void> {
     
     // Sauvegarder la source dans le profil utilisateur
     const userRef = doc(db, 'users', userId);
+    const trafficSourceDetails: any = {
+      referrer: data.referrer,
+      landingPage: data.landingPage,
+      firstVisitDate: data.timestamp,
+    };
+    
+    // Ajouter les paramètres UTM uniquement s'ils existent
+    if (data.utmSource) trafficSourceDetails.utmSource = data.utmSource;
+    if (data.utmMedium) trafficSourceDetails.utmMedium = data.utmMedium;
+    if (data.utmCampaign) trafficSourceDetails.utmCampaign = data.utmCampaign;
+    
     await updateDoc(userRef, {
       trafficSource: data.source,
-      trafficSourceDetails: {
-        referrer: data.referrer,
-        utmSource: data.utmSource,
-        utmMedium: data.utmMedium,
-        utmCampaign: data.utmCampaign,
-        landingPage: data.landingPage,
-        firstVisitDate: data.timestamp,
-      },
+      trafficSourceDetails,
     });
     
     // Supprimer du sessionStorage

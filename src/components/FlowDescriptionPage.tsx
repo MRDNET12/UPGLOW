@@ -51,26 +51,19 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
 
   useEffect(() => {
     if (isGenerating) {
-      let stepTimeout: NodeJS.Timeout;
+      // 1. Animation visuelle (boucle sur les étapes)
+      const interval = setInterval(() => {
+        setGenerationStep((prev) => (prev + 1) % currentSteps.length);
+      }, 1250); // Changement toutes les 1.25s
 
-      const runSteps = (step: number) => {
-        if (step >= currentSteps.length) {
-          // Animation terminée
-          if (onAnimationComplete) onAnimationComplete();
-          return;
-        }
-
-        setGenerationStep(step);
-
-        stepTimeout = setTimeout(() => {
-          runSteps(step + 1);
-        }, 1500);
-      };
-
-      runSteps(0);
+      // 2. Timeout de 5 secondes avant redirection
+      const timeout = setTimeout(() => {
+        if (onAnimationComplete) onAnimationComplete();
+      }, 5000);
 
       return () => {
-        if (stepTimeout) clearTimeout(stepTimeout);
+        clearInterval(interval);
+        clearTimeout(timeout);
       };
     }
   }, [isGenerating, currentSteps.length, onAnimationComplete]);

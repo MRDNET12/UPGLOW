@@ -2348,17 +2348,12 @@ PROCESO OBLIGATORIO:
         language={language}
         objectifPrincipal={objectifPrincipal}
         onBack={() => setCurrentView('goal-setup-1')}
-        onCreate={async (description) => {
+        onCreate={(description) => {
           setFlowDescription(description);
-          try {
-            await generatePersonalizedFlow(objectifPrincipal, description);
-            setCurrentView('flow-challenge');
-          } catch (error) {
-            console.error("Erreur lors de la génération du flow:", error);
-            // Gérer l'erreur si nécessaire (peut-être rester sur la page avec un message ?)
-            // Pour l'instant on laisse l'UI gérer ou on redirige
-            setCurrentView('flow-challenge'); // Fallback pour voir le résultat même si partiel ou erreur
-          }
+          generateFlowInBackground(objectifPrincipal, description);
+        }}
+        onAnimationComplete={() => {
+          setCurrentView('dashboard');
         }}
       />
     );

@@ -10,9 +10,10 @@ interface FlowDescriptionPageProps {
   objectifPrincipal: string;
   onBack: () => void;
   onCreate: (description: string) => void;
+  onAnimationComplete?: () => void;
 }
 
-export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCreate }: FlowDescriptionPageProps) {
+export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCreate, onAnimationComplete }: FlowDescriptionPageProps) {
   const [flowDescription, setFlowDescription] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
@@ -50,12 +51,29 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
 
   useEffect(() => {
     if (isGenerating) {
-      const interval = setInterval(() => {
-        setGenerationStep((prev) => (prev + 1) % currentSteps.length);
-      }, 1500);
-      return () => clearInterval(interval);
+      let stepTimeout: NodeJS.Timeout;
+
+      const runSteps = (step: number) => {
+        if (step >= currentSteps.length) {
+          // Animation terminée
+          if (onAnimationComplete) onAnimationComplete();
+          return;
+        }
+
+        setGenerationStep(step);
+
+        stepTimeout = setTimeout(() => {
+          runSteps(step + 1);
+        }, 1500);
+      };
+
+      runSteps(0);
+
+      return () => {
+        if (stepTimeout) clearTimeout(stepTimeout);
+      };
     }
-  }, [isGenerating, currentSteps.length]);
+  }, [isGenerating, currentSteps.length, onAnimationComplete]);
 
   const handleCreate = () => {
     if (!flowDescription.trim()) return;
@@ -66,7 +84,7 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
 
   if (isGenerating) {
     const CurrentIcon = currentSteps[generationStep].icon;
-    
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
         <div className="text-center space-y-8 max-w-md mx-auto">
@@ -76,7 +94,7 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
             <div className="absolute inset-0 rounded-full border-4 border-pink-200 opacity-20 animate-ping" />
             <div className="absolute inset-2 rounded-full border-4 border-rose-300 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
             <div className="absolute inset-4 rounded-full border-4 border-pink-400 opacity-60 animate-ping" style={{ animationDelay: '0.4s' }} />
-            
+
             {/* Icône centrale */}
             <div className="absolute inset-6 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-2xl animate-pulse">
               <CurrentIcon className="w-12 h-12 text-white" />
@@ -95,7 +113,7 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
 
           {/* Barre de progression */}
           <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-pink-400 to-rose-500 rounded-full transition-all duration-500"
               style={{ width: `${((generationStep + 1) / currentSteps.length) * 100}%` }}
             />
@@ -155,16 +173,15 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
           <Button
             onClick={handleCreate}
             disabled={!flowDescription.trim()}
-            className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${
-              flowDescription.trim()
-                ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
+            className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all ${flowDescription.trim()
+              ? 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-pink-200/50 hover:shadow-xl'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
           >
             {createButton}
             <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
-          
+
           <Button
             onClick={onBack}
             variant="outline"

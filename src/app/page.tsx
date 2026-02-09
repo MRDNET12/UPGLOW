@@ -2275,7 +2275,7 @@ PROCESO OBLIGATORIO:
 
           {/* Bouton Commencer */}
           <Button
-            onClick={() => setCurrentView('goal-setup-5')}
+            onClick={() => startChallenge()}
             className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
           >
             {startText}
@@ -2286,111 +2286,7 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Goal Setup Page A - Define 5 objectives
-  if (currentView === 'goal-setup-5') {
-    return (
-      <GoalSetup5
-        language={language}
-        onContinue={(objectives) => {
-          setObjectifsInitiaux(objectives);
-          setObjectifsPrioritaires(objectives);
-          setCurrentView('goal-setup-1');
-        }}
-      />
-    );
-  }
 
-  // Goal Setup Page B - Select 1 objective
-  if (currentView === 'goal-setup-1') {
-    return (
-      <GoalSetup1
-        language={language}
-        objectifsPrioritaires={objectifsInitiaux}
-        onStart={(objectifPrincipal) => {
-          setObjectifPrincipal(objectifPrincipal);
-          setCurrentView('flow-proposition');
-        }}
-      />
-    );
-  }
-
-  // Page de proposition de Flow - Page 1
-  if (currentView === 'flow-proposition') {
-    const title = language === 'fr' ? 'Un pas de plus vers ton objectif' : language === 'en' ? 'One step closer to your goal' : 'Un paso más hacia tu objetivo';
-    const description1 = language === 'fr' ? 'Tu as choisi de te concentrer sur :' : language === 'en' ? 'You chose to focus on:' : 'Elegiste concentrarte en:';
-    const description2 = language === 'fr' ? 'Souhaites-tu passer à l\'action avec un Flow de 30 jours ?' : language === 'en' ? 'Do you want to take action with a 30-day Flow?' : '¿Quieres pasar a la acción con un Flow de 30 días?';
-    const description3 = language === 'fr' ? '3 petites actions par jour pour avancer vers ton objectif' : language === 'en' ? '3 small actions per day to move toward your goal' : '3 pequeñas acciones por día para avanzar hacia tu objetivo';
-    const yesButton = language === 'fr' ? 'Oui, je veux essayer' : language === 'en' ? 'Yes, I want to try' : 'Sí, quiero probar';
-    const noButton = language === 'fr' ? 'Pas maintenant' : language === 'en' ? 'Not now' : 'Ahora no';
-
-    return (
-      <div className="min-h-screen flex flex-col p-6 bg-white">
-        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
-          {/* Titre */}
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              {title}
-            </h1>
-          </div>
-
-          {/* Objectif principal affiché */}
-          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 shadow-sm border-2 border-pink-200">
-            <p className="text-sm text-pink-600 font-medium mb-2">{description1}</p>
-            <p className="text-xl font-bold text-gray-800">"{objectifPrincipal}"</p>
-          </div>
-
-          {/* Description du Flow */}
-          <div className="text-center space-y-2">
-            <p className="text-lg text-gray-700 font-medium">
-              {description2}
-            </p>
-            <p className="text-sm text-gray-500">
-              {description3}
-            </p>
-          </div>
-
-          {/* Boutons */}
-          <div className="space-y-4">
-            <Button
-              onClick={() => setCurrentView('flow-description')}
-              className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
-            >
-              {yesButton}
-              <ChevronRight className="ml-2 w-5 h-5" />
-            </Button>
-
-            <Button
-              onClick={() => startChallenge()}
-              variant="outline"
-              className="w-full h-14 text-lg text-gray-600 font-medium rounded-2xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
-            >
-              {noButton}
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Page de description du Flow - Page A (saisie de l'objectif)
-  if (currentView === 'flow-description') {
-    return (
-      <FlowDescriptionPage
-        language={language}
-        objectifPrincipal={objectifPrincipal}
-        onBack={() => setCurrentView('flow-proposition')}
-        onCreate={(description) => {
-          setFlowDescription(description);
-          // Lancer la génération en arrière-plan
-          generateFlowInBackground(objectifPrincipal, description);
-          // Attendre 5 secondes avec animation puis rediriger vers l'accueil
-          setTimeout(() => {
-            setCurrentView('dashboard');
-          }, 5000);
-        }}
-      />
-    );
-  }
 
   // Page du Flow Challenge - Suivi jour après jour
   if (currentView === 'flow-challenge') {

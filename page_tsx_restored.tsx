@@ -483,7 +483,7 @@ export default function GlowUpChallengeApp() {
     if (isGeneratingFlowBackground) {
       const interval = setInterval(() => {
         setFlowGenerationStep((prev) => (prev + 1) % 4);
-      }, 1250);
+      }, 1500);
       return () => clearInterval(interval);
     }
   }, [isGeneratingFlowBackground]);
@@ -2348,12 +2348,17 @@ PROCESO OBLIGATORIO:
         language={language}
         objectifPrincipal={objectifPrincipal}
         onBack={() => setCurrentView('goal-setup-1')}
-        onCreate={(description) => {
+        onCreate={async (description) => {
           setFlowDescription(description);
-          generateFlowInBackground(objectifPrincipal, description);
-        }}
-        onAnimationComplete={() => {
-          setCurrentView('dashboard');
+          try {
+            await generatePersonalizedFlow(objectifPrincipal, description);
+            setCurrentView('flow-challenge');
+          } catch (error) {
+            console.error("Erreur lors de la g├®n├®ration du flow:", error);
+            // G├®rer l'erreur si n├®cessaire (peut-├¬tre rester sur la page avec un message ?)
+            // Pour l'instant on laisse l'UI g├®rer ou on redirige
+            setCurrentView('flow-challenge'); // Fallback pour voir le r├®sultat m├¬me si partiel ou erreur
+          }
         }}
       />
     );

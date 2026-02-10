@@ -51,24 +51,19 @@ export function FlowDescriptionPage({ language, objectifPrincipal, onBack, onCre
 
   useEffect(() => {
     if (isGenerating) {
-      // Animation visuelle qui joue chaque étape une fois (0 → 1 → 2 → 3)
-      let currentStep = 0;
+      // Animation visuelle (boucle sur les étapes)
       const interval = setInterval(() => {
-        currentStep += 1;
-        if (currentStep < currentSteps.length) {
-          setGenerationStep(currentStep);
-        } else {
-          // Toutes les étapes ont été jouées, on arrête l'interval
-          clearInterval(interval);
-          // Redirection après que toutes les étapes soient affichées
-          setTimeout(() => {
-            if (onAnimationComplete) onAnimationComplete();
-          }, 800); // Petit délai pour voir la dernière étape
-        }
+        setGenerationStep((prev) => (prev + 1) % currentSteps.length);
       }, 1250); // Changement toutes les 1.25s
+
+      // Timeout de 5 secondes avant redirection vers la home
+      const timeout = setTimeout(() => {
+        if (onAnimationComplete) onAnimationComplete();
+      }, 5000);
 
       return () => {
         clearInterval(interval);
+        clearTimeout(timeout);
       };
     }
   }, [isGenerating, currentSteps.length, onAnimationComplete]);

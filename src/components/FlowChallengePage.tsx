@@ -133,247 +133,326 @@ export function FlowChallengePage({
   // --- RENDERS ---
 
   const renderFlowSection = () => (
-    <div className="space-y-8 pb-36 px-1">
+    <div className="space-y-6 pb-36 px-1">
+      {/* Top Banner Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Streak Card */}
+        <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2rem] p-5 shadow-lg shadow-blue-900/20 flex flex-col justify-between h-36 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/30 rounded-bl-[3rem] -mr-4 -mt-4 blur-xl"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-400/20 rounded-tr-[2rem] -ml-2 -mb-2 blur-lg"></div>
 
-      {/* Manifesto & Philosophy Section */}
-      <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="flex items-center gap-3 mb-2 opacity-80 justify-center">
-          <div className="h-px w-12 bg-gradient-to-r from-transparent to-blue-500/50"></div>
-          <span className="text-[10px] font-bold text-blue-300 uppercase tracking-[0.25em]">ESSENTIAL</span>
-          <div className="h-px w-12 bg-gradient-to-l from-transparent to-blue-500/50"></div>
+          <div className="relative z-10">
+            <span className="text-xs font-bold text-blue-200 uppercase tracking-wider">{t.streak}</span>
+            <div className="text-4xl font-bold text-white mt-1 tracking-tight">{completedCount} <span className="text-sm font-normal text-blue-200">j</span></div>
+          </div>
+          <div className="flex items-center gap-2 relative z-10 bg-black/20 self-start px-3 py-1 rounded-full backdrop-blur-sm">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
+            <span className="text-[10px] font-medium text-white tracking-wide">Active</span>
+          </div>
         </div>
 
-        <h2 className="text-3xl md:text-4xl font-light text-white leading-tight text-center tracking-tight">
-          {language === 'fr' ? (
-            <>Fini la <span className="font-semibold text-white dropdown-shadow">charge mentale</span>.</>
-          ) : (
-            <>End the <span className="font-semibold text-white dropdown-shadow">mental overload</span>.</>
-          )}
-        </h2>
-
-        <div className="bg-[#1E293B]/60 border border-white/5 rounded-2xl p-5 backdrop-blur-md shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-
-          <p className="text-slate-200 text-sm text-center leading-relaxed font-medium relative z-10">
-            {language === 'fr'
-              ? "Ici, tu avances sereinement avec 3 actions à forte valeur ajoutée."
-              : "Here, you move forward calmly with 3 high-value actions."}
-          </p>
-
-          <div className="mt-4 flex items-center justify-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-full border border-white/5">
-              <Target className="w-3 h-3 text-blue-400" />
-              <span className="max-w-[100px] truncate">{personalizedFlow?.objective || objectifPrincipal}</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-full border border-white/5 text-orange-400">
-              <Flame className="w-3 h-3" />
-              <span>{completedCount} j</span>
-            </div>
+        {/* Goal Card */}
+        <div className="bg-[#1E293B] border border-white/5 rounded-[2rem] p-5 shadow-lg flex flex-col justify-between h-36 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-indigo-500/20 rounded-full blur-2xl"></div>
+          <div className="relative z-10">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{language === 'fr' ? 'Objectif' : 'Goal'}</span>
+          </div>
+          <div className="relative z-10 font-bold text-white leading-tight line-clamp-3 text-lg">
+            {personalizedFlow?.objective || objectifPrincipal}
+          </div>
+          <div className="absolute -bottom-2 -right-2 opacity-5">
+            <Target className="w-16 h-16 text-white" />
           </div>
         </div>
       </div>
 
-      {/* Daily Mission List - Numbered 1, 2, 3 */}
-      <div className="space-y-3">
-        {/* Step 1 */}
-        {mandatoryActions[0] && (
-          <div className="relative pl-3">
-            <div className="absolute left-[3px] top-8 bottom-[-16px] w-[2px] bg-[#1E293B]"></div>
+      {/* Main Actions List */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-2">
+          <h3 className="text-lg font-bold text-white">{language === 'fr' ? 'Ta Routine' : 'Your Routine'}</h3>
+          <span className="text-xs font-medium text-slate-400">{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric' })}</span>
+        </div>
 
+        {/* Action 1 */}
+        {mandatoryActions[0] && (
+          <div className="relative group">
             <div
               onClick={() => onToggleAction(currentDay, mandatoryActions[0].id)}
-              className={`relative group bg-[#162032] border border-white/5 rounded-[2rem] p-1 transition-all duration-300 ${isAction1Completed ? 'opacity-60 grayscale-[0.3]' : 'hover:border-blue-500/30 hover:bg-[#1c2840]'}`}
+              className={`relative overflow-hidden p-0.5 rounded-[2.5rem] transition-all duration-300 ${isAction1Completed ? 'opacity-50' : 'hover:scale-[1.01]'}`}
             >
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#0F1729] border border-slate-700 flex items-center justify-center font-bold text-slate-500 text-[10px] z-10 shadow-lg group-hover:border-blue-500/50 group-hover:text-blue-400 transition-colors">1</div>
-
-              <div className="p-3 flex items-center gap-4 cursor-pointer">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500 ${isAction1Completed
-                  ? 'bg-emerald-500 text-white scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                  : 'bg-[#1E293B] text-blue-400 border border-white/5'
+              <div className={`absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[2.5rem]`}></div>
+              <div className={`bg-[#1E293B] relative p-5 rounded-[2.4rem] flex items-center gap-4 cursor-pointer border border-white/5 shadow-sm`}>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-colors ${isAction1Completed
+                  ? 'bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                  : 'bg-indigo-500/20 text-indigo-400'
                   }`}>
-                  {isAction1Completed ? <Check className="w-6 h-6" /> : <div className="text-xl">{mandatoryActions[0].icon}</div>}
+                  {isAction1Completed ? <Check className="w-6 h-6" /> : <div className="text-2xl">{mandatoryActions[0].icon}</div>}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className={`font-medium text-sm md:text-base truncate ${isAction1Completed ? 'text-slate-500 line-through decoration-slate-600' : 'text-slate-100'}`}>{mandatoryActions[0].title}</h4>
-                  <p className="text-xs text-slate-500 mt-0.5 truncate">{mandatoryActions[0].description}</p>
+                <div className="flex-1 pr-8">
+                  <h4 className={`font-bold text-base ${isAction1Completed ? 'text-slate-500 line-through' : 'text-white'}`}>{mandatoryActions[0].title}</h4>
+                  <p className="text-xs text-slate-400 font-medium mt-1 line-clamp-1">{mandatoryActions[0].description}</p>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedTask({ title: mandatoryActions[0].title, description: mandatoryActions[0].description, icon: mandatoryActions[0].icon });
-                  }}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isAction1Completed ? 'border-emerald-500 bg-emerald-500' : 'border-slate-600 group-hover:border-slate-500'
+                  }`}>
+                  {isAction1Completed && <Check className="w-3 h-3 text-white" />}
+                </div>
               </div>
             </div>
+            {/* Bouton + pour voir les détails */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTask({
+                  title: mandatoryActions[0].title,
+                  description: mandatoryActions[0].description,
+                  icon: mandatoryActions[0].icon
+                });
+              }}
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 w-8 h-8 bg-slate-800 text-slate-300 rounded-full flex items-center justify-center border border-white/10 hover:bg-slate-700 hover:text-white transition-all z-20"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         )}
 
-        {/* Step 2 */}
+        {/* Action 2 */}
         {mandatoryActions[1] && (
-          <div className="relative pl-3">
-            <div className="absolute left-[3px] top-[10px] bottom-[-16px] w-[2px] bg-[#1E293B]"></div>
-
+          <div className="relative group">
             <div
               onClick={() => onToggleAction(currentDay, mandatoryActions[1].id)}
-              className={`relative group bg-[#162032] border border-white/5 rounded-[2rem] p-1 transition-all duration-300 ${isAction2Completed ? 'opacity-60 grayscale-[0.3]' : 'hover:border-purple-500/30 hover:bg-[#1c2840]'}`}
+              className={`relative overflow-hidden p-0.5 rounded-[2.5rem] transition-all duration-300 ${isAction2Completed ? 'opacity-50' : 'hover:scale-[1.01]'}`}
             >
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#0F1729] border border-slate-700 flex items-center justify-center font-bold text-slate-500 text-[10px] z-10 shadow-lg group-hover:border-purple-500/50 group-hover:text-purple-400 transition-colors">2</div>
-
-              <div className="p-3 flex items-center gap-4 cursor-pointer">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500 ${isAction2Completed
-                  ? 'bg-emerald-500 text-white scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                  : 'bg-[#1E293B] text-purple-400 border border-white/5'
+              <div className={`absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[2.5rem]`}></div>
+              <div className={`bg-[#1E293B] relative p-5 rounded-[2.4rem] flex items-center gap-4 cursor-pointer border border-white/5 shadow-sm`}>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-colors ${isAction2Completed
+                  ? 'bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                  : 'bg-purple-500/20 text-purple-400'
                   }`}>
-                  {isAction2Completed ? <Check className="w-6 h-6" /> : <div className="text-xl">{mandatoryActions[1].icon}</div>}
+                  {isAction2Completed ? <Check className="w-6 h-6" /> : <div className="text-2xl">{mandatoryActions[1].icon}</div>}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className={`font-medium text-sm md:text-base truncate ${isAction2Completed ? 'text-slate-500 line-through decoration-slate-600' : 'text-slate-100'}`}>{mandatoryActions[1].title}</h4>
-                  <p className="text-xs text-slate-500 mt-0.5 truncate">{mandatoryActions[1].description}</p>
+                <div className="flex-1 pr-8">
+                  <h4 className={`font-bold text-base ${isAction2Completed ? 'text-slate-500 line-through' : 'text-white'}`}>{mandatoryActions[1].title}</h4>
+                  <p className="text-xs text-slate-400 font-medium mt-1 line-clamp-1">{mandatoryActions[1].description}</p>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedTask({ title: mandatoryActions[1].title, description: mandatoryActions[1].description, icon: mandatoryActions[1].icon });
-                  }}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isAction2Completed ? 'border-emerald-500 bg-emerald-500' : 'border-slate-600 group-hover:border-slate-500'
+                  }`}>
+                  {isAction2Completed && <Check className="w-3 h-3 text-white" />}
+                </div>
               </div>
             </div>
+            {/* Bouton + pour voir les détails */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTask({
+                  title: mandatoryActions[1].title,
+                  description: mandatoryActions[1].description,
+                  icon: mandatoryActions[1].icon
+                });
+              }}
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 w-8 h-8 bg-slate-800 text-slate-300 rounded-full flex items-center justify-center border border-white/10 hover:bg-slate-700 hover:text-white transition-all z-20"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         )}
 
-        {/* Step 3 (Choice) */}
+        {/* Choice Action */}
         {choiceActions.length > 0 && (
-          <div className="relative pl-3">
-            <div className={`relative bg-[#162032] border border-white/5 rounded-[2rem] p-1 transition-all duration-300 ${isChoiceCompleted ? 'opacity-80' : 'hover:border-amber-500/30'}`}>
-              <div className="absolute -left-3 top-[28px] w-6 h-6 rounded-full bg-[#0F1729] border border-slate-700 flex items-center justify-center font-bold text-slate-500 text-[10px] z-10 shadow-lg group-hover:border-amber-500/50 group-hover:text-amber-400">3</div>
-
-              <div className="overflow-hidden rounded-[1.8rem]">
-                <div
-                  onClick={() => setShowChoiceCard(!showChoiceCard)}
-                  className="p-3 flex items-center gap-4 cursor-pointer bg-[#1E293B]/50"
-                >
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500 ${isChoiceCompleted
-                    ? 'bg-emerald-500 text-white scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                    : 'bg-[#1E293B] text-amber-400 border border-white/5'
-                    }`}>
-                    {isChoiceCompleted ? <Check className="w-6 h-6" /> : <Sparkles className="w-5 h-5" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-slate-100">{language === 'fr' ? 'Ton Choix' : 'Your Choice'}</h4>
-                    <p className="text-[10px] text-amber-500/80 font-bold tracking-wide uppercase">{language === 'fr' ? 'INSTANT SELF-CARE' : 'SELF-CARE MOMENT'}</p>
-                  </div>
-                  <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${showChoiceCard ? 'rotate-180' : ''}`} />
-                </div>
-
-                {/* Dropdown Content */}
-                <div className={`transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden ${showChoiceCard ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                  <div className="px-2 pb-2 pt-0 space-y-1">
-                    {choiceActions.map((action) => {
-                      const isSelected = selectedChoiceId === action.id;
-                      return (
-                        <div
-                          key={action.id}
-                          onClick={() => {
-                            if (isSelected) {
-                              onSelectChoice(currentDay, '');
-                              onToggleAction(currentDay, action.id);
-                            } else {
-                              onSelectChoice(currentDay, action.id);
-                              onToggleAction(currentDay, action.id);
-                              setShowChoiceCard(false);
-                            }
-                          }}
-                          className={`p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-all border ${isSelected
-                            ? 'bg-emerald-500/10 border-emerald-500/30'
-                            : 'hover:bg-white/5 border-transparent'
-                            }`}
-                        >
-                          <div className="text-lg">{action.icon}</div>
-                          <div className="flex-1">
-                            <h5 className={`text-sm font-medium ${isSelected ? 'text-emerald-400' : 'text-slate-300'}`}>{action.title}</h5>
-                          </div>
-                          {isSelected && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+          <div className="bg-[#1E293B] border border-white/5 rounded-[2.5rem] shadow-sm overflow-hidden transition-all duration-300">
+            <div
+              onClick={() => setShowChoiceCard(!showChoiceCard)}
+              className="p-5 flex items-center gap-4 cursor-pointer"
+            >
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-colors ${isChoiceCompleted
+                ? 'bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                : 'bg-amber-500/20 text-amber-400'
+                }`}>
+                {isChoiceCompleted ? <Check className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
               </div>
+              <div className="flex-1">
+                <h4 className="font-bold text-white">{language === 'fr' ? 'Instant Self-Care' : 'Self-Care Moment'}</h4>
+                <p className="text-xs text-amber-400 font-bold tracking-wide">{language === 'fr' ? 'CHOISIS TON INSTANT' : 'CHOOSE YOUR MOMENT'}</p>
+              </div>
+              <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${showChoiceCard ? 'rotate-180' : ''}`} />
             </div>
+
+            {/* Dropdown Content */}
+            {showChoiceCard && (
+              <div className="px-5 pb-5 pt-0 space-y-3">
+                <div className="h-px w-full bg-white/5 mb-4"></div>
+                {choiceActions.map((action) => {
+                  const isSelected = selectedChoiceId === action.id;
+                  return (
+                    <div key={action.id} className="relative group">
+                      <div
+                        onClick={() => {
+                          if (isSelected) {
+                            // Désélectionner si déjà sélectionné
+                            onSelectChoice(currentDay, '');
+                            onToggleAction(currentDay, action.id);
+                          } else {
+                            onSelectChoice(currentDay, action.id);
+                            onToggleAction(currentDay, action.id);
+                          }
+                        }}
+                        className={`p-4 rounded-2xl flex items-center gap-3 cursor-pointer transition-all border ${isSelected
+                          ? 'bg-emerald-500/10 border-emerald-500/30'
+                          : 'bg-slate-800/50 border-transparent hover:bg-slate-800'
+                          }`}
+                      >
+                        <div className="text-xl">{action.icon}</div>
+                        <div className="flex-1 pr-8">
+                          <h5 className={`text-sm font-bold ${isSelected ? 'text-emerald-400' : 'text-slate-200'}`}>{action.title}</h5>
+                        </div>
+                        {isSelected && <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>}
+                      </div>
+                      {/* Bouton + pour voir les détails */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTask({
+                            title: action.title,
+                            description: action.description,
+                            icon: action.icon
+                          });
+                        }}
+                        className="absolute top-1/2 right-3 transform -translate-y-1/2 w-7 h-7 bg-slate-900 text-slate-400 border border-white/10 rounded-full flex items-center justify-center hover:bg-slate-800 hover:text-white transition-all z-10"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Validate Button Area */}
-      <div className="mt-8">
+      {/* Validate Button - Sous les tâches */}
+      <div className="mt-6 mb-8">
         <Button
           onClick={handleValidateClick}
           disabled={personalizedFlow?.completedDays.includes(currentDay)}
-          className={`w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-300 ${personalizedFlow?.completedDays.includes(currentDay)
-            ? 'bg-transparent border border-emerald-500/20 text-emerald-500 cursor-not-allowed'
-            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/40 hover:scale-[1.02]'
+          className={`w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 border border-t-white/10 ${personalizedFlow?.completedDays.includes(currentDay)
+            ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/30 cursor-not-allowed'
+            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/40'
             }`}
         >
           <span className="flex items-center gap-2">
             {personalizedFlow?.completedDays.includes(currentDay)
-              ? (language === 'fr' ? 'Journée validée' : 'Day completed')
+              ? (language === 'fr' ? 'Journée validée' : language === 'en' ? 'Day completed' : 'Día completado')
               : t.validate}
             {personalizedFlow?.completedDays.includes(currentDay) && <Check className="w-5 h-5" />}
           </span>
         </Button>
 
-        {/* Continuation Logic */}
+        {/* Indicateur de progression */}
+        <div className="mt-3 flex items-center justify-center gap-2 text-sm text-slate-500">
+          <span>{completedTasksCount}/3 {language === 'fr' ? 'tâches complétées' : language === 'en' ? 'tasks completed' : 'tareas completadas'}</span>
+        </div>
+
+        {/* Bouton Continuer - Affiché après validation de chaque jour si on n'a pas atteint 30 jours */}
         {dayJustCompleted && !showContinuationAnimation && !showContinuationMessage && personalizedFlow && personalizedFlow.days.length < 30 && (
-          <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="mt-6">
             <Button
               onClick={() => {
                 setShowContinuationAnimation(true);
-                if (onContinueFlow) onContinueFlow();
+                // Lancer la génération en arrière-plan avec l'historique
+                if (onContinueFlow) {
+                  onContinueFlow();
+                }
+                // Après 6 secondes d'animation, afficher le message
                 setTimeout(() => {
                   setShowContinuationAnimation(false);
                   setShowContinuationMessage(true);
                 }, 6000);
               }}
-              className="w-full h-16 rounded-[2rem] bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold hover:scale-[1.02] transition-all shadow-lg shadow-orange-900/20"
+              className="w-full h-16 rounded-[2rem] text-lg font-bold shadow-xl transition-all duration-500 bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-400 hover:to-orange-500 hover:scale-[1.02] border border-orange-400/20"
             >
               <span className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                {language === 'fr' ? 'Débloquer le jour suivant' : 'Unlock next day'}
+                <Target className="w-5 h-5 text-white" />
+                {language === 'fr' ? 'Avancer vers mon objectif' : language === 'en' ? 'Advance towards my goal' : 'Avanzar hacia mi objetivo'}
               </span>
             </Button>
+            <p className="mt-2 text-center text-xs text-slate-500">
+              {language === 'fr'
+                ? `${personalizedFlow?.days.length || 0}/30 jours générés • Clique pour débloquer le jour suivant`
+                : `${personalizedFlow?.days.length || 0}/30 days generated • Click to unlock the next day`}
+            </p>
           </div>
         )}
 
+        {/* Animation de continuation du Flow */}
         {showContinuationAnimation && (
-          <div className="mt-6 text-center animate-in fade-in zoom-in duration-300">
-            <div className="relative w-16 h-16 mx-auto mb-3">
-              <div className="absolute inset-0 rounded-full border-t-2 border-amber-500 animate-spin"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Target className="w-6 h-6 text-amber-500" />
+          <div className="mt-6 flex flex-col items-center justify-center">
+            <div className="relative w-32 h-32 mx-auto mb-4">
+              {/* Cercles animés identiques à l'animation initiale */}
+              <div className="absolute inset-0 rounded-full border-4 border-amber-500/30 opacity-30 animate-ping" />
+              <div className="absolute inset-2 rounded-full border-4 border-orange-500/40 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
+              <div className="absolute inset-4 rounded-full border-4 border-amber-400/50 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
+
+              {/* Icône centrale qui change */}
+              <div className="absolute inset-6 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-900/50 animate-pulse">
+                {continuationStep === 0 && <Target className="w-10 h-10 text-white" />}
+                {continuationStep === 1 && <Wand2 className="w-10 h-10 text-white" />}
+                {continuationStep === 2 && <Lightbulb className="w-10 h-10 text-white" />}
+                {continuationStep === 3 && <Sparkles className="w-10 h-10 text-white" />}
               </div>
             </div>
-            <p className="text-sm font-medium text-amber-400 animate-pulse">
-              {language === 'fr' ? 'Génération en cours...' : 'Generating...'}
-            </p>
+
+            {/* Texte de l'étape */}
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-white">
+                {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
+              </h3>
+              <p className="text-base text-amber-400 font-medium">
+                {continuationStep === 0 && (language === 'fr' ? 'Analyse de ton objectif...' : language === 'en' ? 'Analyzing your goal...' : 'Analizando tu objetivo...')}
+                {continuationStep === 1 && (language === 'fr' ? 'Génération du jour suivant...' : language === 'en' ? 'Generating next day...' : 'Generando el próximo día...')}
+                {continuationStep === 2 && (language === 'fr' ? 'Personnalisation de ton parcours...' : language === 'en' ? 'Personalizing your journey...' : 'Personalizando tu camino...')}
+                {continuationStep === 3 && (language === 'fr' ? 'Finalisation...' : language === 'en' ? 'Finalizing...' : 'Finalizando...')}
+              </p>
+            </div>
+
+            {/* Barre de progression */}
+            <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden mx-auto mt-4">
+              <div
+                className="h-full bg-gradient-to-r from-amber-500 to-orange-600 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                style={{ width: `${((continuationStep + 1) / 4) * 100}%` }}
+              />
+            </div>
           </div>
         )}
 
+        {/* Message après continuation */}
         {showContinuationMessage && (
-          <div className="mt-6 p-6 rounded-[2rem] bg-[#162032] border border-white/5 text-center">
-            <p className="text-sm text-slate-400">
-              {language === 'fr' ? 'Top ! Reviens demain pour la suite.' : 'Great! Come back tomorrow for more.'}
+          <div className="mt-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-white/5 rounded-[2rem] p-6 text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-900/30">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-3">
+              {language === 'fr' ? 'Analyse des flows validés en cours' : language === 'en' ? 'Flow analysis in progress' : 'Análisis de flows en curso'}
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed mb-4">
+              {language === 'fr'
+                ? "Ton prochain jour sera accessible demain, pour éviter la surcharge mentale."
+                : language === 'en'
+                  ? "Your next day will be accessible tomorrow, to avoid mental overload."
+                  : "Tu próximo día será accesible mañana, para evitar la sobrecarga mental."}
             </p>
+            <div className="bg-black/30 border border-white/5 rounded-xl p-3 text-xs text-amber-400 font-medium">
+              {language === 'fr'
+                ? `🔒 Jour ${(personalizedFlow?.days.length || 0) + 1} verrouillé, Tu as bien avancé`
+                : language === 'en'
+                  ? `🔒 Day ${(personalizedFlow?.days.length || 0) + 1} locked, Great progress`
+                  : `🔒 Día ${(personalizedFlow?.days.length || 0) + 1} bloqueado, Buen progreso`}
+            </div>
           </div>
         )}
       </div>
 
-      {/* Validation Popup */}
+      {/* Popup de validation */}
       {showValidationPopup && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#1E293B] border border-white/10 rounded-[2rem] p-6 max-w-sm w-full shadow-2xl">
@@ -384,14 +463,21 @@ export function FlowChallengePage({
                     <Check className="w-10 h-10 text-emerald-400" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">
-                    {language === 'fr' ? 'Série validée !' : 'Streak validated!'}
+                    {language === 'fr' ? 'Série validée !' : language === 'en' ? 'Streak validated!' : '¡Racha validada!'}
                   </h3>
                   <p className="text-slate-400 text-sm">
-                    {language === 'fr' ? 'Bravo ! Tu as complété toutes tes tâches aujourd\'hui.' : 'Great job! You completed all your tasks today.'}
+                    {language === 'fr'
+                      ? 'Bravo ! Tu as complété toutes tes tâches aujourd\'hui.'
+                      : language === 'en'
+                        ? 'Great job! You completed all your tasks today.'
+                        : '¡Excelente trabajo! Completaste todas tus tareas hoy.'}
                   </p>
                 </div>
-                <Button onClick={handleConfirmValidation} className="w-full h-14 rounded-[2rem] bg-indigo-600 text-white font-bold hover:bg-indigo-500">
-                  {language === 'fr' ? 'Continuer' : 'Continue'}
+                <Button
+                  onClick={handleConfirmValidation}
+                  className="w-full h-14 rounded-[2rem] bg-indigo-600 text-white font-bold hover:bg-indigo-500 shadow-lg shadow-indigo-900/50"
+                >
+                  {language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar'}
                 </Button>
               </>
             ) : (
@@ -400,17 +486,30 @@ export function FlowChallengePage({
                   <div className="w-20 h-20 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-4xl">🤔</span>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">{language === 'fr' ? 'Moment...' : 'Wait...'}</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {language === 'fr' ? 'Remise en question' : language === 'en' ? 'Double check' : 'Verificación'}
+                  </h3>
                   <p className="text-slate-400 text-sm">
-                    {language === 'fr' ? `Tu n'as complété que ${completedTasksCount}/3 tâches.` : `You only completed ${completedTasksCount}/3 tasks.`}
+                    {language === 'fr'
+                      ? `Tu n'as complété que ${completedTasksCount}/3 tâches. Veux-tu vraiment valider sans avoir tout complété ?`
+                      : language === 'en'
+                        ? `You only completed ${completedTasksCount}/3 tasks. Do you really want to validate without completing everything?`
+                        : `Solo completaste ${completedTasksCount}/3 tareas. ¿Realmente quieres validar sin completar todo?`}
                   </p>
                 </div>
                 <div className="space-y-3">
-                  <Button onClick={handleConfirmValidation} className="w-full h-14 rounded-[2rem] bg-indigo-600 text-white font-bold hover:bg-indigo-500">
-                    {language === 'fr' ? 'Oui, je valide' : 'Yes, validate'}
+                  <Button
+                    onClick={handleConfirmValidation}
+                    className="w-full h-14 rounded-[2rem] bg-indigo-600 text-white font-bold hover:bg-indigo-500"
+                  >
+                    {language === 'fr' ? 'Oui, valider quand même' : language === 'en' ? 'Yes, validate anyway' : 'Sí, validar de todos modos'}
                   </Button>
-                  <Button onClick={handleCancelValidation} variant="outline" className="w-full h-14 rounded-[2rem] border-white/10 bg-transparent text-slate-300 font-bold hover:bg-slate-800">
-                    {language === 'fr' ? 'Je complète' : 'I will complete'}
+                  <Button
+                    onClick={handleCancelValidation}
+                    variant="outline"
+                    className="w-full h-14 rounded-[2rem] border-white/10 bg-transparent text-slate-300 font-bold hover:bg-slate-800"
+                  >
+                    {language === 'fr' ? 'Non, je vais compléter' : language === 'en' ? 'No, I\'ll complete them' : 'No, las completaré'}
                   </Button>
                 </div>
               </>
@@ -419,19 +518,27 @@ export function FlowChallengePage({
         </div>
       )}
 
-      {/* Details Popup */}
+      {/* Popup détails de la tâche */}
       {selectedTask && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setSelectedTask(null)}>
           <div className="bg-[#0F1729] border border-white/10 rounded-[2rem] p-6 max-w-sm w-full shadow-2xl relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-blue-900/20 to-transparent"></div>
             <div className="text-center mb-6 relative z-10">
-              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl border border-white/5">
+              <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl border border-white/5">
                 {selectedTask.icon}
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">{selectedTask.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{selectedTask.description}</p>
+              <h3 className="text-xl font-bold text-white mb-3">
+                {selectedTask.title}
+              </h3>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                {selectedTask.description}
+              </p>
             </div>
-            <Button onClick={() => setSelectedTask(null)} className="w-full h-14 rounded-[2rem] bg-white text-slate-950 font-bold hover:bg-slate-200">
-              {language === 'fr' ? 'Fermer' : 'Close'}
+            <Button
+              onClick={() => setSelectedTask(null)}
+              className="w-full h-14 rounded-[2rem] bg-white text-slate-950 font-bold hover:bg-slate-200"
+            >
+              {language === 'fr' ? 'Fermer' : language === 'en' ? 'Close' : 'Cerrar'}
             </Button>
           </div>
         </div>

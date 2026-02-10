@@ -145,7 +145,7 @@ export function FlowChallengePage({
 
         <h2 className="text-3xl md:text-4xl font-light text-white leading-tight text-center tracking-tight">
           {language === 'fr' ? (
-            <>Fini la <span className="font-semibold text-white dropdown-shadow">surcharge mentale</span>.</>
+            <>Fini la <span className="font-semibold text-white dropdown-shadow">charge mentale</span>.</>
           ) : (
             <>End the <span className="font-semibold text-white dropdown-shadow">mental overload</span>.</>
           )}
@@ -156,8 +156,8 @@ export function FlowChallengePage({
 
           <p className="text-slate-200 text-sm text-center leading-relaxed font-medium relative z-10">
             {language === 'fr'
-              ? "Ici, tu avances seulement avec 3 actions par jour, à forte valeur vers ton objectif..."
-              : "Here, you move forward with only 3 high-value actions per day towards your goal..."}
+              ? "Ici, tu avances sereinement avec 3 actions à forte valeur ajoutée."
+              : "Here, you move forward calmly with 3 high-value actions."}
           </p>
 
           <div className="mt-4 flex items-center justify-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">

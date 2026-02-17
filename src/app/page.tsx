@@ -2344,7 +2344,7 @@ PROCESO OBLIGATORIO:
           {/* Conclusion */}
           <p className="text-xl text-center font-medium bg-gradient-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent">
             {language === 'fr'
-              ? 'Une victoire par semaine suffit.'
+              ? 'Une victoire par jour suffit.'
               : language === 'en'
                 ? 'One victory per week is enough.'
                 : 'Una victoria por semana es suficiente.'}
@@ -2634,7 +2634,7 @@ PROCESO OBLIGATORIO:
                     </div>
 
                     <div className="px-4 py-2 bg-amber-100 rounded-xl text-amber-700 font-bold text-sm">
-                      Une victoire par semaine suffit.
+                      Une victoire par jour suffit.
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-2">

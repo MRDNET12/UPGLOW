@@ -3084,7 +3084,7 @@ PROCESO OBLIGATORIO:
 
         {/* Trackers View - Project Glow Design System */}
         {currentView === 'trackers' && (
-          <div className="pb-24 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+          <div className="pb-24 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white">
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">
@@ -3120,10 +3120,12 @@ PROCESO OBLIGATORIO:
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCurrentView('habit-progress')}
-                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
-                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200"
                   >
-                    <span className="text-lg">📊</span>
+                    <TrendingUp className="w-4 h-4 text-gray-600" />
+                    <span className="text-xs font-medium text-gray-700">
+                      {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
+                    </span>
                   </button>
                   <button
                     onClick={() => setShowAddHabit(true)}

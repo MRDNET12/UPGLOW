@@ -2544,12 +2544,11 @@ PROCESO OBLIGATORIO:
               </button>
             </div>
 
-            {/* Carte Ma Semaine (même emplacement et dimensions que l'ancienne carte Flow) */}
-            <Card
+            {/* Carte Ma Semaine - MASQUÉE */}
+            {/* <Card
               className="border-none shadow-lg bg-[#facc15] text-amber-950 rounded-[2rem] overflow-hidden relative min-h-[220px] cursor-pointer transition-all duration-300 hover:scale-[1.01]"
               onClick={() => setCurrentView('routine')}
             >
-              {/* Wave Background */}
               <div className="absolute bottom-0 left-0 right-0 h-32 opacity-40 pointer-events-none">
                 <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
                   <path fill="#ca8a04" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,160C960,139,1056,149,1152,160C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
@@ -2557,7 +2556,6 @@ PROCESO OBLIGATORIO:
               </div>
 
               <CardContent className="p-6 h-full flex flex-col justify-between relative z-10">
-                {/* Header */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-black/10 rounded-full">
                     <Calendar className="w-5 h-5 text-amber-900" />
@@ -2567,7 +2565,6 @@ PROCESO OBLIGATORIO:
                   </h3>
                 </div>
 
-                {/* Stats */}
                 <div className="flex-1 flex items-center">
                   <div>
                     <p className="text-5xl font-bold text-amber-950">
@@ -2585,7 +2582,6 @@ PROCESO OBLIGATORIO:
                   </div>
                 </div>
 
-                {/* Footer avec indication */}
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-xs text-amber-900/60">
                     {language === 'fr' ? 'Clique pour voir' : language === 'en' ? 'Click to view' : 'Clic para ver'}
@@ -2595,7 +2591,7 @@ PROCESO OBLIGATORIO:
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
             {selectedChallenge === 'mind-life' && showChallengeCard && (

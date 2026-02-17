@@ -377,6 +377,7 @@ export default function GlowUpChallengeApp() {
   // État pour la vue Planning (Semaine vs Jour)
   const [isDayView, setIsDayView] = useState(false);
   const [selectedDayViewDate, setSelectedDayViewDate] = useState(new Date());
+  const [showSmallWinsHelp, setShowSmallWinsHelp] = useState(false);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -2543,12 +2544,117 @@ PROCESO OBLIGATORIO:
 
               {/* Bouton Challenge Switch - Position absolue fixe à droite */}
               <button
-                onClick={() => setShowChallengeDrawer(true)}
+                onClick={() => setShowSmallWinsHelp(true)}
                 className="absolute right-0 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all"
               >
                 <ChevronRight className="w-5 h-5 rotate-180 text-pink-400" />
               </button>
             </div>
+
+            {/* Popup Explications Petites Victoires */}
+            <Dialog open={showSmallWinsHelp} onOpenChange={setShowSmallWinsHelp}>
+              <DialogContent className="max-w-[340px] w-[90%] rounded-[2rem] p-0 overflow-hidden bg-white border-none shadow-2xl">
+                <div className="absolute top-3 right-3 z-20">
+                  <Button variant="ghost" size="icon" onClick={() => setShowSmallWinsHelp(false)} className="rounded-full bg-white/50 backdrop-blur-sm hover:bg-white/80 h-8 w-8">
+                    <X className="w-4 h-4 text-gray-500" />
+                  </Button>
+                </div>
+
+                <div className="overflow-x-auto flex snap-x snap-mandatory scrollbar-hide">
+                  {/* Slide 1 */}
+                  <div className="min-w-full snap-center p-8 pt-12 flex flex-col items-center text-center space-y-6 bg-gradient-to-br from-pink-50 to-white">
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-bold text-gray-800 leading-tight">
+                        Tu avances.<br />
+                        <span className="text-pink-500">Et ça compte.</span>
+                      </h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      <p className="text-sm font-medium text-gray-600 leading-relaxed">
+                        Célèbre tes victoires quotidiennes.
+                        Même minuscule, un pas reste un pas.
+                      </p>
+                    </div>
+
+                    <div className="pt-4 flex flex-wrap justify-center gap-2">
+                      {['#Progression', '#PetitesVictoires', '#FiertéSaine'].map(tag => (
+                        <span key={tag} className="px-3 py-1 rounded-full bg-pink-100 text-pink-600 text-[10px] font-bold tracking-wide">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Slide 2 */}
+                  <div className="min-w-full snap-center p-8 pt-12 flex flex-col items-center text-center space-y-6 bg-gradient-to-br from-purple-50 to-white">
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-bold text-gray-800 leading-tight">
+                        Reconnais<br />
+                        <span className="text-purple-500">tes efforts.</span>
+                      </h3>
+                    </div>
+
+                    <div className="space-y-3 bg-white/60 p-4 rounded-2xl backdrop-blur-sm w-full shadow-sm border border-purple-100">
+                      <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Écris :</p>
+                      <ul className="space-y-2 text-sm font-medium text-gray-700 text-left pl-2">
+                        <li className="flex items-center gap-2"><span className="text-purple-400">•</span> « J’ai commencé… »</li>
+                        <li className="flex items-center gap-2"><span className="text-purple-400">•</span> « Je n’ai pas abandonné… »</li>
+                        <li className="flex items-center gap-2"><span className="text-purple-400">•</span> « J’ai essayé… »</li>
+                        <li className="flex items-center gap-2"><span className="text-purple-400">•</span> « J’ai réussi… »</li>
+                      </ul>
+                    </div>
+
+                    <p className="text-sm font-bold text-gray-800">
+                      Valide tes progrès. Bâtis ta fierté.
+                    </p>
+
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {['#Action', '#Constance', '#Élan'].map(tag => (
+                        <span key={tag} className="px-3 py-1 rounded-full bg-purple-100 text-purple-600 text-[10px] font-bold tracking-wide">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Slide 3 */}
+                  <div className="min-w-full snap-center p-8 pt-12 flex flex-col items-center text-center space-y-6 bg-gradient-to-br from-amber-50 to-white">
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-bold text-gray-800 leading-tight">
+                        Pourquoi<br />
+                        <span className="text-amber-500">ça marche ?</span>
+                      </h3>
+                    </div>
+
+                    <div className="space-y-4 text-sm font-medium text-gray-600 leading-relaxed max-w-[240px]">
+                      <p>L’auto-valorisation renforce la confiance.</p>
+                      <p>Elle réduit le sentiment d’échec.</p>
+                      <p>Elle crée du momentum.</p>
+                    </div>
+
+                    <div className="px-4 py-2 bg-amber-100 rounded-xl text-amber-700 font-bold text-sm">
+                      Une victoire par semaine suffit.
+                    </div>
+
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {['#Confiance', '#Clarté', '#Momentum'].map(tag => (
+                        <span key={tag} className="px-3 py-1 rounded-full bg-amber-100 text-amber-600 text-[10px] font-bold tracking-wide">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Indicateur de swipe */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 pb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                </div>
+              </DialogContent>
+            </Dialog>
 
             {/* Carte Ma Semaine - MASQUÉE */}
             {/* <Card
@@ -2665,7 +2771,7 @@ PROCESO OBLIGATORIO:
                     <h2 className="text-sm font-bold text-gray-800 mb-1.5 pr-14 line-clamp-2">
                       {t.newMe.subtitle}
                     </h2>
-                      <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-gray-300/50">
+                    <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-gray-300/50">
                       {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>

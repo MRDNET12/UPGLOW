@@ -2099,10 +2099,10 @@ PROCESO OBLIGATORIO:
                 setSelectedChallenge('beauty-body');
                 startChallenge();
               }}
-              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-pink-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white"
+              className="w-full p-6 rounded-[2rem] border-none shadow-2xl shadow-gray-200/50 transition-all hover:scale-[1.02] bg-gradient-to-br from-pink-100 via-rose-50 to-white"
             >
               <div className="flex items-start gap-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-4xl shadow-lg shadow-pink-200/50">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-4xl shadow-lg shadow-gray-200/50">
                   {t.challengeSelection.beautyBodyEmoji}
                 </div>
                 <div className="flex-1 text-left">
@@ -2157,7 +2157,7 @@ PROCESO OBLIGATORIO:
           {/* Bouton */}
           <Button
             onClick={() => setCurrentView('presentation-1')}
-            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all"
           >
             {continueText}
             <ChevronRight className="ml-2 w-5 h-5" />
@@ -2211,7 +2211,7 @@ PROCESO OBLIGATORIO:
           {/* Bouton Continuer */}
           <Button
             onClick={() => setCurrentView('presentation-2')}
-            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all"
           >
             {continueText}
             <ChevronRight className="ml-2 w-5 h-5" />
@@ -2279,7 +2279,7 @@ PROCESO OBLIGATORIO:
           {/* Bouton Continuer */}
           <Button
             onClick={() => setCurrentView('presentation-3')}
-            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all"
           >
             {continueText}
             <ChevronRight className="ml-2 w-5 h-5" />
@@ -2364,7 +2364,7 @@ PROCESO OBLIGATORIO:
           {/* Bouton Commencer */}
           <Button
             onClick={() => startChallenge()}
-            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all"
           >
             {startText}
             <ChevronRight className="ml-2 w-5 h-5" />
@@ -2435,7 +2435,7 @@ PROCESO OBLIGATORIO:
             {/* Header avec avatar et notification */}
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-200/50">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center text-white font-bold shadow-lg shadow-gray-200/50">
                   {user?.email?.[0]?.toUpperCase() || 'U'}
                 </div>
                 <div>
@@ -2457,13 +2457,13 @@ PROCESO OBLIGATORIO:
                         setDeferredPrompt(null);
                       }
                     }}
-                    className="px-3 py-2 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold shadow-lg shadow-pink-200/50 flex items-center gap-1.5 hover:shadow-xl transition-shadow"
+                    className="px-3 py-2 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold shadow-lg shadow-gray-200/50 flex items-center gap-1.5 hover:shadow-xl transition-shadow"
                   >
                     <Download className="w-4 h-4" />
                     {language === 'fr' ? 'Installer' : language === 'en' ? 'Install' : 'Instalar'}
                   </button>
                 )}
-                <button className="w-11 h-11 rounded-full bg-white shadow-lg shadow-pink-100/50 flex items-center justify-center hover:shadow-xl transition-shadow">
+                <button className="w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-200/50 flex items-center justify-center hover:shadow-xl transition-shadow">
                   <Bell className="w-5 h-5 text-pink-400" />
                 </button>
               </div>
@@ -2471,7 +2471,7 @@ PROCESO OBLIGATORIO:
 
             {/* Message Glowee - Style glassmorphism - Taille réduite + Glowee agrandie */}
             <div className="relative">
-              <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+              <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                 <CardContent className="p-0">
                   <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
                     {/* Message avec rotation et effet typing - sans mention Glowee */}
@@ -2514,7 +2514,7 @@ PROCESO OBLIGATORIO:
                       setSubscriptionSource('button');
                       setShowSubscription(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg shadow-pink-200/50 hover:shadow-xl hover:scale-105 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-lg shadow-gray-200/50 hover:shadow-xl hover:scale-105 transition-all"
                   >
                     <Crown className="w-4 h-4" />
                     <span>Plan Pro</span>
@@ -2544,7 +2544,7 @@ PROCESO OBLIGATORIO:
               {/* Bouton Challenge Switch - Position absolue fixe à droite */}
               <button
                 onClick={() => setShowChallengeDrawer(true)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all"
+                className="absolute right-0 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all"
               >
                 <ChevronRight className="w-5 h-5 rotate-180 text-pink-400" />
               </button>
@@ -2648,7 +2648,7 @@ PROCESO OBLIGATORIO:
             {/* Grande carte Beauty & Body - Style glassmorphism */}
             {selectedChallenge === 'beauty-body' && showChallengeCard && (
               <Card
-                className="border-none shadow-2xl shadow-pink-300/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50 rounded-[2rem] overflow-hidden relative"
+                className="border-none shadow-2xl shadow-gray-200/60 cursor-pointer transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-pink-200 via-rose-100 to-pink-50 rounded-[2rem] overflow-hidden relative"
                 onClick={() => setCurrentView('new-me')}
               >
                 <CardContent className="p-3 relative z-10">
@@ -2665,7 +2665,7 @@ PROCESO OBLIGATORIO:
                     <h2 className="text-sm font-bold text-gray-800 mb-1.5 pr-14 line-clamp-2">
                       {t.newMe.subtitle}
                     </h2>
-                    <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-pink-300/50">
+                      <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-gray-300/50">
                       {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>
@@ -2892,7 +2892,7 @@ PROCESO OBLIGATORIO:
 
             {/* Carte Glow Up (Bonus) - MASQUÉE */}
             {/* <Card
-              className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-purple-50 to-orange-50 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+              className="border-none shadow-xl shadow-gray-200/50 bg-gradient-to-br from-pink-100 via-purple-50 to-orange-50 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
               onClick={() => setCurrentView('bonus')}
             >
               <CardContent className="p-4">
@@ -4174,7 +4174,7 @@ PROCESO OBLIGATORIO:
                 <>
                   {/* Carte Glowee avec message et progression */}
                   <div className="relative mb-6">
-                    <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                    <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                       <CardContent className="p-4 pl-20">
                         <p className="text-xs text-gray-700 leading-relaxed font-medium mb-3">
                           {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
@@ -4326,7 +4326,7 @@ PROCESO OBLIGATORIO:
                               <div className="space-y-3">
                                 {/* Message Glowee - With typing effect */}
                                 <div className="relative">
-                                  <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                                  <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                                     <CardContent className="p-0">
                                       <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
                                         <div className="flex-1 min-w-0">
@@ -4944,7 +4944,7 @@ PROCESO OBLIGATORIO:
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-pink-100/50 hover:bg-white"
+                className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-gray-200/50 hover:bg-white"
                 onClick={() => setCurrentView('dashboard')}
               >
                 <X className="w-5 h-5 text-gray-800" />
@@ -4967,7 +4967,7 @@ PROCESO OBLIGATORIO:
                       <Card
                         key={section.id}
                         onClick={() => setSelectedBonusSection(section)}
-                        className={`border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
+                        className={`border-none shadow-xl shadow-gray-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
                       >
                         <CardContent className="p-5">
                           <div className="flex items-center gap-4">
@@ -5000,7 +5000,7 @@ PROCESO OBLIGATORIO:
               </div>
 
               {/* Checklists - Glassmorphism */}
-              <Card className="border-none shadow-xl shadow-pink-200/30 bg-white/80 backdrop-blur-md rounded-[1.5rem]">
+              <Card className="border-none shadow-xl shadow-gray-200/30 bg-white/80 backdrop-blur-md rounded-[1.5rem]">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-3 text-lg">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center shadow-lg">
@@ -5056,7 +5056,7 @@ PROCESO OBLIGATORIO:
               {/* Mini-Guide Soft Life - Glassmorphism */}
               <Card
                 onClick={() => setShowSoftLifeGuide(true)}
-                className="border-none shadow-xl shadow-pink-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem]"
+                className="border-none shadow-xl shadow-gray-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem]"
               >
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-3 text-lg">
@@ -5154,7 +5154,7 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
 
-            {/* Bouton + doré (pill/capsule) - identique à la capture */}
+            {/* Bouton + noir */}
             <button
               onClick={() => {
                 if (currentView === 'journal') {
@@ -5165,9 +5165,9 @@ PROCESO OBLIGATORIO:
                   setShowAddMenu(true);
                 }
               }}
-              className="flex-shrink-0 w-14 h-14 rounded-[1.75rem] flex items-center justify-center shadow-[0_4px_20px_rgba(180,130,20,0.35)] hover:shadow-[0_6px_28px_rgba(180,130,20,0.5)] hover:scale-105 active:scale-95 transition-all duration-200"
+              className="flex-shrink-0 w-14 h-14 rounded-[1.75rem] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)] hover:scale-105 active:scale-95 transition-all duration-200"
               style={{
-                background: 'linear-gradient(160deg, #e8b830 0%, #c49a20 40%, #a07818 100%)',
+                background: 'linear-gradient(160deg, #1a1a1a 0%, #333 40%, #1a1a1a 100%)',
               }}
             >
               <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
@@ -5334,7 +5334,7 @@ PROCESO OBLIGATORIO:
 
       {/* Drawer New Me Habit Details - Style Glassmorphism */}
       <Drawer open={!!selectedHabit} onOpenChange={(open) => !open && setSelectedHabit(null)}>
-        <DrawerContent className="max-w-lg mx-auto bg-white/95 backdrop-blur-xl border-none shadow-2xl shadow-pink-200/50">
+        <DrawerContent className="max-w-lg mx-auto bg-white/95 backdrop-blur-xl border-none shadow-2xl shadow-gray-200/50">
           <DrawerHeader className="border-b border-pink-100 bg-gradient-to-br from-pink-50 to-rose-50 rounded-t-3xl">
             <div className="flex items-center gap-4">
               <div className="text-5xl drop-shadow-2xl">{selectedHabit?.icon}</div>

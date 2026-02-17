@@ -2149,33 +2149,40 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Page d'introduction Project Glow
+  // Page d'introduction Project Glow - Page 1: Salut, je suis Glowee
   if (currentView === 'project-glow-intro') {
-    const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
+    const continueText = language === 'fr' ? 'Chaque pas compte' : language === 'en' ? 'Every step counts' : 'Cada paso cuenta';
 
     return (
-      <div className="min-h-screen flex flex-col p-6 bg-white">
-        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
-          {/* Titre principal */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent leading-tight">
-              Project Glow
-            </h1>
+      <div className="min-h-screen flex flex-col bg-white">
+        {/* Image Glowee en haut */}
+        <div className="flex-1 flex items-center justify-center pt-8 pb-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-[2rem] blur-xl opacity-40"></div>
+            <img
+              src="/Glowee/glowee-acceuillante.webp"
+              alt="Glowee"
+              className="w-64 h-64 object-contain drop-shadow-2xl relative z-10"
+            />
           </div>
+        </div>
 
-          {/* Texte explicatif */}
-          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 shadow-sm">
-            <p className="text-lg text-gray-700 leading-relaxed text-center">
-              {language === 'fr'
-                ? "Tu ne poursuis pas seulement des objectifs. Tu construis la personne capable de les atteindre."
-                : language === 'en'
-                  ? "You're not just pursuing goals. You're building the person capable of achieving them."
-                  : "No solo persigues objetivos. Estás construyendo a la persona capaz de lograrlos."
-              }
+        {/* Contenu en bas */}
+        <div className="px-6 pb-12 space-y-8">
+          {/* Texte */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+              {language === 'fr' ? 'Salut. Je suis Glowee.' : language === 'en' ? 'Hi. I\'m Glowee.' : 'Hola. Soy Glowee.'}
+            </h1>
+            <p className="text-lg text-gray-600">
+              {language === 'fr' ? 'Le miroir qui reflète tes efforts.' : language === 'en' ? 'The mirror that reflects your efforts.' : 'El espejo que refleja tus esfuerzos.'}
+            </p>
+            <p className="text-xl font-medium bg-gradient-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent">
+              {language === 'fr' ? 'Ravie de faire ta rencontre !' : language === 'en' ? 'Nice to meet you!' : '¡Encantada de conocerte!'}
             </p>
           </div>
 
-          {/* Bouton Continuer */}
+          {/* Bouton */}
           <Button
             onClick={() => setCurrentView('presentation-1')}
             className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
@@ -2188,27 +2195,32 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Page de présentation 1: Chaque petit pas te fait avancer
+  // Page 2: Tu avances
   if (currentView === 'presentation-1') {
-    const title = language === 'fr' ? 'Chaque petit pas te fait avancer' : language === 'en' ? 'Every small step moves you forward' : 'Cada pequeño paso te hace avanzar';
-    const description = language === 'fr' ? "Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois." : language === 'en' ? "Change doesn't happen overnight. This app guides your progress, one habit, one thought, one victory at a time." : 'El cambio no ocurre de la noche a la mañana. Esta app te acompaña en tu progreso, un hábito, un pensamiento, una victoria a la vez.';
     const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
-    const tags = language === 'fr' ? ['Progression', 'Habitudes', 'Évolution personnelle'] : language === 'en' ? ['Progress', 'Habits', 'Personal growth'] : ['Progreso', 'Hábitos', 'Evolución personal'];
+    const tags = ['#Progression', '#PetitesVictoires', '#FiertéSaine'];
 
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
-          {/* Titre principal */}
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              {title}
+          {/* Titre */}
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+              {language === 'fr' ? 'Tu avances.' : language === 'en' ? 'You\'re moving forward.' : 'Avanzas.'}
             </h1>
+            <p className="text-2xl text-pink-500 font-medium">
+              {language === 'fr' ? 'Et ça compte.' : language === 'en' ? 'And it counts.' : 'Y eso cuenta.'}
+            </p>
           </div>
 
           {/* Texte explicatif */}
           <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
-            <p className="text-lg text-gray-600 leading-relaxed">
-              {description}
+            <p className="text-lg text-gray-600 leading-relaxed text-center">
+              {language === 'fr' 
+                ? 'Célèbre tes victoires quotidiennes. Même minuscule, un pas reste un pas.' 
+                : language === 'en' 
+                  ? 'Celebrate your daily victories. Even tiny, a step is still a step.'
+                  : 'Celebra tus victorias diarias. Incluso minúsculo, un paso sigue siendo un paso.'}
             </p>
           </div>
 
@@ -2217,7 +2229,7 @@ PROCESO OBLIGATORIO:
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
+                className="px-3 py-1.5 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
               >
                 {tag}
               </span>
@@ -2237,36 +2249,140 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Page de présentation 2: Célèbre tes petites victoires
+  // Page 3: Reconnais tes efforts
   if (currentView === 'presentation-2') {
-    const title = language === 'fr' ? 'Célèbre tes petites victoires' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros';
-    const description = language === 'fr' ? "Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens." : language === 'en' ? "Recognizing your progress gives you strength to continue. Here, every effort counts and brings you closer to who you're becoming." : 'Reconocer tu progreso te da fuerzas para continuar. Aquí, cada esfuerzo cuenta y te acerca a la persona que estás convirtiéndote.';
-    const startText = language === 'fr' ? 'Commencer mon évolution' : language === 'en' ? 'Start my evolution' : 'Comenzar mi evolución';
-    const tags = language === 'fr' ? ['Petits succès', 'Motivation', 'Confiance en soi'] : language === 'en' ? ['Small wins', 'Motivation', 'Self-confidence'] : ['Pequeños logros', 'Motivación', 'Confianza en ti'];
+    const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
+    const examples = language === 'fr' 
+      ? ['J\'ai commencé…', 'Je n\'ai pas abandonné…', 'J\'ai essayé…', 'J\'ai réussi…']
+      : language === 'en'
+        ? ['I started…', 'I didn\'t give up…', 'I tried…', 'I succeeded…']
+        : ['Empecé…', 'No me rendí…', 'Intenté…', 'Lo logré…'];
+    const tags = ['#Action', '#Constance', '#Élan'];
 
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
-          {/* Titre principal */}
+          {/* Titre */}
           <div className="text-center space-y-4">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-              {title}
+              {language === 'fr' ? 'Reconnais tes efforts.' : language === 'en' ? 'Recognize your efforts.' : 'Reconoce tus esfuerzos.'}
             </h1>
           </div>
 
-          {/* Texte explicatif */}
-          <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
-            <p className="text-lg text-gray-600 leading-relaxed">
-              {description}
+          {/* Exemples */}
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 shadow-sm">
+            <p className="text-sm text-gray-500 mb-4 text-center">
+              {language === 'fr' ? 'Écris :' : language === 'en' ? 'Write:' : 'Escribe:'}
             </p>
+            <div className="space-y-3">
+              {examples.map((example, index) => (
+                <p key={index} className="text-lg text-gray-700 text-center font-medium">
+                  « {example} »
+                </p>
+              ))}
+            </div>
           </div>
+
+          {/* Texte */}
+          <p className="text-lg text-gray-600 text-center leading-relaxed">
+            {language === 'fr' 
+              ? 'Valide tes progrès. Bâtis ta fierté.' 
+              : language === 'en' 
+                ? 'Validate your progress. Build your pride.'
+                : 'Valida tu progreso. Construye tu orgullo.'}
+          </p>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 justify-center">
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
+                className="px-3 py-1.5 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Bouton Continuer */}
+          <Button
+            onClick={() => setCurrentView('presentation-3')}
+            className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+          >
+            {continueText}
+            <ChevronRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Page 4: Pourquoi ça marche ?
+  if (currentView === 'presentation-3') {
+    const startText = language === 'fr' ? 'Commencer' : language === 'en' ? 'Start' : 'Comenzar';
+    const tags = ['#Confiance', '#Clarté', '#Momentum'];
+
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-white">
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          {/* Titre */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+              {language === 'fr' ? 'Pourquoi ça marche ?' : language === 'en' ? 'Why does it work?' : '¿Por qué funciona?'}
+            </h1>
+          </div>
+
+          {/* Liste des avantages */}
+          <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
+                <p className="text-lg text-gray-700">
+                  {language === 'fr' 
+                    ? 'L\'auto-valorisation renforce la confiance.' 
+                    : language === 'en' 
+                      ? 'Self-validation strengthens confidence.'
+                      : 'La auto-validación fortalece la confianza.'}
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
+                <p className="text-lg text-gray-700">
+                  {language === 'fr' 
+                    ? 'Elle réduit le sentiment d\'échec.' 
+                    : language === 'en' 
+                      ? 'It reduces the feeling of failure.'
+                      : 'Reduce la sensación de fracaso.'}
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
+                <p className="text-lg text-gray-700">
+                  {language === 'fr' 
+                    ? 'Elle crée du momentum.' 
+                    : language === 'en' 
+                      ? 'It creates momentum.'
+                      : 'Crea momentum.'}
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          {/* Conclusion */}
+          <p className="text-xl text-center font-medium bg-gradient-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent">
+            {language === 'fr' 
+              ? 'Une victoire par semaine suffit.' 
+              : language === 'en' 
+                ? 'One victory per week is enough.'
+                : 'Una victoria por semana es suficiente.'}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1.5 rounded-full bg-pink-100 text-pink-700 text-sm font-medium"
               >
                 {tag}
               </span>

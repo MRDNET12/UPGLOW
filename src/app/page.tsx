@@ -5200,7 +5200,7 @@ PROCESO OBLIGATORIO:
 
       {/* Drawer Menu Ajouter (+) - Slide du bas vers le haut */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
-        <DrawerContent className="max-w-lg mx-auto">
+        <DrawerContent className="max-w-lg mx-auto bg-white">
           <DrawerHeader className="border-b">
             <div className="flex items-center justify-between">
               <DrawerTitle className="text-xl">

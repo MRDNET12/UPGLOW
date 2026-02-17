@@ -5019,7 +5019,7 @@ PROCESO OBLIGATORIO:
                 </span>
               </Button>
 
-              {/* La Forge */}
+              {/* Habitudes */}
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'trackers'
@@ -5028,28 +5028,28 @@ PROCESO OBLIGATORIO:
                   }`}
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
-                <Flame className="w-5 h-5" />
+                <Target className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'La Forge' : language === 'en' ? 'The Forge' : 'La Forja'}
+                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
                 </span>
               </Button>
 
-              {/* Identités */}
+              {/* Ma Semaine */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'settings'
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'routine'
                   ? 'bg-gray-900 text-white shadow-md'
                   : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                   }`}
-                onClick={() => setCurrentView('settings')}
+                onClick={() => setCurrentView('routine')}
               >
-                <User className="w-5 h-5" />
+                <Calendar className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Identités' : language === 'en' ? 'Identities' : 'Identidades'}
+                  {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
                 </span>
               </Button>
 
-              {/* Réglages */}
+              {/* Profil */}
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'settings'
@@ -5060,12 +5060,11 @@ PROCESO OBLIGATORIO:
               >
                 <Settings className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Réglages' : language === 'en' ? 'Settings' : 'Ajustes'}
+                  {language === 'fr' ? 'Profil' : language === 'en' ? 'Profile' : 'Perfil'}
                 </span>
               </Button>
             </div>
           </div>
-          
           {/* Bouton + flottant à droite */}
           <button
             onClick={() => setShowAddMenu(true)}
@@ -5075,7 +5074,7 @@ PROCESO OBLIGATORIO:
           </button>
         </nav>
       )}
- 
+
       {/* Drawer Menu Ajouter (+) - Slide du bas vers le haut */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
         <DrawerContent className="max-w-lg mx-auto">
@@ -5098,7 +5097,6 @@ PROCESO OBLIGATORIO:
               onClick={() => {
                 setShowAddMenu(false);
                 checkFeatureAccess('petites_victoires', () => {
-                  // Rediriger vers la page des petites victoires ou ouvrir le modal
                   setCurrentView('dashboard');
                 });
               }}
@@ -5125,12 +5123,10 @@ PROCESO OBLIGATORIO:
               }}
               className="w-full bg-[#E9D8FD] rounded-[2rem] p-5 relative h-[160px] overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-98 shadow-sm group"
             >
-              {/* Top Text */}
               <h3 className="text-lg font-bold text-[#2D2a2e] max-w-[60%] leading-snug relative z-10">
                 {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
               </h3>
 
-              {/* Character Bottom Left - CSS Art */}
               <div className="absolute bottom-[-15px] left-[-5px] transform rotate-[-5deg] transition-transform group-hover:rotate-0 duration-500">
                 <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#F0ABFC" />
@@ -5144,7 +5140,6 @@ PROCESO OBLIGATORIO:
                 </svg>
               </div>
 
-              {/* Button Bottom Right */}
               <div className="absolute bottom-4 right-4">
                 <div className="bg-black text-white text-xs font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
                   {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}

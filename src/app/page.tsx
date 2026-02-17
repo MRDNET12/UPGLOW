@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
@@ -66,7 +66,7 @@ import { useInstallTracking } from '@/hooks/useInstallTracking';
 import { useTrafficTracking, linkTrackingToUser, trackSubscription } from '@/hooks/useTrafficTracking';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 
-// Fonction utilitaire pour formater une date en YYYY-MM-DD sans probl├¿me de timezone
+// Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
 const getLocalDateString = (date: Date = new Date()): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -174,7 +174,7 @@ export default function GlowUpChallengeApp() {
 
   const { t } = useTranslation();
 
-  // Donn├®es localis├®es selon la langue
+  // Données localisées selon la langue
   const challengeDays = useMemo(() => getLocalizedChallengeDays(language), [language]);
   const bonusAffirmations = useMemo(() => getLocalizedBonusAffirmations(language), [language]);
   const checklistsData = useMemo(() => getLocalizedChecklistsData(language), [language]);
@@ -182,13 +182,13 @@ export default function GlowUpChallengeApp() {
   const bonusSections = useMemo(() => getLocalizedBonusSections(language), [language]);
   const fiftyThingsAlone = useMemo(() => getLocalizedFiftyThingsAlone(language), [language]);
 
-  // ├ëtat pour le dialog de f├®licitations
+  // État pour le dialog de félicitations
   const [showCongratulations, setShowCongratulations] = useState(false);
 
-  // ├ëtat pour le popup Glowee Chat
+  // État pour le popup Glowee Chat
   const [showGloweeChat, setShowGloweeChat] = useState(false);
 
-  // ├ëtats pour les popups de paywall
+  // États pour les popups de paywall
   const [showTrialExtension, setShowTrialExtension] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
   const [showPlanSelection, setShowPlanSelection] = useState(false);
@@ -196,24 +196,24 @@ export default function GlowUpChallengeApp() {
   const [shouldReopenSubscription, setShouldReopenSubscription] = useState(false);
   const [subscriptionSource, setSubscriptionSource] = useState<'button' | 'trial_expired'>('trial_expired');
 
-  // ├ëtats pour les popups Glowee
+  // États pour les popups Glowee
   const [showGloweeWelcome, setShowGloweeWelcome] = useState(false);
   const [showGloweeFifthVisit, setShowGloweeFifthVisit] = useState(false);
   const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
 
-  // ├ëtats pour le message Glowee avec effet typing et rotation toutes les 10 minutes
+  // États pour le message Glowee avec effet typing et rotation toutes les 10 minutes
   const [gloweeMessageIndex, setGloweeMessageIndex] = useState(0);
   const [displayedMessage, setDisplayedMessage] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [hasShownFirstMessage, setHasShownFirstMessage] = useState(false);
 
-  // ├ëtat pour le dialogue d'authentification
+  // État pour le dialogue d'authentification
   const [showAuthDialog, setShowAuthDialog] = useState(false);
 
-  // ├ëtat pour les actions en cours de disparition (effet avant tri)
+  // État pour les actions en cours de disparition (effet avant tri)
   const [fadingActions, setFadingActions] = useState<Set<string>>(new Set());
 
-  // ├ëtat pour les objectifs
+  // État pour les objectifs
   const [goals, setGoals] = useState<any[]>([]);
 
   // Helper function to check feature access and show paywall if needed
@@ -245,7 +245,7 @@ export default function GlowUpChallengeApp() {
     }
   }, [isHydrated]);
 
-  // ├ëcouter les changements dans localStorage pour mettre ├á jour les objectifs
+  // Écouter les changements dans localStorage pour mettre à jour les objectifs
   useEffect(() => {
     if (!isHydrated) return;
 
@@ -255,7 +255,7 @@ export default function GlowUpChallengeApp() {
       }
     };
 
-    // ├ëcouter les changements de localStorage (entre onglets uniquement)
+    // Écouter les changements de localStorage (entre onglets uniquement)
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
@@ -263,7 +263,7 @@ export default function GlowUpChallengeApp() {
     };
   }, [isHydrated]);
 
-  // V├®rifier l'acc├¿s aux vues payantes et rediriger si n├®cessaire
+  // Vérifier l'accès aux vues payantes et rediriger si nécessaire
   useEffect(() => {
     if (!isHydrated) return;
 
@@ -283,13 +283,13 @@ export default function GlowUpChallengeApp() {
 
   const [todayDate] = useState(() => getLocalDateString());
 
-  // ├ëtats pour les modals
+  // États pour les modals
   const [selectedChecklist, setSelectedChecklist] = useState<ReturnType<typeof getLocalizedChecklistsData>[0] | null>(null);
   const [showSoftLifeGuide, setShowSoftLifeGuide] = useState(false);
   const [selectedGuideStep, setSelectedGuideStep] = useState<number | null>(null);
   const [selectedBonusSection, setSelectedBonusSection] = useState<ReturnType<typeof getLocalizedBonusSections>[0] | null>(null);
 
-  // ├ëtats pour New Me
+  // États pour New Me
   const [selectedHabit, setSelectedHabit] = useState<typeof newMePillars[0] | null>(null);
   const [newMeDailyHabits, setNewMeDailyHabits] = useState<Record<string, boolean>>({});
   const [newMeFeeling, setNewMeFeeling] = useState('');
@@ -299,10 +299,10 @@ export default function GlowUpChallengeApp() {
   const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
   const [newMeStartDate, setNewMeStartDate] = useState<string | null>(null);
 
-  // ├ëtats pour Beauty Pillars (Challenge Beaut├® et Corps)
+  // États pour Beauty Pillars (Challenge Beauté et Corps)
   const [beautySelectedDate, setBeautySelectedDate] = useState<string>(getLocalDateString(new Date()));
   const [beautyChoiceExpanded, setBeautyChoiceExpanded] = useState(false);
-  const [expandedPillar, setExpandedPillar] = useState<string | null>(null); // Pour g├®rer l'ouverture des d├®tails des piliers
+  const [expandedPillar, setExpandedPillar] = useState<string | null>(null); // Pour gérer l'ouverture des détails des piliers
   const [beautyGloweeMessageIndex, setBeautyGloweeMessageIndex] = useState(0);
   const [beautyGloweeDisplayedMessage, setBeautyGloweeDisplayedMessage] = useState('');
   const [beautyGloweeIsTyping, setBeautyGloweeIsTyping] = useState(true);
@@ -310,7 +310,7 @@ export default function GlowUpChallengeApp() {
   const [showBeautyStreakPopup, setShowBeautyStreakPopup] = useState(false);
   const [showBeautyIncompletePopup, setShowBeautyIncompletePopup] = useState(false);
 
-  // ├ëtat pour le Journal
+  // État pour le Journal
   const [journalEntries, setJournalEntries] = useState<Array<{
     id: string;
     date: string;
@@ -325,11 +325,11 @@ export default function GlowUpChallengeApp() {
   const [journalCurrentMonth, setJournalCurrentMonth] = useState(new Date());
   const [editingEntry, setEditingEntry] = useState<typeof journalEntries[0] | null>(null);
 
-  // ├ëtat pour l'animation du Flow en arri├¿re-plan
+  // État pour l'animation du Flow en arrière-plan
   const [flowGenerationStep, setFlowGenerationStep] = useState(0);
   const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
 
-  // ├ëtat pour Glow Mirror
+  // État pour Glow Mirror
   const [showGlowMirror, setShowGlowMirror] = useState(false);
   const [glowMirrorMessage, setGlowMirrorMessage] = useState('');
   const [glowMirrorLoading, setGlowMirrorLoading] = useState(false);
@@ -352,12 +352,12 @@ export default function GlowUpChallengeApp() {
   const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
   const [showGlowMirrorAlert, setShowGlowMirrorAlert] = useState(false);
 
-  // Date de premi├¿re utilisation de l'app (pour Glow Mirror)
+  // Date de première utilisation de l'app (pour Glow Mirror)
   const [firstAppUseDate, setFirstAppUseDate] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('firstAppUseDate');
       if (saved) return saved;
-      // Si pas de date sauvegard├®e, c'est la premi├¿re utilisation
+      // Si pas de date sauvegardée, c'est la première utilisation
       const today = new Date().toISOString();
       localStorage.setItem('firstAppUseDate', today);
       return today;
@@ -367,7 +367,7 @@ export default function GlowUpChallengeApp() {
   const [daysSinceFirstUse, setDaysSinceFirstUse] = useState(0);
   const [isGlowMirrorReady, setIsGlowMirrorReady] = useState(false);
 
-  // Charger les entr├®es du journal depuis localStorage
+  // Charger les entrées du journal depuis localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('journalEntries');
@@ -377,14 +377,14 @@ export default function GlowUpChallengeApp() {
     }
   }, []);
 
-  // Sauvegarder les entr├®es du journal dans localStorage
+  // Sauvegarder les entrées du journal dans localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
     }
   }, [journalEntries]);
 
-  // Fonction pour sauvegarder une entr├®e (ajout ou modification)
+  // Fonction pour sauvegarder une entrée (ajout ou modification)
   const handleSaveJournalEntry = (entryData: Omit<typeof journalEntries[0], 'id'>) => {
     if (editingEntry) {
       setJournalEntries(prev => prev.map(e =>
@@ -401,14 +401,14 @@ export default function GlowUpChallengeApp() {
     setShowJournalEntryModal(false);
   };
 
-  // Fonction pour supprimer une entr├®e
+  // Fonction pour supprimer une entrée
   const deleteJournalEntry = (id: string) => {
-    if (confirm(language === 'fr' ? 'Supprimer cette entr├®e ?' : language === 'en' ? 'Delete this entry?' : '┬┐Eliminar esta entrada?')) {
+    if (confirm(language === 'fr' ? 'Supprimer cette entrée ?' : language === 'en' ? 'Delete this entry?' : '¿Eliminar esta entrada?')) {
       setJournalEntries(prev => prev.filter(e => e.id !== id));
     }
   };
 
-  // Fonction pour ├®diter une entr├®e
+  // Fonction pour éditer une entrée
   const editJournalEntry = (entry: typeof journalEntries[0]) => {
     setEditingEntry(entry);
     setShowJournalEntryModal(true);
@@ -427,7 +427,7 @@ export default function GlowUpChallengeApp() {
     });
   };
 
-  // Filtrer les entr├®es par mois
+  // Filtrer les entrées par mois
   const getFilteredJournalEntries = () => {
     return journalEntries.filter(entry => {
       const entryDate = new Date(entry.date);
@@ -436,12 +436,12 @@ export default function GlowUpChallengeApp() {
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
 
-  // V├®rifier si on peut voir le Glow Mirror (1x par semaine) + 7 jours minimum d'utilisation
+  // Vérifier si on peut voir le Glow Mirror (1x par semaine) + 7 jours minimum d'utilisation
   useEffect(() => {
     const checkGlowMirrorAvailability = () => {
       const now = new Date();
 
-      // V├®rifier si l'utilisateur a utilis├® l'app pendant au moins 7 jours
+      // Vérifier si l'utilisateur a utilisé l'app pendant au moins 7 jours
       const firstUse = new Date(firstAppUseDate);
       const daysSinceFirst = Math.floor((now.getTime() - firstUse.getTime()) / (1000 * 60 * 60 * 24));
       setDaysSinceFirstUse(daysSinceFirst);
@@ -455,14 +455,14 @@ export default function GlowUpChallengeApp() {
         return;
       }
 
-      // Si jamais vu, disponible apr├¿s 7 jours
+      // Si jamais vu, disponible après 7 jours
       if (!lastGlowMirrorView) {
         setCanViewGlowMirror(true);
         setShowGlowMirrorNotification(true);
         return;
       }
 
-      // V├®rifier 7 jours depuis la derni├¿re vue
+      // Vérifier 7 jours depuis la dernière vue
       const lastView = new Date(lastGlowMirrorView);
       const daysSinceLastView = Math.floor((now.getTime() - lastView.getTime()) / (1000 * 60 * 60 * 24));
       const isAvailable = daysSinceLastView >= 7;
@@ -473,22 +473,22 @@ export default function GlowUpChallengeApp() {
 
     checkGlowMirrorAvailability();
 
-    // V├®rifier toutes les heures
+    // Vérifier toutes les heures
     const interval = setInterval(checkGlowMirrorAvailability, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, [lastGlowMirrorView, firstAppUseDate]);
 
-  // Animation du Flow en arri├¿re-plan
+  // Animation du Flow en arrière-plan
   useEffect(() => {
     if (isGeneratingFlowBackground) {
       const interval = setInterval(() => {
         setFlowGenerationStep((prev) => (prev + 1) % 4);
-      }, 1250);
+      }, 1500);
       return () => clearInterval(interval);
     }
   }, [isGeneratingFlowBackground]);
 
-  // Helper: Calculer les jours cons├®cutifs d'une habitude
+  // Helper: Calculer les jours consécutifs d'une habitude
   const calculateHabitConsecutiveDays = (habitHistory: Array<{ date: string, completed: boolean }>) => {
     if (!habitHistory || habitHistory.length === 0) return 0;
 
@@ -590,7 +590,7 @@ export default function GlowUpChallengeApp() {
     throw new Error('Max retries reached');
   };
 
-  // G├®n├®rer le message Glow Mirror avec Kimi AI
+  // Générer le message Glow Mirror avec Kimi AI
   const generateGlowMirror = async (forceRetry = false) => {
     if (!forceRetry) {
       setGlowMirrorRetryCount(0);
@@ -600,7 +600,7 @@ export default function GlowUpChallengeApp() {
 
     const now = new Date();
 
-    // Collecter toutes les donn├®es
+    // Collecter toutes les données
     const smallWins = bonusProgress?.smallWins || [];
     const recentWins = smallWins.filter((win: any) => {
       const winDate = new Date(win.date);
@@ -611,7 +611,7 @@ export default function GlowUpChallengeApp() {
     const newMeHabits = JSON.parse(localStorage.getItem('newMeHabits') || '[]');
     const completedHabits = newMeHabits.filter((habit: any) => habit.completed);
 
-    // Calculer les jours cons├®cutifs pour chaque habitude
+    // Calculer les jours consécutifs pour chaque habitude
     const habitConsecutiveData = newMeHabits.map((habit: any) => ({
       name: habit.label || habit.name || 'Habit',
       streak: calculateHabitConsecutiveDays(habit.history || []),
@@ -633,7 +633,7 @@ export default function GlowUpChallengeApp() {
     const challengeProgress = JSON.parse(localStorage.getItem('challengeProgress') || '{}');
     const completedDays = Object.values(challengeProgress).filter((p: any) => p.completed).length;
 
-    // Calculer des statistiques avanc├®es
+    // Calculer des statistiques avancées
     const habitCompletionRate = newMeHabits.length > 0 ? Math.round((completedHabits.length / newMeHabits.length) * 100) : 0;
     const taskCompletionRate = weekTasks.length > 0 ? Math.round((completedTasks.length / weekTasks.length) * 100) : 0;
     const boundaryCompletionRate = boundariesData.length > 0 ? Math.round((completedBoundaries.length / boundariesData.length) * 100) : 0;
@@ -648,7 +648,7 @@ export default function GlowUpChallengeApp() {
       ? Math.round((moodCounts[dominantMood] / recentEntries.length) * 100)
       : 0;
 
-    // Analyser les tags les plus utilis├®s
+    // Analyser les tags les plus utilisés
     const allTags = recentEntries.flatMap((e: any) => e.tags || []);
     const tagCounts: Record<string, number> = {};
     allTags.forEach((tag: string) => {
@@ -659,7 +659,7 @@ export default function GlowUpChallengeApp() {
       .slice(0, 5)
       .map(([tag, count]) => ({ tag, count }));
 
-    // Calculer la r├®gularit├® (streak)
+    // Calculer la régularité (streak)
     let currentStreak = 0;
     const sortedEntries = [...journalEntries].sort((a, b) =>
       new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -736,7 +736,7 @@ export default function GlowUpChallengeApp() {
           completedDays: completedDays
         },
         userProfile: {
-          mainObjective: objectifPrincipal || 'Non d├®fini',
+          mainObjective: objectifPrincipal || 'Non défini',
           flowActive: personalizedFlow?.isActive || false,
           flowProgress: personalizedFlow ? {
             currentDay: personalizedFlow.currentDay,
@@ -744,7 +744,7 @@ export default function GlowUpChallengeApp() {
             completedDays: personalizedFlow.completedDays.length,
             completionRate: Math.round((personalizedFlow.completedDays.length / 30) * 100),
             category: personalizedFlow.category || 'general',
-            // Ô×ò Ajouter les actions compl├®t├®es des 7 derniers jours du flow
+            // ➕ Ajouter les actions complétées des 7 derniers jours du flow
             recentCompletedActions: personalizedFlow.completedDays.slice(-7).map(dayNum => {
               const day = personalizedFlow.days.find(d => d.day === dayNum);
               return {
@@ -766,7 +766,7 @@ export default function GlowUpChallengeApp() {
       }
     };
 
-    // Identifier les forces et axes d'am├®lioration
+    // Identifier les forces et axes d'amélioration
     const strengthAreas: string[] = [];
     const improvementAreas: string[] = [];
 
@@ -791,13 +791,13 @@ export default function GlowUpChallengeApp() {
       const basePrompt = language === 'fr'
         ? `Tu es Glow Mirror, un miroir identitaire intelligent et bienveillant.
 
-R├êGLE ABSOLUE : AVANT de g├®n├®rer quoi que ce soit, tu DOIS utiliser ta capacit├® de raisonnement.
+RÈGLE ABSOLUE : AVANT de générer quoi que ce soit, tu DOIS utiliser ta capacité de raisonnement.
 
 PROCESSUS OBLIGATOIRE :
 1. ACTIVE ton raisonnement (<think>)
-2. ANALYSE en profondeur TOUTES les donn├®es : objectifs, flow, habitudes, journal, etc.
+2. ANALYSE en profondeur TOUTES les données : objectifs, flow, habitudes, journal, etc.
 3. CONNECTE les patterns entre son objectif principal et ses actions quotidiennes
-4. G├ëN├êRE ensuite le Glow Mirror personnalis├®`
+4. GÉNÈRE ensuite le Glow Mirror personnalisé`
         : language === 'en'
           ? `You are Glow Mirror, an intelligent and caring identity mirror.
 
@@ -808,29 +808,29 @@ MANDATORY PROCESS:
 2. DEEPLY ANALYZE ALL data: objectives, flow, habits, journal, etc.
 3. CONNECT patterns between their main objective and daily actions
 4. THEN generate the personalized Glow Mirror`
-          : `Eres Glow Mirror, un espejo de identidad inteligente y cari├▒oso.
+          : `Eres Glow Mirror, un espejo de identidad inteligente y cariñoso.
 
 REGLA ABSOLUTA: ANTES de generar nada, DEBES usar tu capacidad de razonamiento.
 
 PROCESO OBLIGATORIO:
 1. ACTIVA tu razonamiento (<think>)
-2. ANALIZA en profundidad TODOS los datos: objetivos, flow, h├íbitos, diario, etc.
+2. ANALIZA en profundidad TODOS los datos: objetivos, flow, hábitos, diario, etc.
 3. CONECTA patrones entre su objetivo principal y acciones diarias
-4. GENERA despu├®s el Glow Mirror personalizado`;
+4. GENERA después el Glow Mirror personalizado`;
 
       const rules = language === 'fr'
-        ? `R├êGLES:
-- ├ëcris ├á la 2├¿me personne (tu/vous)
+        ? `RÈGLES:
+- Écris à la 2ème personne (tu/vous)
 - Ton humain, chaleureux mais professionnel
-- Structure: 1) Analyse profonde de qui elle est, 2) Tendances remarquables avec comparaisons, 3) Conseil d'am├®lioration ultra-personnalis├®
-- Sois pr├®cis: cite des chiffres, des patterns, des exemples concrets
-- Analyse les tendances sur 2 semaines (comparaison semaine actuelle vs pr├®c├®dente)
-- Mentionne ses streaks de cons├®cutivit├® comme preuve de sa discipline
-- Le conseil doit ├¬tre actionnable et adapt├® ├á son profil
-- Si elle manque de r├®gularit├®, sugg├¿re un micro-habit facile
-- Si elle est tr├¿s active, sugg├¿re comment optimiser ou ├®quilibrer
-- Si la tendance est n├®gative, encourage-la avec bienveillance
-- IMPORTANT : Relie TOUJOURS l'analyse ├á son objectif principal et son Flow`
+- Structure: 1) Analyse profonde de qui elle est, 2) Tendances remarquables avec comparaisons, 3) Conseil d'amélioration ultra-personnalisé
+- Sois précis: cite des chiffres, des patterns, des exemples concrets
+- Analyse les tendances sur 2 semaines (comparaison semaine actuelle vs précédente)
+- Mentionne ses streaks de consécutivité comme preuve de sa discipline
+- Le conseil doit être actionnable et adapté à son profil
+- Si elle manque de régularité, suggère un micro-habit facile
+- Si elle est très active, suggère comment optimiser ou équilibrer
+- Si la tendance est négative, encourage-la avec bienveillance
+- IMPORTANT : Relie TOUJOURS l'analyse à son objectif principal et son Flow`
         : language === 'en'
           ? `RULES:
 - Write in 2nd person (you)
@@ -845,21 +845,21 @@ PROCESO OBLIGATORIO:
 - If trend is negative, encourage them with kindness
 - IMPORTANT: ALWAYS connect the analysis to their main objective and Flow`
           : `REGLAS:
-- Escribe en 2┬¬ persona (t├║)
-- Tono humano, c├ílido pero profesional
-- Estructura: 1) An├ílisis profundo de qui├®n es, 2) Tendencias notables con comparaciones, 3) Consejo de mejora ultra-personalizado
-- S├® espec├¡fico: cita n├║meros, patrones, ejemplos concretos
-- Analiza tendencias durante 2 semanas (comparaci├│n semana actual vs anterior)
+- Escribe en 2ª persona (tú)
+- Tono humano, cálido pero profesional
+- Estructura: 1) Análisis profundo de quién es, 2) Tendencias notables con comparaciones, 3) Consejo de mejora ultra-personalizado
+- Sé específico: cita números, patrones, ejemplos concretos
+- Analiza tendencias durante 2 semanas (comparación semana actual vs anterior)
 - Menciona sus rachas consecutivas como prueba de disciplina
 - El consejo debe ser accionable y adaptado a su perfil
-- Si le falta regularidad, sugiere un micro-h├íbito f├ícil
-- Si es muy activa, sugiere c├│mo optimizar o equilibrar
-- Si la tendencia es negativa, an├¡mala con amabilidad
-- IMPORTANTE: CONECTA SIEMPRE el an├ílisis a su objetivo principal y Flow`;
+- Si le falta regularidad, sugiere un micro-hábito fácil
+- Si es muy activa, sugiere cómo optimizar o equilibrar
+- Si la tendencia es negativa, anímala con amabilidad
+- IMPORTANTE: CONECTA SIEMPRE el análisis a su objetivo principal y Flow`;
 
       const length = glowMirrorDeepMode
-        ? (language === 'fr' ? 'Message de 15-25 lignes pour une analyse profonde' : language === 'en' ? 'Message of 15-25 lines for deep analysis' : 'Mensaje de 15-25 l├¡neas para an├ílisis profundo')
-        : (language === 'fr' ? 'Message de 8-15 lignes' : language === 'en' ? 'Message of 8-15 lines' : 'Mensaje de 8-15 l├¡neas');
+        ? (language === 'fr' ? 'Message de 15-25 lignes pour une analyse profonde' : language === 'en' ? 'Message of 15-25 lines for deep analysis' : 'Mensaje de 15-25 líneas para análisis profundo')
+        : (language === 'fr' ? 'Message de 8-15 lignes' : language === 'en' ? 'Message of 8-15 lines' : 'Mensaje de 8-15 líneas');
 
       return `${basePrompt}\n\n${rules}\n\n${length}`;
     };
@@ -867,16 +867,16 @@ PROCESO OBLIGATORIO:
     const systemPrompt = getSystemPrompt();
 
     const userPrompt = language === 'fr'
-      ? `DONN├ëES COMPL├êTES DE L'UTILISATRICE (7 derniers jours):\n\n${JSON.stringify(promptData, null, 2)}\n\nÔÜá´©Å PROCESSUS OBLIGATOIRE - ├ëTAPE 1: RAISONNEMENT\nAvant de g├®n├®rer le Glow Mirror, tu DOIS fournir ton analyse entre balises <think> :\n<think>\n- Objectif principal de l'utilisatrice: ${objectifPrincipal || 'Non d├®fini'}\n- Flow actif: ${personalizedFlow?.isActive ? 'OUI' : 'NON'}\n- Si Flow actif: Jour ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} jours compl├®t├®s\n- Analyse de la coh├®rence: Ses actions quotidiennes soutiennent-elles son objectif principal?\n- Patterns identifi├®s: Quels liens entre ses habitudes et son objectif?\n- Forces et blocages li├®s ├á son objectif\n- Recommandations pr├®liminaires\n</think>\n\n├ëTAPE 2: GLOW MIRROR\nG├®n├¿re maintenant:\n1. UN MIROIR PROFOND: Qui est-elle vraiment? Ses patterns? Forces cach├®es? Mentionne ses streaks comme preuves de discipline.\n2. TENDANCES: Compare cette semaine ├á la pr├®c├®dente. Progression ou r├®gression?\n3. CONSEIL ACTIONNABLE: Ultra-personnalis├®, connect├® ├á son objectif principal "${objectifPrincipal || 'sa vision'}" et son Flow de 30 jours.\n\n${glowMirrorDeepMode ? 'Mode Profond: 15-25 lignes.' : '8-15 lignes.'}`
+      ? `DONNÉES COMPLÈTES DE L'UTILISATRICE (7 derniers jours):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESSUS OBLIGATOIRE - ÉTAPE 1: RAISONNEMENT\nAvant de générer le Glow Mirror, tu DOIS fournir ton analyse entre balises <think> :\n<think>\n- Objectif principal de l'utilisatrice: ${objectifPrincipal || 'Non défini'}\n- Flow actif: ${personalizedFlow?.isActive ? 'OUI' : 'NON'}\n- Si Flow actif: Jour ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} jours complétés\n- Analyse de la cohérence: Ses actions quotidiennes soutiennent-elles son objectif principal?\n- Patterns identifiés: Quels liens entre ses habitudes et son objectif?\n- Forces et blocages liés à son objectif\n- Recommandations préliminaires\n</think>\n\nÉTAPE 2: GLOW MIRROR\nGénère maintenant:\n1. UN MIROIR PROFOND: Qui est-elle vraiment? Ses patterns? Forces cachées? Mentionne ses streaks comme preuves de discipline.\n2. TENDANCES: Compare cette semaine à la précédente. Progression ou régression?\n3. CONSEIL ACTIONNABLE: Ultra-personnalisé, connecté à son objectif principal "${objectifPrincipal || 'sa vision'}" et son Flow de 30 jours.\n\n${glowMirrorDeepMode ? 'Mode Profond: 15-25 lignes.' : '8-15 lignes.'}`
       : language === 'en'
-        ? `COMPLETE USER DATA (last 7 days):\n\n${JSON.stringify(promptData, null, 2)}\n\nÔÜá´©Å MANDATORY PROCESS - STEP 1: REASONING\nBefore generating the Glow Mirror, you MUST provide your analysis between <think> tags:\n<think>\n- User's main objective: ${objectifPrincipal || 'Not defined'}\n- Flow active: ${personalizedFlow?.isActive ? 'YES' : 'NO'}\n- If Flow active: Day ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} days completed\n- Coherence analysis: Do her daily actions support her main objective?\n- Patterns identified: What links between her habits and objective?\n- Strengths and blocks related to her objective\n- Preliminary recommendations\n</think>\n\nSTEP 2: GLOW MIRROR\nNow generate:\n1. A DEEP MIRROR: Who is she really? Her patterns? Hidden strengths? Mention her streaks as proof of discipline.\n2. TRENDS: Compare this week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized, connected to her main objective "${objectifPrincipal || 'her vision'}" and her 30-day Flow.\n\n${glowMirrorDeepMode ? 'Deep Mode: 15-25 lines.' : '8-15 lines.'}`
-        : `DATOS COMPLETOS DE LA USUARIA (├║ltimos 7 d├¡as):\n\n${JSON.stringify(promptData, null, 2)}\n\nÔÜá´©Å PROCESO OBLIGATORIO - PASO 1: RAZONAMIENTO\nAntes de generar el Glow Mirror, DEBES proporcionar tu an├ílisis entre etiquetas <think> :\n<think>\n- Objetivo principal de la usuaria: ${objectifPrincipal || 'No definido'}\n- Flow activo: ${personalizedFlow?.isActive ? 'S├ì' : 'NO'}\n- Si Flow activo: D├¡a ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} d├¡as completados\n- An├ílisis de coherencia: ┬┐Sus acciones diarias apoyan su objetivo principal?\n- Patrones identificados: ┬┐Qu├® v├¡nculos entre sus h├íbitos y objetivo?\n- Fortalezas y bloqueos relacionados con su objetivo\n- Recomendaciones preliminares\n</think>\n\nPASO 2: GLOW MIRROR\nGenera ahora:\n1. ESPEJO PROFUNDO: ┬┐Qui├®n es realmente? ┬┐Sus patrones? ┬┐Fortalezas ocultas? Menciona sus rachas como prueba de disciplina.\n2. TENDENCIAS: Compara esta semana con la anterior. ┬┐Progreso o regresi├│n?\n3. CONSEJO ACCIONABLE: Ultra-personalizado, conectado a su objetivo principal "${objectifPrincipal || 'su visi├│n'}" y su Flow de 30 d├¡as.\n\n${glowMirrorDeepMode ? 'Modo Profundo: 15-25 l├¡neas.' : '8-15 l├¡neas.'}`;
+        ? `COMPLETE USER DATA (last 7 days):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ MANDATORY PROCESS - STEP 1: REASONING\nBefore generating the Glow Mirror, you MUST provide your analysis between <think> tags:\n<think>\n- User's main objective: ${objectifPrincipal || 'Not defined'}\n- Flow active: ${personalizedFlow?.isActive ? 'YES' : 'NO'}\n- If Flow active: Day ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} days completed\n- Coherence analysis: Do her daily actions support her main objective?\n- Patterns identified: What links between her habits and objective?\n- Strengths and blocks related to her objective\n- Preliminary recommendations\n</think>\n\nSTEP 2: GLOW MIRROR\nNow generate:\n1. A DEEP MIRROR: Who is she really? Her patterns? Hidden strengths? Mention her streaks as proof of discipline.\n2. TRENDS: Compare this week to previous. Progress or regression?\n3. ACTIONABLE ADVICE: Ultra-personalized, connected to her main objective "${objectifPrincipal || 'her vision'}" and her 30-day Flow.\n\n${glowMirrorDeepMode ? 'Deep Mode: 15-25 lines.' : '8-15 lines.'}`
+        : `DATOS COMPLETOS DE LA USUARIA (últimos 7 días):\n\n${JSON.stringify(promptData, null, 2)}\n\n⚠️ PROCESO OBLIGATORIO - PASO 1: RAZONAMIENTO\nAntes de generar el Glow Mirror, DEBES proporcionar tu análisis entre etiquetas <think> :\n<think>\n- Objetivo principal de la usuaria: ${objectifPrincipal || 'No definido'}\n- Flow activo: ${personalizedFlow?.isActive ? 'SÍ' : 'NO'}\n- Si Flow activo: Día ${personalizedFlow?.currentDay}/30, ${personalizedFlow?.completedDays.length || 0} días completados\n- Análisis de coherencia: ¿Sus acciones diarias apoyan su objetivo principal?\n- Patrones identificados: ¿Qué vínculos entre sus hábitos y objetivo?\n- Fortalezas y bloqueos relacionados con su objetivo\n- Recomendaciones preliminares\n</think>\n\nPASO 2: GLOW MIRROR\nGenera ahora:\n1. ESPEJO PROFUNDO: ¿Quién es realmente? ¿Sus patrones? ¿Fortalezas ocultas? Menciona sus rachas como prueba de disciplina.\n2. TENDENCIAS: Compara esta semana con la anterior. ¿Progreso o regresión?\n3. CONSEJO ACCIONABLE: Ultra-personalizado, conectado a su objetivo principal "${objectifPrincipal || 'su visión'}" y su Flow de 30 días.\n\n${glowMirrorDeepMode ? 'Modo Profundo: 15-25 líneas.' : '8-15 líneas.'}`;
 
     setGlowMirrorLoading(true);
     setGlowMirrorRetryCount(forceRetry ? glowMirrorRetryCount + 1 : 0);
 
     try {
-      // Liste des mod├¿les
+      // Liste des modèles
       const models = [
         'openrouter/pony-alpha',
         'deepseek/deepseek-r1-0528:free',
@@ -927,14 +927,14 @@ PROCESO OBLIGATORIO:
 
       console.log('[Glow Mirror] Response length:', aiMessage.length);
 
-      // ÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöü
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       // VALIDATION STRICTE DU RAISONNEMENT (BLOQUANTE)
-      // ÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöü
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
       const thinkMatch = aiMessage.match(/<think>([\s\S]*?)<\/think>/);
 
       if (!thinkMatch) {
-        console.error('[Glow Mirror] ÔØî REJECTED: No <think> reasoning found!');
+        console.error('[Glow Mirror] ❌ REJECTED: No <think> reasoning found!');
         console.error('[Glow Mirror] Content preview:', aiMessage.substring(0, 500));
         throw new Error('AI did not provide reasoning for Glow Mirror');
       }
@@ -942,46 +942,46 @@ PROCESO OBLIGATORIO:
       const reasoning = thinkMatch[1].trim();
 
       if (reasoning.length < 150) {
-        console.error('[Glow Mirror] ÔØî REJECTED: Reasoning too short!');
+        console.error('[Glow Mirror] ❌ REJECTED: Reasoning too short!');
         console.error('[Glow Mirror] Reasoning length:', reasoning.length);
         throw new Error('AI reasoning insufficient (< 150 chars)');
       }
 
-      // V├®rifier que le raisonnement contient les ├®l├®ments cl├®s
-      const hasAnalysis = /coh├®rence|pattern|tendance|trend|coherence|patr├│n/i.test(reasoning);
+      // Vérifier que le raisonnement contient les éléments clés
+      const hasAnalysis = /cohérence|pattern|tendance|trend|coherence|patrón/i.test(reasoning);
 
       if (!hasAnalysis) {
-        console.error('[Glow Mirror] ÔØî REJECTED: Reasoning missing analysis!');
+        console.error('[Glow Mirror] ❌ REJECTED: Reasoning missing analysis!');
         throw new Error('AI reasoning incomplete - missing analysis');
       }
 
-      console.log('[Glow Mirror] Ô£à Valid reasoning detected');
+      console.log('[Glow Mirror] ✅ Valid reasoning detected');
       console.log('[Glow Mirror] Reasoning preview:', reasoning.substring(0, 200) + '...');
 
-      // Extraire uniquement le contenu apr├¿s </think> pour l'affichage
+      // Extraire uniquement le contenu après </think> pour l'affichage
       const afterThink = aiMessage.split(/<\/think>/).pop() || aiMessage;
       aiMessage = afterThink.trim();
 
-      // ÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöü
-      // VALIDATION DE LA QUALIT├ë DU MESSAGE
-      // ÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöüÔöü
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // VALIDATION DE LA QUALITÉ DU MESSAGE
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
       const minLength = glowMirrorDeepMode ? 400 : 200;
       if (aiMessage.length < minLength) {
-        console.warn('[Glow Mirror] ÔÜá´©Å Message shorter than expected:', aiMessage.length, 'chars');
+        console.warn('[Glow Mirror] ⚠️ Message shorter than expected:', aiMessage.length, 'chars');
       }
 
-      // V├®rifier que le message mentionne l'objectif (si d├®fini)
+      // Vérifier que le message mentionne l'objectif (si défini)
       if (objectifPrincipal && !aiMessage.toLowerCase().includes(objectifPrincipal.toLowerCase().substring(0, 10))) {
-        console.warn('[Glow Mirror] ÔÜá´©Å Message does not mention main objective');
+        console.warn('[Glow Mirror] ⚠️ Message does not mention main objective');
       }
 
-      // V├®rifier que le message mentionne le Flow (si actif)
-      if (personalizedFlow?.isActive && !/flow|jour|day|d├¡a/i.test(aiMessage)) {
-        console.warn('[Glow Mirror] ÔÜá´©Å Message does not mention Flow');
+      // Vérifier que le message mentionne le Flow (si actif)
+      if (personalizedFlow?.isActive && !/flow|jour|day|día/i.test(aiMessage)) {
+        console.warn('[Glow Mirror] ⚠️ Message does not mention Flow');
       }
 
-      console.log('[Glow Mirror] Ô£à Message quality validated');
+      console.log('[Glow Mirror] ✅ Message quality validated');
 
       setGlowMirrorMessage(aiMessage);
       setGlowMirrorQAMessages([{ role: 'assistant', content: aiMessage }]);
@@ -991,7 +991,7 @@ PROCESO OBLIGATORIO:
       setGlowMirrorHistory(newHistory);
       localStorage.setItem('glowMirrorHistory', JSON.stringify(newHistory));
 
-      // D├®clencher le confetti apr├¿s 2 secondes
+      // Déclencher le confetti après 2 secondes
       setTimeout(() => {
         setGlowMirrorHasBeenRead(true);
         confetti({
@@ -1011,11 +1011,11 @@ PROCESO OBLIGATORIO:
         return;
       }
 
-      // Message de fallback apr├¿s les retries
+      // Message de fallback après les retries
       const fallbackMessages = {
-        fr: "Tu es en train de construire quelque chose de beau. Chaque petit pas compte. Prends un moment pour c├®l├®brer qui tu es aujourd'hui.",
+        fr: "Tu es en train de construire quelque chose de beau. Chaque petit pas compte. Prends un moment pour célébrer qui tu es aujourd'hui.",
         en: "You are building something beautiful. Every small step counts. Take a moment to celebrate who you are today.",
-        es: "Est├ís construyendo algo hermoso. Cada peque├▒o paso cuenta. T├│mate un momento para celebrar qui├®n eres hoy."
+        es: "Estás construyendo algo hermoso. Cada pequeño paso cuenta. Tómate un momento para celebrar quién eres hoy."
       };
       setGlowMirrorMessage(fallbackMessages[language]);
       setGlowMirrorQAMessages([{ role: 'assistant', content: fallbackMessages[language] }]);
@@ -1045,10 +1045,10 @@ PROCESO OBLIGATORIO:
     setGlowMirrorQAMessages(updatedMessages);
 
     const qaSystemPrompt = language === 'fr'
-      ? "Tu es Glow Mirror. R├®ponds ├á la question de l'utilisatrice de fa├ºon concise (3-5 lignes max), bienveillante et personnalis├®e. Base-toi sur le contexte pr├®c├®dent."
+      ? "Tu es Glow Mirror. Réponds à la question de l'utilisatrice de façon concise (3-5 lignes max), bienveillante et personnalisée. Base-toi sur le contexte précédent."
       : language === 'en'
         ? "You are Glow Mirror. Answer the user's question concisely (3-5 lines max), kindly and personally. Base yourself on the previous context."
-        : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 l├¡neas m├íx), amable y personalizada. Bas├índote en el contexto anterior.";
+        : "Eres Glow Mirror. Responde a la pregunta de la usuaria de forma concisa (3-5 líneas máx), amable y personalizada. Basándote en el contexto anterior.";
 
     try {
       const models = [
@@ -1095,10 +1095,10 @@ PROCESO OBLIGATORIO:
     } catch (error) {
       console.error('Q&A Error:', error);
       const fallback = language === 'fr'
-        ? "Je ne peux pas r├®pondre pour le moment. Continue ton beau travail !"
+        ? "Je ne peux pas répondre pour le moment. Continue ton beau travail !"
         : language === 'en'
           ? "I can't answer right now. Keep up your great work!"
-          : "No puedo responder ahora. ┬íSigue con tu gran trabajo!";
+          : "No puedo responder ahora. ¡Sigue con tu gran trabajo!";
       setGlowMirrorQAMessages([...updatedMessages, { role: 'assistant', content: fallback }]);
     } finally {
       setGlowMirrorQALoading(false);
@@ -1117,13 +1117,13 @@ PROCESO OBLIGATORIO:
     }
   }, [openMenuEntryId]);
 
-  // ├ëtat pour les pages d'onboarding avec Glowee
+  // État pour les pages d'onboarding avec Glowee
   const [onboardingPage, setOnboardingPage] = useState(1);
 
-  // ├ëtat pour le drawer de switch de challenge
+  // État pour le drawer de switch de challenge
   const [showChallengeDrawer, setShowChallengeDrawer] = useState(false);
 
-  // ├ëtats pour Tracker
+  // États pour Tracker
   const [trackerCurrentDay, setTrackerCurrentDay] = useState(1);
   const [trackerStartDate, setTrackerStartDate] = useState<string | null>(null);
   const [customHabits, setCustomHabits] = useState<Array<{ id: string, label: string, type: 'good' | 'bad' }>>([]);
@@ -1132,42 +1132,42 @@ PROCESO OBLIGATORIO:
   const [newHabitType, setNewHabitType] = useState<'good' | 'bad'>('good');
 
   // New Me habits - 9 predefined habits with completion tracking
-  // Donn├®es des habitudes New Me avec traductions
+  // Données des habitudes New Me avec traductions
   const newMeHabitsData = {
     water: {
-      icon: '­ƒÆº',
+      icon: '💧',
       label: {
-        fr: 'Boire 1,5ÔÇô2 L d\'eau',
-        en: 'Drink 1.5ÔÇô2 L of water',
-        es: 'Beber 1,5ÔÇô2 L de agua'
+        fr: 'Boire 1,5–2 L d\'eau',
+        en: 'Drink 1.5–2 L of water',
+        es: 'Beber 1,5–2 L de agua'
       }
     },
     move: {
-      icon: '­ƒÅâ',
+      icon: '🏃',
       label: {
-        fr: 'Bouger 20ÔÇô30 min',
-        en: 'Move 20ÔÇô30 min',
-        es: 'Moverse 20ÔÇô30 min'
+        fr: 'Bouger 20–30 min',
+        en: 'Move 20–30 min',
+        es: 'Moverse 20–30 min'
       }
     },
     positive: {
-      icon: 'Ô£ì´©Å',
+      icon: '✍️',
       label: {
-        fr: '├ëcrire une pens├®e positive',
+        fr: 'Écrire une pensée positive',
         en: 'Write a positive thought',
         es: 'Escribir un pensamiento positivo'
       }
     },
     win: {
-      icon: '­ƒÅå',
+      icon: '🏆',
       label: {
         fr: 'Noter une petite victoire',
         en: 'Note a small win',
-        es: 'Anotar una peque├▒a victoria'
+        es: 'Anotar una pequeña victoria'
       }
     },
     tidy: {
-      icon: '­ƒº╣',
+      icon: '🧹',
       label: {
         fr: 'Ranger mon espace 5 min',
         en: 'Tidy my space 5 min',
@@ -1175,33 +1175,33 @@ PROCESO OBLIGATORIO:
       }
     },
     future: {
-      icon: '­ƒÜÇ',
+      icon: '🚀',
       label: {
         fr: 'Faire une action pour mon futur',
         en: 'Do an action for my future',
-        es: 'Hacer una acci├│n para mi futuro'
+        es: 'Hacer una acción para mi futuro'
       }
     },
     priority: {
-      icon: '­ƒÄ»',
+      icon: '🎯',
       label: {
-        fr: 'D├®finir une priorit├® du jour',
+        fr: 'Définir une priorité du jour',
         en: 'Define today\'s priority',
-        es: 'Definir una prioridad del d├¡a'
+        es: 'Definir una prioridad del día'
       }
     },
     imperfect: {
-      icon: 'Ô£ô',
+      icon: '✓',
       label: {
-        fr: 'Accomplir une t├óche imparfaite',
+        fr: 'Accomplir une tâche imparfaite',
         en: 'Complete an imperfect task',
         es: 'Completar una tarea imperfecta'
       }
     },
     bed: {
-      icon: '­ƒîÖ',
+      icon: '🌙',
       label: {
-        fr: 'Me coucher en me disant : ┬½ J\'ai avanc├®. ┬╗',
+        fr: 'Me coucher en me disant : « J\'ai avancé. »',
         en: 'Go to bed saying: "I made progress."',
         es: 'Acostarme diciendo: "He avanzado."'
       }
@@ -1224,7 +1224,7 @@ PROCESO OBLIGATORIO:
     label: string;
     completed: boolean;
   }>>(() => {
-    // Lire depuis le format individuel newme_${id}_${date} (utilis├® par la page Progression)
+    // Lire depuis le format individuel newme_${id}_${date} (utilisé par la page Progression)
     const today = getLocalDateString();
     const translatedHabits = getTranslatedNewMeHabits();
     return translatedHabits.map(habit => {
@@ -1251,7 +1251,7 @@ PROCESO OBLIGATORIO:
     }
   }, [newMeHabits]);
 
-  // Mettre ├á jour les labels des habitudes quand la langue change
+  // Mettre à jour les labels des habitudes quand la langue change
   useEffect(() => {
     setNewMeHabits(prevHabits => {
       return prevHabits.map(habit => ({
@@ -1261,27 +1261,27 @@ PROCESO OBLIGATORIO:
     });
   }, [language]);
 
-  // Bloc par d├®faut unique et non-modifiable
+  // Bloc par défaut unique et non-modifiable
   const getDefaultHabitBlocks = () => [
     {
       id: 'essential-today',
-      name: language === 'fr' ? 'Habitudes - Glow Up' : language === 'en' ? 'Habits - Glow Up' : 'H├íbitos - Glow Up',
-      icon: 'Ô£¿',
+      name: language === 'fr' ? 'Habitudes - Glow Up' : language === 'en' ? 'Habits - Glow Up' : 'Hábitos - Glow Up',
+      icon: '✨',
       color: 'from-white to-gray-50',
       description: '',
       habits: [
-        { id: 'water', label: language === 'fr' ? 'Boire 1,5ÔÇô2 L d\'eau' : language === 'en' ? 'Drink 1.5ÔÇô2 L of water' : 'Beber 1,5ÔÇô2 L de agua', completed: false },
-        { id: 'move', label: language === 'fr' ? 'Bouger 20ÔÇô30 min (marche, sport, ├®tirements)' : language === 'en' ? 'Move 20ÔÇô30 min (walk, sport, stretching)' : 'Moverse 20ÔÇô30 min (caminar, deporte, estiramientos)', completed: false },
-        { id: 'positive-thought', label: language === 'fr' ? '├ëcrire une pens├®e positive sur moi' : language === 'en' ? 'Write a positive thought about myself' : 'Escribir un pensamiento positivo sobre m├¡', completed: false },
-        { id: 'daily-win', label: language === 'fr' ? 'Noter une petite victoire' : language === 'en' ? 'Note a small win' : 'Anotar una peque├▒a victoria', completed: false },
+        { id: 'water', label: language === 'fr' ? 'Boire 1,5–2 L d\'eau' : language === 'en' ? 'Drink 1.5–2 L of water' : 'Beber 1,5–2 L de agua', completed: false },
+        { id: 'move', label: language === 'fr' ? 'Bouger 20–30 min (marche, sport, étirements)' : language === 'en' ? 'Move 20–30 min (walk, sport, stretching)' : 'Moverse 20–30 min (caminar, deporte, estiramientos)', completed: false },
+        { id: 'positive-thought', label: language === 'fr' ? 'Écrire une pensée positive sur moi' : language === 'en' ? 'Write a positive thought about myself' : 'Escribir un pensamiento positivo sobre mí', completed: false },
+        { id: 'daily-win', label: language === 'fr' ? 'Noter une petite victoire' : language === 'en' ? 'Note a small win' : 'Anotar una pequeña victoria', completed: false },
         { id: 'clean-space', label: language === 'fr' ? 'Ranger mon espace 5 minutes' : language === 'en' ? 'Tidy my space 5 minutes' : 'Ordenar mi espacio 5 minutos', completed: false },
-        { id: 'future-action', label: language === 'fr' ? 'Faire une action utile pour mon futur' : language === 'en' ? 'Do a useful action for my future' : 'Hacer una acci├│n ├║til para mi futuro', completed: false },
-        { id: 'daily-priority', label: language === 'fr' ? 'D├®finir une priorit├® du jour' : language === 'en' ? 'Define a priority of the day' : 'Definir una prioridad del d├¡a', completed: false },
-        { id: 'imperfect-task', label: language === 'fr' ? 'Accomplir une t├óche m├¬me imparfaite' : language === 'en' ? 'Complete a task even if imperfect' : 'Completar una tarea aunque sea imperfecta', completed: false },
-        { id: 'progress-check', label: language === 'fr' ? 'Me coucher en me disant : ┬½ J\'ai avanc├®. ┬╗' : language === 'en' ? 'Go to bed saying: "I made progress."' : 'Acostarme dici├®ndome: "Avanc├®."', completed: false }
+        { id: 'future-action', label: language === 'fr' ? 'Faire une action utile pour mon futur' : language === 'en' ? 'Do a useful action for my future' : 'Hacer una acción útil para mi futuro', completed: false },
+        { id: 'daily-priority', label: language === 'fr' ? 'Définir une priorité du jour' : language === 'en' ? 'Define a priority of the day' : 'Definir una prioridad del día', completed: false },
+        { id: 'imperfect-task', label: language === 'fr' ? 'Accomplir une tâche même imparfaite' : language === 'en' ? 'Complete a task even if imperfect' : 'Completar una tarea aunque sea imperfecta', completed: false },
+        { id: 'progress-check', label: language === 'fr' ? 'Me coucher en me disant : « J\'ai avancé. »' : language === 'en' ? 'Go to bed saying: "I made progress."' : 'Acostarme diciéndome: "Avancé."', completed: false }
       ],
       collapsed: false,
-      isDefault: true // Marquer comme bloc par d├®faut non-supprimable
+      isDefault: true // Marquer comme bloc par défaut non-supprimable
     }
   ];
 
@@ -1304,12 +1304,12 @@ PROCESO OBLIGATORIO:
 
   const [showCreateBlock, setShowCreateBlock] = useState(false);
   const [newBlockName, setNewBlockName] = useState('');
-  const [newBlockIcon, setNewBlockIcon] = useState('­ƒôØ');
+  const [newBlockIcon, setNewBlockIcon] = useState('📝');
   const [newBlockColor, setNewBlockColor] = useState('from-blue-100 to-indigo-100');
-  // Mode liste fixe pour le bloc par d├®faut (non modifiable)
+  // Mode liste fixe pour le bloc par défaut (non modifiable)
   const habitGridMode = 'list' as const;
 
-  // ├ëtats pour l'ajout de nouvelles habitudes dans les blocs
+  // États pour l'ajout de nouvelles habitudes dans les blocs
   const [addingHabitToBlock, setAddingHabitToBlock] = useState<string | null>(null);
   const [newBlockHabitLabel, setNewBlockHabitLabel] = useState('');
 
@@ -1320,31 +1320,31 @@ PROCESO OBLIGATORIO:
     return Math.round((completed / block.habits.length) * 100);
   };
 
-  // Donn├®es pour les intentions et humeurs
+  // Données pour les intentions et humeurs
   const INTENTIONS_DATA = [
     { id: 'respect', fr: 'se respecte', en: 'respects themselves', es: 'se respeta' },
-    { id: 'advance', fr: 'avance m├¬me lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
-    { id: 'energy', fr: 'prend soin de son ├®nergie', en: 'takes care of energy', es: 'cuida su energ├¡a' },
+    { id: 'advance', fr: 'avance même lentement', en: 'moves forward slowly', es: 'avanza aunque sea lentamente' },
+    { id: 'energy', fr: 'prend soin de son énergie', en: 'takes care of energy', es: 'cuida su energía' },
     { id: 'word', fr: 'tient parole', en: 'keeps their word', es: 'cumple su palabra' },
   ];
 
   const INTENTION_MESSAGES = [
     'Tu t\'engages envers toi.',
     'Tu honores cette intention.',
-    'Alignement confirm├®.',
-    'C\'est assum├®.',
-    'Tu avances avec ├ºa.',
+    'Alignement confirmé.',
+    'C\'est assumé.',
+    'Tu avances avec ça.',
   ];
 
   const MOODS_DATA = [
     { id: 'calm', fr: 'Calme', en: 'Calm', es: 'Tranquilo', icon: Sun, color: '#0ea5e9', bgColor: 'bg-sky-100', textColor: 'text-sky-700', gradient: 'from-sky-400 to-cyan-400', iconColor: '#0ea5e9' },
-    { id: 'tired', fr: 'Fatigu├®', en: 'Tired', es: 'Cansado', icon: Moon, color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700', gradient: 'from-gray-400 to-gray-500', iconColor: '#6b7280' },
+    { id: 'tired', fr: 'Fatigué', en: 'Tired', es: 'Cansado', icon: Moon, color: '#6b7280', bgColor: 'bg-gray-100', textColor: 'text-gray-700', gradient: 'from-gray-400 to-gray-500', iconColor: '#6b7280' },
     { id: 'proud', fr: 'Fier', en: 'Proud', es: 'Orgulloso', icon: Sparkles, color: '#f59e0b', bgColor: 'bg-amber-100', textColor: 'text-amber-700', gradient: 'from-amber-400 to-orange-400', iconColor: '#f59e0b' },
     { id: 'sad', fr: 'Triste', en: 'Sad', es: 'Triste', icon: Frown, color: '#6366f1', bgColor: 'bg-indigo-100', textColor: 'text-indigo-700', gradient: 'from-indigo-400 to-purple-400', iconColor: '#6366f1' },
     { id: 'neutral', fr: 'Neutre', en: 'Neutral', es: 'Neutral', icon: Meh, color: '#14b8a6', bgColor: 'bg-teal-100', textColor: 'text-teal-700', gradient: 'from-teal-400 to-emerald-400', iconColor: '#14b8a6' },
   ];
 
-  // ├ëtats pour "Comment je me sens ?" et "Intention du jour"
+  // États pour "Comment je me sens ?" et "Intention du jour"
   const [dailyFeeling, setDailyFeeling] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(`dailyFeeling_${getLocalDateString()}`);
@@ -1385,16 +1385,16 @@ PROCESO OBLIGATORIO:
     }
   }, [dailyIntention]);
 
-  // ├ëtats pour Planning
+  // États pour Planning
   // Planning tab is now simplified to only 'my-tasks'
   const planningTab = 'my-tasks';
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
 
-  // ├ëtats pour TimeCapsule (Message ├á moi)
+  // États pour TimeCapsule (Message à moi)
   const [showTimeCapsuleCard, setShowTimeCapsuleCard] = useState(false);
   const [timeCapsuleExpanded, setTimeCapsuleExpanded] = useState(false);
 
-  // Mes t├óches (manuelles)
+  // Mes tâches (manuelles)
   const [myWeekPriorities, setMyWeekPriorities] = useState<Array<{ id: string, text: string, completed: boolean }>>([]);
   const [myWeeklyTasks, setMyWeeklyTasks] = useState<Record<string, Array<{ id: string, text: string, completed: boolean }>>>({
     monday: [],
@@ -1406,7 +1406,7 @@ PROCESO OBLIGATORIO:
     sunday: []
   });
 
-  // T├óches avec dates sp├®cifiques (nouvelle structure)
+  // Tâches avec dates spécifiques (nouvelle structure)
   const [tasksWithDates, setTasksWithDates] = useState<Array<{
     id: string;
     text: string;
@@ -1415,18 +1415,18 @@ PROCESO OBLIGATORIO:
     type: 'glowee' | 'user';
     priority?: string;
     category?: string;
-    goalId?: string; // ID de l'objectif associ├®
+    goalId?: string; // ID de l'objectif associé
     goalName?: string; // Nom de l'objectif
     goalColor?: string; // Couleur de l'objectif
   }>>([]);
 
-  // Synchronisation Firebase pour les t├óches du planning
+  // Synchronisation Firebase pour les tâches du planning
   usePlanningSync(tasksWithDates, setTasksWithDates);
 
   // Navigation par semaine
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0); // 0 = semaine actuelle, 1 = semaine prochaine, etc.
 
-  // Objectifs avec leurs priorit├®s
+  // Objectifs avec leurs priorités
   const [goalsWithPriorities, setGoalsWithPriorities] = useState<Array<{
     id: string;
     name: string;
@@ -1442,31 +1442,26 @@ PROCESO OBLIGATORIO:
   const [showDeleteTaskConfirm, setShowDeleteTaskConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<{ id: string, day: string, type: 'priority' | 'task' } | null>(null);
 
-  // ├ëtats pour l'installation PWA (Android uniquement)
+  // États pour l'installation PWA (Android uniquement)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
 
-  // Hydratation du store - ├®vite les probl├¿mes d'hydratation SSR/CSR
+  // Hydratation du store - évite les problèmes d'hydratation SSR/CSR
   useEffect(() => {
     setIsHydrated(true);
-
-    // Rediriger vers le dashboard si l'utilisateur a d├®j├á compl├®t├® l'onboarding
-    if (hasStarted && currentView !== 'dashboard') {
-      setCurrentView('dashboard');
-    }
   }, []);
 
   // Gestion de l'installation PWA pour Android
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // D├®tecter si l'utilisateur est sur Android
+    // Détecter si l'utilisateur est sur Android
     const userAgent = navigator.userAgent.toLowerCase();
     const isAndroidDevice = userAgent.includes('android');
     setIsAndroid(isAndroidDevice);
 
-    // V├®rifier si l'app est d├®j├á install├®e (mode standalone)
+    // Vérifier si l'app est déjà installée (mode standalone)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
       || (window.navigator as any).standalone === true;
 
@@ -1475,7 +1470,7 @@ PROCESO OBLIGATORIO:
       return;
     }
 
-    // ├ëcouter l'├®v├®nement beforeinstallprompt
+    // Écouter l'événement beforeinstallprompt
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -1485,7 +1480,7 @@ PROCESO OBLIGATORIO:
       }
     };
 
-    // ├ëcouter quand l'app est install├®e
+    // Écouter quand l'app est installée
     const handleAppInstalled = () => {
       setShowInstallButton(false);
       setDeferredPrompt(null);
@@ -1500,23 +1495,23 @@ PROCESO OBLIGATORIO:
     };
   }, []);
 
-  // Initialiser la premi├¿re ouverture de l'app et g├®rer le paywall
+  // Initialiser la première ouverture de l'app et gérer le paywall
   useEffect(() => {
     if (isHydrated) {
-      // Initialiser la date de premi├¿re ouverture
+      // Initialiser la date de première ouverture
       initializeFirstOpen();
 
-      // V├®rifier si on doit afficher le popup d'extension de trial (jour 4)
+      // Vérifier si on doit afficher le popup d'extension de trial (jour 4)
       const remainingDays = getRemainingFreeDays();
       const hasExpired = isTrialExpired();
 
-      // Si c'est le 4├¿me jour (remainingDays === 0 pour les 3 premiers jours)
+      // Si c'est le 4ème jour (remainingDays === 0 pour les 3 premiers jours)
       // et que l'utilisateur n'est pas inscrit et n'a pas vu le popup
       if (remainingDays === 0 && !subscription.hasRegistered && !subscription.hasSeenTrialPopup) {
         setShowTrialExtension(true);
       }
 
-      // Si la p├®riode d'essai est expir├®e et pas d'abonnement
+      // Si la période d'essai est expirée et pas d'abonnement
       if (hasExpired && !subscription.isSubscribed) {
         setSubscriptionSource('trial_expired');
         setShowSubscription(true);
@@ -1524,7 +1519,7 @@ PROCESO OBLIGATORIO:
     }
   }, [isHydrated, initializeFirstOpen, getRemainingFreeDays, isTrialExpired, subscription]);
 
-  // Rouvrir le popup d'abonnement apr├¿s l'inscription si n├®cessaire
+  // Rouvrir le popup d'abonnement après l'inscription si nécessaire
   useEffect(() => {
     if (user && shouldReopenSubscription) {
       // L'utilisateur vient de se connecter et on doit rouvrir le popup
@@ -1534,11 +1529,11 @@ PROCESO OBLIGATORIO:
     }
   }, [user, shouldReopenSubscription]);
 
-  // Animation de switch pour TimeCapsule (Message ├á moi)
-  // 3s cartes normales, 20s Message ├á moi - s'arr├¬te si premium ou si expanded
+  // Animation de switch pour TimeCapsule (Message à moi)
+  // 3s cartes normales, 20s Message à moi - s'arrête si premium ou si expanded
   useEffect(() => {
     if (subscription.isSubscribed) {
-      // Si premium, afficher toujours la carte Message ├á moi (statique)
+      // Si premium, afficher toujours la carte Message à moi (statique)
       setShowTimeCapsuleCard(true);
       return;
     }
@@ -1555,7 +1550,7 @@ PROCESO OBLIGATORIO:
       // Afficher les cartes normales pendant 3s
       setShowTimeCapsuleCard(false);
       timeoutId = setTimeout(() => {
-        // Afficher Message ├á moi pendant 20s (10s de plus qu'avant)
+        // Afficher Message à moi pendant 20s (10s de plus qu'avant)
         setShowTimeCapsuleCard(true);
         timeoutId = setTimeout(() => {
           // Recommencer le cycle seulement si pas expanded
@@ -1574,24 +1569,24 @@ PROCESO OBLIGATORIO:
   }, [subscription.isSubscribed, timeCapsuleExpanded]);
 
   // Tracker les visites et afficher les popups Glowee
-  // D├ëSACTIV├ë TEMPORAIREMENT - Les popups s'affichent trop souvent
+  // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
   /*
   useEffect(() => {
     if (isHydrated && hasStarted) {
       // Tracker la visite de l'app
       trackVisit('app');
 
-      // V├®rifier si c'est la 1├¿re visite du dashboard
+      // Vérifier si c'est la 1ère visite du dashboard
       if (currentView === 'dashboard' && isFirstVisit('home')) {
         setTimeout(() => setShowGloweeWelcome(true), 1000);
       }
 
-      // V├®rifier si c'est la 5├¿me visite de l'app
+      // Vérifier si c'est la 5ème visite de l'app
       if (isFifthAppVisit()) {
         setTimeout(() => setShowGloweeFifthVisit(true), 1500);
       }
 
-      // V├®rifier si c'est la 1├¿re visite du planning
+      // Vérifier si c'est la 1ère visite du planning
       if (currentView === 'routine' && isFirstVisit('planning')) {
         setTimeout(() => setShowGloweePlanningWelcome(true), 1000);
       }
@@ -1602,28 +1597,28 @@ PROCESO OBLIGATORIO:
   // Messages Glowee avec effet typing et rotation toutes les 10 minutes
   const gloweeHomepageMessages = {
     fr: [
-      'Continue comme ├ºa, tu es sur la bonne voie ! Ô£¿',
-      'Chaque petit pas compte, ma belle ! ­ƒÆ½',
-      'Tu fais d├®j├á tellement de progr├¿s ! ­ƒî©',
-      'Je suis fi├¿re de toi ! Continue ! ­ƒÆû',
-      'Tu rayonnes de plus en plus ! Ô£¿',
-      'Avance ├á ton rythme, c\'est parfait ! ­ƒîƒ'
+      'Continue comme ça, tu es sur la bonne voie ! ✨',
+      'Chaque petit pas compte, ma belle ! 💫',
+      'Tu fais déjà tellement de progrès ! 🌸',
+      'Je suis fière de toi ! Continue ! 💖',
+      'Tu rayonnes de plus en plus ! ✨',
+      'Avance à ton rythme, c\'est parfait ! 🌟'
     ],
     en: [
-      'Keep it up, you\'re on the right track! Ô£¿',
-      'Every little step counts, beautiful! ­ƒÆ½',
-      'You\'re already making so much progress! ­ƒî©',
-      'I\'m proud of you! Keep going! ­ƒÆû',
-      'You\'re shining more and more! Ô£¿',
-      'Go at your own pace, it\'s perfect! ­ƒîƒ'
+      'Keep it up, you\'re on the right track! ✨',
+      'Every little step counts, beautiful! 💫',
+      'You\'re already making so much progress! 🌸',
+      'I\'m proud of you! Keep going! 💖',
+      'You\'re shining more and more! ✨',
+      'Go at your own pace, it\'s perfect! 🌟'
     ],
     es: [
-      '┬íSigue as├¡, vas por buen camino! Ô£¿',
-      '┬íCada peque├▒o paso cuenta, hermosa! ­ƒÆ½',
-      '┬íYa est├ís haciendo tanto progreso! ­ƒî©',
-      '┬íEstoy orgullosa de ti! ┬íContin├║a! ­ƒÆû',
-      '┬íBrillas cada vez m├ís! Ô£¿',
-      '┬íVe a tu ritmo, es perfecto! ­ƒîƒ'
+      '¡Sigue así, vas por buen camino! ✨',
+      '¡Cada pequeño paso cuenta, hermosa! 💫',
+      '¡Ya estás haciendo tanto progreso! 🌸',
+      '¡Estoy orgullosa de ti! ¡Continúa! 💖',
+      '¡Brillas cada vez más! ✨',
+      '¡Ve a tu ritmo, es perfecto! 🌟'
     ]
   };
 
@@ -1634,11 +1629,11 @@ PROCESO OBLIGATORIO:
     const langMessages = gloweeHomepageMessages[language] || gloweeHomepageMessages.fr;
     const currentMessage = langMessages[gloweeMessageIndex % langMessages.length];
 
-    // V├®rifier si c'est la premi├¿re apparition
+    // Vérifier si c'est la première apparition
     const hasShownTyping = localStorage.getItem('gloweeTypingShown');
 
     if (!hasShownTyping && !hasShownFirstMessage) {
-      // Effet typing pour la premi├¿re fois
+      // Effet typing pour la première fois
       setIsTyping(true);
       let charIndex = 0;
       setDisplayedMessage('');
@@ -1674,7 +1669,7 @@ PROCESO OBLIGATORIO:
     return () => clearInterval(interval);
   }, [isHydrated]);
 
-  // Effet typing pour la Glowee du challenge beaut├®
+  // Effet typing pour la Glowee du challenge beauté
   useEffect(() => {
     if (!isHydrated) return;
 
@@ -1707,7 +1702,7 @@ PROCESO OBLIGATORIO:
     }
   }, [isHydrated, beautyGloweeMessageIndex, language, beautyHasShownFirstMessage]);
 
-  // Auto-fermer la popup de s├®rie apr├¿s 5 secondes
+  // Auto-fermer la popup de série après 5 secondes
   useEffect(() => {
     if (showBeautyStreakPopup) {
       const timer = setTimeout(() => {
@@ -1717,7 +1712,7 @@ PROCESO OBLIGATORIO:
     }
   }, [showBeautyStreakPopup]);
 
-  // Initialiser la date de d├®but et calculer le jour actuel pour New Me
+  // Initialiser la date de début et calculer le jour actuel pour New Me
   useEffect(() => {
     if (isHydrated) {
       const storedStartDate = localStorage.getItem('newMeStartDate');
@@ -1728,7 +1723,7 @@ PROCESO OBLIGATORIO:
         setNewMeCurrentDay(1);
       } else {
         setNewMeStartDate(storedStartDate);
-        // Calculer le jour actuel bas├® sur la date de d├®but
+        // Calculer le jour actuel basé sur la date de début
         const start = new Date(storedStartDate);
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - start.getTime());
@@ -1739,7 +1734,7 @@ PROCESO OBLIGATORIO:
     }
   }, [isHydrated]);
 
-  // Initialiser la date de d├®but et calculer le jour actuel pour Tracker
+  // Initialiser la date de début et calculer le jour actuel pour Tracker
   useEffect(() => {
     if (isHydrated) {
       const storedStartDate = localStorage.getItem('trackerStartDate');
@@ -1766,14 +1761,14 @@ PROCESO OBLIGATORIO:
     }
   }, [isHydrated]);
 
-  // Sauvegarder les habitudes personnalis├®es
+  // Sauvegarder les habitudes personnalisées
   useEffect(() => {
     if (isHydrated && customHabits.length > 0) {
       localStorage.setItem('customHabits', JSON.stringify(customHabits));
     }
   }, [customHabits, isHydrated]);
 
-  // Charger et sauvegarder les donn├®es du planning
+  // Charger et sauvegarder les données du planning
   useEffect(() => {
     if (isHydrated) {
       const storedMyPriorities = localStorage.getItem('myWeekPriorities');
@@ -1800,10 +1795,10 @@ PROCESO OBLIGATORIO:
     }
   }, [myWeeklyTasks, isHydrated]);
 
-  // Note: Le chargement et la sauvegarde des t├óches avec dates sont maintenant g├®r├®s par usePlanningSync
+  // Note: Le chargement et la sauvegarde des tâches avec dates sont maintenant gérés par usePlanningSync
   // qui charge depuis Firebase au montage et synchronise automatiquement les changements
 
-  // Charger et sauvegarder les objectifs avec priorit├®s
+  // Charger et sauvegarder les objectifs avec priorités
   useEffect(() => {
     if (isHydrated) {
       const savedGoalsWithPriorities = localStorage.getItem('goalsWithPriorities');
@@ -1827,7 +1822,7 @@ PROCESO OBLIGATORIO:
   }, [hasStarted, setCurrentView, isHydrated]);
 
 
-  // Scroll to top quand on acc├¿de ├á la page Glow Up (bonus)
+  // Scroll to top quand on accède à la page Glow Up (bonus)
   useEffect(() => {
     if (currentView === 'bonus') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1845,7 +1840,7 @@ PROCESO OBLIGATORIO:
     for (let i = 0; i < 7; i++) {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
-      // Utiliser getLocalDateString pour ├®viter les probl├¿mes de timezone avec toISOString()
+      // Utiliser getLocalDateString pour éviter les problèmes de timezone avec toISOString()
       dates.push(getLocalDateString(date));
     }
     return dates;
@@ -1867,7 +1862,7 @@ PROCESO OBLIGATORIO:
     return `${start} - ${end}`;
   };
 
-  // Obtenir les objectifs actifs (avec t├óches) pour la semaine actuelle
+  // Obtenir les objectifs actifs (avec tâches) pour la semaine actuelle
   const getActiveGoals = () => {
     const weekDates = getWeekDates(currentWeekOffset);
     const goalsMap = new Map<string, { id: string; name: string; color: string }>();
@@ -1887,7 +1882,7 @@ PROCESO OBLIGATORIO:
     return Array.from(goalsMap.values());
   };
 
-  // Variables pour les priorit├®s et t├óches de la semaine
+  // Variables pour les priorités et tâches de la semaine
   const weekPriorities = myWeekPriorities;
   const setWeekPriorities = setMyWeekPriorities;
   const weeklyTasks = myWeeklyTasks;
@@ -1932,7 +1927,7 @@ PROCESO OBLIGATORIO:
     const wasCompleted = challengeProgress.completedDays.includes(currentDay);
     toggleDayCompletion(currentDay);
 
-    // Afficher les f├®licitations seulement si on vient de compl├®ter (pas de d├®compl├®ter)
+    // Afficher les félicitations seulement si on vient de compléter (pas de décompléter)
     if (!wasCompleted) {
       setShowCongratulations(true);
     }
@@ -1960,10 +1955,10 @@ PROCESO OBLIGATORIO:
 
   const progressPercentage = getProgressPercentage();
 
-  // Bloquer l'acc├¿s si l'essai est expir├® et pas d'abonnement
-  // Cette v├®rification s'applique ├á toutes les vues sauf language-selection, challenge et les pages d'onboarding
-  // Les challenges (Beaut├® et Corps, Esprit et Vie) sont toujours accessibles
-  // Les pages de pr├®sentation et de configuration des objectifs sont aussi accessibles
+  // Bloquer l'accès si l'essai est expiré et pas d'abonnement
+  // Cette vérification s'applique à toutes les vues sauf language-selection, challenge et les pages d'onboarding
+  // Les challenges (Beauté et Corps, Esprit et Vie) sont toujours accessibles
+  // Les pages de présentation et de configuration des objectifs sont aussi accessibles
   const isChallengeView = currentView === 'challenge-selection' || currentView === 'dashboard' || currentView === 'challenge';
   const isOnboardingView = currentView === 'presentation-1' || currentView === 'presentation-2' || currentView === 'goal-setup-5' || currentView === 'goal-setup-1';
   const shouldBlockAccess = hasSelectedLanguage && !canAccessApp() && !subscription.isSubscribed && !isChallengeView && !isOnboardingView;
@@ -1999,9 +1994,9 @@ PROCESO OBLIGATORIO:
           {/* Language Options - Clean White Cards */}
           <div className="space-y-2 animate-in slide-in-from-bottom duration-700 delay-200">
             {[
-              { code: 'fr' as Language, name: 'Fran├ºais', flag: '­ƒç½­ƒçÀ' },
-              { code: 'en' as Language, name: 'English', flag: '­ƒç¼­ƒçº' },
-              { code: 'es' as Language, name: 'Espa├▒ol', flag: '­ƒç¬­ƒç©' }
+              { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
+              { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
+              { code: 'es' as Language, name: 'Español', flag: '🇪🇸' }
             ].map((lang) => (
               <button
                 key={lang.code}
@@ -2047,7 +2042,7 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Si l'acc├¿s est bloqu├®, afficher uniquement le popup de subscription
+  // Si l'accès est bloqué, afficher uniquement le popup de subscription
   if (shouldBlockAccess) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-stone-950' : 'bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50'}`}>
@@ -2170,7 +2165,7 @@ PROCESO OBLIGATORIO:
                 ? "Tu ne poursuis pas seulement des objectifs. Tu construis la personne capable de les atteindre."
                 : language === 'en'
                   ? "You're not just pursuing goals. You're building the person capable of achieving them."
-                  : "No solo persigues objetivos. Est├ís construyendo a la persona capaz de lograrlos."
+                  : "No solo persigues objetivos. Estás construyendo a la persona capaz de lograrlos."
               }
             </p>
           </div>
@@ -2188,12 +2183,12 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Page de pr├®sentation 1: Chaque petit pas te fait avancer
+  // Page de présentation 1: Chaque petit pas te fait avancer
   if (currentView === 'presentation-1') {
-    const title = language === 'fr' ? 'Chaque petit pas te fait avancer' : language === 'en' ? 'Every small step moves you forward' : 'Cada peque├▒o paso te hace avanzar';
-    const description = language === 'fr' ? "Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pens├®e, une victoire ├á la fois." : language === 'en' ? "Change doesn't happen overnight. This app guides your progress, one habit, one thought, one victory at a time." : 'El cambio no ocurre de la noche a la ma├▒ana. Esta app te acompa├▒a en tu progreso, un h├íbito, un pensamiento, una victoria a la vez.';
+    const title = language === 'fr' ? 'Chaque petit pas te fait avancer' : language === 'en' ? 'Every small step moves you forward' : 'Cada pequeño paso te hace avanzar';
+    const description = language === 'fr' ? "Changer ne se fait pas d'un coup. Cette app t'accompagne dans ta progression, une habitude, une pensée, une victoire à la fois." : language === 'en' ? "Change doesn't happen overnight. This app guides your progress, one habit, one thought, one victory at a time." : 'El cambio no ocurre de la noche a la mañana. Esta app te acompaña en tu progreso, un hábito, un pensamiento, una victoria a la vez.';
     const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
-    const tags = language === 'fr' ? ['Progression', 'Habitudes', '├ëvolution personnelle'] : language === 'en' ? ['Progress', 'Habits', 'Personal growth'] : ['Progreso', 'H├íbitos', 'Evoluci├│n personal'];
+    const tags = language === 'fr' ? ['Progression', 'Habitudes', 'Évolution personnelle'] : language === 'en' ? ['Progress', 'Habits', 'Personal growth'] : ['Progreso', 'Hábitos', 'Evolución personal'];
 
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
@@ -2237,12 +2232,12 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Page de pr├®sentation 2: C├®l├¿bre tes petites victoires
+  // Page de présentation 2: Célèbre tes petites victoires
   if (currentView === 'presentation-2') {
-    const title = language === 'fr' ? 'C├®l├¿bre tes petites victoires' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus peque├▒os logros';
-    const description = language === 'fr' ? "Reconna├«tre tes progr├¿s te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens." : language === 'en' ? "Recognizing your progress gives you strength to continue. Here, every effort counts and brings you closer to who you're becoming." : 'Reconocer tu progreso te da fuerzas para continuar. Aqu├¡, cada esfuerzo cuenta y te acerca a la persona que est├ís convirti├®ndote.';
-    const startText = language === 'fr' ? 'Commencer mon ├®volution' : language === 'en' ? 'Start my evolution' : 'Comenzar mi evoluci├│n';
-    const tags = language === 'fr' ? ['Petits succ├¿s', 'Motivation', 'Confiance en soi'] : language === 'en' ? ['Small wins', 'Motivation', 'Self-confidence'] : ['Peque├▒os logros', 'Motivaci├│n', 'Confianza en ti'];
+    const title = language === 'fr' ? 'Célèbre tes petites victoires' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros';
+    const description = language === 'fr' ? "Reconnaître tes progrès te donne la force de continuer. Ici, chaque effort compte et te rapproche de la personne que tu deviens." : language === 'en' ? "Recognizing your progress gives you strength to continue. Here, every effort counts and brings you closer to who you're becoming." : 'Reconocer tu progreso te da fuerzas para continuar. Aquí, cada esfuerzo cuenta y te acerca a la persona que estás convirtiéndote.';
+    const startText = language === 'fr' ? 'Commencer mon évolution' : language === 'en' ? 'Start my evolution' : 'Comenzar mi evolución';
+    const tags = language === 'fr' ? ['Petits succès', 'Motivation', 'Confiance en soi'] : language === 'en' ? ['Small wins', 'Motivation', 'Self-confidence'] : ['Pequeños logros', 'Motivación', 'Confianza en ti'];
 
     return (
       <div className="min-h-screen flex flex-col p-6 bg-white">
@@ -2275,7 +2270,7 @@ PROCESO OBLIGATORIO:
 
           {/* Bouton Commencer */}
           <Button
-            onClick={() => startChallenge()}
+            onClick={() => setCurrentView('goal-setup-5')}
             className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
           >
             {startText}
@@ -2286,9 +2281,113 @@ PROCESO OBLIGATORIO:
     );
   }
 
+  // Goal Setup Page A - Define 5 objectives
+  if (currentView === 'goal-setup-5') {
+    return (
+      <GoalSetup5
+        language={language}
+        onContinue={(objectives) => {
+          setObjectifsInitiaux(objectives);
+          setObjectifsPrioritaires(objectives);
+          setCurrentView('goal-setup-1');
+        }}
+      />
+    );
+  }
 
+  // Goal Setup Page B - Select 1 objective
+  if (currentView === 'goal-setup-1') {
+    return (
+      <GoalSetup1
+        language={language}
+        objectifsPrioritaires={objectifsInitiaux}
+        onStart={(objectifPrincipal) => {
+          setObjectifPrincipal(objectifPrincipal);
+          setCurrentView('flow-proposition');
+        }}
+      />
+    );
+  }
 
-  // Page du Flow Challenge - Suivi jour apr├¿s jour
+  // Page de proposition de Flow - Page 1
+  if (currentView === 'flow-proposition') {
+    const title = language === 'fr' ? 'Un pas de plus vers ton objectif' : language === 'en' ? 'One step closer to your goal' : 'Un paso más hacia tu objetivo';
+    const description1 = language === 'fr' ? 'Tu as choisi de te concentrer sur :' : language === 'en' ? 'You chose to focus on:' : 'Elegiste concentrarte en:';
+    const description2 = language === 'fr' ? 'Souhaites-tu passer à l\'action avec un Flow de 30 jours ?' : language === 'en' ? 'Do you want to take action with a 30-day Flow?' : '¿Quieres pasar a la acción con un Flow de 30 días?';
+    const description3 = language === 'fr' ? '3 petites actions par jour pour avancer vers ton objectif' : language === 'en' ? '3 small actions per day to move toward your goal' : '3 pequeñas acciones por día para avanzar hacia tu objetivo';
+    const yesButton = language === 'fr' ? 'Oui, je veux essayer' : language === 'en' ? 'Yes, I want to try' : 'Sí, quiero probar';
+    const noButton = language === 'fr' ? 'Pas maintenant' : language === 'en' ? 'Not now' : 'Ahora no';
+
+    return (
+      <div className="min-h-screen flex flex-col p-6 bg-white">
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full space-y-8">
+          {/* Titre */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+              {title}
+            </h1>
+          </div>
+
+          {/* Objectif principal affiché */}
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 shadow-sm border-2 border-pink-200">
+            <p className="text-sm text-pink-600 font-medium mb-2">{description1}</p>
+            <p className="text-xl font-bold text-gray-800">"{objectifPrincipal}"</p>
+          </div>
+
+          {/* Description du Flow */}
+          <div className="text-center space-y-2">
+            <p className="text-lg text-gray-700 font-medium">
+              {description2}
+            </p>
+            <p className="text-sm text-gray-500">
+              {description3}
+            </p>
+          </div>
+
+          {/* Boutons */}
+          <div className="space-y-4">
+            <Button
+              onClick={() => setCurrentView('flow-description')}
+              className="w-full h-14 text-lg bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200/50 hover:shadow-xl transition-all"
+            >
+              {yesButton}
+              <ChevronRight className="ml-2 w-5 h-5" />
+            </Button>
+
+            <Button
+              onClick={() => startChallenge()}
+              variant="outline"
+              className="w-full h-14 text-lg text-gray-600 font-medium rounded-2xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
+            >
+              {noButton}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Page de description du Flow - Page A (saisie de l'objectif)
+  if (currentView === 'flow-description') {
+    return (
+      <FlowDescriptionPage
+        language={language}
+        objectifPrincipal={objectifPrincipal}
+        onBack={() => setCurrentView('flow-proposition')}
+        onCreate={(description) => {
+          setFlowDescription(description);
+          // Lancer la génération en arrière-plan
+          generateFlowInBackground(objectifPrincipal, description);
+          // Attendre 5 secondes avec animation puis rediriger vers l'accueil
+          setTimeout(() => {
+            setCurrentView('dashboard');
+          }, 5000);
+        }}
+      />
+    );
+  }
+
+  // Page du Flow Challenge - Suivi jour après jour
   if (currentView === 'flow-challenge') {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -2313,57 +2412,11 @@ PROCESO OBLIGATORIO:
     );
   }
 
-  // Page d'objectif 1: 3 objectifs (GoalSetup5)
-  // On g├¿re aussi 'flow-proposition' comme fallback pour garder la compatibilit├®
-  if (currentView === 'goal-setup-5' || currentView === 'flow-proposition') {
-    return (
-      <GoalSetup5
-        language={language}
-        onContinue={(objectives) => {
-          setObjectifsPrioritaires(objectives);
-          setCurrentView('goal-setup-1');
-        }}
-      />
-    );
-  }
-
-  // Page d'objectif 2: S├®lectionner l'objectif principal (GoalSetup1)
-  if (currentView === 'goal-setup-1') {
-    return (
-      <GoalSetup1
-        language={language}
-        objectifsPrioritaires={objectifsPrioritaires}
-        onStart={(selectedObjective) => {
-          setObjectifPrincipal(selectedObjective);
-          setCurrentView('flow-description');
-        }}
-      />
-    );
-  }
-
-  // Page de description: D├®tails et g├®n├®ration (FlowDescriptionPage)
-  if (currentView === 'flow-description') {
-    return (
-      <FlowDescriptionPage
-        language={language}
-        objectifPrincipal={objectifPrincipal}
-        onBack={() => setCurrentView('goal-setup-1')}
-        onCreate={(description) => {
-          setFlowDescription(description);
-          generateFlowInBackground(objectifPrincipal, description);
-        }}
-        onAnimationComplete={() => {
-          setCurrentView('dashboard');
-        }}
-      />
-    );
-  }
-
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-gradient-to-br from-white via-gray-50 to-gray-100 text-stone-900'}`}>
       {/* Indicateur de connexion */}
       <OfflineIndicator />
-
+      
       {/* Main Content */}
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
@@ -2406,7 +2459,7 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
 
-            {/* Message Glowee - Style glassmorphism - Taille r├®duite + Glowee agrandie */}
+            {/* Message Glowee - Style glassmorphism - Taille réduite + Glowee agrandie */}
             <div className="relative">
               <Card className="border-none shadow-xl shadow-pink-100/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                 <CardContent className="p-0">
@@ -2422,7 +2475,7 @@ PROCESO OBLIGATORIO:
                 </CardContent>
               </Card>
 
-              {/* Image Glowee agrandie de 40px - positionn├®e ├á l'ext├®rieur de la carte */}
+              {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
               <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl blur-md opacity-40"></div>
                 <Image
@@ -2435,9 +2488,9 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
 
-            {/* Trial Badge, Plan Pro Button, Message ├á moi et Challenge Switch Button */}
+            {/* Trial Badge, Plan Pro Button, Message à moi et Challenge Switch Button */}
             <div className="relative flex items-center justify-center">
-              {/* Container avec animation de switch - Centr├® */}
+              {/* Container avec animation de switch - Centré */}
               <div className="w-full flex justify-center items-center">
                 {/* Cartes normales (Trial + Plan Pro) */}
                 <div
@@ -2459,7 +2512,7 @@ PROCESO OBLIGATORIO:
                   </button>
                 </div>
 
-                {/* Carte Message ├á moi - Centr├® */}
+                {/* Carte Message à moi - Centré */}
                 <div
                   className={`w-full flex justify-center transition-all duration-500 ease-in-out ${showTimeCapsuleCard
                     ? 'opacity-100 translate-y-0'
@@ -2479,7 +2532,7 @@ PROCESO OBLIGATORIO:
                 </div>
               </div>
 
-              {/* Bouton Challenge Switch - Position absolue fixe ├á droite */}
+              {/* Bouton Challenge Switch - Position absolue fixe à droite */}
               <button
                 onClick={() => setShowChallengeDrawer(true)}
                 className="absolute right-0 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white shadow-lg shadow-pink-100/50 hover:shadow-xl transition-all"
@@ -2488,7 +2541,7 @@ PROCESO OBLIGATORIO:
               </button>
             </div>
 
-            {/* Carte Flow Personnalis├® - Style "A series of Olympiads" (Purple + Trophy) */}
+            {/* Carte Flow Personnalisé - Style "A series of Olympiads" (Purple + Trophy) */}
             {showFlowCard && (
               <Card
                 className={`border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] overflow-hidden relative min-h-[220px] group transition-all duration-300 ${isGeneratingFlowBackground
@@ -2496,30 +2549,30 @@ PROCESO OBLIGATORIO:
                   : 'cursor-pointer hover:scale-[1.01]'
                   }`}
                 onClick={() => {
-                  if (isGeneratingFlowBackground) return; // Bloquer le clic pendant la g├®n├®ration
+                  if (isGeneratingFlowBackground) return; // Bloquer le clic pendant la génération
                   if (personalizedFlow?.isActive) {
                     setCurrentView('flow-challenge');
                   } else {
-                    setCurrentView('goal-setup-5');
+                    setCurrentView('flow-proposition');
                   }
                 }}
               >
                 {/* Background Stars/Decorations */}
                 <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-4 right-1/3 text-yellow-300 text-xl animate-pulse">Ô£¿</div>
-                  <div className="absolute bottom-8 right-8 text-yellow-200 text-sm">Ô£ª</div>
-                  <div className="absolute top-1/2 left-1/2 text-purple-300/30 text-4xl">Ôÿà</div>
-                  <div className="absolute top-6 left-6 text-yellow-300/50 text-xs">Ô£ª</div>
+                  <div className="absolute top-4 right-1/3 text-yellow-300 text-xl animate-pulse">✨</div>
+                  <div className="absolute bottom-8 right-8 text-yellow-200 text-sm">✦</div>
+                  <div className="absolute top-1/2 left-1/2 text-purple-300/30 text-4xl">★</div>
+                  <div className="absolute top-6 left-6 text-yellow-300/50 text-xs">✦</div>
                 </div>
 
                 <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
                   {isGeneratingFlowBackground ? (
-                    /* Loading State - Animation identique ├á FlowDescriptionPage */
+                    /* Loading State - Animation identique à FlowDescriptionPage */
                     (() => {
                       const generationSteps = {
                         fr: [
                           { text: 'Analyse de ton objectif...', icon: Target },
-                          { text: 'G├®n├®ration des 30 jours...', icon: Wand2 },
+                          { text: 'Génération des 30 jours...', icon: Wand2 },
                           { text: 'Personnalisation de ton parcours...', icon: Lightbulb },
                           { text: 'Finalisation...', icon: Sparkles },
                         ],
@@ -2531,7 +2584,7 @@ PROCESO OBLIGATORIO:
                         ],
                         es: [
                           { text: 'Analizando tu objetivo...', icon: Target },
-                          { text: 'Generando 30 d├¡as...', icon: Wand2 },
+                          { text: 'Generando 30 días...', icon: Wand2 },
                           { text: 'Personalizando tu camino...', icon: Lightbulb },
                           { text: 'Finalizando...', icon: Sparkles },
                         ],
@@ -2543,21 +2596,21 @@ PROCESO OBLIGATORIO:
                         <div className="flex flex-col items-center justify-center h-full">
                           {/* Animation circulaire */}
                           <div className="relative w-32 h-32 mx-auto mb-4">
-                            {/* Cercles anim├®s */}
+                            {/* Cercles animés */}
                             <div className="absolute inset-0 rounded-full border-4 border-white/20 opacity-30 animate-ping" />
                             <div className="absolute inset-2 rounded-full border-4 border-white/30 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
                             <div className="absolute inset-4 rounded-full border-4 border-white/40 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
 
-                            {/* Ic├┤ne centrale */}
+                            {/* Icône centrale */}
                             <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white/80 to-white/60 flex items-center justify-center shadow-2xl animate-pulse">
                               <CurrentIcon className="w-10 h-10 text-purple-600" />
                             </div>
                           </div>
 
-                          {/* Texte de l'├®tape */}
+                          {/* Texte de l'étape */}
                           <div className="text-center space-y-2">
                             <h3 className="text-xl font-bold text-white">
-                              {language === 'fr' ? 'Cr├®ation de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
+                              {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
                             </h3>
                             <p className="text-base text-white/90 font-medium">
                               {currentSteps[flowGenerationStep].text}
@@ -2610,7 +2663,7 @@ PROCESO OBLIGATORIO:
                           />
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <span className="text-2xl">­ƒöÑ</span>
+                          <span className="text-2xl">🔥</span>
                           <span className="text-sm font-bold text-white">{personalizedFlow.completedDays.length}j</span>
                         </div>
                       </div>
@@ -2625,7 +2678,7 @@ PROCESO OBLIGATORIO:
                           <div className="absolute top-8 left-0 w-32 h-16 border-4 border-indigo-400 rounded-full z-0"></div>
                           {/* Cup Body */}
                           <div className="relative z-10 w-20 h-20 bg-gradient-to-b from-yellow-300 to-amber-400 rounded-b-full shadow-lg border-t-4 border-yellow-200 flex items-center justify-center">
-                            <div className="text-amber-600 opacity-50 transform rotate-12">Ôÿà</div>
+                            <div className="text-amber-600 opacity-50 transform rotate-12">★</div>
                             {/* Shine */}
                             <div className="absolute top-2 right-4 w-3 h-8 bg-white/30 rounded-full transform rotate-12"></div>
                           </div>
@@ -2639,10 +2692,10 @@ PROCESO OBLIGATORIO:
 
                       <div className="z-20 max-w-[65%]">
                         <h2 className="text-3xl font-black text-white leading-none mb-3 drop-shadow-md">
-                          {language === 'fr' ? 'Cr├®e ton\nFlow' : language === 'en' ? 'Create your\nFlow' : 'Crea tu\nFlow'}
+                          {language === 'fr' ? 'Crée ton\nFlow' : language === 'en' ? 'Create your\nFlow' : 'Crea tu\nFlow'}
                         </h2>
                         <p className="text-sm font-medium text-purple-100 mb-6 leading-relaxed">
-                          {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 d├¡as para transformar tus objetivos en h├íbitos'}
+                          {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 días para transformar tus objetivos en hábitos'}
                         </p>
 
                         {/* Circular Button */}
@@ -2666,19 +2719,19 @@ PROCESO OBLIGATORIO:
                 }}
               >
                 <CardContent className="p-3 relative z-10">
-                  {/* Illustration d├®corative 3D */}
+                  {/* Illustration décorative 3D */}
                   <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
-                    ­ƒÄ»
+                    🎯
                   </div>
 
                   <div className="mb-1">
                     <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/60 backdrop-blur-sm mb-1.5">
                       <span className="text-xs font-bold text-purple-600">
-                        {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'D├¡a'} {challengeProgress.currentDay}/30
+                        {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {challengeProgress.currentDay}/30
                       </span>
                     </div>
                     <h2 className="text-sm font-bold text-gray-800 mb-1.5 pr-14 line-clamp-2">
-                      {getCurrentDayData()?.title || (language === 'fr' ? 'Challenge du jour' : language === 'en' ? 'Challenge of the day' : 'Desaf├¡o del d├¡a')}
+                      {getCurrentDayData()?.title || (language === 'fr' ? 'Challenge du jour' : language === 'en' ? 'Challenge of the day' : 'Desafío del día')}
                     </h2>
                     <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-purple-300/50">
                       {language === 'fr' ? 'Esprit & Vie' : language === 'en' ? 'Mind & Life' : 'Mente & Vida'}
@@ -2710,20 +2763,20 @@ PROCESO OBLIGATORIO:
               >
                 <CardContent className="p-3 relative z-10">
                   <div className="absolute -top-2 -right-2 text-5xl opacity-10 drop-shadow-lg">
-                    Ô£¿
+                    ✨
                   </div>
 
                   <div className="mb-1">
                     <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/60 backdrop-blur-sm mb-1.5">
                       <span className="text-xs font-bold text-pink-600">
-                        {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'D├¡a'} {newMeCurrentDay}/30
+                        {language === 'fr' ? 'Jour' : language === 'en' ? 'Day' : 'Día'} {newMeCurrentDay}/30
                       </span>
                     </div>
                     <h2 className="text-sm font-bold text-gray-800 mb-1.5 pr-14 line-clamp-2">
                       {t.newMe.subtitle}
                     </h2>
                     <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-0 shadow-lg shadow-pink-300/50">
-                      {language === 'fr' ? 'Beaut├® & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
+                      {language === 'fr' ? 'Beauté & Corps' : language === 'en' ? 'Beauty & Body' : 'Belleza & Cuerpo'}
                     </Badge>
                   </div>
 
@@ -2744,7 +2797,7 @@ PROCESO OBLIGATORIO:
               </Card>
             )}
 
-            {/* Carte S├®rie - Tracking des victoires cons├®cutives */}
+            {/* Carte Série - Tracking des victoires consécutives */}
             <Card className="border-none shadow-lg bg-white rounded-2xl overflow-hidden mb-2">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-3">
@@ -2779,8 +2832,8 @@ PROCESO OBLIGATORIO:
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-gray-800">{language === 'fr' ? 'Votre s├®rie' : language === 'en' ? 'Your streak' : 'Tu serie'}</h3>
-                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Garde le rythme !' : language === 'en' ? 'Keep it up!' : '┬íSigue as├¡!'}</p>
+                      <h3 className="text-base font-bold text-gray-800">{language === 'fr' ? 'Votre série' : language === 'en' ? 'Your streak' : 'Tu serie'}</h3>
+                      <p className="text-xs text-gray-500">{language === 'fr' ? 'Garde le rythme !' : language === 'en' ? 'Keep it up!' : '¡Sigue así!'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -2811,7 +2864,7 @@ PROCESO OBLIGATORIO:
                     return (
                       <div key={day} className="flex flex-col items-center gap-1">
                         <span className={`text-[10px] ${isToday ? 'font-bold text-pink-600' : 'text-gray-400'}`}>
-                          {language === 'fr' ? day : language === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] : ['Lun', 'Mar', 'Mi├®', 'Jue', 'Vie', 'S├íb', 'Dom'][index]}
+                          {language === 'fr' ? day : language === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index] : ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}
                         </span>
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${hasWin
@@ -2836,7 +2889,7 @@ PROCESO OBLIGATORIO:
               </CardContent>
             </Card>
 
-            {/* Petits Succ├¿s Compact */}
+            {/* Petits Succès Compact */}
             <div
               className="cursor-pointer"
               onClick={() => checkFeatureAccess('petites_victoires', () => { })}
@@ -2847,7 +2900,7 @@ PROCESO OBLIGATORIO:
             {/* Grille de cartes - Layout moderne compact */}
             {/* Grille de cartes - Layout moderne compact */}
             <div className="grid grid-cols-5 gap-3">
-              {/* Carte Mes Habitudes - Grande carte ├á gauche (60%) */}
+              {/* Carte Mes Habitudes - Grande carte à gauche (60%) */}
               <Card
                 className="col-span-3 border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
@@ -2860,7 +2913,7 @@ PROCESO OBLIGATORIO:
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-white mb-0.5">
-                        {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis H├íbitos'}
+                        {language === 'fr' ? 'Mes Habitudes' : language === 'en' ? 'My Habits' : 'Mis Hábitos'}
                       </h3>
                     </div>
                   </div>
@@ -2895,7 +2948,7 @@ PROCESO OBLIGATORIO:
                       </span>
                     </div>
                     <p className="text-[10px] text-blue-100 opacity-80 font-medium">
-                      {language === 'fr' ? 'Compl├®t├®' : language === 'en' ? 'Completed' : 'Completado'}
+                      {language === 'fr' ? 'Complété' : language === 'en' ? 'Completed' : 'Completado'}
                     </p>
                   </div>
                 </CardContent>
@@ -2933,7 +2986,7 @@ PROCESO OBLIGATORIO:
                           return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
                         })()}
                         <span className="text-sm ml-1 text-amber-900/60 font-medium">
-                          {language === 'fr' ? 't├óches' : language === 'en' ? 'tasks' : 'tareas'}
+                          {language === 'fr' ? 'tâches' : language === 'en' ? 'tasks' : 'tareas'}
                         </span>
                       </p>
                     </div>
@@ -2942,7 +2995,7 @@ PROCESO OBLIGATORIO:
               </Card>
             </div>
 
-            {/* Carte Glow Up (Bonus) - MASQU├ëE */}
+            {/* Carte Glow Up (Bonus) - MASQUÉE */}
             {/* <Card
               className="border-none shadow-xl shadow-pink-100/50 bg-gradient-to-br from-pink-100 via-purple-50 to-orange-50 rounded-[1.5rem] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
               onClick={() => setCurrentView('bonus')}
@@ -2955,7 +3008,7 @@ PROCESO OBLIGATORIO:
                   <div className="flex-1">
                     <h3 className="font-bold text-sm text-gray-800">{t.bonus.title}</h3>
                     <p className="text-[10px] text-gray-500 font-medium">
-                      {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Gu├¡as'}
+                      {language === 'fr' ? 'Routine & Guides' : language === 'en' ? 'Routine & Guides' : 'Rutina & Guías'}
                     </p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-pink-400" />
@@ -2972,7 +3025,7 @@ PROCESO OBLIGATORIO:
             >
               {/* Top Text */}
               <h3 className="text-xl font-bold text-[#2D2a2e] max-w-[65%] leading-snug relative z-10">
-                {language === 'fr' ? 'Raconte ta journ├®e et lib├¿re ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cu├®ntanos tu d├¡a y libera tu mente'}
+                {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
               </h3>
 
               {/* Character Bottom Left - CSS Art */}
@@ -2996,12 +3049,12 @@ PROCESO OBLIGATORIO:
               {/* Button Bottom Right */}
               <div className="absolute bottom-6 right-6">
                 <div className="bg-black text-white text-xs font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
-                  {language === 'fr' ? '├ëcrire' : language === 'en' ? 'Write' : 'Escribir'}
+                  {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}
                 </div>
               </div>
             </div>
 
-            {/* Carte 50 choses ├á faire seule - MASQU├ëE */}
+            {/* Carte 50 choses à faire seule - MASQUÉE */}
             {/* <Card
               onClick={() => {
                 const fiftyThingsSection = bonusSections.find(s => s.id === '50-choses-seule');
@@ -3015,7 +3068,7 @@ PROCESO OBLIGATORIO:
               <CardContent className="p-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg">
-                    <span className="text-xl">­ƒÆ½</span>
+                    <span className="text-xl">💫</span>
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-sm text-gray-800">{t.bonus.fiftyThingsAlone}</h3>
@@ -3052,13 +3105,13 @@ PROCESO OBLIGATORIO:
             <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
               <div className="p-6">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
-                  <span className="text-3xl">Ô£¿</span>
+                  <span className="text-3xl">✨</span>
                 </div>
                 <h3 className="text-lg font-bold text-center text-gray-800 mb-2">
                   Glow Mirror
                 </h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Ô£¿ Utilisez Project Glow pendant 7 jours, puis revenez d├®couvrir qui vous ├¬tes en train de devenir !
+                  ✨ Utilisez Project Glow pendant 7 jours, puis revenez découvrir qui vous êtes en train de devenir !
                 </p>
                 <button
                   onClick={() => setShowGlowMirrorAlert(false)}
@@ -3088,7 +3141,7 @@ PROCESO OBLIGATORIO:
                     <div>
                       <h2 className="text-xl font-bold">Glow Mirror</h2>
                       <p className="text-sm text-white/80">
-                        {language === 'fr' ? 'Qui tu es en train de devenir' : language === 'en' ? 'Who you are becoming' : 'Qui├®n est├ís llegando a ser'}
+                        {language === 'fr' ? 'Qui tu es en train de devenir' : language === 'en' ? 'Who you are becoming' : 'Quién estás llegando a ser'}
                       </p>
                     </div>
                   </div>
@@ -3115,7 +3168,7 @@ PROCESO OBLIGATORIO:
                       ? 'Prochain Glow Mirror disponible dans 7 jours'
                       : language === 'en'
                         ? 'Next Glow Mirror available in 7 days'
-                        : 'Pr├│ximo Glow Mirror disponible en 7 d├¡as'}
+                        : 'Próximo Glow Mirror disponible en 7 días'}
                   </p>
                   <button
                     onClick={() => setShowGlowMirror(false)}
@@ -3134,8 +3187,8 @@ PROCESO OBLIGATORIO:
           <div className="h-screen flex flex-col pb-16">
             <AIChat
               theme={theme}
-              systemPrompt="Tu es Glowee, une assistante IA bienveillante et encourageante. Tu aides les utilisateurs dans leur parcours de d├®veloppement personnel avec empathie et positivit├®. Tu r├®ponds toujours dans la langue de l'utilisateur."
-              placeholder="Parle-moi de ce qui te pr├®occupe..."
+              systemPrompt="Tu es Glowee, une assistante IA bienveillante et encourageante. Tu aides les utilisateurs dans leur parcours de développement personnel avec empathie et positivité. Tu réponds toujours dans la langue de l'utilisateur."
+              placeholder="Parle-moi de ce qui te préoccupe..."
               maxHeight="calc(100vh - 200px)"
               onClose={() => setCurrentView('dashboard')}
             />
@@ -3158,7 +3211,7 @@ PROCESO OBLIGATORIO:
                   </button>
                   <div>
                     <h1 className="text-lg font-bold text-gray-800">
-                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'H├íbitos'}
+                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
                     </h1>
                     {(() => {
                       const completedNewMe = newMeHabits.filter(h => h.completed).length;
@@ -3183,7 +3236,7 @@ PROCESO OBLIGATORIO:
                     className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
                     style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                   >
-                    <span className="text-lg">­ƒôè</span>
+                    <span className="text-lg">📊</span>
                   </button>
                   <button
                     onClick={() => setShowAddHabit(true)}
@@ -3232,8 +3285,8 @@ PROCESO OBLIGATORIO:
               {/* SECTION INTENTION */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 font-sans">
-                  <span>­ƒÄ»</span>
-                  {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un quiÔÇª' : language === 'en' ? 'Today, I am someone whoÔÇª' : 'Hoy, soy alguien queÔÇª'}
+                  <span>🎯</span>
+                  {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
                 </h3>
 
                 {dailyIntention ? (
@@ -3271,11 +3324,11 @@ PROCESO OBLIGATORIO:
                 )}
               </div>
 
-              {/* SECTION HUMEUR - Ic├┤nes grises quand non s├®lectionn├®es, couleur quand s├®lectionn├®es */}
+              {/* SECTION HUMEUR - Icônes grises quand non sélectionnées, couleur quand sélectionnées */}
               <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 font-sans">
-                  <span>­ƒÿè</span>
-                  {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '┬┐C├│mo me siento?'}
+                  <span>😊</span>
+                  {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
                 </h3>
                 <div className="flex gap-2">
                   {MOODS_DATA.map((mood) => {
@@ -3310,7 +3363,7 @@ PROCESO OBLIGATORIO:
                 <div className="p-4 pb-2">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 font-sans">
-                      <span style={{ color: '#fb7185' }}>Ô£¿</span>
+                      <span style={{ color: '#fb7185' }}>✨</span>
                       New Me
                     </h3>
                     <span className="text-xs font-bold text-gray-600">
@@ -3326,7 +3379,7 @@ PROCESO OBLIGATORIO:
                       onClick={() => {
                         const newCompletedState = !habit.completed;
 
-                        // Mettre ├á jour le state
+                        // Mettre à jour le state
                         setNewMeHabits(newMeHabits.map(h =>
                           h.id === habit.id ? { ...h, completed: newCompletedState } : h
                         ));
@@ -3342,7 +3395,7 @@ PROCESO OBLIGATORIO:
                       }}
                       onContextMenu={(e) => {
                         e.preventDefault();
-                        // TODO: Ouvrir la vue d├®tail 30 jours
+                        // TODO: Ouvrir la vue détail 30 jours
                       }}
                       className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${habit.completed
                         ? 'bg-emerald-50'
@@ -3379,7 +3432,7 @@ PROCESO OBLIGATORIO:
                 <div className="p-4 pb-2">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold text-gray-800 font-sans">
-                      {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis h├íbitos'}
+                      {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'}
                     </h3>
                     <span className="text-xs font-bold text-gray-600">
                       {customHabits.filter(h => {
@@ -3400,7 +3453,7 @@ PROCESO OBLIGATORIO:
                     >
                       <Plus className="w-5 h-5" />
                       <span className="text-sm font-bold">
-                        {language === 'fr' ? 'Cr├®er ma premi├¿re habitude' : language === 'en' ? 'Create my first habit' : 'Crear mi primer h├íbito'}
+                        {language === 'fr' ? 'Créer ma première habitude' : language === 'en' ? 'Create my first habit' : 'Crear mi primer hábito'}
                       </span>
                     </button>
                   </div>
@@ -3455,7 +3508,7 @@ PROCESO OBLIGATORIO:
                 )}
               </div>
 
-              {/* Bouton cr├®er - si des habitudes existent */}
+              {/* Bouton créer - si des habitudes existent */}
               {customHabits.length > 0 && (
                 <button
                   onClick={() => setShowAddHabit(true)}
@@ -3463,7 +3516,7 @@ PROCESO OBLIGATORIO:
                   style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)', boxShadow: '0 2px 8px rgba(52, 211, 153, 0.3)' }}
                 >
                   <Plus className="w-5 h-5" />
-                  {language === 'fr' ? 'Cr├®er une habitude' : language === 'en' ? 'Create a habit' : 'Crear un h├íbito'}
+                  {language === 'fr' ? 'Créer une habitude' : language === 'en' ? 'Create a habit' : 'Crear un hábito'}
                 </button>
               )}
             </div>
@@ -3473,12 +3526,12 @@ PROCESO OBLIGATORIO:
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
                 <div className="bg-white rounded-2xl p-6 w-full max-w-sm" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
                   <h3 className="text-base font-bold text-gray-800 mb-4">
-                    {language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo h├íbito'}
+                    {language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo hábito'}
                   </h3>
                   <Input
                     value={newHabitLabel}
                     onChange={(e) => setNewHabitLabel(e.target.value)}
-                    placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del h├íbito'}
+                    placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
                     className="mb-4 rounded-xl border-gray-200 focus:border-emerald-400 focus:ring-emerald-400"
                   />
                   <div className="flex gap-3">
@@ -3497,7 +3550,7 @@ PROCESO OBLIGATORIO:
                       className="flex-1 rounded-xl text-white font-semibold py-3"
                       style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)' }}
                     >
-                      {language === 'fr' ? 'Cr├®er' : language === 'en' ? 'Create' : 'Crear'}
+                      {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
                     </Button>
                     <Button
                       variant="outline"
@@ -3547,7 +3600,7 @@ PROCESO OBLIGATORIO:
                     ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
                   ];
 
-                  // R├®cup├®rer firstOpenDate
+                  // Récupérer firstOpenDate
                   const firstOpenStr = typeof window !== 'undefined'
                     ? localStorage.getItem('firstOpenDate')
                     : null;
@@ -3626,7 +3679,7 @@ PROCESO OBLIGATORIO:
                                     ? 'bg-emerald-500 shadow-sm'
                                     : 'bg-gray-100 border border-gray-200'}
                                 `}
-                                title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Compl├®t├®' : 'Non compl├®t├®'}`}
+                                title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Complété' : 'Non complété'}`}
                               />
                             ))}
                           </div>
@@ -3642,7 +3695,7 @@ PROCESO OBLIGATORIO:
                                     ? 'bg-emerald-500 shadow-sm'
                                     : 'bg-gray-100 border border-gray-200'}
                                 `}
-                                title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Compl├®t├®' : 'Non compl├®t├®'}`}
+                                title={`Jour ${day.dayNumber}: ${day.wasCompleted ? 'Complété' : 'Non complété'}`}
                               />
                             ))}
                           </div>
@@ -3659,7 +3712,7 @@ PROCESO OBLIGATORIO:
                   <Target className="w-16 h-16 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium mb-1">Aucune habitude</p>
                   <p className="text-gray-500 text-sm">
-                    Ajoutez des habitudes pour commencer ├á suivre votre progression
+                    Ajoutez des habitudes pour commencer à suivre votre progression
                   </p>
                 </div>
               )}
@@ -3681,7 +3734,7 @@ PROCESO OBLIGATORIO:
                   <X className="w-5 h-5" />
                 </Button>
                 <h1 className="text-xl font-bold">
-                  {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificaci├│n'}
+                  {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
                 </h1>
               </div>
             </div>
@@ -3708,9 +3761,9 @@ PROCESO OBLIGATORIO:
                         {currentWeekOffset === 0
                           ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
                           : currentWeekOffset === 1
-                            ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Pr├│xima semana')
+                            ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
                             : currentWeekOffset === -1
-                              ? (language === 'fr' ? 'Semaine derni├¿re' : language === 'en' ? 'Last week' : 'Semana pasada')
+                              ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
                               : formatWeekRange(currentWeekOffset)
                         }
                       </p>
@@ -3730,24 +3783,24 @@ PROCESO OBLIGATORIO:
             </div>
 
             <div className="px-4 space-y-3 max-w-lg mx-auto">
-              {/* Mes 3 priorit├®s de la semaine */}
+              {/* Mes 3 priorités de la semaine */}
               <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
                 <h2 className="text-sm font-bold mb-2.5 flex items-center gap-1.5">
                   <Star className="w-4 h-4 text-rose-400" />
-                  {language === 'fr' ? 'Mes 3 priorit├®s de la semaine' : language === 'en' ? 'My 3 weekly priorities' : 'Mis 3 prioridades semanales'}
+                  {language === 'fr' ? 'Mes 3 priorités de la semaine' : language === 'en' ? 'My 3 weekly priorities' : 'Mis 3 prioridades semanales'}
                 </h2>
 
 
                 <div className="space-y-2">
                   {(() => {
-                    // D├®terminer quelles priorit├®s afficher
+                    // Déterminer quelles priorités afficher
                     let prioritiesToShow = weekPriorities;
 
 
                     if (prioritiesToShow.length === 0) {
                       return (
                         <p className="text-sm text-stone-500 dark:text-stone-400 text-center py-4">
-                          {language === 'fr' ? 'Aucune priorit├® d├®finie' : language === 'en' ? 'No priorities set' : 'Sin prioridades definidas'}
+                          {language === 'fr' ? 'Aucune priorité définie' : language === 'en' ? 'No priorities set' : 'Sin prioridades definidas'}
                         </p>
                       );
                     }
@@ -3785,10 +3838,10 @@ PROCESO OBLIGATORIO:
                   return [
                     { key: 'monday', label: language === 'fr' ? 'Lun' : language === 'en' ? 'Mon' : 'Lun', index: 0 },
                     { key: 'tuesday', label: language === 'fr' ? 'Mar' : language === 'en' ? 'Tue' : 'Mar', index: 1 },
-                    { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mi├®', index: 2 },
+                    { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mié', index: 2 },
                     { key: 'thursday', label: language === 'fr' ? 'Jeu' : language === 'en' ? 'Thu' : 'Jue', index: 3 },
                     { key: 'friday', label: language === 'fr' ? 'Ven' : language === 'en' ? 'Fri' : 'Vie', index: 4 },
-                    { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'S├íb', index: 5 },
+                    { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'Sáb', index: 5 },
                     { key: 'sunday', label: language === 'fr' ? 'Dim' : language === 'en' ? 'Sun' : 'Dom', index: 6 }
                   ].map((day) => {
                     const dateStr = weekDates[day.index];
@@ -3796,7 +3849,7 @@ PROCESO OBLIGATORIO:
                     const dayDate = new Date(dateStr);
                     const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
 
-                    // R├®cup├®rer les t├óches pour cette date
+                    // Récupérer les tâches pour cette date
                     const dayTasks = getTasksForDate(dateStr, "user");
 
                     return (
@@ -3816,17 +3869,17 @@ PROCESO OBLIGATORIO:
                           <div className="space-y-1.5">
                             {dayTasks.length === 0 ? (
                               <p className="text-[10px] text-stone-400 text-center py-1">
-                                {language === 'fr' ? 'Aucune t├óche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
+                                {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
                               </p>
                             ) : (
                               dayTasks.map((task) => {
-                                // Obtenir l'index de l'objectif pour d├®terminer la couleur du d├®grad├® (3 couleurs max)
+                                // Obtenir l'index de l'objectif pour déterminer la couleur du dégradé (3 couleurs max)
                                 const getGradientForGoal = () => {
                                   if (task.type !== 'glowee' || !task.goalId) return null;
                                   const activeGoals = getActiveGoals();
                                   const goalIndex = activeGoals.findIndex(g => g.id === task.goalId);
                                   if (goalIndex === -1) return null;
-                                  // 3 d├®grad├®s distincts pour les 3 objectifs possibles
+                                  // 3 dégradés distincts pour les 3 objectifs possibles
                                   const gradients = [
                                     'from-rose-200/60 via-pink-200/60 to-rose-100/60', // Objectif 1 - Rose
                                     'from-violet-200/60 via-purple-200/60 to-violet-100/60', // Objectif 2 - Violet
@@ -3852,7 +3905,7 @@ PROCESO OBLIGATORIO:
                                         title={task.goalName || ''}
                                       />
                                     )}
-                                    {/* Bouton supprimer - coin sup├®rieur droit */}
+                                    {/* Bouton supprimer - coin supérieur droit */}
                                     <button
                                       onClick={async () => {
                                         setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
@@ -3899,7 +3952,7 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
 
-            {/* Bouton Ajouter une t├óche */}
+            {/* Bouton Ajouter une tâche */}
             <div className="px-4 pb-4 pt-3 max-w-lg mx-auto">
               <Button
                 size="sm"
@@ -3907,7 +3960,7 @@ PROCESO OBLIGATORIO:
                 onClick={() => setShowAddTask(true)}
               >
                 <Plus className="w-3.5 h-3.5 mr-1.5" />
-                {language === 'fr' ? 'Ajouter une t├óche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
+                {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
               </Button>
             </div>
           </div>
@@ -4052,13 +4105,13 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
 
-            {/* S├®lecteur de dates - Oval pill design */}
+            {/* Sélecteur de dates - Oval pill design */}
             <div className="px-4 py-2">
               <div className="flex justify-between items-center gap-1">
                 {(() => {
                   const today = new Date();
                   const dates: Date[] = [];
-                  // G├®n├®rer 9 jours (4 avant, aujourd'hui, 4 apr├¿s)
+                  // Générer 9 jours (4 avant, aujourd'hui, 4 après)
                   for (let i = -4; i <= 4; i++) {
                     const date = new Date(today);
                     date.setDate(today.getDate() + i);
@@ -4161,9 +4214,9 @@ PROCESO OBLIGATORIO:
                         <p className="text-xs text-gray-700 leading-relaxed font-medium mb-3">
                           {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
                             language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
-                              '30 d├¡as. 3 gestos al d├¡a. Para un verdadero glow up.'}
+                              '30 días. 3 gestos al día. Para un verdadero glow up.'}
                         </p>
-                        {/* Barre de progression en bas ├á droite */}
+                        {/* Barre de progression en bas à droite */}
                         <div className="flex items-center gap-2 justify-end">
                           <div className="flex-1 max-w-[150px]">
                             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -4205,7 +4258,7 @@ PROCESO OBLIGATORIO:
                     </div>
                   </div>
 
-                  {/* Liste des 3 piliers beaut├® */}
+                  {/* Liste des 3 piliers beauté */}
                   <div className="space-y-4">
                     {beautyPillars.map((pillar) => {
                       const dayProgress = getBeautyProgressForDate(beautySelectedDate);
@@ -4238,11 +4291,11 @@ PROCESO OBLIGATORIO:
                                   {pillar.description[language]}
                                 </p>
                               </div>
-                              {/* Fl├¿che d'ouverture pour tous les piliers */}
+                              {/* Flèche d'ouverture pour tous les piliers */}
                               <div
                                 className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors"
                                 onClick={(e) => {
-                                  e.stopPropagation(); // Emp├¬cher la propagation pour ne pas cocher la t├óche
+                                  e.stopPropagation(); // Empêcher la propagation pour ne pas cocher la tâche
                                   setExpandedPillar(isExpanded ? null : pillar.id);
                                 }}
                               >
@@ -4254,7 +4307,7 @@ PROCESO OBLIGATORIO:
                             </div>
                           </div>
 
-                          {/* Section d├®pliable avec explications pour tous les piliers */}
+                          {/* Section dépliable avec explications pour tous les piliers */}
                           {!isChoicePillar && (
                             <div
                               className={`overflow-hidden transition-all duration-300 ease-out ${isExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'
@@ -4266,21 +4319,21 @@ PROCESO OBLIGATORIO:
                                 </h5>
                                 <p className="text-xs text-gray-600 leading-relaxed">
                                   {pillar.id === 'walk-sport' && (language === 'fr'
-                                    ? 'La marche rapide ou le sport quotidien am├®liorent la circulation sanguine, boostent l\'├®nergie et favorisent un sommeil r├®parateur. 30 minutes suffisent pour activer le m├®tabolisme et lib├®rer des endorphines.'
+                                    ? 'La marche rapide ou le sport quotidien améliorent la circulation sanguine, boostent l\'énergie et favorisent un sommeil réparateur. 30 minutes suffisent pour activer le métabolisme et libérer des endorphines.'
                                     : language === 'en'
                                       ? 'Brisk walking or daily sport improve blood circulation, boost energy and promote restorative sleep. 30 minutes is enough to activate metabolism and release endorphins.'
-                                      : 'Caminar r├ípido o hacer deporte diariamente mejora la circulaci├│n sangu├¡nea, aumenta la energ├¡a y favorece un sue├▒o reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
+                                      : 'Caminar rápido o hacer deporte diariamente mejora la circulación sanguínea, aumenta la energía y favorece un sueño reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
                                   )}
                                   {pillar.id === 'water' && (language === 'fr'
-                                    ? 'Boire 2 litres d\'eau par jour hydrate la peau de l\'int├®rieur, r├®duit les cernes et am├®liore l\'├®lasticit├® de la peau. L\'hydratation optimale favorise aussi l\'├®limination des toxines et la brillance des cheveux.'
+                                    ? 'Boire 2 litres d\'eau par jour hydrate la peau de l\'intérieur, réduit les cernes et améliore l\'élasticité de la peau. L\'hydratation optimale favorise aussi l\'élimination des toxines et la brillance des cheveux.'
                                     : language === 'en'
                                       ? 'Drinking 2 liters of water per day hydrates skin from within, reduces dark circles and improves skin elasticity. Optimal hydration also promotes toxin elimination and hair shine.'
-                                      : 'Beber 2 litros de agua al d├¡a hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidrataci├│n ├│ptima tambi├®n favorece la eliminaci├│n de toxinas y el brillo del cabello.'
+                                      : 'Beber 2 litros de agua al día hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidratación óptima también favorece la eliminación de toxinas y el brillo del cabello.'
                                   )}
                                 </p>
                                 <div className="mt-3 flex items-center justify-between">
                                   <span className="text-xs text-pink-500 font-medium">
-                                    {isCompleted ? 'Ô£ô ' : ''}{language === 'fr' ? 'Pilier' : language === 'en' ? 'Pillar' : 'Pilar'} {isCompleted ? (language === 'fr' ? 'compl├®t├®' : language === 'en' ? 'completed' : 'completado') : (language === 'fr' ? '├á faire' : language === 'en' ? 'to do' : 'por hacer')}
+                                    {isCompleted ? '✓ ' : ''}{language === 'fr' ? 'Pilier' : language === 'en' ? 'Pillar' : 'Pilar'} {isCompleted ? (language === 'fr' ? 'complété' : language === 'en' ? 'completed' : 'completado') : (language === 'fr' ? 'à faire' : language === 'en' ? 'to do' : 'por hacer')}
                                   </span>
                                   <button
                                     onClick={() => toggleBeautyPillar(beautySelectedDate, pillar.id)}
@@ -4321,7 +4374,7 @@ PROCESO OBLIGATORIO:
                                     </CardContent>
                                   </Card>
 
-                                  {/* Image Glowee agrandie de 40px - positionn├®e ├á l'ext├®rieur de la carte */}
+                                  {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
                                   <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
                                     <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
                                     <Image
@@ -4366,31 +4419,31 @@ PROCESO OBLIGATORIO:
                                         </div>
                                       </div>
 
-                                      {/* Explications d├®taill├®es avec fl├¿che */}
+                                      {/* Explications détaillées avec flèche */}
                                       {hasDetailedExplanation && (
                                         <div className="mt-2">
                                           <Accordion type="single" collapsible className="w-full">
                                             <AccordionItem value={`explanation-${choice.id}`} className="border-none">
                                               <AccordionTrigger className="py-2 px-4 text-xs font-medium text-pink-600 hover:text-pink-700 hover:no-underline bg-pink-50 rounded-xl">
-                                                {language === 'fr' ? 'En savoir plus' : language === 'en' ? 'Learn more' : 'Saber m├ís'}
+                                                {language === 'fr' ? 'En savoir plus' : language === 'en' ? 'Learn more' : 'Saber más'}
                                               </AccordionTrigger>
                                               <AccordionContent className="pt-2">
                                                 <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-4 space-y-4">
-                                                  {/* Explication d├®taill├®e */}
+                                                  {/* Explication détaillée */}
                                                   <p className="text-sm text-gray-700 leading-relaxed">
                                                     {choice.detailedExplanation![language]}
                                                   </p>
 
-                                                  {/* R├®sultats promis */}
+                                                  {/* Résultats promis */}
                                                   {choice.promisedResults && choice.promisedResults[language] && (
                                                     <div className="space-y-2">
                                                       <p className="text-xs font-bold text-pink-600 uppercase tracking-wide">
-                                                        {language === 'fr' ? 'R├®sultats promis :' : language === 'en' ? 'Promised results:' : 'Resultados prometidos:'}
+                                                        {language === 'fr' ? 'Résultats promis :' : language === 'en' ? 'Promised results:' : 'Resultados prometidos:'}
                                                       </p>
                                                       <ul className="space-y-1">
                                                         {choice.promisedResults[language].map((result, idx) => (
                                                           <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                                                            <span className="text-pink-400 mt-1">Ô£ª</span>
+                                                            <span className="text-pink-400 mt-1">✦</span>
                                                             {result}
                                                           </li>
                                                         ))}
@@ -4484,7 +4537,7 @@ PROCESO OBLIGATORIO:
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Target className="w-5 h-5 text-rose-400" />
-                        {language === 'fr' ? 'Progression sur 30 jours' : language === 'en' ? 'Progress over 30 days' : 'Progreso en 30 d├¡as'}
+                        {language === 'fr' ? 'Progression sur 30 jours' : language === 'en' ? 'Progress over 30 days' : 'Progreso en 30 días'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -4501,7 +4554,7 @@ PROCESO OBLIGATORIO:
                             })()}
                           </div>
                           <div className="text-xs text-gray-600 mt-1">
-                            {language === 'fr' ? 'Jours parfaits' : language === 'en' ? 'Perfect days' : 'D├¡as perfectos'}
+                            {language === 'fr' ? 'Jours parfaits' : language === 'en' ? 'Perfect days' : 'Días perfectos'}
                           </div>
                         </div>
                         <div className="text-center p-3 rounded-lg bg-gradient-to-br from-orange-50 to-pink-50">
@@ -4512,7 +4565,7 @@ PROCESO OBLIGATORIO:
                             })()}
                           </div>
                           <div className="text-xs text-gray-600 mt-1">
-                            {language === 'fr' ? 'Jours valid├®s' : language === 'en' ? 'Validated days' : 'D├¡as validados'}
+                            {language === 'fr' ? 'Jours validés' : language === 'en' ? 'Validated days' : 'Días validados'}
                           </div>
                         </div>
                         <div className="text-center p-3 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50">
@@ -4542,19 +4595,19 @@ PROCESO OBLIGATORIO:
                             })()}
                           </div>
                           <div className="text-xs text-gray-600 mt-1">
-                            {language === 'fr' ? 'Meilleure s├®rie' : language === 'en' ? 'Best streak' : 'Mejor racha'}
+                            {language === 'fr' ? 'Meilleure série' : language === 'en' ? 'Best streak' : 'Mejor racha'}
                           </div>
                         </div>
                       </div>
                       {/* Calendrier des 30 jours */}
                       <div className="space-y-2 mb-6">
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                          {language === 'fr' ? 'Calendrier de validation' : language === 'en' ? 'Validation calendar' : 'Calendario de validaci├│n'}
+                          {language === 'fr' ? 'Calendrier de validation' : language === 'en' ? 'Validation calendar' : 'Calendario de validación'}
                         </h3>
                         <div className="grid grid-cols-7 gap-2">
                           {Array.from({ length: 30 }, (_, i) => {
                             const dayIndex = i + 1;
-                            // Cr├®er une date fictive pour chaque jour
+                            // Créer une date fictive pour chaque jour
                             const today = new Date();
                             const startDate = new Date(today);
                             startDate.setDate(today.getDate() - 15); // Commencer 15 jours avant aujourd'hui
@@ -4590,10 +4643,10 @@ PROCESO OBLIGATORIO:
                         </div>
                       </div>
 
-                      {/* D├®tail par pilier */}
+                      {/* Détail par pilier */}
                       <div className="space-y-3">
                         <h3 className="text-sm font-semibold text-gray-700">
-                          {language === 'fr' ? 'D├®tail par pilier' : language === 'en' ? 'Details by pillar' : 'Detalles por pilar'}
+                          {language === 'fr' ? 'Détail par pilier' : language === 'en' ? 'Details by pillar' : 'Detalles por pilar'}
                         </h3>
 
                         {beautyPillars.map(pillar => {
@@ -4608,7 +4661,7 @@ PROCESO OBLIGATORIO:
                                 <span className="text-2xl">{pillar.icon}</span>
                                 <div className="flex-1">
                                   <h4 className="text-sm font-semibold text-gray-800">{pillar.title[language]}</h4>
-                                  <p className="text-xs text-gray-600">{completedDays} / 30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'd├¡as'}</p>
+                                  <p className="text-xs text-gray-600">{completedDays} / 30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}</p>
                                 </div>
                               </div>
                               <div className="h-2 bg-white rounded-full overflow-hidden">
@@ -4667,7 +4720,7 @@ PROCESO OBLIGATORIO:
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {(() => {
-                        // Calculs pour le challenge beaut├®
+                        // Calculs pour le challenge beauté
                         const validatedDays = beautyValidatedDates.length;
                         const allDates = Object.keys(beautyPillarsProgress);
 
@@ -4691,7 +4744,7 @@ PROCESO OBLIGATORIO:
                           return dayProgress && dayProgress['self-care-choice'];
                         }).length;
 
-                        // Calcul de la s├®rie actuelle
+                        // Calcul de la série actuelle
                         const sortedDates = beautyValidatedDates.sort();
                         let currentStreak = 0;
                         const today = getLocalDateString(new Date());
@@ -4710,7 +4763,7 @@ PROCESO OBLIGATORIO:
 
                         const hasStarted = allDates.length > 0;
 
-                        // Calcul des jours avec choix sp├®cifiques de beaut├®
+                        // Calcul des jours avec choix spécifiques de beauté
                         const skincareDays = allDates.filter(date => {
                           const dayProgress = beautyPillarsProgress[date];
                           return dayProgress && dayProgress.selectedChoice === 'skincare';
@@ -4739,105 +4792,105 @@ PROCESO OBLIGATORIO:
                         const badges = [
                           {
                             condition: hasStarted,
-                            icon: '­ƒî▒',
+                            icon: '🌱',
                             title: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso',
-                            desc: language === 'fr' ? 'Tu as commenc├® ton glow up !' : language === 'en' ? 'You started your glow up!' : '┬íComenzaste tu glow up!'
+                            desc: language === 'fr' ? 'Tu as commencé ton glow up !' : language === 'en' ? 'You started your glow up!' : '¡Comenzaste tu glow up!'
                           },
                           {
                             condition: perfectDays >= 1,
-                            icon: 'Ô£¿',
-                            title: language === 'fr' ? 'Journ├®e Parfaite' : language === 'en' ? 'Perfect Day' : 'D├¡a Perfecto',
-                            desc: language === 'fr' ? '3 piliers compl├®t├®s en un jour' : language === 'en' ? '3 pillars completed in one day' : '3 pilares completados en un d├¡a'
+                            icon: '✨',
+                            title: language === 'fr' ? 'Journée Parfaite' : language === 'en' ? 'Perfect Day' : 'Día Perfecto',
+                            desc: language === 'fr' ? '3 piliers complétés en un jour' : language === 'en' ? '3 pillars completed in one day' : '3 pilares completados en un día'
                           },
                           {
                             condition: currentStreak >= 3,
-                            icon: '­ƒöÑ',
-                            title: language === 'fr' ? 'S├®rie de 3' : language === 'en' ? 'Streak of 3' : 'Racha de 3',
-                            desc: language === 'fr' ? '3 jours cons├®cutifs valid├®s' : language === 'en' ? '3 consecutive days validated' : '3 d├¡as consecutivos validados'
+                            icon: '🔥',
+                            title: language === 'fr' ? 'Série de 3' : language === 'en' ? 'Streak of 3' : 'Racha de 3',
+                            desc: language === 'fr' ? '3 jours consécutifs validés' : language === 'en' ? '3 consecutive days validated' : '3 días consecutivos validados'
                           },
                           {
                             condition: waterDays >= 7,
-                            icon: '­ƒÆº',
-                            title: language === 'fr' ? 'Hydratation Pro' : language === 'en' ? 'Hydration Pro' : 'Hidrataci├│n Pro',
-                            desc: language === 'fr' ? '7 jours d\'hydratation parfaite' : language === 'en' ? '7 days of perfect hydration' : '7 d├¡as de hidrataci├│n perfecta'
+                            icon: '💧',
+                            title: language === 'fr' ? 'Hydratation Pro' : language === 'en' ? 'Hydration Pro' : 'Hidratación Pro',
+                            desc: language === 'fr' ? '7 jours d\'hydratation parfaite' : language === 'en' ? '7 days of perfect hydration' : '7 días de hidratación perfecta'
                           },
                           {
                             condition: walkSportDays >= 7,
-                            icon: '­ƒÜÂÔÇìÔÖÇ´©Å',
+                            icon: '🚶‍♀️',
                             title: language === 'fr' ? 'Active Queen' : language === 'en' ? 'Active Queen' : 'Reina Activa',
-                            desc: language === 'fr' ? '7 jours de sport ou marche' : language === 'en' ? '7 days of sport or walk' : '7 d├¡as de deporte o caminata'
+                            desc: language === 'fr' ? '7 jours de sport ou marche' : language === 'en' ? '7 days of sport or walk' : '7 días de deporte o caminata'
                           },
                           {
                             condition: selfCareDays >= 7,
-                            icon: '­ƒÆåÔÇìÔÖÇ´©Å',
+                            icon: '💆‍♀️',
                             title: language === 'fr' ? 'Self-Care Star' : language === 'en' ? 'Self-Care Star' : 'Estrella del Autocuidado',
-                            desc: language === 'fr' ? '7 gestes beaut├® pour toi' : language === 'en' ? '7 beauty gestures for you' : '7 gestos de belleza para ti'
+                            desc: language === 'fr' ? '7 gestes beauté pour toi' : language === 'en' ? '7 beauty gestures for you' : '7 gestos de belleza para ti'
                           },
                           {
                             condition: currentStreak >= 7,
-                            icon: '­ƒîƒ',
+                            icon: '🌟',
                             title: language === 'fr' ? 'Semaine d\'Or' : language === 'en' ? 'Golden Week' : 'Semana de Oro',
-                            desc: language === 'fr' ? '7 jours cons├®cutifs valid├®s' : language === 'en' ? '7 consecutive days validated' : '7 d├¡as consecutivos validados'
+                            desc: language === 'fr' ? '7 jours consécutifs validés' : language === 'en' ? '7 consecutive days validated' : '7 días consecutivos validados'
                           },
                           {
                             condition: perfectDays >= 14,
-                            icon: '­ƒî©',
+                            icon: '🌸',
                             title: language === 'fr' ? 'Glow Up en Vue' : language === 'en' ? 'Glow Up in Sight' : 'Glow Up a la Vista',
-                            desc: language === 'fr' ? '14 journ├®es parfaites' : language === 'en' ? '14 perfect days' : '14 d├¡as perfectos'
+                            desc: language === 'fr' ? '14 journées parfaites' : language === 'en' ? '14 perfect days' : '14 días perfectos'
                           },
                           {
                             condition: currentStreak >= 14,
-                            icon: '­ƒÆÄ',
-                            title: language === 'fr' ? 'D├®termination Diamant' : language === 'en' ? 'Diamond Determination' : 'Determinaci├│n Diamante',
-                            desc: language === 'fr' ? '14 jours cons├®cutifs valid├®s' : language === 'en' ? '14 consecutive days validated' : '14 d├¡as consecutivos validados'
+                            icon: '💎',
+                            title: language === 'fr' ? 'Détermination Diamant' : language === 'en' ? 'Diamond Determination' : 'Determinación Diamante',
+                            desc: language === 'fr' ? '14 jours consécutifs validés' : language === 'en' ? '14 consecutive days validated' : '14 días consecutivos validados'
                           },
                           {
                             condition: validatedDays >= 21,
-                            icon: '­ƒææ',
+                            icon: '👑',
                             title: language === 'fr' ? 'Reine du Glow Up' : language === 'en' ? 'Glow Up Queen' : 'Reina del Glow Up',
-                            desc: language === 'fr' ? '21 jours valid├®s - nouvelle habitude !' : language === 'en' ? '21 days validated - new habit!' : '21 d├¡as validados - ┬ínuevo h├íbito!'
+                            desc: language === 'fr' ? '21 jours validés - nouvelle habitude !' : language === 'en' ? '21 days validated - new habit!' : '21 días validados - ¡nuevo hábito!'
                           },
                           {
                             condition: currentStreak >= 30,
-                            icon: '­ƒÅå',
-                            title: language === 'fr' ? 'L├®gende' : language === 'en' ? 'Legend' : 'Leyenda',
-                            desc: language === 'fr' ? '30 jours cons├®cutifs - transformation compl├¿te !' : language === 'en' ? '30 consecutive days - complete transformation!' : '30 d├¡as consecutivos - ┬ítransformaci├│n completa!'
+                            icon: '🏆',
+                            title: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
+                            desc: language === 'fr' ? '30 jours consécutifs - transformation complète !' : language === 'en' ? '30 consecutive days - complete transformation!' : '30 días consecutivos - ¡transformación completa!'
                           },
                           {
                             condition: perfectDays >= 30,
-                            icon: 'Ô£¿',
-                            title: language === 'fr' ? 'Perfection Absolue' : language === 'en' ? 'Absolute Perfection' : 'Perfecci├│n Absoluta',
-                            desc: language === 'fr' ? '30 journ├®es parfaites - tu es incroyable !' : language === 'en' ? '30 perfect days - you\'re incredible!' : '30 d├¡as perfectos - ┬íeres incre├¡ble!'
+                            icon: '✨',
+                            title: language === 'fr' ? 'Perfection Absolue' : language === 'en' ? 'Absolute Perfection' : 'Perfección Absoluta',
+                            desc: language === 'fr' ? '30 journées parfaites - tu es incroyable !' : language === 'en' ? '30 perfect days - you\'re incredible!' : '30 días perfectos - ¡eres increíble!'
                           },
                           {
                             condition: skincareDays >= 8,
-                            icon: '­ƒº╝',
+                            icon: '🧼',
                             title: language === 'fr' ? 'Expert Skincare' : language === 'en' ? 'Skincare Expert' : 'Experta en Skincare',
-                            desc: language === 'fr' ? '8 jours de routine skincare parfaite' : language === 'en' ? '8 days of perfect skincare routine' : '8 d├¡as de rutina skincare perfecta'
+                            desc: language === 'fr' ? '8 jours de routine skincare parfaite' : language === 'en' ? '8 days of perfect skincare routine' : '8 días de rutina skincare perfecta'
                           },
                           {
                             condition: faceMassageDays >= 5,
-                            icon: '­ƒÆåÔÇìÔÖÇ´©Å',
+                            icon: '💆‍♀️',
                             title: language === 'fr' ? 'Massage Pro' : language === 'en' ? 'Massage Pro' : 'Pro del Masaje',
-                            desc: language === 'fr' ? '5 jours de massage visage' : language === 'en' ? '5 days of face massage' : '5 d├¡as de masaje facial'
+                            desc: language === 'fr' ? '5 jours de massage visage' : language === 'en' ? '5 days of face massage' : '5 días de masaje facial'
                           },
                           {
                             condition: bodyCreamDays >= 5,
-                            icon: '­ƒº┤',
+                            icon: '🧴',
                             title: language === 'fr' ? 'Peau Douce' : language === 'en' ? 'Soft Skin' : 'Piel Suave',
-                            desc: language === 'fr' ? '5 jours de cr├¿me corps' : language === 'en' ? '5 days of body cream' : '5 d├¡as de crema corporal'
+                            desc: language === 'fr' ? '5 jours de crème corps' : language === 'en' ? '5 days of body cream' : '5 días de crema corporal'
                           },
                           {
                             condition: lashesHairDays >= 4,
-                            icon: '­ƒæü´©Å',
-                            title: language === 'fr' ? 'Cils & Cheveux Parfaits' : language === 'en' ? 'Perfect Lashes & Hair' : 'Pesta├▒as y Cabello Perfectos',
-                            desc: language === 'fr' ? '4 jours de soins cils/cheveux' : language === 'en' ? '4 days of lashes/hair care' : '4 d├¡as de cuidado pesta├▒as/cabello'
+                            icon: '👁️',
+                            title: language === 'fr' ? 'Cils & Cheveux Parfaits' : language === 'en' ? 'Perfect Lashes & Hair' : 'Pestañas y Cabello Perfectos',
+                            desc: language === 'fr' ? '4 jours de soins cils/cheveux' : language === 'en' ? '4 days of lashes/hair care' : '4 días de cuidado pestañas/cabello'
                           },
                           {
                             condition: dryBrushingDays >= 3,
-                            icon: '­ƒ¬Ñ',
+                            icon: '🪥',
                             title: language === 'fr' ? 'Brossage Expert' : language === 'en' ? 'Brushing Expert' : 'Experta en Cepillado',
-                            desc: language === 'fr' ? '3 jours de brossage ├á sec' : language === 'en' ? '3 days of dry brushing' : '3 d├¡as de cepillado en seco'
+                            desc: language === 'fr' ? '3 jours de brossage à sec' : language === 'en' ? '3 days of dry brushing' : '3 días de cepillado en seco'
                           }
                         ];
 
@@ -4882,30 +4935,30 @@ PROCESO OBLIGATORIO:
 
                               if (perfectDaysCount >= 20) {
                                 return language === 'fr'
-                                  ? "Tu es une vraie inspiration ! Continue ce rythme incroyable Ô£¿"
+                                  ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨"
                                   : language === 'en'
-                                    ? "You're a real inspiration! Keep up this incredible pace Ô£¿"
-                                    : "┬íEres una verdadera inspiraci├│n! Mant├®n este ritmo incre├¡ble Ô£¿";
+                                    ? "You're a real inspiration! Keep up this incredible pace ✨"
+                                    : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
                               }
                               if (perfectDaysCount >= 10) {
                                 return language === 'fr'
-                                  ? "Wow ! Tu brilles d├®j├á tellement plus ­ƒîƒ"
+                                  ? "Wow ! Tu brilles déjà tellement plus 🌟"
                                   : language === 'en'
-                                    ? "Wow! You're already shining so much brighter ­ƒîƒ"
-                                    : "┬íWow! Ya brillas mucho m├ís ­ƒîƒ";
+                                    ? "Wow! You're already shining so much brighter 🌟"
+                                    : "¡Wow! Ya brillas mucho más 🌟";
                               }
                               if (perfectDaysCount >= 3) {
                                 return language === 'fr'
-                                  ? "Je suis fi├¿re de toi ! Chaque jour compte ­ƒÆû"
+                                  ? "Je suis fière de toi ! Chaque jour compte 💖"
                                   : language === 'en'
-                                    ? "I'm proud of you! Every day counts ­ƒÆû"
-                                    : "┬íEstoy orgullosa de ti! Cada d├¡a cuenta ­ƒÆû";
+                                    ? "I'm proud of you! Every day counts 💖"
+                                    : "¡Estoy orgullosa de ti! Cada día cuenta 💖";
                               }
                               return language === 'fr'
-                                ? "Tu es au d├®but d'un parcours magnifique. Je suis l├á pour toi ! ­ƒî©"
+                                ? "Tu es au début d'un parcours magnifique. Je suis là pour toi ! 🌸"
                                 : language === 'en'
-                                  ? "You're at the start of a beautiful journey. I'm here for you! ­ƒî©"
-                                  : "Est├ís al comienzo de un hermoso viaje. ┬íEstoy aqu├¡ para ti! ­ƒî©";
+                                  ? "You're at the start of a beautiful journey. I'm here for you! 🌸"
+                                  : "Estás al comienzo de un hermoso viaje. ¡Estoy aquí para ti! 🌸";
                             })()}
                           </p>
                         </div>
@@ -4921,7 +4974,7 @@ PROCESO OBLIGATORIO:
         {/* Bonus View - Refonte Glassmorphism */}
         {currentView === 'bonus' && (
           <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 min-h-screen">
-            {/* Header ├®l├®gant */}
+            {/* Header élégant */}
             <div className="flex items-center gap-3 p-5 pb-4 max-w-3xl mx-auto">
               <Button
                 variant="ghost"
@@ -4933,7 +4986,7 @@ PROCESO OBLIGATORIO:
               </Button>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent">{t.bonus.title}</h1>
-                <p className="text-xs text-gray-600 font-medium">{language === 'fr' ? 'Ton espace de d├®veloppement' : language === 'en' ? 'Your development space' : 'Tu espacio de desarrollo'}</p>
+                <p className="text-xs text-gray-600 font-medium">{language === 'fr' ? 'Ton espace de développement' : language === 'en' ? 'Your development space' : 'Tu espacio de desarrollo'}</p>
               </div>
             </div>
 
@@ -5071,7 +5124,7 @@ PROCESO OBLIGATORIO:
         )}
       </main>
 
-      {/* Bottom Navigation - Design moderne ├®pur├® */}
+      {/* Bottom Navigation - Design moderne épuré */}
       {currentView !== 'goal-details' && (
         <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-lg z-50">
           <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-3 py-2 border border-gray-100">
@@ -5100,7 +5153,7 @@ PROCESO OBLIGATORIO:
               >
                 <Target className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'H├íbitos'}
+                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
                 </span>
               </Button>
 
@@ -5118,7 +5171,7 @@ PROCESO OBLIGATORIO:
                   </span>
                   <Plus className="w-6 h-6 relative z-10" />
                   <span className="text-[10px] font-medium relative z-10">
-                    {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'A├▒adir'}
+                    {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Añadir'}
                   </span>
                 </Button>
               ) : (
@@ -5228,7 +5281,7 @@ PROCESO OBLIGATORIO:
             <div className="p-5 rounded-2xl bg-gradient-to-br from-white to-pink-50 shadow-lg border border-pink-100/50">
               <h3 className="font-bold mb-3 flex items-center gap-2 text-gray-800">
                 <Sparkles className="w-5 h-5 text-pink-500 drop-shadow-lg" />
-                {language === 'fr' ? 'Pourquoi c\'est important' : language === 'en' ? 'Why it\'s important' : 'Por qu├® es importante'}
+                {language === 'fr' ? 'Pourquoi c\'est important' : language === 'en' ? 'Why it\'s important' : 'Por qué es importante'}
               </h3>
               <p className="text-sm text-gray-700 leading-relaxed">
                 {selectedHabit?.detailedExplanation[language]}
@@ -5239,7 +5292,7 @@ PROCESO OBLIGATORIO:
             <div className="p-5 rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 shadow-lg border border-pink-100/50">
               <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-800">
                 <Star className="w-5 h-5 text-pink-500 drop-shadow-lg" />
-                {language === 'fr' ? 'Les b├®n├®fices' : language === 'en' ? 'The benefits' : 'Los beneficios'}
+                {language === 'fr' ? 'Les bénéfices' : language === 'en' ? 'The benefits' : 'Los beneficios'}
               </h3>
               <div className="space-y-3">
                 {selectedHabit?.benefits[language].map((benefit, index) => (
@@ -5287,7 +5340,7 @@ PROCESO OBLIGATORIO:
               {newMeProgress[newMeCurrentDay]?.[selectedHabit?.id.toString() || ''] ? (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Habitude compl├®t├®e pour le {t.newMe.day} {newMeCurrentDay}
+                  Habitude complétée pour le {t.newMe.day} {newMeCurrentDay}
                 </>
               ) : (
                 <>
@@ -5340,11 +5393,11 @@ PROCESO OBLIGATORIO:
                         <div className="text-3xl">{step.icon}</div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">├ëtape {step.number}</Badge>
+                            <Badge variant="outline" className="text-xs">Étape {step.number}</Badge>
                             {isCompleted && (
                               <Badge className="text-xs bg-green-500 text-white">
                                 <Check className="w-3 h-3 mr-1" />
-                                Compl├®t├®
+                                Complété
                               </Badge>
                             )}
                           </div>
@@ -5386,7 +5439,7 @@ PROCESO OBLIGATORIO:
                                 key={index}
                                 className={`flex items-start gap-2 p-3 rounded-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}
                               >
-                                <span className="text-amber-400 text-sm mt-0.5">Ô£¿</span>
+                                <span className="text-amber-400 text-sm mt-0.5">✨</span>
                                 <p className="text-sm flex-1">{tip}</p>
                               </div>
                             ))}
@@ -5452,7 +5505,7 @@ PROCESO OBLIGATORIO:
                         className={`flex items-start gap-3 p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}
                       >
                         <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${theme === 'dark' ? 'bg-stone-700 text-stone-300' : 'bg-white text-stone-600'}`}>
-                          {selectedBonusSection.id === 'limites-paix' ? 'ÔÇó' : index + 1}
+                          {selectedBonusSection.id === 'limites-paix' ? '•' : index + 1}
                         </div>
                         <p className="text-sm flex-1 leading-relaxed">{step}</p>
                       </div>
@@ -5460,7 +5513,7 @@ PROCESO OBLIGATORIO:
                   </div>
                 )}
 
-                {/* 50 choses ├á faire seule - Liste avec fonction de rayer */}
+                {/* 50 choses à faire seule - Liste avec fonction de rayer */}
                 {selectedBonusSection.id === '50-choses-seule' && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between mb-4">
@@ -5490,7 +5543,7 @@ PROCESO OBLIGATORIO:
                             ? 'bg-stone-700 text-stone-300'
                             : 'bg-white text-stone-600'
                           }`}>
-                          {completedThingsAlone.includes(index) ? 'Ô£ô' : index + 1}
+                          {completedThingsAlone.includes(index) ? '✓' : index + 1}
                         </div>
                         <p className={`text-sm flex-1 leading-relaxed transition-all ${completedThingsAlone.includes(index)
                           ? 'line-through opacity-60'
@@ -5515,8 +5568,8 @@ PROCESO OBLIGATORIO:
                         key={index}
                         className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'}`}
                       >
-                        <p className="text-sm font-medium mb-1">┬½ {example.question} ┬╗</p>
-                        <p className="text-sm text-purple-600 dark:text-purple-400">ÔåÆ {example.answer}</p>
+                        <p className="text-sm font-medium mb-1">« {example.question} »</p>
+                        <p className="text-sm text-purple-600 dark:text-purple-400">→ {example.answer}</p>
                       </div>
                     ))}
                   </div>
@@ -5527,13 +5580,13 @@ PROCESO OBLIGATORIO:
                   <div className={`p-4 rounded-xl border-l-4 ${selectedBonusSection.id === 'petits-succes' ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : selectedBonusSection.id === 'question-soir' ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'}`}>
                     <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                       <Star className="w-4 h-4" />
-                      {selectedBonusSection.id === 'question-soir' ? 'R├®sultat' : 'Pourquoi ├ºa marche ?'}
+                      {selectedBonusSection.id === 'question-soir' ? 'Résultat' : 'Pourquoi ça marche ?'}
                     </h4>
                     <p className="text-sm leading-relaxed">{selectedBonusSection.content.why}</p>
                   </div>
                 )}
 
-                {/* S├®parateur avant le suivi */}
+                {/* Séparateur avant le suivi */}
                 {selectedBonusSection.id === 'limites-paix' && (
                   <div className="border-t-2 border-dashed border-stone-300 dark:border-stone-700 my-6"></div>
                 )}
@@ -5546,38 +5599,38 @@ PROCESO OBLIGATORIO:
         </DrawerContent>
       </Drawer>
 
-      {/* Drawer Ajouter une t├óche */}
+      {/* Drawer Ajouter une tâche */}
       <Drawer open={showAddTask} onOpenChange={setShowAddTask}>
         <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col">
           <DrawerHeader className="border-b flex-shrink-0">
             <DrawerTitle className="text-xl">
-              {language === 'fr' ? 'Ajouter une t├óche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
+              {language === 'fr' ? 'Ajouter une tâche' : language === 'en' ? 'Add a task' : 'Agregar una tarea'}
             </DrawerTitle>
             <DrawerDescription>
               {language === 'fr' ? 'Planifiez votre semaine efficacement' : language === 'en' ? 'Plan your week efficiently' : 'Planifica tu semana eficientemente'}
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-6 space-y-6 overflow-y-auto flex-1">
-            {/* Champ de texte pour la t├óche */}
+            {/* Champ de texte pour la tâche */}
             <div className="space-y-2">
               <label className="text-sm font-semibold">
-                {language === 'fr' ? 'T├óche' : language === 'en' ? 'Task' : 'Tarea'}
+                {language === 'fr' ? 'Tâche' : language === 'en' ? 'Task' : 'Tarea'}
               </label>
               <Input
-                placeholder={language === 'fr' ? 'Entrez votre t├óche...' : language === 'en' ? 'Enter your task...' : 'Ingresa tu tarea...'}
+                placeholder={language === 'fr' ? 'Entrez votre tâche...' : language === 'en' ? 'Enter your task...' : 'Ingresa tu tarea...'}
                 value={newTaskText}
                 onChange={(e) => setNewTaskText(e.target.value)}
                 className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
               />
             </div>
 
-            {/* S├®lection de la destination */}
+            {/* Sélection de la destination */}
             <div className="space-y-3">
               <label className="text-sm font-semibold">
                 {language === 'fr' ? 'Destination' : language === 'en' ? 'Destination' : 'Destino'}
               </label>
 
-              {/* Priorit├® de la semaine */}
+              {/* Priorité de la semaine */}
               <button
                 onClick={() => setNewTaskDestination('priority')}
                 className={`w-full p-4 rounded-xl text-left transition-all ${newTaskDestination === 'priority'
@@ -5597,10 +5650,10 @@ PROCESO OBLIGATORIO:
                   <div className="flex-1">
                     <p className="font-semibold flex items-center gap-2">
                       <Star className="w-4 h-4" />
-                      {language === 'fr' ? 'Priorit├® de la semaine' : language === 'en' ? 'Weekly priority' : 'Prioridad semanal'}
+                      {language === 'fr' ? 'Priorité de la semaine' : language === 'en' ? 'Weekly priority' : 'Prioridad semanal'}
                     </p>
                     <p className={`text-xs ${newTaskDestination === 'priority' ? 'opacity-90' : 'opacity-70'}`}>
-                      {language === 'fr' ? 'Ajoutez ├á vos 3 priorit├®s' : language === 'en' ? 'Add to your 3 priorities' : 'Agregar a tus 3 prioridades'}
+                      {language === 'fr' ? 'Ajoutez à vos 3 priorités' : language === 'en' ? 'Add to your 3 priorities' : 'Agregar a tus 3 prioridades'}
                     </p>
                   </div>
                 </div>
@@ -5609,7 +5662,7 @@ PROCESO OBLIGATORIO:
               {/* Jours de la semaine avec dates */}
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-stone-500 dark:text-stone-400">
-                  {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Pr├│ximos d├¡as'}
+                  {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Próximos días'}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   {(() => {
@@ -5683,7 +5736,7 @@ PROCESO OBLIGATORIO:
               >
                 <div className="flex items-center justify-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>{language === 'fr' ? 'Choisir un autre jour' : language === 'en' ? 'Choose another day' : 'Elegir otro d├¡a'}</span>
+                  <span>{language === 'fr' ? 'Choisir un autre jour' : language === 'en' ? 'Choose another day' : 'Elegir otro día'}</span>
                 </div>
               </button>
             </div>
@@ -5694,7 +5747,7 @@ PROCESO OBLIGATORIO:
               onClick={async () => {
                 if (newTaskText.trim()) {
                   if (newTaskDestination === 'priority') {
-                    // Ajouter aux priorit├®s de la semaine
+                    // Ajouter aux priorités de la semaine
                     if (weekPriorities.length < 3) {
                       const newTask = {
                         id: `task_${Date.now()}`,
@@ -5703,15 +5756,15 @@ PROCESO OBLIGATORIO:
                       };
                       setWeekPriorities([...weekPriorities, newTask]);
                     } else {
-                      alert(language === 'fr' ? 'Vous avez d├®j├á 3 priorit├®s!' : language === 'en' ? 'You already have 3 priorities!' : '┬íYa tienes 3 prioridades!');
+                      alert(language === 'fr' ? 'Vous avez déjà 3 priorités!' : language === 'en' ? 'You already have 3 priorities!' : '¡Ya tienes 3 prioridades!');
                       return;
                     }
                   } else {
-                    // Ajouter aux t├óches avec dates (nouveau syst├¿me)
+                    // Ajouter aux tâches avec dates (nouveau système)
                     const today = new Date();
                     const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
-                    // Trouver la date correspondant au jour s├®lectionn├®
+                    // Trouver la date correspondant au jour sélectionné
                     let targetDate = '';
                     for (let i = 0; i < 7; i++) {
                       const date = new Date(today);
@@ -5734,11 +5787,11 @@ PROCESO OBLIGATORIO:
 
                     setTasksWithDates(prev => [...prev, newTaskWithDate]);
 
-                    // Sauvegarder dans Firebase si l'utilisateur est connect├®
+                    // Sauvegarder dans Firebase si l'utilisateur est connecté
                     if (user) {
                       try {
                         const firebaseId = await saveTask(user.uid, newTaskWithDate);
-                        // Mettre ├á jour l'ID local avec l'ID Firebase
+                        // Mettre à jour l'ID local avec l'ID Firebase
                         setTasksWithDates(prev => prev.map(t =>
                           t.id === newTaskWithDate.id ? { ...t, id: firebaseId } : t
                         ));
@@ -5760,7 +5813,7 @@ PROCESO OBLIGATORIO:
         </DrawerContent>
       </Drawer>
 
-      {/* Dialog de F├®licitations */}
+      {/* Dialog de Félicitations */}
       <Dialog open={showCongratulations} onOpenChange={setShowCongratulations}>
         <DialogContent className={`max-w-sm ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
           <DialogHeader>
@@ -5769,11 +5822,11 @@ PROCESO OBLIGATORIO:
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
-            {/* Glowee f├®licitations */}
+            {/* Glowee félicitations */}
             <div className="flex justify-center">
               <img
                 src="/Glowee/glowee-felicite.webp"
-                alt="Glowee f├®licitations"
+                alt="Glowee félicitations"
                 className="w-32 h-32 object-contain"
               />
             </div>
@@ -5816,15 +5869,15 @@ PROCESO OBLIGATORIO:
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Calendrier - S├®lection de date */}
+      {/* Dialog Calendrier - Sélection de date */}
       <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
         <DialogContent className={`max-w-md ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
           <DialogHeader>
             <DialogTitle className="text-center">
-              {language === 'fr' ? 'S├®lectionner une date' : language === 'en' ? 'Select a date' : 'Seleccionar una fecha'}
+              {language === 'fr' ? 'Sélectionner une date' : language === 'en' ? 'Select a date' : 'Seleccionar una fecha'}
             </DialogTitle>
             <DialogDescription className="text-center">
-              {language === 'fr' ? 'Les jours avec une croix verte ont des t├óches planifi├®es' : language === 'en' ? 'Days with a green check have scheduled tasks' : 'Los d├¡as con un check verde tienen tareas programadas'}
+              {language === 'fr' ? 'Les jours avec une croix verte ont des tâches planifiées' : language === 'en' ? 'Days with a green check have scheduled tasks' : 'Los días con un check verde tienen tareas programadas'}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -5856,7 +5909,7 @@ PROCESO OBLIGATORIO:
                   sunday.setDate(monday.getDate() + 6);
                   sunday.setHours(23, 59, 59, 999);
 
-                  // V├®rifier si la date est dans la semaine actuelle
+                  // Vérifier si la date est dans la semaine actuelle
                   const dateToCheck = new Date(date);
                   dateToCheck.setHours(0, 0, 0, 0);
                   const isInCurrentWeek = dateToCheck >= monday && dateToCheck <= sunday;
@@ -5864,7 +5917,7 @@ PROCESO OBLIGATORIO:
                   // Si la date n'est pas dans la semaine actuelle, ne pas afficher de croix
                   if (!isInCurrentWeek) return false;
 
-                  // Sinon, v├®rifier si ce jour de la semaine a des t├óches
+                  // Sinon, vérifier si ce jour de la semaine a des tâches
                   const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
                   const dayIndex = date.getDay();
                   const dayOfWeek = dayKeys[dayIndex];
@@ -5872,14 +5925,14 @@ PROCESO OBLIGATORIO:
                 }
               }}
               modifiersClassNames={{
-                hasTask: 'relative after:content-["Ô£ô"] after:absolute after:top-1 after:right-1 after:text-[10px] after:text-green-500 after:font-bold'
+                hasTask: 'relative after:content-["✓"] after:absolute after:top-1 after:right-1 after:text-[10px] after:text-green-500 after:font-bold'
               }}
             />
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Popup de confirmation de suppression de t├óche */}
+      {/* Popup de confirmation de suppression de tâche */}
       <Dialog open={showDeleteTaskConfirm} onOpenChange={setShowDeleteTaskConfirm}>
         <DialogContent className={`max-w-md ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
           <div className="flex flex-col items-center gap-4 py-4">
@@ -5890,14 +5943,14 @@ PROCESO OBLIGATORIO:
             />
             <DialogHeader className="text-center">
               <DialogTitle className="text-xl">
-                {language === 'fr' ? 'Supprimer cette t├óche ?' : language === 'en' ? 'Delete this task?' : '┬┐Eliminar esta tarea?'}
+                {language === 'fr' ? 'Supprimer cette tâche ?' : language === 'en' ? 'Delete this task?' : '¿Eliminar esta tarea?'}
               </DialogTitle>
               <DialogDescription className="text-center pt-2">
                 {language === 'fr'
-                  ? 'Es-tu s├╗r(e) de vouloir supprimer cette t├óche ? Cette action est irr├®versible.'
+                  ? 'Es-tu sûr(e) de vouloir supprimer cette tâche ? Cette action est irréversible.'
                   : language === 'en'
                     ? 'Are you sure you want to delete this task? This action is irreversible.'
-                    : '┬┐Est├ís seguro de que quieres eliminar esta tarea? Esta acci├│n es irreversible.'}
+                    : '¿Estás seguro de que quieres eliminar esta tarea? Esta acción es irreversible.'}
               </DialogDescription>
             </DialogHeader>
             <div className="flex gap-3 w-full pt-2">
@@ -5949,7 +6002,7 @@ PROCESO OBLIGATORIO:
         language={language}
       />
 
-      {/* Trial Extension Popup - 3 jours suppl├®mentaires */}
+      {/* Trial Extension Popup - 3 jours supplémentaires */}
       <TrialExtensionPopup
         isOpen={showTrialExtension}
         onClose={() => setShowTrialExtension(false)}
@@ -5976,7 +6029,7 @@ PROCESO OBLIGATORIO:
         }}
         onSelectPlan={(plan) => {
           if (!user) {
-            // Sauvegarder le plan s├®lectionn├® et ouvrir l'authentification
+            // Sauvegarder le plan sélectionné et ouvrir l'authentification
             setPendingPlan(plan);
             setShowPlanSelection(false);
             setShowAuthDialog(true);
@@ -5995,7 +6048,7 @@ PROCESO OBLIGATORIO:
         language={language}
       />
 
-      {/* Glowee Welcome Popup - 1├¿re visite Dashboard */}
+      {/* Glowee Welcome Popup - 1ère visite Dashboard */}
       <GloweePopup
         isOpen={showGloweeWelcome}
         onClose={() => {
@@ -6046,10 +6099,10 @@ PROCESO OBLIGATORIO:
         <DrawerContent className="max-w-lg mx-auto bg-cream-100 border-none rounded-t-3xl">
           <DrawerHeader className="border-b border-stone-200 pb-4">
             <DrawerTitle className="text-center text-xl font-bold text-navy-900">
-              {language === 'fr' ? 'Challenge Beaut├® & Corps' : language === 'en' ? 'Beauty & Body Challenge' : 'Desaf├¡o Belleza & Cuerpo'}
+              {language === 'fr' ? 'Challenge Beauté & Corps' : language === 'en' ? 'Beauty & Body Challenge' : 'Desafío Belleza & Cuerpo'}
             </DrawerTitle>
             <DrawerDescription className="text-center text-sm text-stone-600">
-              {language === 'fr' ? '30 jours pour un glow up complet' : language === 'en' ? '30 days for a complete glow up' : '30 d├¡as para un glow up completo'}
+              {language === 'fr' ? '30 jours pour un glow up complet' : language === 'en' ? '30 days for a complete glow up' : '30 días para un glow up completo'}
             </DrawerDescription>
           </DrawerHeader>
 
@@ -6065,14 +6118,14 @@ PROCESO OBLIGATORIO:
                 : 'bg-gradient-to-br from-peach-100 to-peach-200'
                 }`}
             >
-              {/* Emoji d├®coratif */}
+              {/* Emoji décoratif */}
               <div className="absolute top-2 right-2 text-5xl opacity-20">
-                Ô£¿
+                ✨
               </div>
 
               <div className="flex items-start gap-3 relative z-10">
                 <div className="w-12 h-12 rounded-2xl bg-white/60 flex items-center justify-center flex-shrink-0">
-                  <span className="text-2xl">­ƒÆä</span>
+                  <span className="text-2xl">💄</span>
                 </div>
                 <div className="flex-1 text-left">
                   <h3 className="text-lg font-bold mb-1 text-navy-900">
@@ -6085,7 +6138,7 @@ PROCESO OBLIGATORIO:
                     <div className="mt-2 flex items-center gap-1.5 text-peach-500">
                       <Check className="w-4 h-4" />
                       <span className="text-xs font-semibold">
-                        {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desaf├¡o activo'}
+                        {language === 'fr' ? 'Challenge actif' : language === 'en' ? 'Active challenge' : 'Desafío activo'}
                       </span>
                     </div>
                   )}
@@ -6093,10 +6146,10 @@ PROCESO OBLIGATORIO:
               </div>
             </button>
 
-            {/* Section Visibilit├® des cartes */}
+            {/* Section Visibilité des cartes */}
             <div className="border-t border-stone-200 pt-4 mt-4">
               <h4 className="text-sm font-semibold text-stone-700 mb-3">
-                {language === 'fr' ? 'Visibilit├® des cartes' : language === 'en' ? 'Card visibility' : 'Visibilidad de tarjetas'}
+                {language === 'fr' ? 'Visibilité des cartes' : language === 'en' ? 'Card visibility' : 'Visibilidad de tarjetas'}
               </h4>
 
               {/* Toggle Challenge Card */}
@@ -6106,10 +6159,10 @@ PROCESO OBLIGATORIO:
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-peach-200 to-peach-300 flex items-center justify-center">
-                    <span className="text-lg">­ƒÆä</span>
+                    <span className="text-lg">💄</span>
                   </div>
                   <span className="text-sm font-medium text-stone-700">
-                    {language === 'fr' ? 'Carte Challenge' : language === 'en' ? 'Challenge Card' : 'Tarjeta Desaf├¡o'}
+                    {language === 'fr' ? 'Carte Challenge' : language === 'en' ? 'Challenge Card' : 'Tarjeta Desafío'}
                   </span>
                 </div>
                 <div className="w-10 h-6 rounded-full bg-stone-200 relative transition-colors" style={{ backgroundColor: showChallengeCard ? '#f472b6' : '#e5e7eb' }}>
@@ -6126,7 +6179,7 @@ PROCESO OBLIGATORIO:
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center">
-                    <span className="text-lg">Ô£¿</span>
+                    <span className="text-lg">✨</span>
                   </div>
                   <span className="text-sm font-medium text-stone-700">
                     {language === 'fr' ? 'Carte Flow' : language === 'en' ? 'Flow Card' : 'Tarjeta Flow'}
@@ -6148,7 +6201,7 @@ PROCESO OBLIGATORIO:
         isOpen={showAuthDialog}
         onClose={() => {
           setShowAuthDialog(false);
-          // Si un plan est en attente et l'utilisateur est connect├®, rediriger vers Stripe
+          // Si un plan est en attente et l'utilisateur est connecté, rediriger vers Stripe
           if (pendingPlan && user?.email) {
             const stripeUrl = pendingPlan === 'glow_start'
               ? `https://buy.stripe.com/8x26oH178evq3KLgqNf3a03?prefilled_email=${encodeURIComponent(user.email)}`
@@ -6172,17 +6225,17 @@ PROCESO OBLIGATORIO:
         language={language}
       />
 
-      {/* Popup de s├®rie - Beauty Challenge */}
+      {/* Popup de série - Beauty Challenge */}
       {showBeautyStreakPopup && (
         <div className="fixed top-0 left-0 right-0 z-50 animate-in slide-in-from-top duration-500">
           <div className="max-w-md mx-auto mt-4 px-4">
             <Card className="border-none shadow-2xl bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-3xl overflow-hidden">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  {/* Ic├┤ne flamme */}
+                  {/* Icône flamme */}
                   <div className="relative">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 flex items-center justify-center shadow-lg">
-                      <span className="text-3xl">­ƒöÑ</span>
+                      <span className="text-3xl">🔥</span>
                     </div>
                     <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg font-bold shadow-md animate-in zoom-in duration-700">
                       1
@@ -6192,11 +6245,11 @@ PROCESO OBLIGATORIO:
                   {/* Texte et jours de la semaine */}
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      {language === 'fr' ? 'Votre s├®rie' : language === 'en' ? 'Your streak' : 'Tu serie'}
+                      {language === 'fr' ? 'Votre série' : language === 'en' ? 'Your streak' : 'Tu serie'}
                     </h3>
                     <div className="flex gap-1.5">
                       {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => {
-                        const isToday = index === 0; // Premier jour pour la d├®monstration
+                        const isToday = index === 0; // Premier jour pour la démonstration
                         return (
                           <div
                             key={day}
@@ -6229,19 +6282,19 @@ PROCESO OBLIGATORIO:
         </div>
       )}
 
-      {/* Popup Glowee d├®├ºu - Journ├®e incompl├¿te */}
+      {/* Popup Glowee déçu - Journée incomplète */}
       {showBeautyIncompletePopup && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="border-none shadow-2xl bg-white rounded-3xl max-w-md w-full overflow-hidden animate-in zoom-in duration-300">
             <CardContent className="p-6">
               <div className="text-center space-y-4">
-                {/* Glowee d├®├ºu */}
+                {/* Glowee déçu */}
                 <div className="flex justify-center">
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full blur-xl opacity-40"></div>
                     <Image
                       src="/Glowee/glowee-decu.webp"
-                      alt="Glowee d├®├ºu"
+                      alt="Glowee déçu"
                       width={120}
                       height={130}
                       className="object-contain relative z-10 drop-shadow-2xl"
@@ -6256,10 +6309,10 @@ PROCESO OBLIGATORIO:
                   </h3>
                   <p className="text-sm text-gray-600">
                     {language === 'fr'
-                      ? 'Es-tu s├╗r┬Àe de vouloir valider cette journ├®e incompl├¿te ?'
+                      ? 'Es-tu sûr·e de vouloir valider cette journée incomplète ?'
                       : language === 'en'
                         ? 'Are you sure you want to validate this incomplete day?'
-                        : '┬┐Est├ís seguro de que quieres validar este d├¡a incompleto?'}
+                        : '¿Estás seguro de que quieres validar este día incompleto?'}
                   </p>
                 </div>
 
@@ -6274,11 +6327,11 @@ PROCESO OBLIGATORIO:
                   <button
                     onClick={() => {
                       setShowBeautyIncompletePopup(false);
-                      // Pas d'ajout de croix ni de popup de s├®rie
+                      // Pas d'ajout de croix ni de popup de série
                     }}
                     className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
                   >
-                    {language === 'fr' ? 'Valider quand m├¬me' : language === 'en' ? 'Validate anyway' : 'Validar de todos modos'}
+                    {language === 'fr' ? 'Valider quand même' : language === 'en' ? 'Validate anyway' : 'Validar de todos modos'}
                   </button>
                 </div>
               </div>
@@ -6287,7 +6340,7 @@ PROCESO OBLIGATORIO:
         </div>
       )}
 
-      {/* Animation CSS pour fade out des habitudes compl├®t├®es */}
+      {/* Animation CSS pour fade out des habitudes complétées */}
       <style jsx global>{`
         @keyframes fadeOut {
           0% {
@@ -6340,7 +6393,7 @@ PROCESO OBLIGATORIO:
             </div>
           </div>
 
-          {/* Liste des entr├®es */}
+          {/* Liste des entrées */}
           <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
             {journalEntries.map((entry) => (
               <div key={entry.id} className="bg-white rounded-2xl p-4 shadow-sm">
@@ -6352,10 +6405,10 @@ PROCESO OBLIGATORIO:
                       className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
                       style={{ backgroundColor: entry.moodColor + '20' }}
                     >
-                      {entry.mood === 'bien' || entry.mood === 'good' ? '­ƒÿè' :
-                        entry.mood === 'super' || entry.mood === 'great' ? '­ƒÿä' :
-                          entry.mood === 'triste' || entry.mood === 'sad' ? '­ƒÿó' :
-                            entry.mood === 'fatigu├®' || entry.mood === 'tired' ? '­ƒÿ┤' : '­ƒÿÉ'}
+                      {entry.mood === 'bien' || entry.mood === 'good' ? '😊' :
+                        entry.mood === 'super' || entry.mood === 'great' ? '😄' :
+                          entry.mood === 'triste' || entry.mood === 'sad' ? '😢' :
+                            entry.mood === 'fatigué' || entry.mood === 'tired' ? '😴' : '😐'}
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 uppercase tracking-wide">
@@ -6386,7 +6439,7 @@ PROCESO OBLIGATORIO:
                       <MoreHorizontal className="w-5 h-5 text-gray-400" />
                     </button>
 
-                    {/* Menu d├®roulant */}
+                    {/* Menu déroulant */}
                     {openMenuEntryId === entry.id && (
                       <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 min-w-[140px]">
                         <button
@@ -6434,7 +6487,7 @@ PROCESO OBLIGATORIO:
                   {entry.text}
                 </p>
 
-                {/* Images si pr├®sentes */}
+                {/* Images si présentes */}
                 {entry.images && entry.images.length > 0 && (
                   <div className="flex gap-2 overflow-x-auto pb-2">
                     {entry.images.map((img, idx) => (
@@ -6470,7 +6523,7 @@ PROCESO OBLIGATORIO:
                   {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
                 </h1>
                 <p className="text-xs text-stone-600 dark:text-stone-400">
-                  {language === 'fr' ? 'Qui ├¬tes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '┬┐En qui├®n te est├ís convirtiendo?'}
+                  {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
                 </p>
               </div>
             </div>
@@ -6488,15 +6541,15 @@ PROCESO OBLIGATORIO:
                   </svg>
                 </div>
                 <h2 className="text-lg font-bold text-violet-800">
-                  {language === 'fr' ? 'Qui ├¬tes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '┬┐En qui├®n te est├ís convirtiendo?'}
+                  {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
                 </h2>
               </div>
               <p className="text-sm text-violet-700 leading-relaxed">
                 {language === 'fr'
-                  ? 'Glow Mirror analyse vos donn├®es sur 7 jours pour cr├®er un reflet personnalis├® de qui vous ├¬tes en train de devenir.'
+                  ? 'Glow Mirror analyse vos données sur 7 jours pour créer un reflet personnalisé de qui vous êtes en train de devenir.'
                   : language === 'en'
                     ? 'Glow Mirror analyzes your data over 7 days to create a personalized reflection of who you are becoming.'
-                    : 'Glow Mirror analiza tus datos durante 7 d├¡as para crear un reflejo personalizado de en qui├®n te est├ís convirtiendo.'}
+                    : 'Glow Mirror analiza tus datos durante 7 días para crear un reflejo personalizado de en quién te estás convirtiendo.'}
               </p>
             </div>
 
@@ -6516,11 +6569,11 @@ PROCESO OBLIGATORIO:
                     ? 'Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
                     : language === 'en'
                       ? 'Use the app for 7 days, then come back to see who you\'re becoming.'
-                      : 'Usa la app durante 7 d├¡as, luego vuelve para ver en qui├®n te est├ís convirtiendo.'}
+                      : 'Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
                 </p>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
                   <span className="text-sm font-medium text-gray-600">
-                    {language === 'fr' ? `Jour ${daysSinceFirstUse} sur 7` : language === 'en' ? `Day ${daysSinceFirstUse} of 7` : `D├¡a ${daysSinceFirstUse} de 7`}
+                    {language === 'fr' ? `Jour ${daysSinceFirstUse} sur 7` : language === 'en' ? `Day ${daysSinceFirstUse} of 7` : `Día ${daysSinceFirstUse} de 7`}
                   </span>
                 </div>
               </div>
@@ -6532,14 +6585,14 @@ PROCESO OBLIGATORIO:
                   </svg>
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
-                  {language === 'fr' ? 'Prochain Glow Mirror' : language === 'en' ? 'Next Glow Mirror' : 'Pr├│ximo Glow Mirror'}
+                  {language === 'fr' ? 'Prochain Glow Mirror' : language === 'en' ? 'Next Glow Mirror' : 'Próximo Glow Mirror'}
                 </h3>
                 <p className="text-gray-600">
                   {language === 'fr'
                     ? 'Votre prochain Glow Mirror sera disponible dans 7 jours.'
                     : language === 'en'
                       ? 'Your next Glow Mirror will be available in 7 days.'
-                      : 'Tu pr├│ximo Glow Mirror estar├í disponible en 7 d├¡as.'}
+                      : 'Tu próximo Glow Mirror estará disponible en 7 días.'}
                 </p>
               </div>
             ) : (

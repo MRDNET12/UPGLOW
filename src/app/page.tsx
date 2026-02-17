@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame, LayoutGrid } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -372,6 +372,10 @@ export default function GlowUpChallengeApp() {
   });
   const [daysSinceFirstUse, setDaysSinceFirstUse] = useState(0);
   const [isGlowMirrorReady, setIsGlowMirrorReady] = useState(false);
+
+  // État pour la vue Planning (Semaine vs Jour)
+  const [isDayView, setIsDayView] = useState(false);
+  const [selectedDayViewDate, setSelectedDayViewDate] = useState(new Date());
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -3635,7 +3639,7 @@ PROCESO OBLIGATORIO:
         {currentView === 'routine' && (
           <div className="pb-24 relative z-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
-            <div className="p-4 pb-0">
+            <div className="p-4 pb-0 flex items-center justify-between">
               <div className="flex items-center gap-3 mb-3">
                 <Button
                   variant="ghost"
@@ -3648,216 +3652,313 @@ PROCESO OBLIGATORIO:
                   {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                 </h1>
               </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsDayView(!isDayView)}
+                className="rounded-full hover:bg-stone-100 dark:hover:bg-stone-800"
+              >
+                {isDayView ? <LayoutGrid className="w-5 h-5 text-stone-500" /> : <Eye className="w-5 h-5 text-stone-500" />}
+              </Button>
             </div>
 
+            {!isDayView ? (
+              <>
+                {/* Navigation par semaine */}
+                <div className="px-4 pb-2">
+                  <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
+                    <div className="flex items-center justify-between gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCurrentWeekOffset(prev => prev - 1)}
+                        className="flex-shrink-0 h-8 w-8 p-0"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </Button>
 
+                      <div className="flex-1 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-rose-400" />
+                          <p className="text-xs font-semibold">
+                            {currentWeekOffset === 0
+                              ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
+                              : currentWeekOffset === 1
+                                ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
+                                : currentWeekOffset === -1
+                                  ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
+                                  : formatWeekRange(currentWeekOffset)
+                            }
+                          </p>
+                        </div>
+                      </div>
 
-            {/* Navigation par semaine */}
-            <div className="px-4 pb-2">
-              <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
-                <div className="flex items-center justify-between gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentWeekOffset(prev => prev - 1)}
-                    className="flex-shrink-0 h-8 w-8 p-0"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </Button>
-
-                  <div className="flex-1 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-rose-400" />
-                      <p className="text-xs font-semibold">
-                        {currentWeekOffset === 0
-                          ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
-                          : currentWeekOffset === 1
-                            ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
-                            : currentWeekOffset === -1
-                              ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
-                              : formatWeekRange(currentWeekOffset)
-                        }
-                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                        className="flex-shrink-0 h-8 w-8 p-0"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentWeekOffset(prev => prev + 1)}
-                    className="flex-shrink-0 h-8 w-8 p-0"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
                 </div>
-              </div>
-            </div>
 
-            <div className="px-4 space-y-3 max-w-lg mx-auto">
-              {/* Section "Mes 3 priorités" masquée */}
-              {/*
-              <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-lg`}>
-                <h2 className="text-sm font-bold mb-2.5 flex items-center gap-1.5">
-                  <Star className="w-4 h-4 text-rose-400" />
-                  {language === 'fr' ? 'Mes 3 priorités de la semaine' : language === 'en' ? 'My 3 weekly priorities' : 'Mis 3 prioridades semanales'}
-                </h2>
-                <div className="space-y-2">
+                <div className="px-4 space-y-3 max-w-lg mx-auto">
+                  {/* Jours de la semaine - 2 par ligne */}
+                  <div className="grid grid-cols-2 gap-2 items-start">
+                    {(() => {
+                      const today = new Date();
+                      const todayStr = getLocalDateString(today);
+                      const weekDates = getWeekDates(currentWeekOffset);
+
+                      return [
+                        { key: 'monday', label: language === 'fr' ? 'Lun' : language === 'en' ? 'Mon' : 'Lun', index: 0 },
+                        { key: 'tuesday', label: language === 'fr' ? 'Mar' : language === 'en' ? 'Tue' : 'Mar', index: 1 },
+                        { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mié', index: 2 },
+                        { key: 'thursday', label: language === 'fr' ? 'Jeu' : language === 'en' ? 'Thu' : 'Jue', index: 3 },
+                        { key: 'friday', label: language === 'fr' ? 'Ven' : language === 'en' ? 'Fri' : 'Vie', index: 4 },
+                        { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'Sáb', index: 5 },
+                        { key: 'sunday', label: language === 'fr' ? 'Dim' : language === 'en' ? 'Sun' : 'Dom', index: 6 }
+                      ].map((day) => {
+                        const dateStr = weekDates[day.index];
+                        const isToday = dateStr === todayStr;
+                        const dayDate = new Date(dateStr);
+                        const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
+
+                        // Récupérer les tâches pour cette date
+                        const dayTasks = getTasksForDate(dateStr, "user");
+
+                        return (
+                          <div
+                            key={day.key}
+                            className={`rounded-xl shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden min-h-[160px] cursor-pointer hover:shadow-lg transition-shadow`}
+                            onClick={() => {
+                              setSelectedDayViewDate(dayDate);
+                              setIsDayView(true);
+                            }}
+                          >
+                            {/* Bordure en haut pour le jour actuel */}
+                            {isToday && (
+                              <div className="absolute top-0 left-[20%] right-[20%] h-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
+                            )}
+                            <div className="p-2.5">
+                              <div className="flex items-center justify-between mb-2">
+                                <h3 className="font-bold text-xs">{day.label}</h3>
+                                <span className="text-[10px] text-stone-400">{formattedDate}</span>
+                              </div>
+                              <div className="space-y-1.5">
+                                {dayTasks.length === 0 ? (
+                                  <p className="text-[10px] text-stone-400 text-center py-1">
+                                    {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
+                                  </p>
+                                ) : (
+                                  dayTasks.map((task) => {
+                                    // Obtenir l'index de l'objectif pour déterminer la couleur du dégradé (3 couleurs max)
+                                    const getGradientForGoal = () => {
+                                      if (task.type !== 'glowee' || !task.goalId) return null;
+                                      const activeGoals = getActiveGoals();
+                                      const goalIndex = activeGoals.findIndex(g => g.id === task.goalId);
+                                      if (goalIndex === -1) return null;
+                                      // 3 dégradés distincts pour les 3 objectifs possibles
+                                      const gradients = [
+                                        'from-rose-200/60 via-pink-200/60 to-rose-100/60', // Objectif 1 - Rose
+                                        'from-violet-200/60 via-purple-200/60 to-violet-100/60', // Objectif 2 - Violet
+                                        'from-amber-200/60 via-orange-200/60 to-amber-100/60' // Objectif 3 - Orange
+                                      ];
+                                      return gradients[goalIndex % 3];
+                                    };
+                                    const taskGradient = getGradientForGoal();
+
+                                    return (
+                                      <div
+                                        key={task.id}
+                                        className={`p-1.5 rounded-lg text-[10px] relative overflow-hidden group ${taskGradient
+                                          ? `bg-gradient-to-r ${taskGradient} text-gray-800`
+                                          : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50 text-stone-600'
+                                          }`}
+                                      >
+                                        <div className="flex items-start gap-1.5 relative z-10">
+                                          <div className={`mt-0.5 w-2.5 h-2.5 rounded border flex items-center justify-center flex-shrink-0 ${task.completed
+                                            ? 'bg-emerald-500 border-emerald-500'
+                                            : 'border-stone-300 bg-white/50'
+                                            }`}>
+                                            {task.completed && <Check className="w-2 h-2 text-white" />}
+                                          </div>
+                                          <span className={`leading-tight line-clamp-2 ${task.completed ? 'line-through opacity-50' : ''}`}>
+                                            {task.text}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    })()}
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* VUE JOUR TYPE APPLE CALENDAR */
+              <div className="px-4 py-2 space-y-6 animate-in slide-in-from-right-4 duration-300">
+                {/* Gros Header Date & Nav Mois */}
+                <div className="flex items-end justify-between mb-4">
+                  <div className="flex items-start gap-1">
+                    <h2 className="text-4xl font-bold text-gray-900 leading-none">
+                      {selectedDayViewDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3)}
+                    </h2>
+                    <div className="w-2 h-2 rounded-full bg-rose-500 mt-2 shadow-sm shadow-rose-200"></div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl text-stone-400 font-light leading-tight capitalize">
+                      {selectedDayViewDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', day: 'numeric' })}
+                    </p>
+                    <p className="text-lg text-stone-300 font-light leading-tight">
+                      {selectedDayViewDate.getFullYear()}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bandeau des jours (Strip) */}
+                <div className="flex justify-between items-center overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide select-none touch-pan-x">
+                  {[-3, -2, -1, 0, 1, 2, 3].map(offset => {
+                    const d = new Date(selectedDayViewDate);
+                    d.setDate(d.getDate() + offset);
+                    const isSelected = offset === 0;
+                    const isToday = getLocalDateString(d) === getLocalDateString(new Date());
+
+                    return (
+                      <button
+                        key={offset}
+                        onClick={() => setSelectedDayViewDate(d)}
+                        className={`flex flex-col items-center justify-center min-w-[48px] h-[64px] rounded-2xl transition-all duration-300 flex-shrink-0 mx-1 ${isSelected ? 'bg-white shadow-md scale-105 ring-1 ring-black/5' : 'text-stone-400 hover:text-stone-600 hover:bg-white/50'}`}
+                      >
+                        <span className="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">
+                          {d.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3)}
+                        </span>
+                        <span className={`text-xl font-bold ${isSelected ? 'text-gray-900' : 'text-stone-400'}`}>
+                          {d.getDate()}
+                        </span>
+                        {isToday && !isSelected && <span className="block w-1 h-1 bg-rose-400 rounded-full mt-1 opacity-50"></span>}
+                        {isSelected && <span className="block w-1 h-1 bg-gray-900 rounded-full mt-1"></span>}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Liste des tâches */}
+                <div className="space-y-0 min-h-[300px]">
                   {(() => {
-                    let prioritiesToShow = weekPriorities;
-                    if (prioritiesToShow.length === 0) {
+                    const dateString = getLocalDateString(selectedDayViewDate);
+                    const tasks = getTasksForDate(dateString, "user");
+
+                    if (tasks.length === 0) {
                       return (
-                        <p className="text-sm text-stone-500 dark:text-stone-400 text-center py-4">
-                          {language === 'fr' ? 'Aucune priorité définie' : language === 'en' ? 'No priorities set' : 'Sin prioridades definidas'}
-                        </p>
+                        <div className="py-20 text-center flex flex-col items-center justify-center gap-4 opacity-50">
+                          <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center">
+                            <Calendar className="w-8 h-8 text-stone-400 stroke-1" />
+                          </div>
+                          <p className="text-sm font-light text-stone-500">
+                            {language === 'fr' ? 'Rien de prévu pour ce jour' : language === 'en' ? 'Nothing planned for today' : 'Nada planeado para hoy'}
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowAddTask(true)}
+                            className="mt-2 rounded-full border-dashed"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            {language === 'fr' ? 'Ajouter' : 'Add'}
+                          </Button>
+                        </div>
                       );
                     }
-                    return prioritiesToShow.map((priority) => (
-                      <div
-                        key={priority.id}
-                        className={`flex items-center gap-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'}`}
+
+                    return tasks.map((task, i) => (
+                      <div key={task.id} className="group flex items-start gap-4 py-4 border-b border-gray-100 border-dashed last:border-0 hover:bg-stone-50/50 -mx-2 px-4 rounded-lg transition-colors cursor-pointer"
+                        onClick={async () => {
+                          const newCompleted = !task.completed;
+                          setTasksWithDates(prev => prev.map(t =>
+                            t.id === task.id ? { ...t, completed: newCompleted } : t
+                          ));
+                          if (user && task.id.startsWith('firebase_')) {
+                            try {
+                              await updateTaskCompletion(task.id, newCompleted);
+                            } catch (error) {
+                              console.error('Error updating task completion in Firebase:', error);
+                            }
+                          }
+                        }}
                       >
-                        <span className={`flex-1 text-xs ${priority.completed ? 'line-through text-stone-500' : ''}`}>
-                          {priority.text}
-                        </span>
-                        <button
-                          onClick={() => {
-                            setWeekPriorities(weekPriorities.filter(p => p.id !== priority.id));
-                          }}
-                          className="text-stone-400 hover:text-red-500"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
+                        {/* Left Icon - Checkbox style but bigger */}
+                        <div className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${task.completed
+                            ? 'bg-emerald-500 border-emerald-500'
+                            : 'border-stone-200 bg-white group-hover:border-rose-300'
+                          }`}>
+                          {task.completed && <Check className="w-4 h-4 text-white" />}
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0 pt-0.5">
+                          <p className={`text-base font-medium leading-normal break-words ${task.completed ? 'line-through text-stone-400' : 'text-gray-900'}`}>
+                            {task.text}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {task.goalId && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-medium">
+                                Objectif
+                              </span>
+                            )}
+                            {task.generated && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 font-medium flex items-center gap-1">
+                                <Sparkles className="w-2.5 h-2.5" />
+                                IA
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Time placeholder */}
+                        <div className="text-sm text-stone-300 font-light font-tabular-nums pt-1">
+                          {/* Fake time based on index to look like schedule */}
+                          {`${9 + (i % 8)}:00`}
+                        </div>
                       </div>
                     ));
                   })()}
                 </div>
+
+                {/* Action flottante pour ajouter */}
+                <div className="fixed bottom-24 right-6 z-20">
+                  <Button
+                    onClick={() => setShowAddTask(true)}
+                    className="rounded-full w-12 h-12 shadow-xl bg-gray-900 hover:bg-black text-white p-0"
+                  >
+                    <Plus className="w-6 h-6" />
+                  </Button>
+                </div>
               </div>
-              */}
+            )}
 
-              {/* Jours de la semaine - 2 par ligne */}
-              <div className="grid grid-cols-2 gap-2 items-start">
-                {(() => {
-                  const today = new Date();
-                  const todayStr = getLocalDateString(today);
-                  const weekDates = getWeekDates(currentWeekOffset);
-
-                  return [
-                    { key: 'monday', label: language === 'fr' ? 'Lun' : language === 'en' ? 'Mon' : 'Lun', index: 0 },
-                    { key: 'tuesday', label: language === 'fr' ? 'Mar' : language === 'en' ? 'Tue' : 'Mar', index: 1 },
-                    { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mié', index: 2 },
-                    { key: 'thursday', label: language === 'fr' ? 'Jeu' : language === 'en' ? 'Thu' : 'Jue', index: 3 },
-                    { key: 'friday', label: language === 'fr' ? 'Ven' : language === 'en' ? 'Fri' : 'Vie', index: 4 },
-                    { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'Sáb', index: 5 },
-                    { key: 'sunday', label: language === 'fr' ? 'Dim' : language === 'en' ? 'Sun' : 'Dom', index: 6 }
-                  ].map((day) => {
-                    const dateStr = weekDates[day.index];
-                    const isToday = dateStr === todayStr;
-                    const dayDate = new Date(dateStr);
-                    const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
-
-                    // Récupérer les tâches pour cette date
-                    const dayTasks = getTasksForDate(dateStr, "user");
-
-                    return (
-                      <div
-                        key={day.key}
-                        className={`rounded-xl shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden min-h-[160px]`}
-                      >
-                        {/* Bordure en haut pour le jour actuel */}
-                        {isToday && (
-                          <div className="absolute top-0 left-[20%] right-[20%] h-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
-                        )}
-                        <div className="p-2.5">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-bold text-xs">{day.label}</h3>
-                            <span className="text-[10px] text-stone-400">{formattedDate}</span>
-                          </div>
-                          <div className="space-y-1.5">
-                            {dayTasks.length === 0 ? (
-                              <p className="text-[10px] text-stone-400 text-center py-1">
-                                {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
-                              </p>
-                            ) : (
-                              dayTasks.map((task) => {
-                                // Obtenir l'index de l'objectif pour déterminer la couleur du dégradé (3 couleurs max)
-                                const getGradientForGoal = () => {
-                                  if (task.type !== 'glowee' || !task.goalId) return null;
-                                  const activeGoals = getActiveGoals();
-                                  const goalIndex = activeGoals.findIndex(g => g.id === task.goalId);
-                                  if (goalIndex === -1) return null;
-                                  // 3 dégradés distincts pour les 3 objectifs possibles
-                                  const gradients = [
-                                    'from-rose-200/60 via-pink-200/60 to-rose-100/60', // Objectif 1 - Rose
-                                    'from-violet-200/60 via-purple-200/60 to-violet-100/60', // Objectif 2 - Violet
-                                    'from-amber-200/60 via-orange-200/60 to-amber-100/60' // Objectif 3 - Orange
-                                  ];
-                                  return gradients[goalIndex % 3];
-                                };
-                                const taskGradient = getGradientForGoal();
-
-                                return (
-                                  <div
-                                    key={task.id}
-                                    className={`relative p-1.5 pr-5 rounded-md text-[10px] flex items-start gap-1.5 ${task.type === 'glowee' && taskGradient
-                                      ? `bg-gradient-to-r ${taskGradient}`
-                                      : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'
-                                      }`}
-                                  >
-                                    {/* Indicateur de couleur de l'objectif */}
-                                    {task.goalColor && (
-                                      <div
-                                        className="w-2 h-2 rounded-full flex-shrink-0 mt-0.5"
-                                        style={{ backgroundColor: task.goalColor }}
-                                        title={task.goalName || ''}
-                                      />
-                                    )}
-                                    {/* Bouton supprimer - coin supérieur droit */}
-                                    <button
-                                      onClick={async () => {
-                                        setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
-                                        if (user && task.id.startsWith('firebase_')) {
-                                          try {
-                                            await deleteTaskFromFirebase(task.id);
-                                          } catch (error) {
-                                            console.error('Error deleting task from Firebase:', error);
-                                          }
-                                        }
-                                      }}
-                                      className="absolute top-0.5 right-0.5 text-stone-400 hover:text-red-500 transition-colors p-0.5"
-                                    >
-                                      <X className="w-2.5 h-2.5" />
-                                    </button>
-                                    <span
-                                      onClick={async () => {
-                                        const newCompleted = !task.completed;
-                                        setTasksWithDates(prev => prev.map(t =>
-                                          t.id === task.id ? { ...t, completed: newCompleted } : t
-                                        ));
-                                        if (user && task.id.startsWith('firebase_')) {
-                                          try {
-                                            await updateTaskCompletion(task.id, newCompleted);
-                                          } catch (error) {
-                                            console.error('Error updating task completion in Firebase:', error);
-                                          }
-                                        }
-                                      }}
-                                      className={`cursor-pointer block leading-tight flex-1 ${task.completed ? 'line-through text-stone-500' : ''}`}
-                                    >
-                                      {task.text}
-                                    </span>
-                                  </div>
-                                );
-                              })
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  });
-                })()}
+            {/* Bouton Ajouter une tâche */}
+            {!isDayView && (
+              <div className="px-4 pb-4 pt-3 max-w-lg mx-auto">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white h-8 text-xs w-full"
+                  onClick={() => setShowAddTask(true)}
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" />
+                  {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
+                </Button>
               </div>
-            </div>
-
+            )}
           </div>
         )}
 
@@ -5615,7 +5716,7 @@ PROCESO OBLIGATORIO:
           setNewTaskDestination('priority');
         }
       }}>
-        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col">
+        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col bg-white">
           <DrawerHeader className="border-b flex-shrink-0">
             <DrawerTitle className="text-xl">
               {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
@@ -5669,35 +5770,6 @@ PROCESO OBLIGATORIO:
                   <label className="text-sm font-semibold">
                     {language === 'fr' ? 'Destination' : language === 'en' ? 'Destination' : 'Destino'}
                   </label>
-
-                  {/* Priorité de la semaine */}
-                  <button
-                    onClick={() => setNewTaskDestination('priority')}
-                    className={`w-full p-4 rounded-xl text-left transition-all ${newTaskDestination === 'priority'
-                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                      : theme === 'dark'
-                        ? 'bg-stone-800 hover:bg-stone-700'
-                        : 'bg-stone-100 hover:bg-stone-200'
-                      }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${newTaskDestination === 'priority'
-                        ? 'border-white bg-white'
-                        : 'border-stone-400'
-                        }`}>
-                        {newTaskDestination === 'priority' && <Check className="w-3 h-3 text-rose-400" />}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold flex items-center gap-2">
-                          <Star className="w-4 h-4" />
-                          {language === 'fr' ? 'Priorité de la semaine' : language === 'en' ? 'Weekly priority' : 'Prioridad semanal'}
-                        </p>
-                        <p className={`text-xs ${newTaskDestination === 'priority' ? 'opacity-90' : 'opacity-70'}`}>
-                          {language === 'fr' ? 'Ajoutez à vos 3 priorités' : language === 'en' ? 'Add to your 3 priorities' : 'Agregar a tus 3 prioridades'}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
 
                   {/* Jours de la semaine avec dates */}
                   <div className="space-y-2">
@@ -5843,14 +5915,11 @@ PROCESO OBLIGATORIO:
                   <div className="space-y-6">
                     {/* Image et message de Glowee */}
                     <div className="flex flex-col items-center space-y-4">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-[2rem] blur-xl opacity-40"></div>
-                        <img
-                          src="/Glowee/glowee.webp"
-                          alt="Glowee"
-                          className="w-24 h-24 object-contain drop-shadow-2xl relative z-10"
-                        />
-                      </div>
+                      <img
+                        src="/Glowee/glowee.webp"
+                        alt="Glowee"
+                        className="w-24 h-24 object-contain"
+                      />
                       <div className="text-center space-y-2">
                         <p className="text-sm text-stone-600 italic">
                           {language === 'fr'

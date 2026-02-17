@@ -2431,15 +2431,15 @@ PROCESO OBLIGATORIO:
                   </button>
                 </div>
 
-                {/* Carte Message à moi - Centré */}
+                {/* Carte Message à moi - Centré avec animation slide fluide */}
                 <div
-                  className={`w-full flex justify-center transition-all duration-500 ease-in-out ${showTimeCapsuleCard
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-full absolute'
+                  className={`w-full flex justify-center transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${showTimeCapsuleCard
+                    ? 'opacity-100 translate-y-0 scale-100'
+                    : 'opacity-0 translate-y-8 scale-95 pointer-events-none'
                     }`}
                 >
                   <div
-                    className="w-full cursor-pointer"
+                    className="w-full cursor-pointer transform transition-transform duration-300 hover:scale-[1.02]"
                     onClick={() => checkFeatureAccess('message_a_moi', () => setTimeCapsuleExpanded(!timeCapsuleExpanded))}
                   >
                     <TimeCapsule
@@ -2697,45 +2697,75 @@ PROCESO OBLIGATORIO:
               <SmallWinsCompact theme={theme} />
             </div>
 
-            {/* Section des succès ajoutés */}
-            {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 && (
-              <div className="space-y-3 -mt-2">
-                {bonusProgress.smallWins.slice(0, 3).map((win, index) => (
-                  <div
-                    key={win.id || index}
-                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg">✨</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 leading-relaxed">
-                        {win.text}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                          day: 'numeric',
-                          month: 'short'
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                {bonusProgress.smallWins.length > 3 && (
-                  <button
-                    onClick={() => setCurrentView('bonus')}
-                    className="w-full py-3 text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors"
-                  >
-                    {language === 'fr'
-                      ? `Voir les ${bonusProgress.smallWins.length - 3} autres succès`
-                      : language === 'en'
-                        ? `See ${bonusProgress.smallWins.length - 3} more wins`
-                        : `Ver ${bonusProgress.smallWins.length - 3} éxitos más`}
-                  </button>
-                )}
+            {/* Section des succès ajoutés - Style moderne clair */}
+            <div className="bg-white rounded-3xl p-6 space-y-4 shadow-sm border border-gray-100">
+              {/* Titre avec icône */}
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                  <Target className="w-3.5 h-3.5 text-white" />
+                </div>
+                <h3 className="text-gray-900 font-semibold text-base">
+                  {language === 'fr' ? 'Tes Preuves du Jour' : language === 'en' ? 'Your Daily Proofs' : 'Tus Pruebas del Día'}
+                </h3>
               </div>
-            )}
+
+              {/* Contenu */}
+              {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 ? (
+                <div className="space-y-3">
+                  {bonusProgress.smallWins.slice(0, 3).map((win, index) => (
+                    <div
+                      key={win.id || index}
+                      className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg">✨</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-800 leading-relaxed">
+                          {win.text}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                            day: 'numeric',
+                            month: 'short'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {bonusProgress.smallWins.length > 3 && (
+                    <button
+                      onClick={() => setCurrentView('bonus')}
+                      className="w-full py-3 text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors"
+                    >
+                      {language === 'fr'
+                        ? `Voir les ${bonusProgress.smallWins.length - 3} autres succès`
+                        : language === 'en'
+                          ? `See ${bonusProgress.smallWins.length - 3} more wins`
+                          : `Ver ${bonusProgress.smallWins.length - 3} éxitos más`}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                /* État vide */
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                    <Star className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-900 font-semibold text-base mb-2">
+                    {language === 'fr' ? 'Aucun succès enregistré' : language === 'en' ? 'No wins recorded' : 'Ningún éxito registrado'}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    {language === 'fr' 
+                      ? 'Utilise le bouton + pour ajouter une nouvelle preuve'
+                      : language === 'en'
+                        ? 'Use the + button to add a new proof'
+                        : 'Usa el botón + para agregar una nueva prueba'}
+                  </p>
+                </div>
+              )}
+            </div>
 
             {/* Grille de cartes - Layout moderne compact - Carte Mes Habitudes MASQUÉE */}
             {/* <div className="grid grid-cols-5 gap-3">
@@ -6199,9 +6229,9 @@ PROCESO OBLIGATORIO:
 
       {/* Journal View */}
       {currentView === 'journal' && canAccessFeature('journal') && (
-        <div className="pb-24 min-h-screen bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="fixed inset-0 z-40 pb-24 bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Header */}
-          <div className="px-4 pt-0 pb-0 bg-white">
+          <div className="px-4 pt-4 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">
               <Button
                 variant="ghost"

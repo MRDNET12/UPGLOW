@@ -3858,17 +3858,6 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
 
-            {/* Bouton Construire ma victoire */}
-            <div className="px-4 pb-4 pt-3 max-w-lg mx-auto">
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white h-8 text-xs"
-                onClick={() => setShowAddTask(true)}
-              >
-                <Plus className="w-3.5 h-3.5 mr-1.5" />
-                {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
-              </Button>
-            </div>
           </div>
         )}
 
@@ -5099,10 +5088,10 @@ PROCESO OBLIGATORIO:
             <button
               onClick={() => {
                 if (currentView === 'journal') {
-                  // Si on est sur la page Journal, ouvrir le popup d'ajout d'entrée
                   setShowJournalEntryModal(true);
+                } else if (currentView === 'routine') {
+                  setShowAddTask(true);
                 } else {
-                  // Sinon, ouvrir le menu habituel
                   setShowAddMenu(true);
                 }
               }}

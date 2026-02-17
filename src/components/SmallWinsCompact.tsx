@@ -94,7 +94,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     <div className="w-full">
       {/* Carte compacte - Cliquable pour expand */}
       <div
-        className={`rounded-[1.5rem] p-4 shadow-xl shadow-pink-100/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-visible border-none ${
+        className={`rounded-[1.5rem] p-4 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-visible border-none ${
           winsThisWeek.length > 0
             ? 'bg-gradient-to-br from-pink-50 via-rose-50 to-white'
             : 'bg-white/80 backdrop-blur-md'
@@ -131,19 +131,11 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             )}
           </div>
         </div>
-        {/* Flèche en superposition avec la bordure droite */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-pink-500" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-pink-500" />
-          )}
-        </div>
       </div>
 
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
-        <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-pink-100/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
+        <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
           {/* FAQ Pourquoi ? - Design compact */}
           <div>
             <button

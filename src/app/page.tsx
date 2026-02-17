@@ -15,7 +15,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -351,6 +351,9 @@ export default function GlowUpChallengeApp() {
   const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{ habit: string, streak: number }>>([]);
   const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
   const [showGlowMirrorAlert, setShowGlowMirrorAlert] = useState(false);
+  
+  // État pour le menu Ajouter (+)
+  const [showAddMenu, setShowAddMenu] = useState(false);
 
   // Date de première utilisation de l'app (pour Glow Mirror)
   const [firstAppUseDate, setFirstAppUseDate] = useState<string>(() => {
@@ -4976,7 +4979,7 @@ PROCESO OBLIGATORIO:
         <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-lg z-50">
           <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-3 py-2 border border-gray-100">
             <div className="flex items-center justify-around">
-              {/* Accueil */}
+              {/* Aujourd'hui */}
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'dashboard'
@@ -4986,10 +4989,12 @@ PROCESO OBLIGATORIO:
                 onClick={() => setCurrentView('dashboard')}
               >
                 <Home className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{t.nav.home}</span>
+                <span className="text-[10px] font-medium">
+                  {language === 'fr' ? "Aujourd'hui" : language === 'en' ? 'Today' : 'Hoy'}
+                </span>
               </Button>
 
-              {/* Habitudes */}
+              {/* La Forge */}
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'trackers'
@@ -4998,59 +5003,28 @@ PROCESO OBLIGATORIO:
                   }`}
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
-                <Target className="w-5 h-5" />
+                <Flame className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
+                  {language === 'fr' ? 'La Forge' : language === 'en' ? 'The Forge' : 'La Forja'}
                 </span>
               </Button>
 
-              {/* Journal - Bouton + quand sur la page journal */}
-              {currentView === 'journal' ? (
-                <Button
-                  variant="ghost"
-                  className="flex-1 h-11 flex-col gap-0.5 rounded-xl bg-gray-900 text-white shadow-lg hover:bg-gray-800 relative overflow-hidden"
-                  onClick={() => setShowJournalEntryModal(true)}
-                >
-                  {/* Animation ondes */}
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="absolute w-full h-full bg-white/20 rounded-xl animate-ping" style={{ animationDuration: '2s' }}></span>
-                    <span className="absolute w-3/4 h-3/4 bg-white/30 rounded-xl animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }}></span>
-                  </span>
-                  <Plus className="w-6 h-6 relative z-10" />
-                  <span className="text-[10px] font-medium relative z-10">
-                    {language === 'fr' ? 'Ajouter' : language === 'en' ? 'Add' : 'Añadir'}
-                  </span>
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'journal'
-                    ? 'bg-gray-900 text-white shadow-md'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                    }`}
-                  onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
-                >
-                  <BookOpen className="w-5 h-5" />
-                  <span className="text-[10px] font-medium">{t.nav.journal}</span>
-                </Button>
-              )}
-
-              {/* Ma Semaine */}
+              {/* Identités */}
               <Button
                 variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'routine'
+                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'settings'
                   ? 'bg-gray-900 text-white shadow-md'
                   : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                   }`}
-                onClick={() => setCurrentView('routine')}
+                onClick={() => setCurrentView('settings')}
               >
-                <Calendar className="w-5 h-5" />
+                <User className="w-5 h-5" />
                 <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                  {language === 'fr' ? 'Identités' : language === 'en' ? 'Identities' : 'Identidades'}
                 </span>
               </Button>
 
-              {/* Profil */}
+              {/* Réglages */}
               <Button
                 variant="ghost"
                 className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'settings'
@@ -5060,13 +5034,88 @@ PROCESO OBLIGATORIO:
                 onClick={() => setCurrentView('settings')}
               >
                 <Settings className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{t.nav.settings}</span>
+                <span className="text-[10px] font-medium">
+                  {language === 'fr' ? 'Réglages' : language === 'en' ? 'Settings' : 'Ajustes'}
+                </span>
               </Button>
             </div>
           </div>
+          
+          {/* Bouton + flottant à droite */}
+          <button
+            onClick={() => setShowAddMenu(true)}
+            className="absolute -right-3 bottom-1/2 transform translate-y-1/2 w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50"
+          >
+            <Plus className="w-6 h-6 text-white" />
+          </button>
         </nav>
       )}
+ 
+      {/* Drawer Menu Ajouter (+) - Slide du bas vers le haut */}
+      <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
+        <DrawerContent className="max-w-lg mx-auto">
+          <DrawerHeader className="border-b">
+            <div className="flex items-center justify-between">
+              <DrawerTitle className="text-xl">
+                {language === 'fr' ? 'Que veux-tu ajouter ?' : language === 'en' ? 'What do you want to add?' : '¿Qué quieres añadir?'}
+              </DrawerTitle>
+              <DrawerClose asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <X className="w-5 h-5" />
+                </Button>
+              </DrawerClose>
+            </div>
+          </DrawerHeader>
+          
+          <div className="p-6 space-y-4">
+            {/* Ajouter une victoire */}
+            <button
+              onClick={() => {
+                setShowAddMenu(false);
+                checkFeatureAccess('petites_victoires', () => {
+                  // Rediriger vers la page des petites victoires ou ouvrir le modal
+                  setCurrentView('dashboard');
+                });
+              }}
+              className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-pink-50 to-rose-50 hover:from-pink-100 hover:to-rose-100 transition-all border border-pink-100"
+            >
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg">
+                <Star className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-gray-800">
+                  {language === 'fr' ? 'Ajouter une victoire' : language === 'en' ? 'Add a victory' : 'Añadir una victoria'}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {language === 'fr' ? 'Célèbre tes petits succès' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros'}
+                </p>
+              </div>
+            </button>
 
+            {/* Mon Journal */}
+            <button
+              onClick={() => {
+                setShowAddMenu(false);
+                checkFeatureAccess('journal', () => setCurrentView('journal'));
+              }}
+              className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100 transition-all border border-purple-100"
+            >
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center shadow-lg">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-gray-800">
+                  {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {language === 'fr' ? 'Écris tes pensées' : language === 'en' ? 'Write your thoughts' : 'Escribe tus pensamientos'}
+                </p>
+              </div>
+            </button>
+          </div>
+        </DrawerContent>
+      </Drawer>
+ 
       {/* Drawer Checklist - Animation coulissante du bas */}
       <Drawer open={!!selectedChecklist} onOpenChange={(open) => !open && setSelectedChecklist(null)}>
         <DrawerContent className="max-w-lg mx-auto">

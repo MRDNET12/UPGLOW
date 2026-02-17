@@ -5042,7 +5042,7 @@ PROCESO OBLIGATORIO:
             {/* Section Célèbre tes petits succès */}
             <div className="space-y-3">
               <h3 className="font-bold text-gray-800 text-lg">
-                {language === 'fr' ? 'Célèbre tes petits succès' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros'}
+                {language === 'fr' ? "Ma fierté du jour !" : language === 'en' ? "My pride of the day!" : '¡Mi orgullo del día!'}
               </h3>
               
               {/* Champ de saisie avec bouton + */}

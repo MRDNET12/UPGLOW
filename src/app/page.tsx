@@ -2541,173 +2541,58 @@ PROCESO OBLIGATORIO:
               </button>
             </div>
 
-            {/* Carte Flow Personnalisé - Style "A series of Olympiads" (Purple + Trophy) */}
-            {showFlowCard && (
-              <Card
-                className={`border-none shadow-xl bg-[#8b5cf6] text-white rounded-[2rem] overflow-hidden relative min-h-[220px] group transition-all duration-300 ${isGeneratingFlowBackground
-                  ? 'cursor-not-allowed opacity-90'
-                  : 'cursor-pointer hover:scale-[1.01]'
-                  }`}
-                onClick={() => {
-                  if (isGeneratingFlowBackground) return; // Bloquer le clic pendant la génération
-                  if (personalizedFlow?.isActive) {
-                    setCurrentView('flow-challenge');
-                  } else {
-                    setCurrentView('flow-proposition');
-                  }
-                }}
-              >
-                {/* Background Stars/Decorations */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-4 right-1/3 text-yellow-300 text-xl animate-pulse">✨</div>
-                  <div className="absolute bottom-8 right-8 text-yellow-200 text-sm">✦</div>
-                  <div className="absolute top-1/2 left-1/2 text-purple-300/30 text-4xl">★</div>
-                  <div className="absolute top-6 left-6 text-yellow-300/50 text-xs">✦</div>
+            {/* Carte Ma Semaine (même emplacement et dimensions que l'ancienne carte Flow) */}
+            <Card
+              className="border-none shadow-lg bg-[#facc15] text-amber-950 rounded-[2rem] overflow-hidden relative min-h-[220px] cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+              onClick={() => setCurrentView('routine')}
+            >
+              {/* Wave Background */}
+              <div className="absolute bottom-0 left-0 right-0 h-32 opacity-40 pointer-events-none">
+                <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
+                  <path fill="#ca8a04" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,160C960,139,1056,149,1152,160C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                </svg>
+              </div>
+
+              <CardContent className="p-6 h-full flex flex-col justify-between relative z-10">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-black/10 rounded-full">
+                    <Calendar className="w-5 h-5 text-amber-900" />
+                  </div>
+                  <h3 className="text-base font-bold text-amber-900">
+                    {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                  </h3>
                 </div>
 
-                <CardContent className="p-6 relative z-10 h-full flex flex-col justify-between">
-                  {isGeneratingFlowBackground ? (
-                    /* Loading State - Animation identique à FlowDescriptionPage */
-                    (() => {
-                      const generationSteps = {
-                        fr: [
-                          { text: 'Analyse de ton objectif...', icon: Target },
-                          { text: 'Génération des 30 jours...', icon: Wand2 },
-                          { text: 'Personnalisation de ton parcours...', icon: Lightbulb },
-                          { text: 'Finalisation...', icon: Sparkles },
-                        ],
-                        en: [
-                          { text: 'Analyzing your goal...', icon: Target },
-                          { text: 'Generating 30 days...', icon: Wand2 },
-                          { text: 'Personalizing your journey...', icon: Lightbulb },
-                          { text: 'Finalizing...', icon: Sparkles },
-                        ],
-                        es: [
-                          { text: 'Analizando tu objetivo...', icon: Target },
-                          { text: 'Generando 30 días...', icon: Wand2 },
-                          { text: 'Personalizando tu camino...', icon: Lightbulb },
-                          { text: 'Finalizando...', icon: Sparkles },
-                        ],
-                      };
-                      const currentSteps = generationSteps[language as keyof typeof generationSteps] || generationSteps.fr;
-                      const CurrentIcon = currentSteps[flowGenerationStep].icon;
+                {/* Stats */}
+                <div className="flex-1 flex items-center">
+                  <div>
+                    <p className="text-5xl font-bold text-amber-950">
+                      {(() => {
+                        const weekDates = getWeekDates(0);
+                        return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
+                      })()}
+                      <span className="text-lg ml-2 text-amber-900/60 font-medium">
+                        {language === 'fr' ? 'tâches' : language === 'en' ? 'tasks' : 'tareas'}
+                      </span>
+                    </p>
+                    <p className="text-sm text-amber-800/70 mt-2">
+                      {language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana'}
+                    </p>
+                  </div>
+                </div>
 
-                      return (
-                        <div className="flex flex-col items-center justify-center h-full">
-                          {/* Animation circulaire */}
-                          <div className="relative w-32 h-32 mx-auto mb-4">
-                            {/* Cercles animés */}
-                            <div className="absolute inset-0 rounded-full border-4 border-white/20 opacity-30 animate-ping" />
-                            <div className="absolute inset-2 rounded-full border-4 border-white/30 opacity-40 animate-ping" style={{ animationDelay: '0.2s' }} />
-                            <div className="absolute inset-4 rounded-full border-4 border-white/40 opacity-50 animate-ping" style={{ animationDelay: '0.4s' }} />
-
-                            {/* Icône centrale */}
-                            <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white/80 to-white/60 flex items-center justify-center shadow-2xl animate-pulse">
-                              <CurrentIcon className="w-10 h-10 text-purple-600" />
-                            </div>
-                          </div>
-
-                          {/* Texte de l'étape */}
-                          <div className="text-center space-y-2">
-                            <h3 className="text-xl font-bold text-white">
-                              {language === 'fr' ? 'Création de ton Flow' : language === 'en' ? 'Creating your Flow' : 'Creando tu Flow'}
-                            </h3>
-                            <p className="text-base text-white/90 font-medium">
-                              {currentSteps[flowGenerationStep].text}
-                            </p>
-                          </div>
-
-                          {/* Barre de progression */}
-                          <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden mx-auto mt-4">
-                            <div
-                              className="h-full bg-white rounded-full transition-all duration-500"
-                              style={{ width: `${((flowGenerationStep + 1) / currentSteps.length) * 100}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })()
-                  ) : personalizedFlow?.isActive ? (
-                    /* Active State - Adapted to Purple Theme */
-                    <div className="flex items-center justify-between h-full">
-                      <div className="flex-1 z-10">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
-                            <TrendingUp className="w-5 h-5 text-white" />
-                          </div>
-                          <span className="text-sm font-bold text-purple-100 tracking-wide">
-                            {language === 'fr' ? 'TA PROGRESSION' : language === 'en' ? 'YOUR PROGRESS' : 'TU PROGRESO'}
-                          </span>
-                        </div>
-
-                        <div className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-sm">
-                          {Math.round((personalizedFlow.completedDays.length / 30) * 100)}%
-                        </div>
-
-                        <div className="flex items-center gap-2 text-purple-200 text-sm font-medium bg-black/10 w-fit px-3 py-1 rounded-full">
-                          <span>
-                            {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Progress Ring - White/Purple Theme */}
-                      <div className="relative w-28 h-28 flex-shrink-0">
-                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
-                          <circle
-                            cx="50" cy="50" r="42" fill="none" stroke="#fbbf24" strokeWidth="8"
-                            strokeLinecap="round"
-                            strokeDasharray={`${(personalizedFlow.completedDays.length / 30) * 264} 264`}
-                            className="transition-all duration-1000 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <span className="text-2xl">🔥</span>
-                          <span className="text-sm font-bold text-white">{personalizedFlow.completedDays.length}j</span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Inactive State - The "Olympiad" Style */
-                    <div className="relative h-full flex flex-col justify-center">
-                      {/* CSS Trophy Illustration */}
-                      <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 transform scale-110 rotate-3 pointer-events-none group-hover:scale-125 group-hover:rotate-6 transition-all duration-500">
-                        <div className="relative w-32 h-32 flex items-center justify-center">
-                          {/* Cup Handles */}
-                          <div className="absolute top-8 left-0 w-32 h-16 border-4 border-indigo-400 rounded-full z-0"></div>
-                          {/* Cup Body */}
-                          <div className="relative z-10 w-20 h-20 bg-gradient-to-b from-yellow-300 to-amber-400 rounded-b-full shadow-lg border-t-4 border-yellow-200 flex items-center justify-center">
-                            <div className="text-amber-600 opacity-50 transform rotate-12">★</div>
-                            {/* Shine */}
-                            <div className="absolute top-2 right-4 w-3 h-8 bg-white/30 rounded-full transform rotate-12"></div>
-                          </div>
-                          {/* Cup Stem */}
-                          <div className="absolute bottom-8 w-4 h-6 bg-amber-500 z-0"></div>
-                          <div className="absolute bottom-10 w-6 h-2 bg-amber-600 z-10 rounded-full"></div>
-                          {/* Base */}
-                          <div className="absolute bottom-4 w-16 h-6 bg-amber-500 rounded-full shadow-md z-10 border-b-4 border-amber-600"></div>
-                        </div>
-                      </div>
-
-                      <div className="z-20 max-w-[65%]">
-                        <h2 className="text-3xl font-black text-white leading-none mb-3 drop-shadow-md">
-                          {language === 'fr' ? 'Crée ton\nFlow' : language === 'en' ? 'Create your\nFlow' : 'Crea tu\nFlow'}
-                        </h2>
-                        <p className="text-sm font-medium text-purple-100 mb-6 leading-relaxed">
-                          {language === 'fr' ? '30 jours pour transformer tes objectifs en habitudes' : language === 'en' ? '30 days to transform your goals into habits' : '30 días para transformar tus objetivos en hábitos'}
-                        </p>
-
-                        {/* Circular Button */}
-                        <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center shadow-lg group-hover:bg-black transition-colors">
-                          <ArrowRight className="w-5 h-5 text-white" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
+                {/* Footer avec indication */}
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs text-amber-900/60">
+                    {language === 'fr' ? 'Clique pour voir' : language === 'en' ? 'Click to view' : 'Clic para ver'}
+                  </span>
+                  <div className="w-10 h-10 rounded-full bg-amber-900/10 flex items-center justify-center">
+                    <ChevronRight className="w-5 h-5 text-amber-900" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Grande carte Challenge Mind & Life - Style glassmorphism */}
             {selectedChallenge === 'mind-life' && showChallengeCard && (
@@ -2954,45 +2839,7 @@ PROCESO OBLIGATORIO:
                 </CardContent>
               </Card>
 
-              {/* Carte Ma Semaine (40%) */}
-              <Card
-                className="col-span-2 border-none shadow-lg bg-[#facc15] text-amber-950 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
-                onClick={() => setCurrentView('routine')}
-              >
-                {/* Wave Background */}
-                <div className="absolute bottom-0 left-0 right-0 h-24 opacity-40 pointer-events-none">
-                  <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
-                    <path fill="#ca8a04" fillOpacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,160C960,139,1056,149,1152,160C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-                  </svg>
-                </div>
-
-                <CardContent className="p-4 h-full flex flex-col justify-between relative z-10">
-                  {/* Header */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-black/10 rounded-full">
-                      <Calendar className="w-4 h-4 text-amber-900" />
-                    </div>
-                    <h3 className="text-sm font-bold text-amber-900">
-                      {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
-                    </h3>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex-1 flex items-end mb-2">
-                    <div>
-                      <p className="text-4xl font-bold text-amber-950">
-                        {(() => {
-                          const weekDates = getWeekDates(0);
-                          return tasksWithDates.filter(t => !t.completed && weekDates.includes(t.date)).length;
-                        })()}
-                        <span className="text-sm ml-1 text-amber-900/60 font-medium">
-                          {language === 'fr' ? 'tâches' : language === 'en' ? 'tasks' : 'tareas'}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Carte Ma Semaine déplacée - voir plus haut dans la page */}
             </div>
 
             {/* Carte Glow Up (Bonus) - MASQUÉE */}

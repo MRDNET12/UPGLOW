@@ -368,7 +368,7 @@ export const useStore = create<AppState>()(
 
       // Visibility toggles for homepage cards
       showChallengeCard: true,
-      showFlowCard: true,
+      showFlowCard: false,
       toggleChallengeCard: () => set({ showChallengeCard: !get().showChallengeCard }),
       toggleFlowCard: () => set({ showFlowCard: !get().showFlowCard }),
 

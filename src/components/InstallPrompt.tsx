@@ -18,19 +18,19 @@ export default function InstallPrompt() {
 
   const translations = {
     fr: {
-      title: 'Installer UPGLOW',
+      title: 'Installer Secret Victory',
       description: 'Installez l\'application pour un accès rapide et hors ligne',
       install: 'Installer',
       later: 'Plus tard'
     },
     en: {
-      title: 'Install UPGLOW',
+      title: 'Install Secret Victory',
       description: 'Install the app for quick access and offline use',
       install: 'Install',
       later: 'Later'
     },
     es: {
-      title: 'Instalar UPGLOW',
+      title: 'Instalar Secret Victory',
       description: 'Instala la aplicación para acceso rápido y sin conexión',
       install: 'Instalar',
       later: 'Más tarde'

@@ -18,10 +18,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Glow Up Challenge - 30 Jours pour Devenir la Meilleure Version de Toi-Même",
-  description: "Transforme ta vie en 30 jours avec le Glow Up Challenge. Beauté, mindset, self-care et lifestyle dans une application premium au style Pinterest.",
-  keywords: ["Glow Up", "Challenge", "Self-care", "Beauté", "Mindset", "Transformation personnelle", "Femme", "Bien-être"],
-  authors: [{ name: "Glow Up Challenge" }],
+  title: "Secret Victory - 30 Jours pour Devenir la Meilleure Version de Toi-Même",
+  description: "Transforme ta vie en 30 jours avec Secret Victory. Beauté, mindset, self-care et lifestyle dans une application premium au style Pinterest.",
+  keywords: ["Secret Victory", "Challenge", "Self-care", "Beauté", "Mindset", "Transformation personnelle", "Femme", "Bien-être"],
+  authors: [{ name: "Secret Victory" }],
   icons: {
     icon: "/logo.svg",
     apple: "/icon.svg",
@@ -30,16 +30,16 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "PROJECT GLOW",
+    title: "Secret Victory",
   },
   openGraph: {
-    title: "Glow Up Challenge - 30 Jours de Transformation",
+    title: "Secret Victory - 30 Jours de Transformation",
     description: "Une expérience premium pour devenir la meilleure version de toi-même",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Glow Up Challenge - 30 Jours de Transformation",
+    title: "Secret Victory - 30 Jours de Transformation",
     description: "Une expérience premium pour devenir la meilleure version de toi-même",
   },
   viewport: {
@@ -63,7 +63,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="PROJECT GLOW" />
+        <meta name="apple-mobile-web-app-title" content="Secret Victory" />
         <link rel="apple-touch-icon" href="/icon.svg" />
         {/* OneSignal Push Notifications */}
         <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>

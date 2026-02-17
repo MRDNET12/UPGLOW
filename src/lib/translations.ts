@@ -405,7 +405,7 @@ export const translations: Record<Language, Translation> = {
       gloweeButton: 'Avançons ensemble',
     },
     languageSelection: {
-      title: 'Bienvenue',
+      title: 'Secret Victory',
       subtitle: 'Choisissez votre langue',
       selectLanguage: 'Sélectionner la langue',
       continue: 'Continuer',
@@ -744,7 +744,7 @@ export const translations: Record<Language, Translation> = {
       gloweeButton: 'Let\'s move forward together',
     },
     languageSelection: {
-      title: 'Welcome',
+      title: 'Secret Victory',
       subtitle: 'Choose your language',
       selectLanguage: 'Select language',
       continue: 'Continue',
@@ -1083,7 +1083,7 @@ export const translations: Record<Language, Translation> = {
       gloweeButton: 'Avancemos juntas',
     },
     languageSelection: {
-      title: 'Bienvenida',
+      title: 'Secret Victory',
       subtitle: 'Elige tu idioma',
       selectLanguage: 'Seleccionar idioma',
       continue: 'Continuar',

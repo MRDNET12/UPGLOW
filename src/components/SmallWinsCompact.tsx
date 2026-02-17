@@ -92,43 +92,36 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   return (
     <div className="w-full">
-      {/* Carte compacte - Cliquable pour expand */}
+      {/* Carte compacte - Style Badge Géant */}
       <div
-        className={`rounded-[1.5rem] p-4 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-visible border-none ${
-          winsThisWeek.length > 0
-            ? 'bg-gradient-to-br from-pink-50 via-rose-50 to-white'
-            : 'bg-white/80 backdrop-blur-md'
-        }`}
+        className={`rounded-[1.5rem] p-5 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient}`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-3 flex-1">
-          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${rank.bgGradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
-            <Trophy className="w-5 h-5 text-white drop-shadow-lg" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-sm font-bold text-gray-800">
-                {t.bonus.smallWinsTitle}
-              </h3>
-              {winsThisWeek.length > 0 && (
-                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r ${rank.bgGradient}`}>
-                  <span className="text-xs">{rank.emoji}</span>
-                  <span className="text-[10px] font-bold text-white drop-shadow-md">{rank.name}</span>
-                </div>
-              )}
+        {/* Décoration d'arrière-plan */}
+        <div className="absolute -right-4 -bottom-4 opacity-20 transform rotate-12">
+          <rank.icon className="w-24 h-24 text-white" />
+        </div>
+
+        <div className="relative z-10 flex flex-col gap-3">
+          {/* En-tête avec Emoji et Compteur */}
+          <div className="flex items-center justify-between">
+            <span className="text-3xl filter drop-shadow-md">{rank.emoji}</span>
+            <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 shadow-sm">
+              <span className="text-xs font-bold text-white">
+                {winsThisWeek.length} {language === 'fr' ? 'succès' : language === 'en' ? 'wins' : 'éxitos'}
+              </span>
             </div>
-            {lastWin ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-600">{winsThisWeek.length}/5</span>
-                <p className="text-xs text-gray-600 truncate font-medium">
-                  {lastWin.text}
-                </p>
-              </div>
-            ) : (
-              <p className="text-xs text-gray-500 italic">
-                {t.bonus.addSmallWin}
-              </p>
-            )}
+          </div>
+
+          {/* Titre du Badge (Rang) */}
+          <div>
+            <h3 className="text-xl font-bold text-white leading-tight drop-shadow-sm">
+              {rank.name}
+            </h3>
+            {/* Dernier succès ou incitation */}
+            <p className="text-white/90 text-sm font-medium mt-1 line-clamp-1">
+              {lastWin ? `"${lastWin.text}"` : (language === 'fr' ? 'Ajouter une victoire...' : 'Add a win...')}
+            </p>
           </div>
         </div>
       </div>
@@ -171,16 +164,16 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                     {language === 'fr'
                       ? 'Chaque victoire, même minuscule, renforce la personne que tu es en train de devenir.\nPrends l\'habitude de reconnaître tes efforts et de bâtir une fierté saine, sans comparaison.\nValide tes progrès et construis ta fierté.'
                       : language === 'en'
-                      ? 'Every victory, even tiny, strengthens the person you\'re becoming.\nGet in the habit of recognizing your efforts and building healthy pride, without comparison.\nValidate your progress and build your pride.'
-                      : 'Cada victoria, incluso minúscula, fortalece la persona que estás llegando a ser.\nAcostúmbrate a reconocer tus esfuerzos y construir un orgullo sano, sin comparación.\nValida tu progreso y construye tu orgullo.'
+                        ? 'Every victory, even tiny, strengthens the person you\'re becoming.\nGet in the habit of recognizing your efforts and building healthy pride, without comparison.\nValidate your progress and build your pride.'
+                        : 'Cada victoria, incluso minúscula, fortalece la persona que estás llegando a ser.\nAcostúmbrate a reconocer tus esfuerzos y construir un orgullo sano, sin comparación.\nValida tu progreso y construye tu orgullo.'
                     }
                   </p>
                   <p className="text-gray-700 font-medium text-[11px] leading-relaxed mb-2">
                     {language === 'fr'
                       ? 'Note tes petits accomplissements réalisés cette semaine (même les plus minimes).\n« J\'ai commencé ... » « Je n\'ai pas abandonné ... » « J\'ai essayé ... » « J\'ai réussi ... »'
                       : language === 'en'
-                      ? 'Note your small accomplishments achieved this week (even the smallest ones).\n"I started ..." "I didn\'t give up ..." "I tried ..." "I succeeded ..."'
-                      : 'Anota tus pequeños logros realizados esta semana (incluso los más mínimos).\n"Empecé ..." "No abandoné ..." "Intenté ..." "Logré ..."'
+                        ? 'Note your small accomplishments achieved this week (even the smallest ones).\n"I started ..." "I didn\'t give up ..." "I tried ..." "I succeeded ..."'
+                        : 'Anota tus pequeños logros realizados esta semana (incluso los más mínimos).\n"Empecé ..." "No abandoné ..." "Intenté ..." "Logré ..."'
                     }
                   </p>
                 </div>
@@ -192,8 +185,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                     {language === 'fr'
                       ? 'L\'auto-valorisation aide à renforcer la confiance et réduire le sentiment d\'échec.'
                       : language === 'en'
-                      ? 'Self-appreciation helps strengthen confidence and reduce feelings of failure.'
-                      : 'La autovaloración ayuda a fortalecer la confianza y reducir el sentimiento de fracaso.'
+                        ? 'Self-appreciation helps strengthen confidence and reduce feelings of failure.'
+                        : 'La autovaloración ayuda a fortalecer la confianza y reducir el sentimiento de fracaso.'
                     }
                   </p>
                 </div>
@@ -240,11 +233,10 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 {winsThisWeek.slice().reverse().map((win, index) => (
                   <div
                     key={win.id}
-                    className={`p-2 rounded-lg transition-all ${
-                      index === 0
+                    className={`p-2 rounded-lg transition-all ${index === 0
                         ? `bg-gradient-to-br ${rank.bgGradient} shadow-md`
                         : 'bg-white/60 border border-pink-100 hover:border-pink-200'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2">
                       <Trophy className={`w-3.5 h-3.5 flex-shrink-0 ${index === 0 ? 'text-white' : 'text-pink-500'}`} />

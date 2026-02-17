@@ -3190,7 +3190,7 @@ PROCESO OBLIGATORIO:
 
         {/* Trackers View - Project Glow Design System */}
         {currentView === 'trackers' && (
-          <div className="pb-24 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white">
+          <div className="pb-24 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 bg-[#F7F8FA]">
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">

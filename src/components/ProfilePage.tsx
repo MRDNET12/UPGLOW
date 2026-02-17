@@ -52,9 +52,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
     );
 
     return (
-        <div className="pb-28 min-h-screen bg-[#F2F6F5] dark:bg-stone-900 font-sans">
+        <div className="pb-28 min-h-screen bg-[#F7F8FA] dark:bg-stone-900 font-sans">
             {/* Background decoration */}
-            <div className="fixed top-0 left-0 w-full h-[400px] bg-gradient-to-b from-[#E0ECE9] to-transparent dark:from-[#1c2e2c] pointer-events-none" />
+            <div className="fixed top-0 left-0 w-full h-[400px] bg-gradient-to-b from-[#F7F8FA] to-transparent dark:from-[#1c2e2c] pointer-events-none" />
 
             <div className="relative z-10 max-w-md mx-auto px-5 pt-8">
 
@@ -158,17 +158,17 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
                     <div className="grid grid-cols-2 gap-4">
                         {/* Progress Box */}
-                        <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <Trophy className="w-24 h-24 text-pink-500" />
+                        <div className="bg-gradient-to-br from-pink-50 to-white dark:from-stone-800 dark:to-stone-900 rounded-[2rem] p-5 shadow-lg shadow-pink-100/50 dark:shadow-none hover:shadow-xl hover:scale-[1.02] transition-all relative overflow-hidden border border-pink-100 dark:border-stone-700 group">
+                            <div className="absolute -right-4 -bottom-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-500">
+                                <Trophy className="w-32 h-32 text-pink-600" />
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center mb-3">
-                                <Trophy className="w-5 h-5 text-pink-500" />
+                            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-stone-700 flex items-center justify-center mb-4 shadow-sm text-pink-500">
+                                <Trophy className="w-6 h-6" />
                             </div>
-                            <p className="text-3xl font-bold text-slate-800 dark:text-white mb-1">
+                            <p className="text-4xl font-extrabold text-slate-800 dark:text-white mb-1 tracking-tight">
                                 {bonusProgress?.smallWins?.length || 0}
                             </p>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                            <p className="text-xs font-bold text-pink-500/80 uppercase tracking-wider">
                                 {language === 'fr' ? 'Petits Succès' : language === 'en' ? 'Small Wins' : 'Pequeños Éxitos'}
                             </p>
                         </div>
@@ -291,8 +291,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         <HelpCircle className="w-6 h-6 mb-1" />
                         <span className="text-xs font-bold">Help & FAQ</span>
                     </button>
-                    <button className="bg-white dark:bg-stone-800 p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 text-center text-slate-600 dark:text-slate-400">
-                        <Shield className="w-6 h-6 mb-1" />
+                    <button
+                        onClick={() => alert(language === 'fr' ? "Nous ne collectons aucune donnée, tout est enregistré sur votre téléphone localement." : "We do not collect any data, everything is stored locally on your phone.")}
+                        className="bg-white dark:bg-stone-800 p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 text-center text-slate-600 dark:text-slate-400 group"
+                    >
+                        <Shield className="w-6 h-6 mb-1 text-emerald-500 group-hover:scale-110 transition-transform" />
                         <span className="text-xs font-bold">Privacy</span>
                     </button>
                 </div>
@@ -300,7 +303,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 {/* Dashboard Admin - Visible uniquement pour les admins */}
                 {userData?.isAdmin && (
                     <div className="mb-20">
-                        <button 
+                        <button
                             onClick={() => window.location.href = '/admin/dashboard'}
                             className="w-full bg-gradient-to-r from-red-500 to-red-600 p-4 rounded-3xl shadow-lg shadow-red-500/30 hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-white"
                         >

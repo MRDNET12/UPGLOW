@@ -2722,7 +2722,7 @@ PROCESO OBLIGATORIO:
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-gray-800">{language === 'fr' ? 'Votre série' : language === 'en' ? 'Your streak' : 'Tu serie'}</h3>
+                      <h3 className="text-base font-bold text-gray-800">{language === 'fr' ? 'Votre série de fierté' : language === 'en' ? 'Your pride streak' : 'Tu serie de orgullo'}</h3>
                       <p className="text-xs text-gray-500">{language === 'fr' ? 'Garde le rythme !' : language === 'en' ? 'Keep it up!' : '¡Sigue así!'}</p>
                     </div>
                   </div>
@@ -2789,7 +2789,7 @@ PROCESO OBLIGATORIO:
 
             {/* Section Carnet de fierté */}
             <div className="px-4">
-              <h3 className="text-gray-900 font-semibold text-base mb-3">
+              <h3 className="text-gray-900 font-semibold text-base mb-3 font-sans">
                 {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
               </h3>
 
@@ -6576,7 +6576,7 @@ PROCESO OBLIGATORIO:
                   {/* Texte et jours de la semaine */}
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      {language === 'fr' ? 'Votre série' : language === 'en' ? 'Your streak' : 'Tu serie'}
+                      {language === 'fr' ? 'Votre série de fierté' : language === 'en' ? 'Your pride streak' : 'Tu serie de orgullo'}
                     </h3>
                     <div className="flex gap-1.5">
                       {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => {

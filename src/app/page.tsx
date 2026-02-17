@@ -1443,7 +1443,7 @@ PROCESO OBLIGATORIO:
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskDestination, setNewTaskDestination] = useState<'priority' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'>('priority');
-  
+
   // États pour les onglets de la popup "Construire ma victoire"
   const [addTaskTab, setAddTaskTab] = useState<'manuel' | 'glowee'>('manuel');
   const [gloweeVictoryText, setGloweeVictoryText] = useState('');
@@ -1533,6 +1533,7 @@ PROCESO OBLIGATORIO:
   }, [isHydrated, initializeFirstOpen, getRemainingFreeDays, isTrialExpired, subscription]);
 
   // Rouvrir le popup d'abonnement après l'inscription si nécessaire
+  // Rouvrir le popup d'abonnement après l'inscription si nécessaire
   useEffect(() => {
     if (user && shouldReopenSubscription) {
       // L'utilisateur vient de se connecter et on doit rouvrir le popup
@@ -1543,43 +1544,10 @@ PROCESO OBLIGATORIO:
   }, [user, shouldReopenSubscription]);
 
   // Animation de switch pour TimeCapsule (Message à moi)
-  // 3s cartes normales, 20s Message à moi - s'arrête si premium ou si expanded
+  // Désactivé : Toujours afficher Message à moi
   useEffect(() => {
-    if (subscription.isSubscribed) {
-      // Si premium, afficher toujours la carte Message à moi (statique)
-      setShowTimeCapsuleCard(true);
-      return;
-    }
-
-    // Si le slide est ouvert, ne pas faire de switch
-    if (timeCapsuleExpanded) {
-      return;
-    }
-
-    // Animation de switch pour les non-premium
-    let timeoutId: NodeJS.Timeout;
-
-    const runAnimation = () => {
-      // Afficher les cartes normales pendant 3s
-      setShowTimeCapsuleCard(false);
-      timeoutId = setTimeout(() => {
-        // Afficher Message à moi pendant 20s (10s de plus qu'avant)
-        setShowTimeCapsuleCard(true);
-        timeoutId = setTimeout(() => {
-          // Recommencer le cycle seulement si pas expanded
-          if (!timeCapsuleExpanded) {
-            runAnimation();
-          }
-        }, 20000);
-      }, 3000);
-    };
-
-    runAnimation();
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [subscription.isSubscribed, timeCapsuleExpanded]);
+    setShowTimeCapsuleCard(true);
+  }, []);
 
   // Tracker les visites et afficher les popups Glowee
   // DÉSACTIVÉ TEMPORAIREMENT - Les popups s'affichent trop souvent
@@ -5129,7 +5097,15 @@ PROCESO OBLIGATORIO:
 
             {/* Bouton + doré (pill/capsule) - identique à la capture */}
             <button
-              onClick={() => setShowAddMenu(true)}
+              onClick={() => {
+                if (currentView === 'journal') {
+                  // Si on est sur la page Journal, ouvrir le popup d'ajout d'entrée
+                  setShowJournalEntryModal(true);
+                } else {
+                  // Sinon, ouvrir le menu habituel
+                  setShowAddMenu(true);
+                }
+              }}
               className="flex-shrink-0 w-14 h-14 rounded-[1.75rem] flex items-center justify-center shadow-[0_4px_20px_rgba(180,130,20,0.35)] hover:shadow-[0_6px_28px_rgba(180,130,20,0.5)] hover:scale-105 active:scale-95 transition-all duration-200"
               style={{
                 background: 'linear-gradient(160deg, #e8b830 0%, #c49a20 40%, #a07818 100%)',
@@ -5659,31 +5635,29 @@ PROCESO OBLIGATORIO:
               {language === 'fr' ? 'Planifiez votre semaine efficacement' : language === 'en' ? 'Plan your week efficiently' : 'Planifica tu semana eficientemente'}
             </DrawerDescription>
           </DrawerHeader>
-          
+
           {/* Onglets */}
           <div className="flex border-b">
             <button
               onClick={() => setAddTaskTab('manuel')}
-              className={`flex-1 py-3 text-sm font-semibold transition-all ${
-                addTaskTab === 'manuel'
-                  ? 'text-rose-500 border-b-2 border-rose-500'
-                  : 'text-stone-400 hover:text-stone-600'
-              }`}
+              className={`flex-1 py-3 text-sm font-semibold transition-all ${addTaskTab === 'manuel'
+                ? 'text-rose-500 border-b-2 border-rose-500'
+                : 'text-stone-400 hover:text-stone-600'
+                }`}
             >
               {language === 'fr' ? 'Manuel' : language === 'en' ? 'Manual' : 'Manual'}
             </button>
             <button
               onClick={() => setAddTaskTab('glowee')}
-              className={`flex-1 py-3 text-sm font-semibold transition-all ${
-                addTaskTab === 'glowee'
-                  ? 'text-rose-500 border-b-2 border-rose-500'
-                  : 'text-stone-400 hover:text-stone-600'
-              }`}
+              className={`flex-1 py-3 text-sm font-semibold transition-all ${addTaskTab === 'glowee'
+                ? 'text-rose-500 border-b-2 border-rose-500'
+                : 'text-stone-400 hover:text-stone-600'
+                }`}
             >
               Glowee
             </button>
           </div>
-          
+
           <div className="p-6 space-y-6 overflow-y-auto flex-1">
             {/* ONGLET MANUEL */}
             {addTaskTab === 'manuel' && (
@@ -5871,7 +5845,7 @@ PROCESO OBLIGATORIO:
                 </Button>
               </>
             )}
-            
+
             {/* ONGLET GLOWEE */}
             {addTaskTab === 'glowee' && (
               <>
@@ -5890,14 +5864,14 @@ PROCESO OBLIGATORIO:
                       </div>
                       <div className="text-center space-y-2">
                         <p className="text-sm text-stone-600 italic">
-                          {language === 'fr' 
+                          {language === 'fr'
                             ? "On veut tous accumuler de petits succès qui nous font grandir. Mais parfois, on ne sait pas quoi faire."
                             : language === 'en'
                               ? "We all want to accumulate small successes that make us grow. But sometimes, we don't know what to do."
                               : "Todos queremos acumular pequeños éxitos que nos hagan crecer. Pero a veces, no sabemos qué hacer."}
                         </p>
                         <p className="text-lg font-semibold text-gray-800">
-                          {language === 'fr' 
+                          {language === 'fr'
                             ? "Quelle sera ta prochaine petite victoire ?"
                             : language === 'en'
                               ? "What will be your next small victory?"
@@ -5905,7 +5879,7 @@ PROCESO OBLIGATORIO:
                         </p>
                       </div>
                     </div>
-                    
+
                     {/* Nombre de jours */}
                     <div className="space-y-2">
                       <label className="text-sm font-semibold">
@@ -5916,27 +5890,26 @@ PROCESO OBLIGATORIO:
                           <button
                             key={days}
                             onClick={() => setGloweeDayCount(days)}
-                            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${
-                              gloweeDayCount === days
-                                ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                                : theme === 'dark'
-                                  ? 'bg-stone-800 hover:bg-stone-700'
-                                  : 'bg-stone-100 hover:bg-stone-200'
-                            }`}
+                            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${gloweeDayCount === days
+                              ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                              : theme === 'dark'
+                                ? 'bg-stone-800 hover:bg-stone-700'
+                                : 'bg-stone-100 hover:bg-stone-200'
+                              }`}
                           >
                             {days} {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
                           </button>
                         ))}
                       </div>
                     </div>
-                    
+
                     {/* Champ de saisie */}
                     <div className="space-y-2">
                       <label className="text-sm font-semibold">
                         {language === 'fr' ? 'Décris ta victoire' : language === 'en' ? 'Describe your victory' : 'Describe tu victoria'}
                       </label>
                       <textarea
-                        placeholder={language === 'fr' 
+                        placeholder={language === 'fr'
                           ? "Ex: Je veux courir 5km, Je veux lire un livre, Je veux apprendre une nouvelle recette..."
                           : language === 'en'
                             ? "Ex: I want to run 5km, I want to read a book, I want to learn a new recipe..."
@@ -5946,15 +5919,15 @@ PROCESO OBLIGATORIO:
                         className={`w-full p-4 rounded-xl resize-none h-24 ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-200'} border focus:outline-none focus:ring-2 focus:ring-rose-400`}
                       />
                     </div>
-                    
+
                     {/* Bouton J'y vais */}
                     <Button
                       className="w-full h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
                       onClick={async () => {
                         if (!gloweeVictoryText.trim()) return;
-                        
+
                         setIsGloweeLoading(true);
-                        
+
                         try {
                           // Appel à l'API OpenRouter
                           const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -5979,14 +5952,14 @@ PROCESO OBLIGATORIO:
                               temperature: 0.7,
                             }),
                           });
-                          
+
                           if (!response.ok) {
                             throw new Error('API request failed');
                           }
-                          
+
                           const data = await response.json();
                           const content = data.choices[0]?.message?.content;
-                          
+
                           // Parse la réponse JSON
                           let parsedTasks;
                           try {
@@ -5999,7 +5972,7 @@ PROCESO OBLIGATORIO:
                               parsedTasks = JSON.parse(jsonMatch[0]);
                             }
                           }
-                          
+
                           if (parsedTasks?.tasks && Array.isArray(parsedTasks.tasks)) {
                             setGloweeProposedTasks(parsedTasks.tasks);
                           } else {
@@ -6011,7 +5984,7 @@ PROCESO OBLIGATORIO:
                           const fallbackTasks = [];
                           for (let i = 0; i < Math.min(3, gloweeDayCount); i++) {
                             fallbackTasks.push({
-                              text: language === 'fr' 
+                              text: language === 'fr'
                                 ? `Étape ${i + 1}: Commencer à travailler sur "${gloweeVictoryText}"`
                                 : language === 'en'
                                   ? `Step ${i + 1}: Start working on "${gloweeVictoryText}"`
@@ -6044,14 +6017,14 @@ PROCESO OBLIGATORIO:
                         {language === 'fr' ? 'Voici ton plan !' : language === 'en' ? 'Here is your plan!' : '¡Aquí está tu plan!'}
                       </h3>
                       <p className="text-sm text-stone-500 mt-1">
-                        {language === 'fr' 
+                        {language === 'fr'
                           ? 'Valide ces tâches pour les ajouter à ton planning'
                           : language === 'en'
                             ? 'Validate these tasks to add them to your schedule'
                             : 'Valida estas tareas para agregarlas a tu calendario'}
                       </p>
                     </div>
-                    
+
                     {/* Liste des tâches proposées */}
                     <div className="space-y-3 max-h-[300px] overflow-y-auto">
                       {gloweeProposedTasks.map((task, index) => {
@@ -6062,9 +6035,9 @@ PROCESO OBLIGATORIO:
                           language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES',
                           { weekday: 'long', day: 'numeric', month: 'short' }
                         );
-                        
+
                         return (
-                          <div 
+                          <div
                             key={index}
                             className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'} border-l-4 border-rose-400`}
                           >
@@ -6081,7 +6054,7 @@ PROCESO OBLIGATORIO:
                         );
                       })}
                     </div>
-                    
+
                     {/* Boutons d'action */}
                     <div className="flex gap-3">
                       <Button
@@ -6098,11 +6071,11 @@ PROCESO OBLIGATORIO:
                         className="flex-1 h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
                         onClick={async () => {
                           const today = new Date();
-                          
+
                           for (const task of gloweeProposedTasks) {
                             const targetDate = new Date(today);
                             targetDate.setDate(today.getDate() + task.dayIndex);
-                            
+
                             const newTaskWithDate = {
                               id: `glowee_${Date.now()}_${Math.random()}`,
                               text: task.text,
@@ -6110,9 +6083,9 @@ PROCESO OBLIGATORIO:
                               completed: false,
                               type: 'user' as const
                             };
-                            
+
                             setTasksWithDates(prev => [...prev, newTaskWithDate]);
-                            
+
                             // Sauvegarder dans Firebase si l'utilisateur est connecté
                             if (user) {
                               try {
@@ -6125,7 +6098,7 @@ PROCESO OBLIGATORIO:
                               }
                             }
                           }
-                          
+
                           // Reset et fermer
                           setGloweeProposedTasks(null);
                           setGloweeVictoryText('');

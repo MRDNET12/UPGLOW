@@ -295,6 +295,7 @@ export default function GlowUpChallengeApp() {
   const [newMeDailyHabits, setNewMeDailyHabits] = useState<Record<string, boolean>>({});
   const [newMeFeeling, setNewMeFeeling] = useState('');
   const [newMeActiveTab, setNewMeActiveTab] = useState<'daily' | 'progress' | 'badges'>('daily');
+  const [showNewMeSection, setShowNewMeSection] = useState(true);
 
   const [newMeProgress, setNewMeProgress] = useState<Record<number, Record<string, boolean>>>({});
   const [newMeCurrentDay, setNewMeCurrentDay] = useState(1);
@@ -1200,14 +1201,6 @@ PROCESO OBLIGATORIO:
         es: 'Definir una prioridad del día'
       }
     },
-    imperfect: {
-      icon: '✓',
-      label: {
-        fr: 'Accomplir une tâche imparfaite',
-        en: 'Complete an imperfect task',
-        es: 'Completar una tarea imperfecta'
-      }
-    },
     bed: {
       icon: '🌙',
       label: {
@@ -1287,7 +1280,6 @@ PROCESO OBLIGATORIO:
         { id: 'clean-space', label: language === 'fr' ? 'Ranger mon espace 5 minutes' : language === 'en' ? 'Tidy my space 5 minutes' : 'Ordenar mi espacio 5 minutos', completed: false },
         { id: 'future-action', label: language === 'fr' ? 'Faire une action utile pour mon futur' : language === 'en' ? 'Do a useful action for my future' : 'Hacer una acción útil para mi futuro', completed: false },
         { id: 'daily-priority', label: language === 'fr' ? 'Définir une priorité du jour' : language === 'en' ? 'Define a priority of the day' : 'Definir una prioridad del día', completed: false },
-        { id: 'imperfect-task', label: language === 'fr' ? 'Accomplir une tâche même imparfaite' : language === 'en' ? 'Complete a task even if imperfect' : 'Completar una tarea aunque sea imperfecta', completed: false },
         { id: 'progress-check', label: language === 'fr' ? 'Me coucher en me disant : « J\'ai avancé. »' : language === 'en' ? 'Go to bed saying: "I made progress."' : 'Acostarme diciéndome: "Avancé."', completed: false }
       ],
       collapsed: false,
@@ -2812,9 +2804,17 @@ PROCESO OBLIGATORIO:
                         <span className="text-gray-400 text-xs">●</span>
                         <span className="text-gray-300 text-xs leading-none">'</span>
                       </div>
-                      <p className="text-sm text-gray-700 flex-1">
-                        {win.text}
-                      </p>
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-700">
+                          {win.text}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                            day: 'numeric',
+                            month: 'short'
+                          })}
+                        </p>
+                      </div>
                     </div>
                   ))}
                   {bonusProgress.smallWins.length > 5 && (
@@ -3249,68 +3249,84 @@ PROCESO OBLIGATORIO:
               <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <div className="p-4 pb-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 font-sans">
-                      <span style={{ color: '#fb7185' }}>✨</span>
-                      New Me
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 font-sans">
+                        <span style={{ color: '#fb7185' }}>✨</span>
+                        {language === 'fr' ? 'Nouveau Moi' : language === 'en' ? 'New Me' : 'Nuevo Yo'}
+                      </h3>
+                      <button
+                        onClick={() => setShowNewMeSection(!showNewMeSection)}
+                        className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                      >
+                        {showNewMeSection ? (
+                          <Eye className="w-4 h-4 text-gray-400" />
+                        ) : (
+                          <EyeOff className="w-4 h-4 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
                     <span className="text-xs font-bold text-gray-600">
                       {newMeHabits.filter(h => h.completed).length}/{newMeHabits.length}
                     </span>
                   </div>
                 </div>
-                <div className="h-px bg-gray-200 mx-4" />
-                <div className="p-4 space-y-1">
-                  {newMeHabits.map((habit) => (
-                    <button
-                      key={habit.id}
-                      onClick={() => {
-                        const newCompletedState = !habit.completed;
+                {showNewMeSection && (
+                  <>
+                    <div className="h-px bg-gray-200 mx-4" />
+                    <div className="p-4 space-y-1">
+                      {newMeHabits.map((habit) => (
+                        <button
+                          key={habit.id}
+                          onClick={() => {
+                            const newCompletedState = !habit.completed;
 
-                        // Mettre à jour le state
-                        setNewMeHabits(newMeHabits.map(h =>
-                          h.id === habit.id ? { ...h, completed: newCompletedState } : h
-                        ));
+                            // Mettre à jour le state
+                            setNewMeHabits(newMeHabits.map(h =>
+                              h.id === habit.id ? { ...h, completed: newCompletedState } : h
+                            ));
 
-                        // Enregistrer dans localStorage pour la page de progression
-                        const today = getLocalDateString();
-                        const storageKey = `newme_${habit.id}_${today}`;
-                        if (newCompletedState) {
-                          localStorage.setItem(storageKey, 'true');
-                        } else {
-                          localStorage.removeItem(storageKey);
-                        }
-                      }}
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        // TODO: Ouvrir la vue détail 30 jours
-                      }}
-                      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${habit.completed
-                        ? 'bg-emerald-50'
-                        : 'hover:bg-gray-50'
-                        }`}
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <span className="text-xl">{habit.icon}</span>
-                        <span className={`text-sm font-medium flex-1 text-left ${habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
-                          }`}>
-                          {habit.label}
-                        </span>
-                      </div>
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${habit.completed
-                          ? 'bg-emerald-400'
-                          : 'bg-gray-200'
-                          }`}
-                      >
-                        {habit.completed ? (
-                          <Check className="w-4 h-4 text-white" />
-                        ) : (
-                          <Check className="w-4 h-4 text-gray-400" />
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                            // Enregistrer dans localStorage pour la page de progression
+                            const today = getLocalDateString();
+                            const storageKey = `newme_${habit.id}_${today}`;
+                            if (newCompletedState) {
+                              localStorage.setItem(storageKey, 'true');
+                            } else {
+                              localStorage.removeItem(storageKey);
+                            }
+                          }}
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            // TODO: Ouvrir la vue détail 30 jours
+                          }}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${habit.completed
+                            ? 'bg-emerald-50'
+                            : 'hover:bg-gray-50'
+                            }`}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <span className="text-xl">{habit.icon}</span>
+                            <span className={`text-sm font-medium flex-1 text-left ${habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
+                              }`}>
+                              {habit.label}
+                            </span>
+                          </div>
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${habit.completed
+                              ? 'bg-emerald-400'
+                              : 'bg-gray-200'
+                              }`}
+                          >
+                            {habit.completed ? (
+                              <Check className="w-4 h-4 text-white" />
+                            ) : (
+                              <Check className="w-4 h-4 text-gray-400" />
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
 
               </div>
 
@@ -3870,8 +3886,8 @@ PROCESO OBLIGATORIO:
                       >
                         {/* Left Icon - Checkbox style but bigger */}
                         <div className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${task.completed
-                            ? 'bg-emerald-500 border-emerald-500'
-                            : 'border-stone-200 bg-white group-hover:border-rose-300'
+                          ? 'bg-emerald-500 border-emerald-500'
+                          : 'border-stone-200 bg-white group-hover:border-rose-300'
                           }`}>
                           {task.completed && <Check className="w-4 h-4 text-white" />}
                         </div>
@@ -3906,31 +3922,10 @@ PROCESO OBLIGATORIO:
                   })()}
                 </div>
 
-                {/* Action flottante pour ajouter */}
-                <div className="fixed bottom-24 right-6 z-20">
-                  <Button
-                    onClick={() => setShowAddTask(true)}
-                    className="rounded-full w-12 h-12 shadow-xl bg-gray-900 hover:bg-black text-white p-0"
-                  >
-                    <Plus className="w-6 h-6" />
-                  </Button>
-                </div>
+
               </div>
             )}
 
-            {/* Bouton Ajouter une tâche */}
-            {!isDayView && (
-              <div className="px-4 pb-4 pt-3 max-w-lg mx-auto">
-                <Button
-                  size="sm"
-                  className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white h-8 text-xs w-full"
-                  onClick={() => setShowAddTask(true)}
-                >
-                  <Plus className="w-3.5 h-3.5 mr-1.5" />
-                  {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
-                </Button>
-              </div>
-            )}
           </div>
         )}
 
@@ -5886,13 +5881,15 @@ PROCESO OBLIGATORIO:
                   /* Étape 1: Saisie de la victoire */
                   <div className="space-y-6">
                     {/* Image et message de Glowee */}
-                    <div className="flex flex-col items-center space-y-4">
-                      <img
-                        src="/Glowee/glowee.webp"
-                        alt="Glowee"
-                        className="w-24 h-24 object-contain"
-                      />
-                      <div className="text-center space-y-2">
+                    <div className="flex items-start gap-3">
+                      <div className="w-[20%] flex-shrink-0">
+                        <img
+                          src="/Glowee/glowee.webp"
+                          alt="Glowee"
+                          className="w-full h-auto object-contain"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-2 pt-2">
                         <p className="text-sm text-stone-600 italic">
                           {language === 'fr'
                             ? "On veut tous accumuler de petits succès qui nous font grandir. Mais parfois, on ne sait pas quoi faire."

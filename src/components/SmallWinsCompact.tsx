@@ -100,31 +100,47 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   return (
     <div className="w-full">
-      {/* Carte compacte - Style Badge Géant Animé */}
-      <div
-        className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} \
+      {/* Carte compacte - Conditionnelle */}
+      {winsThisWeek.length > 0 ? (
+        <div
+          className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} \
         ${isAnimating ? 'scale-105 ring-4 ring-pink-300 ring-offset-2 animate-pulse' : 'hover:scale-[1.02]'}`}
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        {/* Décoration d'arrière-plan */}
-        <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12">
-          <rank.icon className="w-32 h-32 text-white" />
-        </div>
-
-        <div className="relative z-10 flex items-center justify-start gap-5">
-          {/* Gauche : Emoji Géant */}
-          <div className={`transition-transform duration-500 ${isAnimating ? 'scale-125 rotate-12' : ''}`}>
-            <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {/* Décoration d'arrière-plan */}
+          <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12">
+            <rank.icon className="w-32 h-32 text-white" />
           </div>
 
-          {/* Droite : Phrase qui change */}
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
-              {rank.name}
-            </h3>
+          <div className="relative z-10 flex items-center justify-start gap-5">
+            {/* Gauche : Emoji Géant */}
+            <div className={`transition-transform duration-500 ${isAnimating ? 'scale-125 rotate-12' : ''}`}>
+              <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
+            </div>
+
+            {/* Droite : Phrase qui change */}
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
+                {rank.name}
+              </h3>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div
+          className="rounded-[1.5rem] p-4 shadow-sm w-full cursor-pointer transition-all hover:shadow-md border border-dashed border-gray-300 bg-white/50 hover:bg-white hover:border-pink-300 group"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-center gap-3 justify-center py-2">
+            <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-pink-100 flex items-center justify-center transition-colors shadow-sm">
+              <Plus className="w-5 h-5 text-gray-400 group-hover:text-pink-500 transition-colors" />
+            </div>
+            <span className="text-sm font-medium text-gray-500 group-hover:text-pink-600 transition-colors">
+              {language === 'fr' ? 'Ajouter une première victoire...' : language === 'en' ? 'Add a first win...' : 'Añadir una primera victoria...'}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Section expandée - Design magnifique */}
       {isExpanded && (

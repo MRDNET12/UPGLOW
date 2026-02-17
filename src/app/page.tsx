@@ -355,6 +355,7 @@ export default function GlowUpChallengeApp() {
 
   // État pour le menu Ajouter (+)
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showTimeCapsuleDrawer, setShowTimeCapsuleDrawer] = useState(false);
   const [newWinText, setNewWinText] = useState('');
 
   // Date de première utilisation de l'app (pour Glow Mirror)
@@ -2216,9 +2217,9 @@ PROCESO OBLIGATORIO:
           {/* Texte explicatif */}
           <div className="bg-gray-50 rounded-2xl p-6 shadow-sm">
             <p className="text-lg text-gray-600 leading-relaxed text-center">
-              {language === 'fr' 
-                ? 'Célèbre tes victoires quotidiennes. Même minuscule, un pas reste un pas.' 
-                : language === 'en' 
+              {language === 'fr'
+                ? 'Célèbre tes victoires quotidiennes. Même minuscule, un pas reste un pas.'
+                : language === 'en'
                   ? 'Celebrate your daily victories. Even tiny, a step is still a step.'
                   : 'Celebra tus victorias diarias. Incluso minúsculo, un paso sigue siendo un paso.'}
             </p>
@@ -2252,7 +2253,7 @@ PROCESO OBLIGATORIO:
   // Page 3: Reconnais tes efforts
   if (currentView === 'presentation-2') {
     const continueText = language === 'fr' ? 'Continuer' : language === 'en' ? 'Continue' : 'Continuar';
-    const examples = language === 'fr' 
+    const examples = language === 'fr'
       ? ['J\'ai commencé…', 'Je n\'ai pas abandonné…', 'J\'ai essayé…', 'J\'ai réussi…']
       : language === 'en'
         ? ['I started…', 'I didn\'t give up…', 'I tried…', 'I succeeded…']
@@ -2285,9 +2286,9 @@ PROCESO OBLIGATORIO:
 
           {/* Texte */}
           <p className="text-lg text-gray-600 text-center leading-relaxed">
-            {language === 'fr' 
-              ? 'Valide tes progrès. Bâtis ta fierté.' 
-              : language === 'en' 
+            {language === 'fr'
+              ? 'Valide tes progrès. Bâtis ta fierté.'
+              : language === 'en'
                 ? 'Validate your progress. Build your pride.'
                 : 'Valida tu progreso. Construye tu orgullo.'}
           </p>
@@ -2338,9 +2339,9 @@ PROCESO OBLIGATORIO:
               <li className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
                 <p className="text-lg text-gray-700">
-                  {language === 'fr' 
-                    ? 'L\'auto-valorisation renforce la confiance.' 
-                    : language === 'en' 
+                  {language === 'fr'
+                    ? 'L\'auto-valorisation renforce la confiance.'
+                    : language === 'en'
                       ? 'Self-validation strengthens confidence.'
                       : 'La auto-validación fortalece la confianza.'}
                 </p>
@@ -2348,9 +2349,9 @@ PROCESO OBLIGATORIO:
               <li className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
                 <p className="text-lg text-gray-700">
-                  {language === 'fr' 
-                    ? 'Elle réduit le sentiment d\'échec.' 
-                    : language === 'en' 
+                  {language === 'fr'
+                    ? 'Elle réduit le sentiment d\'échec.'
+                    : language === 'en'
                       ? 'It reduces the feeling of failure.'
                       : 'Reduce la sensación de fracaso.'}
                 </p>
@@ -2358,9 +2359,9 @@ PROCESO OBLIGATORIO:
               <li className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
                 <p className="text-lg text-gray-700">
-                  {language === 'fr' 
-                    ? 'Elle crée du momentum.' 
-                    : language === 'en' 
+                  {language === 'fr'
+                    ? 'Elle crée du momentum.'
+                    : language === 'en'
                       ? 'It creates momentum.'
                       : 'Crea momentum.'}
                 </p>
@@ -2370,9 +2371,9 @@ PROCESO OBLIGATORIO:
 
           {/* Conclusion */}
           <p className="text-xl text-center font-medium bg-gradient-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent">
-            {language === 'fr' 
-              ? 'Une victoire par semaine suffit.' 
-              : language === 'en' 
+            {language === 'fr'
+              ? 'Une victoire par semaine suffit.'
+              : language === 'en'
                 ? 'One victory per week is enough.'
                 : 'Una victoria por semana es suficiente.'}
           </p>
@@ -2558,12 +2559,12 @@ PROCESO OBLIGATORIO:
                 >
                   <div
                     className="w-full cursor-pointer transform transition-transform duration-300 hover:scale-[1.02]"
-                    onClick={() => checkFeatureAccess('message_a_moi', () => setTimeCapsuleExpanded(!timeCapsuleExpanded))}
+                    onClick={() => checkFeatureAccess('message_a_moi', () => setShowTimeCapsuleDrawer(true))}
                   >
                     <TimeCapsule
                       theme={theme}
-                      isExpanded={timeCapsuleExpanded}
-                      onToggle={() => { }}
+                      isExpanded={false}
+                      onToggle={() => setShowTimeCapsuleDrawer(true)}
                     />
                   </div>
                 </div>
@@ -2875,7 +2876,7 @@ PROCESO OBLIGATORIO:
                     {language === 'fr' ? 'Aucun succès enregistré' : language === 'en' ? 'No wins recorded' : 'Ningún éxito registrado'}
                   </p>
                   <p className="text-gray-500 text-sm">
-                    {language === 'fr' 
+                    {language === 'fr'
                       ? 'Utilise le bouton + pour ajouter une nouvelle preuve'
                       : language === 'en'
                         ? 'Use the + button to add a new proof'
@@ -3669,7 +3670,7 @@ PROCESO OBLIGATORIO:
                   <X className="w-5 h-5" />
                 </Button>
                 <h1 className="text-xl font-bold">
-                  {language === 'fr' ? 'Mon Planning' : language === 'en' ? 'My Planning' : 'Mi Planificación'}
+                  {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
                 </h1>
               </div>
             </div>
@@ -5104,7 +5105,7 @@ PROCESO OBLIGATORIO:
                 >
                   <Calendar className="w-[22px] h-[22px]" strokeWidth={currentView === 'routine' ? 2.5 : 1.8} />
                   <span className={`text-[10px] leading-tight ${currentView === 'routine' ? 'font-semibold' : 'font-medium'}`}>
-                    {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                    {language === 'fr' ? 'Semaine' : language === 'en' ? 'Week' : 'Semana'}
                   </span>
                 </button>
 
@@ -5138,6 +5139,28 @@ PROCESO OBLIGATORIO:
         </nav>
       )}
 
+      {/* Drawer Message à moi */}
+      <Drawer open={showTimeCapsuleDrawer} onOpenChange={setShowTimeCapsuleDrawer}>
+        <DrawerContent className="max-w-lg mx-auto bg-white">
+          <DrawerHeader className="border-b px-4 py-3">
+            <div className="flex items-center justify-between">
+              <DrawerTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
+                <Mail className="w-5 h-5 text-purple-600" />
+                {language === 'fr' ? 'Message à moi' : language === 'en' ? 'Message to me' : 'Mensaje a mí'}
+              </DrawerTitle>
+              <DrawerClose asChild>
+                <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-100">
+                  <X className="w-4 h-4 text-gray-500" />
+                </Button>
+              </DrawerClose>
+            </div>
+          </DrawerHeader>
+          <div className="p-4 overflow-y-auto max-h-[80vh]">
+            <TimeCapsule theme={theme} isExpanded={true} standalone={true} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+
       {/* Drawer Menu Ajouter (+) - Slide du bas vers le haut */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
         <DrawerContent className="max-w-lg mx-auto">
@@ -5160,7 +5183,7 @@ PROCESO OBLIGATORIO:
               <h3 className="font-bold text-gray-800 text-lg">
                 {language === 'fr' ? "Ma fierté du jour !" : language === 'en' ? "My pride of the day!" : '¡Mi orgullo del día!'}
               </h3>
-              
+
               {/* Champ de saisie avec bouton + */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 relative">

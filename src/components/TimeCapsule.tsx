@@ -41,7 +41,8 @@ const CATEGORIES = [
   { id: 'corps', label: { fr: 'Corps', en: 'Body', es: 'Cuerpo' }, icon: Dumbbell, color: 'from-green-400 to-emerald-500' },
   { id: 'mental', label: { fr: 'Mental', en: 'Mental', es: 'Mental' }, icon: Brain, color: 'from-purple-400 to-violet-500' },
   { id: 'discipline', label: { fr: 'Discipline', en: 'Discipline', es: 'Disciplina' }, icon: Clock, color: 'from-blue-400 to-indigo-500' },
-  { id: 'image', label: { fr: 'Image', en: 'Image', es: 'Imagen' }, icon: Eye, color: 'from-pink-400 to-rose-500' }
+  { id: 'image', label: { fr: 'Image', en: 'Image', es: 'Imagen' }, icon: Eye, color: 'from-pink-400 to-rose-500' },
+  { id: 'accomplissement', label: { fr: 'Accomplissement', en: 'Achievement', es: 'Logro' }, icon: Check, color: 'from-yellow-400 to-amber-500' }
 ];
 
 // Délais prédéfinis
@@ -253,23 +254,19 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
           {activeTab === 'create' && (
             <div className="space-y-4">
               {/* Suggestion */}
-              <div className="bg-purple-50 rounded-xl p-3">
-                <p className="text-xs text-purple-700 font-medium mb-2">
-                  {language === 'fr' ? 'Dans X jours, je veux me souvenir que j\'ai…' :
-                    language === 'en' ? 'In X days, I want to remember that I...' :
-                      'En X días, quiero recordar que...'}
+              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                <p className="text-xs text-gray-700 font-medium mb-2">
+                  {language === 'fr' ? '"Cher Moi du futur, j\'espère que tu es devenu..."' :
+                    language === 'en' ? '"Dear Future Me, I hope you have become..."' :
+                      '"Querido Yo Futuro, espero que te hayas convertido en..."'}
                 </p>
-                <div className="flex flex-wrap gap-1">
-                  {suggestions.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setNewMessage(s[language as keyof typeof s])}
-                      className="text-[10px] px-2 py-1 bg-white rounded-full text-purple-600 hover:bg-purple-100 transition-all"
-                    >
-                      💡 {s[language as keyof typeof s].substring(0, 30)}...
-                    </button>
-                  ))}
-                </div>
+                <p className="text-[10px] text-gray-500">
+                  {language === 'fr' 
+                    ? "Verrouille cette lettre. Ouvre-la quand tu auras atteint tes objectifs."
+                    : language === 'en' 
+                      ? "Lock this letter. Open it when you have achieved your goals."
+                      : "Bloque esta carta. Ábrela cuando hayas alcanzado tus objetivos."}
+                </p>
               </div>
 
               {/* Champ de texte */}

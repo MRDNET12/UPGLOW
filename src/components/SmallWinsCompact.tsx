@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
 import { Trophy, Plus, Award, Crown, ChevronDown, ChevronUp } from 'lucide-react';
@@ -31,29 +31,39 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   const [showWhy, setShowWhy] = useState(false);
   const [newWin, setNewWin] = useState('');
 
+  // Animation state
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const addSmallWin = useStore((state) => state.addSmallWin);
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
 
   const winsThisWeek = getSmallWinsThisWeek();
-  const lastWin = winsThisWeek.length > 0 ? winsThisWeek[winsThisWeek.length - 1] : null;
+  const lastWin = winsThisWeek.length > 0 ? winsThisWeek[winsThisWeek.length - 1] : null; // Conservé pour la logique mais non affiché
 
-  // Message d'auto-validation qui change à chaque nouvel ajout
+  // Ref pour tracker le nombre précédent de wins afin de déclencher l'animation uniquement sur ajout
+  const prevCountRef = useRef(winsThisWeek.length);
+
+  // Trigger animation on win add
+  useEffect(() => {
+    if (winsThisWeek.length > prevCountRef.current) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => setIsAnimating(false), 3000);
+      return () => clearTimeout(timer);
+    }
+    prevCountRef.current = winsThisWeek.length;
+  }, [winsThisWeek.length]);
+
+  // ... getAutoValidation and getRank ...
+
   const getAutoValidation = () => {
     const count = winsThisWeek.length;
     if (count === 0) return AUTO_VALIDATIONS[0];
     return AUTO_VALIDATIONS[count % AUTO_VALIDATIONS.length];
   };
 
-  // Déterminer le palier
-  // - 0-2 succès : auto-validation
-  // - 3 succès : Alpha
-  // - 4 succès : auto-validation
-  // - 5 succès : Légende
-  // - 6+ succès : auto-validation (tournante)
   const getRank = () => {
     const count = winsThisWeek.length;
     if (count === 5) {
-      // Exactement 5 succès : Légende
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
         icon: Crown,
@@ -62,7 +72,6 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         emoji: '👑'
       };
     } else if (count === 3) {
-      // Exactement 3 succès : Alpha
       return {
         name: 'Alpha',
         icon: Award,
@@ -71,7 +80,6 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         emoji: '🏆'
       };
     }
-    // Sinon : auto-validation (0-2, 4, 6+)
     return {
       name: getAutoValidation(),
       icon: Trophy,
@@ -92,36 +100,28 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   return (
     <div className="w-full">
-      {/* Carte compacte - Style Badge Géant */}
+      {/* Carte compacte - Style Badge Géant Animé */}
       <div
-        className={`rounded-[1.5rem] p-5 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient}`}
+        className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} \
+        ${isAnimating ? 'scale-105 ring-4 ring-pink-300 ring-offset-2 animate-pulse' : 'hover:scale-[1.02]'}`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {/* Décoration d'arrière-plan */}
-        <div className="absolute -right-4 -bottom-4 opacity-20 transform rotate-12">
-          <rank.icon className="w-24 h-24 text-white" />
+        <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12">
+          <rank.icon className="w-32 h-32 text-white" />
         </div>
 
-        <div className="relative z-10 flex flex-col gap-3">
-          {/* En-tête avec Emoji et Compteur */}
-          <div className="flex items-center justify-between">
-            <span className="text-3xl filter drop-shadow-md">{rank.emoji}</span>
-            <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 shadow-sm">
-              <span className="text-xs font-bold text-white">
-                {winsThisWeek.length} {language === 'fr' ? 'succès' : language === 'en' ? 'wins' : 'éxitos'}
-              </span>
-            </div>
+        <div className="relative z-10 flex items-center justify-start gap-5">
+          {/* Gauche : Emoji Géant */}
+          <div className={`transition-transform duration-500 ${isAnimating ? 'scale-125 rotate-12' : ''}`}>
+            <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
           </div>
 
-          {/* Titre du Badge (Rang) */}
-          <div>
-            <h3 className="text-xl font-bold text-white leading-tight drop-shadow-sm">
+          {/* Droite : Phrase qui change */}
+          <div className="flex-1">
+            <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
               {rank.name}
             </h3>
-            {/* Dernier succès ou incitation */}
-            <p className="text-white/90 text-sm font-medium mt-1 line-clamp-1">
-              {lastWin ? `"${lastWin.text}"` : (language === 'fr' ? 'Ajouter une victoire...' : 'Add a win...')}
-            </p>
           </div>
         </div>
       </div>
@@ -234,8 +234,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                   <div
                     key={win.id}
                     className={`p-2 rounded-lg transition-all ${index === 0
-                        ? `bg-gradient-to-br ${rank.bgGradient} shadow-md`
-                        : 'bg-white/60 border border-pink-100 hover:border-pink-200'
+                      ? `bg-gradient-to-br ${rank.bgGradient} shadow-md`
+                      : 'bg-white/60 border border-pink-100 hover:border-pink-200'
                       }`}
                   >
                     <div className="flex items-center gap-2">

@@ -3301,13 +3301,13 @@ PROCESO OBLIGATORIO:
                             // TODO: Ouvrir la vue détail 30 jours
                           }}
                           className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${habit.completed
-                            ? 'bg-emerald-50'
+                            ? ''
                             : 'hover:bg-gray-50'
                             }`}
                         >
                           <div className="flex items-center gap-3 flex-1">
                             <span className="text-xl">{habit.icon}</span>
-                            <span className={`text-sm font-medium flex-1 text-left ${habit.completed ? 'text-emerald-700 line-through' : 'text-gray-700'
+                            <span className={`text-sm font-medium flex-1 text-left ${habit.completed ? 'text-gray-700 line-through' : 'text-gray-700'
                               }`}>
                               {habit.label}
                             </span>

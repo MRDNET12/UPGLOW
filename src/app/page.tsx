@@ -351,7 +351,7 @@ export default function GlowUpChallengeApp() {
   const [glowMirrorConsecutiveHabits, setGlowMirrorConsecutiveHabits] = useState<Array<{ habit: string, streak: number }>>([]);
   const [glowMirrorHasBeenRead, setGlowMirrorHasBeenRead] = useState(false);
   const [showGlowMirrorAlert, setShowGlowMirrorAlert] = useState(false);
-  
+
   // État pour le menu Ajouter (+)
   const [showAddMenu, setShowAddMenu] = useState(false);
 
@@ -2336,7 +2336,7 @@ PROCESO OBLIGATORIO:
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-gradient-to-br from-white via-gray-50 to-gray-100 text-stone-900'}`}>
       {/* Indicateur de connexion */}
       <OfflineIndicator />
-      
+
       {/* Main Content */}
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
@@ -2728,9 +2728,9 @@ PROCESO OBLIGATORIO:
                     onClick={() => setCurrentView('bonus')}
                     className="w-full py-3 text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors"
                   >
-                    {language === 'fr' 
-                      ? `Voir les ${bonusProgress.smallWins.length - 3} autres succès` 
-                      : language === 'en' 
+                    {language === 'fr'
+                      ? `Voir les ${bonusProgress.smallWins.length - 3} autres succès`
+                      : language === 'en'
                         ? `See ${bonusProgress.smallWins.length - 3} more wins`
                         : `Ver ${bonusProgress.smallWins.length - 3} éxitos más`}
                   </button>
@@ -4914,77 +4914,80 @@ PROCESO OBLIGATORIO:
 
       {/* Bottom Navigation - Design moderne épuré */}
       {currentView !== 'goal-details' && (
-        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-lg z-50">
-          <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-3 py-2 border border-gray-100">
-            <div className="flex items-center justify-around">
-              {/* Aujourd'hui */}
-              <Button
-                variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'dashboard'
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                  }`}
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <Home className="w-5 h-5" />
-                <span className="text-[10px] font-medium">
-                  {language === 'fr' ? "Aujourd'hui" : language === 'en' ? 'Today' : 'Hoy'}
-                </span>
-              </Button>
+        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-lg z-50">
+          <div className="flex items-center gap-2">
+            {/* Nav items container */}
+            <div className="flex-1 bg-white rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] px-2 py-2 border border-gray-100/80">
+              <div className="flex items-center justify-around">
+                {/* Aujourd'hui */}
+                <button
+                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'dashboard'
+                    ? 'text-gray-900'
+                    : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <Home className="w-[22px] h-[22px]" strokeWidth={currentView === 'dashboard' ? 2.5 : 1.8} />
+                  <span className={`text-[10px] leading-tight ${currentView === 'dashboard' ? 'font-semibold' : 'font-medium'}`}>
+                    {language === 'fr' ? "Aujourd'hui" : language === 'en' ? 'Today' : 'Hoy'}
+                  </span>
+                </button>
 
-              {/* Habitudes */}
-              <Button
-                variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'trackers'
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                  }`}
-                onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
-              >
-                <Target className="w-5 h-5" />
-                <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
-                </span>
-              </Button>
+                {/* Habitudes */}
+                <button
+                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'trackers'
+                    ? 'text-gray-900'
+                    : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
+                >
+                  <Target className="w-[22px] h-[22px]" strokeWidth={currentView === 'trackers' ? 2.5 : 1.8} />
+                  <span className={`text-[10px] leading-tight ${currentView === 'trackers' ? 'font-semibold' : 'font-medium'}`}>
+                    {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
+                  </span>
+                </button>
 
-              {/* Ma Semaine */}
-              <Button
-                variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'routine'
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                  }`}
-                onClick={() => setCurrentView('routine')}
-              >
-                <Calendar className="w-5 h-5" />
-                <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
-                </span>
-              </Button>
+                {/* Ma Semaine */}
+                <button
+                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'routine'
+                    ? 'text-gray-900'
+                    : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  onClick={() => setCurrentView('routine')}
+                >
+                  <Calendar className="w-[22px] h-[22px]" strokeWidth={currentView === 'routine' ? 2.5 : 1.8} />
+                  <span className={`text-[10px] leading-tight ${currentView === 'routine' ? 'font-semibold' : 'font-medium'}`}>
+                    {language === 'fr' ? 'Ma Semaine' : language === 'en' ? 'My Week' : 'Mi Semana'}
+                  </span>
+                </button>
 
-              {/* Profil */}
-              <Button
-                variant="ghost"
-                className={`flex-1 h-11 flex-col gap-0.5 rounded-xl transition-all duration-200 ${currentView === 'settings'
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                  }`}
-                onClick={() => setCurrentView('settings')}
-              >
-                <Settings className="w-5 h-5" />
-                <span className="text-[10px] font-medium">
-                  {language === 'fr' ? 'Profil' : language === 'en' ? 'Profile' : 'Perfil'}
-                </span>
-              </Button>
+                {/* Profil */}
+                <button
+                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'settings'
+                    ? 'text-gray-900'
+                    : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  onClick={() => setCurrentView('settings')}
+                >
+                  <Settings className="w-[22px] h-[22px]" strokeWidth={currentView === 'settings' ? 2.5 : 1.8} />
+                  <span className={`text-[10px] leading-tight ${currentView === 'settings' ? 'font-semibold' : 'font-medium'}`}>
+                    {language === 'fr' ? 'Profil' : language === 'en' ? 'Profile' : 'Perfil'}
+                  </span>
+                </button>
+              </div>
             </div>
+
+            {/* Bouton + doré (pill/capsule) - identique à la capture */}
+            <button
+              onClick={() => setShowAddMenu(true)}
+              className="flex-shrink-0 w-14 h-14 rounded-[1.75rem] flex items-center justify-center shadow-[0_4px_20px_rgba(180,130,20,0.35)] hover:shadow-[0_6px_28px_rgba(180,130,20,0.5)] hover:scale-105 active:scale-95 transition-all duration-200"
+              style={{
+                background: 'linear-gradient(160deg, #e8b830 0%, #c49a20 40%, #a07818 100%)',
+              }}
+            >
+              <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
+            </button>
           </div>
-          {/* Bouton + flottant à droite */}
-          <button
-            onClick={() => setShowAddMenu(true)}
-            className="absolute -right-3 bottom-1/2 transform translate-y-1/2 w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50"
-          >
-            <Plus className="w-6 h-6 text-white" />
-          </button>
         </nav>
       )}
 
@@ -5003,7 +5006,7 @@ PROCESO OBLIGATORIO:
               </DrawerClose>
             </div>
           </DrawerHeader>
-          
+
           <div className="p-6 space-y-4">
             {/* Ajouter une victoire */}
             <button
@@ -5062,7 +5065,7 @@ PROCESO OBLIGATORIO:
           </div>
         </DrawerContent>
       </Drawer>
- 
+
       {/* Drawer Checklist - Animation coulissante du bas */}
       <Drawer open={!!selectedChecklist} onOpenChange={(open) => !open && setSelectedChecklist(null)}>
         <DrawerContent className="max-w-lg mx-auto">

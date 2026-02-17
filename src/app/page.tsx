@@ -2397,7 +2397,6 @@ PROCESO OBLIGATORIO:
 
               {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
               <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl blur-md opacity-40"></div>
                 <Image
                   src="/Glowee/glowee.webp"
                   alt="Glowee"

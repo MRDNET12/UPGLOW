@@ -2785,16 +2785,13 @@ PROCESO OBLIGATORIO:
               <SmallWinsCompact theme={theme} />
             </div>
 
-            {/* Grille de cartes - Layout moderne compact */}
-            {/* Grille de cartes - Layout moderne compact */}
-            <div className="grid grid-cols-5 gap-3">
-              {/* Carte Mes Habitudes - Grande carte à gauche (60%) */}
+            {/* Grille de cartes - Layout moderne compact - Carte Mes Habitudes MASQUÉE */}
+            {/* <div className="grid grid-cols-5 gap-3">
               <Card
                 className="col-span-3 border-none shadow-lg bg-[#3b82f6] text-white rounded-3xl cursor-pointer transition-all duration-300 hover:scale-[1.01] overflow-hidden relative h-48"
                 onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
               >
                 <CardContent className="p-5 h-full flex flex-col justify-between relative z-10">
-                  {/* Header */}
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
                       <Target className="w-6 h-6 text-white" />
@@ -2806,7 +2803,6 @@ PROCESO OBLIGATORIO:
                     </div>
                   </div>
 
-                  {/* Bar Chart Visualization - Fixed Display with Grid */}
                   <div className="grid grid-cols-7 gap-2 h-16 mt-4 items-end px-2 w-full">
                     {[65, 45, 75, 55, 85, 60, 90].map((h, i) => (
                       <div key={i} className="w-full bg-black/10 rounded-full h-full relative overflow-hidden">
@@ -2818,7 +2814,6 @@ PROCESO OBLIGATORIO:
                     ))}
                   </div>
 
-                  {/* Footer Stats */}
                   <div className="mt-1">
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-bold">
@@ -2841,9 +2836,7 @@ PROCESO OBLIGATORIO:
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Carte Ma Semaine déplacée - voir plus haut dans la page */}
-            </div>
+            </div> */}
 
             {/* Carte Glow Up (Bonus) - MASQUÉE */}
             {/* <Card
@@ -2867,42 +2860,34 @@ PROCESO OBLIGATORIO:
             </Card> */}
 
 
-            {/* Carte Mon Journal - Style Daily Challenge (Purple 3D) */}
-            {/* Carte Mon Journal - Redesign Soft UI/Cute */}
-            <div
+            {/* Carte Mon Journal - DÉPLACÉE dans la popup + */}
+            {/* <div
               onClick={() => checkFeatureAccess('journal', () => setCurrentView('journal'))}
               className="bg-[#E9D8FD] rounded-[2.5rem] p-6 relative h-[180px] overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-98 shadow-sm group"
             >
-              {/* Top Text */}
               <h3 className="text-xl font-bold text-[#2D2a2e] max-w-[65%] leading-snug relative z-10">
                 {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
               </h3>
 
-              {/* Character Bottom Left - CSS Art */}
               <div className="absolute bottom-[-20px] left-[-10px] transform rotate-[-5deg] transition-transform group-hover:rotate-0 duration-500">
                 <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Body */}
                   <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#F0ABFC" />
-                  {/* Face */}
                   <circle cx="65" cy="85" r="3.5" fill="#000" />
                   <circle cx="95" cy="85" r="3.5" fill="#000" />
                   <path d="M68 100 Q 80 115 92 100" stroke="#000" strokeWidth="3.5" strokeLinecap="round" />
-                  {/* Hair curl */}
                   <path d="M50 45 Q 40 25 60 30" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" />
                   <path d="M55 40 Q 50 20 65 25" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" transform="translate(10, -5) rotate(20)" />
-                  {/* Cheeks */}
                   <circle cx="58" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
                   <circle cx="102" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
                 </svg>
               </div>
 
-              {/* Button Bottom Right */}
               <div className="absolute bottom-6 right-6">
                 <div className="bg-black text-white text-xs font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
                   {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Carte 50 choses à faire seule - MASQUÉE */}
             {/* <Card
@@ -2931,8 +2916,8 @@ PROCESO OBLIGATORIO:
               </CardContent>
             </Card> */}
 
-            {/* Glow Mirror Button */}
-            <div className="mt-6 mb-4">
+            {/* Glow Mirror Button - MASQUÉ */}
+            {/* <div className="mt-6 mb-4">
               <button
                 onClick={() => checkFeatureAccess('glow_mirror', () => setCurrentView('glow-mirror'))}
                 className="w-full py-4 rounded-2xl font-semibold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]"
@@ -2945,7 +2930,7 @@ PROCESO OBLIGATORIO:
                   {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
                 </span>
               </button>
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -5092,26 +5077,40 @@ PROCESO OBLIGATORIO:
               </div>
             </button>
 
-            {/* Mon Journal */}
-            <button
+            {/* Carte Mon Journal */}
+            <div
               onClick={() => {
                 setShowAddMenu(false);
                 checkFeatureAccess('journal', () => setCurrentView('journal'));
               }}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100 transition-all border border-purple-100"
+              className="w-full bg-[#E9D8FD] rounded-[2rem] p-5 relative h-[160px] overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-98 shadow-sm group"
             >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center shadow-lg">
-                <BookOpen className="w-6 h-6 text-white" />
+              {/* Top Text */}
+              <h3 className="text-lg font-bold text-[#2D2a2e] max-w-[60%] leading-snug relative z-10">
+                {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
+              </h3>
+
+              {/* Character Bottom Left - CSS Art */}
+              <div className="absolute bottom-[-15px] left-[-5px] transform rotate-[-5deg] transition-transform group-hover:rotate-0 duration-500">
+                <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#F0ABFC" />
+                  <circle cx="65" cy="85" r="3.5" fill="#000" />
+                  <circle cx="95" cy="85" r="3.5" fill="#000" />
+                  <path d="M68 100 Q 80 115 92 100" stroke="#000" strokeWidth="3.5" strokeLinecap="round" />
+                  <path d="M50 45 Q 40 25 60 30" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+                  <path d="M55 40 Q 50 20 65 25" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" transform="translate(10, -5) rotate(20)" />
+                  <circle cx="58" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+                  <circle cx="102" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+                </svg>
               </div>
-              <div className="text-left">
-                <h3 className="font-bold text-gray-800">
-                  {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {language === 'fr' ? 'Écris tes pensées' : language === 'en' ? 'Write your thoughts' : 'Escribe tus pensamientos'}
-                </p>
+
+              {/* Button Bottom Right */}
+              <div className="absolute bottom-4 right-4">
+                <div className="bg-black text-white text-xs font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
+                  {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}
+                </div>
               </div>
-            </button>
+            </div>
           </div>
         </DrawerContent>
       </Drawer>

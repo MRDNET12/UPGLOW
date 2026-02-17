@@ -2795,73 +2795,45 @@ PROCESO OBLIGATORIO:
               <SmallWinsCompact theme={theme} />
             </div>
 
-            {/* Section des succès ajoutés - Style moderne clair */}
-            <div className="bg-white rounded-3xl p-6 space-y-4 shadow-sm border border-gray-100">
-              {/* Titre avec icône */}
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
-                  <Target className="w-3.5 h-3.5 text-white" />
-                </div>
-                <h3 className="text-gray-900 font-semibold text-base">
-                  {language === 'fr' ? 'Tes Preuves du Jour' : language === 'en' ? 'Your Daily Proofs' : 'Tus Pruebas del Día'}
-                </h3>
-              </div>
+            {/* Section Carnet de fierté */}
+            <div className="px-4">
+              <h3 className="text-gray-900 font-semibold text-base mb-3">
+                {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
+              </h3>
 
-              {/* Contenu */}
               {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 ? (
-                <div className="space-y-3">
-                  {bonusProgress.smallWins.slice(0, 3).map((win, index) => (
+                <div className="space-y-2">
+                  {bonusProgress.smallWins.slice(0, 5).map((win, index) => (
                     <div
                       key={win.id || index}
-                      className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
-                      style={{ animationDelay: `${index * 100}ms` }}
+                      className="flex items-start gap-3"
                     >
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg">✨</span>
+                      <div className="flex flex-col items-center pt-1">
+                        <span className="text-gray-400 text-xs">●</span>
+                        <span className="text-gray-300 text-xs leading-none">'</span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-800 leading-relaxed">
-                          {win.text}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                            day: 'numeric',
-                            month: 'short'
-                          })}
-                        </p>
-                      </div>
+                      <p className="text-sm text-gray-700 flex-1">
+                        {win.text}
+                      </p>
                     </div>
                   ))}
-                  {bonusProgress.smallWins.length > 3 && (
+                  {bonusProgress.smallWins.length > 5 && (
                     <button
                       onClick={() => setCurrentView('bonus')}
-                      className="w-full py-3 text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors"
+                      className="text-sm text-pink-500 hover:text-pink-600"
                     >
                       {language === 'fr'
-                        ? `Voir les ${bonusProgress.smallWins.length - 3} autres succès`
+                        ? `+ ${bonusProgress.smallWins.length - 5} autres`
                         : language === 'en'
-                          ? `See ${bonusProgress.smallWins.length - 3} more wins`
-                          : `Ver ${bonusProgress.smallWins.length - 3} éxitos más`}
+                          ? `+ ${bonusProgress.smallWins.length - 5} more`
+                          : `+ ${bonusProgress.smallWins.length - 5} más`}
                     </button>
                   )}
                 </div>
               ) : (
-                /* État vide */
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                    <Star className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-900 font-semibold text-base mb-2">
-                    {language === 'fr' ? 'Aucun succès enregistré' : language === 'en' ? 'No wins recorded' : 'Ningún éxito registrado'}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    {language === 'fr'
-                      ? 'Utilise le bouton + pour ajouter une nouvelle preuve'
-                      : language === 'en'
-                        ? 'Use the + button to add a new proof'
-                        : 'Usa el botón + para agregar una nueva prueba'}
-                  </p>
-                </div>
+                <p className="text-sm text-gray-400 italic">
+                  {language === 'fr' ? 'Aucun succès enregistré' : language === 'en' ? 'No wins recorded' : 'Ningún éxito registrado'}
+                </p>
               )}
             </div>
 

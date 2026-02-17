@@ -284,20 +284,37 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                 <p className="text-xs font-bold text-gray-700 mb-2">
                   {language === 'fr' ? 'Catégorie (optionnel)' : language === 'en' ? 'Category (optional)' : 'Categoría (opcional)'}
                 </p>
-                <div className="flex gap-2">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-                      className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedCategory === cat.id
-                        ? `bg-gradient-to-r ${cat.color} text-white`
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                      <cat.icon className="w-3 h-3" />
-                      {cat.label[language as keyof typeof cat.label]}
-                    </button>
-                  ))}
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    {CATEGORIES.slice(0, 4).map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+                        className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedCategory === cat.id
+                          ? `bg-gradient-to-r ${cat.color} text-white`
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                      >
+                        <cat.icon className="w-3 h-3" />
+                        {cat.label[language as keyof typeof cat.label]}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    {CATEGORIES.slice(4).map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+                        className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedCategory === cat.id
+                          ? `bg-gradient-to-r ${cat.color} text-white`
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                      >
+                        <cat.icon className="w-3 h-3" />
+                        {cat.label[language as keyof typeof cat.label]}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 

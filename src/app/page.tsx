@@ -2785,6 +2785,46 @@ PROCESO OBLIGATORIO:
               <SmallWinsCompact theme={theme} />
             </div>
 
+            {/* Section des succès ajoutés */}
+            {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 && (
+              <div className="space-y-3 -mt-2">
+                {bonusProgress.smallWins.slice(0, 3).map((win, index) => (
+                  <div
+                    key={win.id || index}
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-lg">✨</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-800 leading-relaxed">
+                        {win.text}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                          day: 'numeric',
+                          month: 'short'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {bonusProgress.smallWins.length > 3 && (
+                  <button
+                    onClick={() => setCurrentView('bonus')}
+                    className="w-full py-3 text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors"
+                  >
+                    {language === 'fr' 
+                      ? `Voir les ${bonusProgress.smallWins.length - 3} autres succès` 
+                      : language === 'en' 
+                        ? `See ${bonusProgress.smallWins.length - 3} more wins`
+                        : `Ver ${bonusProgress.smallWins.length - 3} éxitos más`}
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Grille de cartes - Layout moderne compact - Carte Mes Habitudes MASQUÉE */}
             {/* <div className="grid grid-cols-5 gap-3">
               <Card

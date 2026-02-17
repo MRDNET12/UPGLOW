@@ -3406,7 +3406,7 @@ PROCESO OBLIGATORIO:
                             e.preventDefault();
                             // TODO: Ouvrir la vue détail 30 jours
                           }}
-                          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${habit.completed
+                          className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl transition-all duration-200 ${habit.completed
                             ? ''
                             : 'hover:bg-gray-50'
                             }`}

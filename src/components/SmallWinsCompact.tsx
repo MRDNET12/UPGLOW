@@ -100,30 +100,108 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   return (
     <div className="w-full">
+      {/* Styles pour l'animation avancée */}
+      <style>{`
+        @keyframes badge-bounce {
+          0%, 100% { transform: scale(1) translateY(0); }
+          25% { transform: scale(1.08) translateY(-4px); }
+          50% { transform: scale(1.05) translateY(-2px); }
+          75% { transform: scale(1.02) translateY(-1px); }
+        }
+        @keyframes badge-shine {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes sparkle {
+          0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+          50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        @keyframes float-up {
+          0% { opacity: 0; transform: translateY(20px) scale(0.5); }
+          50% { opacity: 1; transform: translateY(-10px) scale(1.2); }
+          100% { opacity: 0; transform: translateY(-40px) scale(0.8); }
+        }
+        .badge-animate {
+          animation: badge-bounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .badge-shine {
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+          background-size: 200% 100%;
+          animation: badge-shine 1.5s ease-in-out;
+        }
+        .sparkle-1 { animation: sparkle 0.6s ease-out 0s; }
+        .sparkle-2 { animation: sparkle 0.6s ease-out 0.15s; }
+        .sparkle-3 { animation: sparkle 0.6s ease-out 0.3s; }
+        .float-1 { animation: float-up 1s ease-out 0s; }
+        .float-2 { animation: float-up 1s ease-out 0.2s; }
+        .float-3 { animation: float-up 1s ease-out 0.4s; }
+      `}</style>
+
       {/* Carte compacte - Conditionnelle */}
       {winsThisWeek.length > 0 ? (
         <div
-          className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} \
-        ${isAnimating ? 'scale-105 ring-4 ring-pink-300 ring-offset-2 animate-pulse' : 'hover:scale-[1.02]'}`}
+          className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
+            isAnimating ? 'badge-animate' : 'hover:scale-[1.02]'
+          }`}
           onClick={() => setIsExpanded(!isExpanded)}
         >
+          {/* Effet de brillance lors de l'animation */}
+          {isAnimating && (
+            <div className="absolute inset-0 badge-shine pointer-events-none z-20" />
+          )}
+
+          {/* Particules flottantes lors de l'animation */}
+          {isAnimating && (
+            <>
+              <div className="absolute top-2 left-1/4 text-2xl float-1">✨</div>
+              <div className="absolute top-4 right-1/3 text-xl float-2">🌟</div>
+              <div className="absolute bottom-4 left-1/3 text-lg float-3">⭐</div>
+            </>
+          )}
+
           {/* Décoration d'arrière-plan */}
           <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12">
             <rank.icon className="w-32 h-32 text-white" />
           </div>
 
+          {/* Effet de bordure lumineuse pulsante */}
+          {isAnimating && (
+            <div className="absolute inset-0 rounded-[1.5rem] ring-4 ring-white/50 ring-offset-2 ring-offset-transparent animate-pulse" />
+          )}
+
           <div className="relative z-10 flex items-center justify-start gap-5">
-            {/* Gauche : Emoji Géant */}
-            <div className={`transition-transform duration-500 ${isAnimating ? 'scale-125 rotate-12' : ''}`}>
+            {/* Gauche : Emoji avec animation */}
+            <div className={`transition-all duration-500 ${isAnimating ? 'scale-130 rotate-12 drop-shadow-2xl' : ''}`}>
               <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
+              {/* Éclats autour de l'emoji */}
+              {isAnimating && (
+                <>
+                  <span className="absolute -top-1 -right-1 text-sm sparkle-1">✦</span>
+                  <span className="absolute -bottom-1 -left-1 text-lg sparkle-2">✦</span>
+                  <span className="absolute top-1/2 -right-2 text-xs sparkle-3">✦</span>
+                </>
+              )}
             </div>
 
-            {/* Droite : Phrase qui change */}
+            {/* Droite : Phrase avec animation */}
             <div className="flex-1">
-              <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
+              <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating ? 'scale-105' : ''}`}>
                 {rank.name}
               </h3>
+              {/* Badge de compteur avec animation */}
+              <div className={`mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm transition-all duration-500 ${isAnimating ? 'scale-110 bg-white/30' : ''}`}>
+                <Trophy className="w-3 h-3 text-white" />
+                <span className="text-xs font-bold text-white">{winsThisWeek.length}</span>
+              </div>
             </div>
+          </div>
+
+          {/* Barre de progression animée en bas */}
+          <div className="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
+            <div 
+              className={`h-full bg-white/60 rounded-full transition-all duration-700 ${isAnimating ? 'animate-pulse' : ''}`}
+              style={{ width: `${Math.min((winsThisWeek.length / 5) * 100, 100)}%` }}
+            />
           </div>
         </div>
       ) : (

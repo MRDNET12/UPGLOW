@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     User, LogOut, LogIn, ChevronLeft, Calendar,
     Crown, Star, Settings, Bell, BellOff, HelpCircle,
@@ -10,6 +10,7 @@ import { useStore } from '@/lib/store';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Language } from '@/lib/translations';
 
 interface ProfilePageProps {
@@ -39,6 +40,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
         objectifsInitiaux,
         bonusProgress
     } = useStore();
+
+    const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
 
     const handleSignOut = () => {
         if (confirm(language === 'fr' ? 'Voulez-vous vous déconnecter ?' : language === 'en' ? 'Sign out?' : '¿Cerrar sesión?')) {
@@ -292,7 +295,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         <span className="text-xs font-bold">Help & FAQ</span>
                     </button>
                     <button
-                        onClick={() => alert(language === 'fr' ? "Nous ne collectons aucune donnée, tout est enregistré sur votre téléphone localement." : "We do not collect any data, everything is stored locally on your phone.")}
+                        onClick={() => setShowPrivacyDialog(true)}
                         className="bg-white dark:bg-stone-800 p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 text-center text-slate-600 dark:text-slate-400 group"
                     >
                         <Shield className="w-6 h-6 mb-1 text-emerald-500 group-hover:scale-110 transition-transform" />
@@ -314,6 +317,29 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 )}
 
             </div>
+            {/* Privacy Dialog */}
+            <Dialog open={showPrivacyDialog} onOpenChange={setShowPrivacyDialog}>
+                <DialogContent className="max-w-xs mx-auto rounded-3xl bg-white dark:bg-stone-800 border border-gray-100 dark:border-stone-700 p-6">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-slate-800 dark:text-white text-center mb-2">
+                            {language === 'fr' ? 'Confidentialité' : 'Privacy'}
+                        </DialogTitle>
+                        <DialogDescription className="text-slate-600 dark:text-slate-300 text-center font-medium leading-relaxed">
+                            {language === 'fr'
+                                ? "Nous ne collectons aucune donnée, tout est enregistré sur votre téléphone localement."
+                                : "We do not collect any data, everything is stored locally on your phone."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-center mt-6">
+                        <Button
+                            onClick={() => setShowPrivacyDialog(false)}
+                            className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-full px-8 shadow-lg shadow-emerald-500/20"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

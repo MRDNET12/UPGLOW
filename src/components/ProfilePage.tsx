@@ -3,7 +3,7 @@ import {
     User, LogOut, LogIn, ChevronLeft, Calendar,
     Crown, Star, Settings, Bell, BellOff, HelpCircle,
     Globe, Moon, Sun, ChevronRight, Mail, Check,
-    TrendingUp, Image as ImageIcon, Shield, Smartphone
+    TrendingUp, Image as ImageIcon, Shield, Smartphone, Trophy
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/lib/store';
@@ -36,7 +36,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
         visionBoardImages,
         objectifPrincipal,
         objectifsPrioritaires,
-        objectifsInitiaux
+        objectifsInitiaux,
+        bonusProgress
     } = useStore();
 
     const handleSignOut = () => {
@@ -159,20 +160,17 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         {/* Progress Box */}
                         <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <TrendingUp className="w-24 h-24 text-emerald-600" />
+                                <Trophy className="w-24 h-24 text-pink-500" />
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
-                                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                            <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center mb-3">
+                                <Trophy className="w-5 h-5 text-pink-500" />
                             </div>
                             <p className="text-3xl font-bold text-slate-800 dark:text-white mb-1">
-                                {getProgressPercentage()}<span className="text-sm text-slate-400">%</span>
+                                {bonusProgress?.smallWins?.length || 0}
                             </p>
                             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                                Global Glow
+                                {language === 'fr' ? 'Petits Succès' : language === 'en' ? 'Small Wins' : 'Pequeños Éxitos'}
                             </p>
-                            <div className="mt-3 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${getProgressPercentage()}%` }} />
-                            </div>
                         </div>
 
                         {/* Days Box */}

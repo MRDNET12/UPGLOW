@@ -115,6 +115,7 @@ export default function GlowUpChallengeApp() {
     canAccessDay,
     getCurrentUnlockedDay,
     bonusProgress,
+    addSmallWin,
     toggleWeeklyBonus,
     updateWeeklyBonusNotes,
     toggleChecklistCompleted,
@@ -354,6 +355,7 @@ export default function GlowUpChallengeApp() {
 
   // État pour le menu Ajouter (+)
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [newWinText, setNewWinText] = useState('');
 
   // Date de première utilisation de l'app (pour Glow Mirror)
   const [firstAppUseDate, setFirstAppUseDate] = useState<string>(() => {
@@ -5036,29 +5038,50 @@ PROCESO OBLIGATORIO:
             </div>
           </DrawerHeader>
 
-          <div className="p-6 space-y-4">
-            {/* Ajouter une victoire */}
-            <button
-              onClick={() => {
-                setShowAddMenu(false);
-                checkFeatureAccess('petites_victoires', () => {
-                  setCurrentView('dashboard');
-                });
-              }}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-pink-50 to-rose-50 hover:from-pink-100 hover:to-rose-100 transition-all border border-pink-100"
-            >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg">
-                <Star className="w-6 h-6 text-white" />
+          <div className="p-6 space-y-6">
+            {/* Section Célèbre tes petits succès */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-gray-800 text-lg">
+                {language === 'fr' ? 'Célèbre tes petits succès' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros'}
+              </h3>
+              
+              {/* Champ de saisie avec bouton + */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={newWinText}
+                    onChange={(e) => setNewWinText(e.target.value)}
+                    placeholder={language === 'fr' ? 'Décris ton petit succès...' : language === 'en' ? 'Describe your small win...' : 'Describe tu pequeño éxito...'}
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none text-gray-700 placeholder-gray-400 bg-white"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && newWinText.trim()) {
+                        checkFeatureAccess('petites_victoires', () => {
+                          addSmallWin(newWinText.trim());
+                          setNewWinText('');
+                          setShowAddMenu(false);
+                        });
+                      }
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    if (newWinText.trim()) {
+                      checkFeatureAccess('petites_victoires', () => {
+                        addSmallWin(newWinText.trim());
+                        setNewWinText('');
+                        setShowAddMenu(false);
+                      });
+                    }
+                  }}
+                  disabled={!newWinText.trim()}
+                  className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                >
+                  <Plus className="w-6 h-6 text-white" />
+                </button>
               </div>
-              <div className="text-left">
-                <h3 className="font-bold text-gray-800">
-                  {language === 'fr' ? 'Ajouter une victoire' : language === 'en' ? 'Add a victory' : 'Añadir una victoria'}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {language === 'fr' ? 'Célèbre tes petits succès' : language === 'en' ? 'Celebrate your small wins' : 'Celebra tus pequeños logros'}
-                </p>
-              </div>
-            </button>
+            </div>
 
             {/* Carte Mon Journal */}
             <div

@@ -6835,9 +6835,12 @@ PROCESO OBLIGATORIO:
           {/* Liste des entrées */}
           <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
             {journalEntries.map((entry) => (
-              <div key={entry.id} className="bg-white rounded-2xl p-4 shadow-sm">
+              <div key={entry.id} className="bg-white rounded-2xl p-4 shadow-sm relative overflow-hidden transition-all hover:shadow-md border border-gray-50">
+                {/* Bandeau couleur humeur */}
+                <div className="absolute top-0 left-0 right-0 h-2 w-full" style={{ backgroundColor: entry.moodColor || '#fcd34d' }} />
+
                 {/* Header avec date et humeur */}
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-3 mt-1">
                   <div className="flex items-center gap-3">
                     {/* Emoji humeur */}
                     <div

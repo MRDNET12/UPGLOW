@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Secret Victory" }],
   icons: {
     icon: "/logo.svg",
-    apple: "/icon.svg",
+    apple: "/apple-icon.png",
   },
   manifest: "/manifest.json",
   appleWebApp: {
@@ -64,7 +64,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Secret Victory" />
-        <link rel="apple-touch-icon" href="/icon.svg" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
         {/* OneSignal Push Notifications */}
         <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
         <script

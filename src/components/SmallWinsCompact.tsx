@@ -47,7 +47,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 7000);
+      const timer = setTimeout(() => setIsAnimating(false), 2000);
       return () => clearTimeout(timer);
     }
     prevCountRef.current = winsThisWeek.length;

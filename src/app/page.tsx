@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useStore, View } from '@/lib/store';
 import {
   getLocalizedChallengeDays,
@@ -75,6 +76,7 @@ const getLocalDateString = (date: Date = new Date()): string => {
 };
 
 export default function GlowUpChallengeApp() {
+  const router = useRouter();
   const [isHydrated, setIsHydrated] = useState(false);
   const { user, userData, signOut } = useAuth();
 
@@ -2901,7 +2903,7 @@ PROCESO OBLIGATORIO:
 
               {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 ? (
                 <div className="space-y-2">
-                  {bonusProgress.smallWins.slice(0, 5).map((win, index) => (
+                  {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
                     <div
                       key={win.id || index}
                       className="flex items-start gap-3"
@@ -2923,16 +2925,16 @@ PROCESO OBLIGATORIO:
                       </div>
                     </div>
                   ))}
-                  {bonusProgress.smallWins.length > 5 && (
+                  {bonusProgress.smallWins.length >= 15 && (
                     <button
-                      onClick={() => setCurrentView('bonus')}
+                      onClick={() => router.push('/small-wins')}
                       className="text-sm text-pink-500 hover:text-pink-600"
                     >
                       {language === 'fr'
-                        ? `+ ${bonusProgress.smallWins.length - 5} autres`
+                        ? `+ ${bonusProgress.smallWins.length - 15} autres`
                         : language === 'en'
-                          ? `+ ${bonusProgress.smallWins.length - 5} more`
-                          : `+ ${bonusProgress.smallWins.length - 5} más`}
+                          ? `+ ${bonusProgress.smallWins.length - 15} more`
+                          : `+ ${bonusProgress.smallWins.length - 15} más`}
                     </button>
                   )}
                 </div>
@@ -5335,7 +5337,7 @@ PROCESO OBLIGATORIO:
                     value={newWinText}
                     onChange={(e) => setNewWinText(e.target.value)}
                     placeholder={language === 'fr' ? 'Décris ton petit succès...' : language === 'en' ? 'Describe your small win...' : 'Describe tu pequeño éxito...'}
-                    className="w-full px-4 py-3 rounded-2xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none text-gray-700 placeholder-gray-400 bg-white"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-black focus:border-pink-400 focus:outline-none text-gray-700 placeholder-gray-400 bg-white"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && newWinText.trim()) {
                         checkFeatureAccess('petites_victoires', () => {

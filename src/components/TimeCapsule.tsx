@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Calendar, Clock, ChevronUp, ChevronDown, Plus, Check, X, Sparkles, Heart, Brain, Dumbbell, Eye, Archive, Send } from 'lucide-react';
+import { Mail, Calendar, Clock, ChevronUp, ChevronDown, Plus, Check, X, Sparkles, Heart, Brain, Dumbbell, Eye, Archive, Send, Trophy } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
+import { useStore } from '@/lib/store';
 
 // Types
 interface TimeCapsuleMessage {
@@ -12,8 +13,11 @@ interface TimeCapsuleMessage {
   emoji: string;
   bgColor: string;
   createdAt: string;
-  deliveryDate: string;
+  deliveryDate: string | null;
   status: 'pending' | 'delivered';
+  triggerType: 'days' | 'wins';
+  triggerValue: number;
+  winsAtCreation: number;
 }
 
 interface TimeCapsuleProps {
@@ -52,6 +56,13 @@ const PRESET_DELAYS = [
   { days: 90, label: { fr: '90 jours', en: '90 days', es: '90 días' } }
 ];
 
+// Seuils de victoires prédéfinis
+const PRESET_WIN_THRESHOLDS = [
+  { wins: 10, label: { fr: '10 victoires', en: '10 wins', es: '10 victorias' } },
+  { wins: 30, label: { fr: '30 victoires', en: '30 wins', es: '30 victorias' } },
+  { wins: 40, label: { fr: '40 victoires', en: '40 wins', es: '40 victorias' } }
+];
+
 // Helper pour obtenir la date locale
 const getLocalDateString = () => {
   const now = new Date();
@@ -67,6 +78,8 @@ const addDays = (dateStr: string, days: number): string => {
 
 export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone = false }: TimeCapsuleProps) {
   const { language } = useTranslation();
+  const getSmallWinsHistory = useStore((state) => state.getSmallWinsHistory);
+  const totalWins = getSmallWinsHistory().length;
 
   // États
   const [capsules, setCapsules] = useState<TimeCapsuleMessage[]>([]);
@@ -75,7 +88,9 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedEmoji, setSelectedEmoji] = useState('💌');
   const [selectedBgColor, setSelectedBgColor] = useState(BG_COLORS[0].value);
+  const [triggerType, setTriggerType] = useState<'days' | 'wins'>('days');
   const [selectedDelay, setSelectedDelay] = useState(7);
+  const [selectedWinThreshold, setSelectedWinThreshold] = useState(10);
   const [customDate, setCustomDate] = useState('');
   const [useCustomDate, setUseCustomDate] = useState(false);
   const [activeTab, setActiveTab] = useState<'create' | 'pending' | 'delivered'>('create');
@@ -90,8 +105,18 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
         // Vérifier si des capsules doivent être livrées
         const today = getLocalDateString();
         const updated = parsed.map(c => {
-          if (c.status === 'pending' && c.deliveryDate <= today) {
-            return { ...c, status: 'delivered' as const };
+          if (c.status === 'pending') {
+            // Vérifier si c'est un déclenchement par jours
+            if (c.triggerType === 'days' && c.deliveryDate && c.deliveryDate <= today) {
+              return { ...c, status: 'delivered' as const };
+            }
+            // Vérifier si c'est un déclenchement par victoires
+            if (c.triggerType === 'wins') {
+              const targetWins = c.winsAtCreation + c.triggerValue;
+              if (totalWins >= targetWins) {
+                return { ...c, status: 'delivered' as const, deliveryDate: today };
+              }
+            }
           }
           return c;
         });
@@ -108,7 +133,7 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
         }
       }
     }
-  }, []);
+  }, [totalWins]);
 
   // Sauvegarder les capsules
   useEffect(() => {
@@ -127,9 +152,10 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
   const handleCreateCapsule = () => {
     if (!newMessage.trim()) return;
 
-    const deliveryDate = useCustomDate && customDate
-      ? customDate
-      : addDays(getLocalDateString(), selectedDelay);
+    const today = getLocalDateString();
+    const deliveryDate = triggerType === 'days' 
+      ? (useCustomDate && customDate ? customDate : addDays(today, selectedDelay))
+      : null;
 
     const newCapsule: TimeCapsuleMessage = {
       id: `capsule_${Date.now()}`,
@@ -137,9 +163,12 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
       category: selectedCategory as TimeCapsuleMessage['category'],
       emoji: selectedEmoji,
       bgColor: selectedBgColor,
-      createdAt: getLocalDateString(),
+      createdAt: today,
       deliveryDate,
-      status: 'pending'
+      status: 'pending',
+      triggerType,
+      triggerValue: triggerType === 'days' ? selectedDelay : selectedWinThreshold,
+      winsAtCreation: totalWins
     };
 
     setCapsules([...capsules, newCapsule]);
@@ -148,7 +177,9 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
     setSelectedCategory(null);
     setSelectedEmoji('💌');
     setSelectedBgColor(BG_COLORS[0].value);
+    setTriggerType('days');
     setSelectedDelay(7);
+    setSelectedWinThreshold(10);
     setCustomDate('');
     setUseCustomDate(false);
     setShowCreateForm(false);
@@ -174,6 +205,14 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                   language === 'en' ? `Written on ${new Date(deliveredCapsule.createdAt).toLocaleDateString('en-US')}` :
                     `Escrito el ${new Date(deliveredCapsule.createdAt).toLocaleDateString('es-ES')}`}
               </p>
+              {deliveredCapsule.triggerType === 'wins' && (
+                <p className="text-xs text-purple-600 font-medium mt-1 flex items-center justify-center gap-1">
+                  <Trophy className="w-3 h-3" />
+                  {language === 'fr' ? `Débloqué après ${deliveredCapsule.triggerValue} victoires` :
+                    language === 'en' ? `Unlocked after ${deliveredCapsule.triggerValue} wins` :
+                      `Desbloqueado después de ${deliveredCapsule.triggerValue} victorias`}
+                </p>
+              )}
             </div>
             <div className="bg-white/80 rounded-2xl p-4 mb-4">
               <p className="text-sm text-gray-800 leading-relaxed">{deliveredCapsule.text}</p>
@@ -354,67 +393,126 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                 </div>
               </div>
 
-              {/* Date de réception */}
+              {/* Type de déclenchement */}
               <div>
                 <p className="text-xs font-bold text-gray-700 mb-2">
-                  {language === 'fr' ? 'Recevoir dans' : language === 'en' ? 'Receive in' : 'Recibir en'}
+                  {language === 'fr' ? 'Recevoir quand' : language === 'en' ? 'Receive when' : 'Recibir cuando'}
                 </p>
-                <div className="flex gap-2 mb-2">
-                  {PRESET_DELAYS.map((delay) => (
-                    <button
-                      key={delay.days}
-                      onClick={() => { setSelectedDelay(delay.days); setUseCustomDate(false); }}
-                      className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${!useCustomDate && selectedDelay === delay.days
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                      {delay.label[language as keyof typeof delay.label]}
-                    </button>
-                  ))}
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setTriggerType('days')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 ${triggerType === 'days'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                  >
+                    <Calendar className="w-3 h-3" />
+                    {language === 'fr' ? 'Par jours' : language === 'en' ? 'By days' : 'Por días'}
+                  </button>
+                  <button
+                    onClick={() => setTriggerType('wins')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 ${triggerType === 'wins'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                  >
+                    <Trophy className="w-3 h-3" />
+                    {language === 'fr' ? 'Par victoires' : language === 'en' ? 'By wins' : 'Por victorias'}
+                  </button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={useCustomDate}
-                    onChange={(e) => setUseCustomDate(e.target.checked)}
-                    className="w-4 h-4 rounded text-purple-500"
-                  />
-                  <span className="text-xs text-gray-600">
-                    {language === 'fr' ? 'Date personnalisée' : language === 'en' ? 'Custom date' : 'Fecha personalizada'}
-                  </span>
-                </div>
-                {useCustomDate && (
-                  <div className="mt-2 space-y-2">
-                    {/* Boutons 6 mois et 1 an */}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => { setSelectedDelay(180); setCustomDate(addDays(getLocalDateString(), 180)); }}
-                        className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${customDate === addDays(getLocalDateString(), 180)
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          }`}
-                      >
-                        {language === 'fr' ? '6 mois' : language === 'en' ? '6 months' : '6 meses'}
-                      </button>
-                      <button
-                        onClick={() => { setSelectedDelay(365); setCustomDate(addDays(getLocalDateString(), 365)); }}
-                        className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${customDate === addDays(getLocalDateString(), 365)
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          }`}
-                      >
-                        {language === 'fr' ? '1 an' : language === 'en' ? '1 year' : '1 año'}
-                      </button>
+
+                {/* Options selon le type */}
+                {triggerType === 'days' ? (
+                  <div>
+                    <p className="text-xs font-medium text-gray-600 mb-2">
+                      {language === 'fr' ? 'Dans' : language === 'en' ? 'In' : 'En'}
+                    </p>
+                    <div className="flex gap-2 mb-2">
+                      {PRESET_DELAYS.map((delay) => (
+                        <button
+                          key={delay.days}
+                          onClick={() => { setSelectedDelay(delay.days); setUseCustomDate(false); }}
+                          className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${!useCustomDate && selectedDelay === delay.days
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                        >
+                          {delay.label[language as keyof typeof delay.label]}
+                        </button>
+                      ))}
                     </div>
-                    {/* Calendrier */}
-                    <input
-                      type="date"
-                      value={customDate}
-                      onChange={(e) => setCustomDate(e.target.value)}
-                      min={addDays(getLocalDateString(), 1)}
-                      className="w-full px-2 py-1 text-xs border border-purple-200 rounded-lg"
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={useCustomDate}
+                        onChange={(e) => setUseCustomDate(e.target.checked)}
+                        className="w-4 h-4 rounded text-purple-500"
+                      />
+                      <span className="text-xs text-gray-600">
+                        {language === 'fr' ? 'Date personnalisée' : language === 'en' ? 'Custom date' : 'Fecha personalizada'}
+                      </span>
+                    </div>
+                    {useCustomDate && (
+                      <div className="mt-2 space-y-2">
+                        {/* Boutons 6 mois et 1 an */}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => { setSelectedDelay(180); setCustomDate(addDays(getLocalDateString(), 180)); }}
+                            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${customDate === addDays(getLocalDateString(), 180)
+                              ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              }`}
+                          >
+                            {language === 'fr' ? '6 mois' : language === 'en' ? '6 months' : '6 meses'}
+                          </button>
+                          <button
+                            onClick={() => { setSelectedDelay(365); setCustomDate(addDays(getLocalDateString(), 365)); }}
+                            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${customDate === addDays(getLocalDateString(), 365)
+                              ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              }`}
+                          >
+                            {language === 'fr' ? '1 an' : language === 'en' ? '1 year' : '1 año'}
+                          </button>
+                        </div>
+                        {/* Calendrier */}
+                        <input
+                          type="date"
+                          value={customDate}
+                          onChange={(e) => setCustomDate(e.target.value)}
+                          min={addDays(getLocalDateString(), 1)}
+                          className="w-full px-2 py-1 text-xs border border-purple-200 rounded-lg"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-xs font-medium text-gray-600 mb-2">
+                      {language === 'fr' ? 'Après' : language === 'en' ? 'After' : 'Después de'}
+                    </p>
+                    <div className="flex gap-2">
+                      {PRESET_WIN_THRESHOLDS.map((threshold) => (
+                        <button
+                          key={threshold.wins}
+                          onClick={() => setSelectedWinThreshold(threshold.wins)}
+                          className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${selectedWinThreshold === threshold.wins
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                        >
+                          {threshold.label[language as keyof typeof threshold.label]}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-gray-500 mt-2 flex items-center gap-1">
+                      <Trophy className="w-3 h-3" />
+                      {language === 'fr' 
+                        ? `Victoires actuelles: ${totalWins} → Message à ${totalWins + selectedWinThreshold} victoires`
+                        : language === 'en'
+                          ? `Current wins: ${totalWins} → Message at ${totalWins + selectedWinThreshold} wins`
+                          : `Victorias actuales: ${totalWins} → Mensaje a ${totalWins + selectedWinThreshold} victorias`}
+                    </p>
                   </div>
                 )}
               </div>
@@ -467,10 +565,21 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                           </p>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-[10px] text-gray-600 flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(capsule.deliveryDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES')}
-                          </span>
+                          {capsule.triggerType === 'days' && capsule.deliveryDate ? (
+                            <span className="text-[10px] text-gray-600 flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(capsule.deliveryDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES')}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-purple-600 flex items-center gap-1 font-medium">
+                              <Trophy className="w-3 h-3" />
+                              {language === 'fr' 
+                                ? `${capsule.winsAtCreation + capsule.triggerValue} victoires`
+                                : language === 'en'
+                                  ? `${capsule.winsAtCreation + capsule.triggerValue} wins`
+                                  : `${capsule.winsAtCreation + capsule.triggerValue} victorias`}
+                            </span>
+                          )}
                           {capsule.category && (
                             <span className="text-[10px] px-1.5 py-0.5 bg-white/50 rounded-full text-gray-700">
                               {CATEGORIES.find(c => c.id === capsule.category)?.label[language as 'fr' | 'en' | 'es']}
@@ -515,8 +624,14 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                         <div className="flex items-center gap-2 mt-2">
                           <span className="text-[10px] text-gray-600 flex items-center gap-1">
                             <Check className="w-3 h-3 text-green-500" />
-                            {language === 'fr' ? 'Reçu le' : language === 'en' ? 'Received on' : 'Recibido el'} {new Date(capsule.deliveryDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES')}
+                            {language === 'fr' ? 'Reçu le' : language === 'en' ? 'Received on' : 'Recibido el'} {new Date(capsule.deliveryDate || capsule.createdAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES')}
                           </span>
+                          {capsule.triggerType === 'wins' && (
+                            <span className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-full flex items-center gap-1">
+                              <Trophy className="w-3 h-3" />
+                              {capsule.triggerValue}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

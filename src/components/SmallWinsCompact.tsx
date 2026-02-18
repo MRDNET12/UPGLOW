@@ -1,11 +1,75 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
-import { Trophy, Plus, Award, Crown, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trophy, Plus, Award, Crown, ChevronDown, ChevronUp, Palette, Sparkles, Target } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface SmallWinsCompactProps {
   theme?: 'light' | 'dark';
 }
+
+// Types pour les designs
+type DesignTheme = 'modern' | 'celebration' | 'minimal';
+
+interface DesignConfig {
+  name: string;
+  nameEn: string;
+  nameEs: string;
+  icon: React.ReactNode;
+  bgGradient: string;
+  textColor: string;
+  inputBorder: string;
+  inputFocus: string;
+  buttonGradient: string;
+  itemBg: string;
+  itemBorder: string;
+  itemHover: string;
+}
+
+const DESIGN_THEMES: Record<DesignTheme, DesignConfig> = {
+  modern: {
+    name: 'Moderne',
+    nameEn: 'Modern',
+    nameEs: 'Moderno',
+    icon: <Sparkles className="w-5 h-5" />,
+    bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
+    textColor: 'text-white',
+    inputBorder: 'border-pink-200',
+    inputFocus: 'focus:border-pink-400 focus:ring-pink-400',
+    buttonGradient: 'from-pink-400 via-rose-400 to-orange-400',
+    itemBg: 'bg-white/60',
+    itemBorder: 'border-pink-100',
+    itemHover: 'hover:border-pink-200'
+  },
+  celebration: {
+    name: 'Célébration',
+    nameEn: 'Celebration',
+    nameEs: 'Celebración',
+    icon: <Award className="w-5 h-5" />,
+    bgGradient: 'from-purple-400 via-pink-500 to-rose-500',
+    textColor: 'text-white',
+    inputBorder: 'border-purple-200',
+    inputFocus: 'focus:border-purple-400 focus:ring-purple-400',
+    buttonGradient: 'from-purple-400 via-pink-500 to-rose-500',
+    itemBg: 'bg-white/80',
+    itemBorder: 'border-purple-100',
+    itemHover: 'hover:border-purple-200'
+  },
+  minimal: {
+    name: 'Minimaliste',
+    nameEn: 'Minimal',
+    nameEs: 'Minimalista',
+    icon: <Target className="w-5 h-5" />,
+    bgGradient: 'from-gray-600 via-gray-700 to-gray-800',
+    textColor: 'text-white',
+    inputBorder: 'border-gray-300',
+    inputFocus: 'focus:border-gray-500 focus:ring-gray-500',
+    buttonGradient: 'from-gray-600 via-gray-700 to-gray-800',
+    itemBg: 'bg-gray-50',
+    itemBorder: 'border-gray-200',
+    itemHover: 'hover:border-gray-300'
+  }
+};
 
 // Messages d'auto-validation qui tournent à chaque ajout
 const AUTO_VALIDATIONS = [
@@ -30,6 +94,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showWhy, setShowWhy] = useState(false);
   const [newWin, setNewWin] = useState('');
+  const [currentDesign, setCurrentDesign] = useState<DesignTheme>('modern');
+  const [showDesignPicker, setShowDesignPicker] = useState(false);
 
   // Animation state
   const [isAnimating, setIsAnimating] = useState(false);
@@ -38,22 +104,20 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
 
   const winsThisWeek = getSmallWinsThisWeek();
-  const lastWin = winsThisWeek.length > 0 ? winsThisWeek[winsThisWeek.length - 1] : null; // Conservé pour la logique mais non affiché
+  const lastWin = winsThisWeek.length > 0 ? winsThisWeek[winsThisWeek.length - 1] : null;
 
-  // Ref pour tracker le nombre précédent de wins afin de déclencher l'animation uniquement sur ajout
+  // Ref pour tracker le nombre précédent de wins
   const prevCountRef = useRef(winsThisWeek.length);
 
   // Trigger animation on win add
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 2000);
+      const timer = setTimeout(() => setIsAnimating(false), 10000);
       return () => clearTimeout(timer);
     }
     prevCountRef.current = winsThisWeek.length;
   }, [winsThisWeek.length]);
-
-  // ... getAutoValidation and getRank ...
 
   const getAutoValidation = () => {
     const count = winsThisWeek.length;
@@ -63,6 +127,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   const getRank = () => {
     const count = winsThisWeek.length;
+    const design = DESIGN_THEMES[currentDesign];
+    
     if (count === 5) {
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
@@ -84,18 +150,25 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       name: getAutoValidation(),
       icon: Trophy,
       color: 'text-pink-600',
-      bgGradient: 'from-pink-400 via-rose-400 to-orange-400',
+      bgGradient: design.bgGradient,
       emoji: '🎉'
     };
   };
 
   const rank = getRank();
+  const design = DESIGN_THEMES[currentDesign];
 
   const handleAddWin = () => {
     if (newWin.trim()) {
       addSmallWin(newWin.trim());
       setNewWin('');
     }
+  };
+
+  const getDesignName = (d: DesignConfig) => {
+    if (language === 'fr') return d.name;
+    if (language === 'en') return d.nameEn;
+    return d.nameEs;
   };
 
   return (
@@ -194,6 +267,18 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 <span className="text-xs font-bold text-white">{winsThisWeek.length}</span>
               </div>
             </div>
+
+            {/* Icône de personnalisation */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDesignPicker(true);
+              }}
+              className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
+              title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
+            >
+              <Palette className="w-5 h-5 text-white" />
+            </button>
           </div>
 
           {/* Barre de progression animée en bas */}
@@ -223,6 +308,20 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
         <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
+          {/* Titre avec icône de personnalisation */}
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold text-gray-800">
+              {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
+            </h4>
+            <button
+              onClick={() => setShowDesignPicker(true)}
+              className="p-2 bg-gray-100 rounded-full hover:bg-pink-100 transition-all"
+              title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
+            >
+              <Palette className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
+
           {/* FAQ Pourquoi ? - Design compact */}
           <div>
             <button
@@ -302,7 +401,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
               }}
               onClick={(e) => e.stopPropagation()}
               placeholder={t.bonus.smallWinPlaceholder}
-              className="flex-1 px-4 py-3 text-sm bg-white border-2 border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-gray-800 placeholder:text-gray-400 shadow-md font-medium transition-all"
+              className={`flex-1 px-4 py-3 text-sm bg-white border-2 ${design.inputBorder} rounded-xl ${design.inputFocus} focus:outline-none focus:ring-2 text-gray-800 placeholder:text-gray-400 shadow-md font-medium transition-all`}
             />
             <button
               onClick={(e) => {
@@ -310,7 +409,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 handleAddWin();
               }}
               disabled={!newWin.trim()}
-              className={`px-4 py-3 bg-gradient-to-r ${rank.bgGradient} hover:scale-105 disabled:bg-gray-300 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-xl transition-all disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 text-sm font-bold shadow-lg`}
+              className={`px-4 py-3 bg-gradient-to-r ${design.buttonGradient} hover:scale-105 disabled:bg-gray-300 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-xl transition-all disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 text-sm font-bold shadow-lg`}
             >
               <Plus className="w-5 h-5" />
             </button>
@@ -328,8 +427,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                   <div
                     key={win.id}
                     className={`p-2 rounded-lg transition-all ${index === 0
-                      ? `bg-gradient-to-br ${rank.bgGradient} shadow-md`
-                      : 'bg-white/60 border border-pink-100 hover:border-pink-200'
+                      ? `bg-gradient-to-br ${design.bgGradient} shadow-md`
+                      : `${design.itemBg} border ${design.itemBorder} ${design.itemHover}`
                       }`}
                   >
                     <div className="flex items-center gap-2">
@@ -350,7 +449,50 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
           )}
         </div>
       )}
+
+      {/* Design Picker Dialog */}
+      <Dialog open={showDesignPicker} onOpenChange={setShowDesignPicker}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'fr' ? 'Choisir un design' : language === 'en' ? 'Choose a design' : 'Elegir un diseño'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 mt-4">
+            {(Object.keys(DESIGN_THEMES) as DesignTheme[]).map((theme) => (
+              <button
+                key={theme}
+                onClick={() => {
+                  setCurrentDesign(theme);
+                  setShowDesignPicker(false);
+                }}
+                className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                  currentDesign === theme 
+                    ? 'border-pink-500 bg-pink-50' 
+                    : 'border-gray-200 hover:border-pink-200'
+                }`}
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${DESIGN_THEMES[theme].bgGradient} flex items-center justify-center text-white`}>
+                  {DESIGN_THEMES[theme].icon}
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-bold text-gray-800">{getDesignName(DESIGN_THEMES[theme])}</h3>
+                  <p className="text-sm text-gray-500">
+                    {theme === 'modern' && (language === 'fr' ? 'Style doux et coloré' : 'Soft and colorful style')}
+                    {theme === 'celebration' && (language === 'fr' ? 'Ambiance festive' : 'Festive vibe')}
+                    {theme === 'minimal' && (language === 'fr' ? 'Épuré et élégant' : 'Clean and elegant')}
+                  </p>
+                </div>
+                {currentDesign === theme && (
+                  <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
-

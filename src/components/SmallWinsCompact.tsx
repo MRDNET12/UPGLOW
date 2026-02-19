@@ -337,6 +337,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       {/* Carte compacte - Conditionnelle */}
       {winsThisWeek.length > 0 ? (
         <div
+          key={`badge-${explosionCount}`}
           className={`rounded-[1.5rem] p-4 shadow-xl shadow-gray-200/50 w-full transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
             isAnimating ? `win-animate-phase-${animationPhase}` : ''
           }`}

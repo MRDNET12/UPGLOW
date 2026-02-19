@@ -382,8 +382,8 @@ export default function GlowUpChallengeApp() {
   const [showSmallWinsHelp, setShowSmallWinsHelp] = useState(false);
   
   // Design du carnet de fierté
-  type PrideJournalDesign = 'classic' | 'cards' | 'minimal';
-  const [prideJournalDesign, setPrideJournalDesign] = useState<PrideJournalDesign>('classic');
+  type PrideJournalDesign = 'gallery' | 'timeline' | 'celebrate';
+  const [prideJournalDesign, setPrideJournalDesign] = useState<PrideJournalDesign>('gallery');
   const [showPrideDesignPicker, setShowPrideDesignPicker] = useState(false);
 
   // Charger les entrées du journal depuis localStorage
@@ -2918,77 +2918,83 @@ PROCESO OBLIGATORIO:
 
               {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 ? (
                 <>
-                  {/* DESIGN 1: Classic (liste simple avec points) */}
-                  {prideJournalDesign === 'classic' && (
-                    <div className="space-y-2">
-                      {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
-                        <div
-                          key={win.id || index}
-                          className="flex items-start gap-3"
-                        >
-                          <div className="flex flex-col items-center pt-1">
-                            <span className="text-gray-400 text-xs">●</span>
-                            <span className="text-gray-300 text-xs leading-none">'</span>
+                  {/* DESIGN 1: Gallery - Grille masonry élaborée */}
+                  {prideJournalDesign === 'gallery' && (
+                    <div className="space-y-4">
+                      {/* Header avec statistiques */}
+                      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 rounded-2xl p-5 text-white shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs font-medium opacity-90 uppercase tracking-wider">
+                              {language === 'fr' ? 'Ma collection de victoires' : language === 'en' ? 'My win collection' : 'Mi colección de victorias'}
+                            </p>
+                            <div className="flex items-baseline gap-2 mt-1">
+                              <p className="text-3xl font-bold">{bonusProgress.smallWins.length}</p>
+                              <p className="text-sm opacity-75">
+                                {language === 'fr' ? 'succès' : language === 'en' ? 'wins' : 'éxitos'}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex-1">
-                            <p className="text-sm text-gray-700">
-                              {win.text}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                                day: 'numeric',
-                                month: 'short'
-                              })}
-                            </p>
+                          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border-2 border-white/30">
+                            <span className="text-3xl">🏆</span>
                           </div>
                         </div>
-                      ))}
-                      {bonusProgress.smallWins.length >= 15 && (
-                        <button
-                          onClick={() => router.push('/small-wins')}
-                          className="text-sm text-pink-500 hover:text-pink-600"
-                        >
-                          {language === 'fr'
-                            ? `+ ${bonusProgress.smallWins.length - 15} autres`
-                            : language === 'en'
-                              ? `+ ${bonusProgress.smallWins.length - 15} more`
-                              : `+ ${bonusProgress.smallWins.length - 15} más`}
-                        </button>
-                      )}
-                    </div>
-                  )}
+                        <div className="mt-4">
+                          <div className="flex justify-between text-xs mb-1 opacity-90">
+                            <span>{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
+                            <span>{Math.min(bonusProgress.smallWins.length, 15)}/15</span>
+                          </div>
+                          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-white rounded-full transition-all duration-700"
+                              style={{ width: `${Math.min((bonusProgress.smallWins.length / 15) * 100, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
 
-                  {/* DESIGN 2: Cards (cartes colorées avec icônes) */}
-                  {prideJournalDesign === 'cards' && (
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-1 gap-3">
+                      {/* Grille masonry 2 colonnes */}
+                      <div className="grid grid-cols-2 gap-3">
                         {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
-                          const colors = [
-                            'from-pink-100 to-rose-100 border-pink-200',
-                            'from-purple-100 to-violet-100 border-purple-200',
-                            'from-blue-100 to-indigo-100 border-blue-200',
-                            'from-green-100 to-emerald-100 border-green-200',
-                            'from-orange-100 to-yellow-100 border-orange-200'
+                          const isLarge = index === 0 || index === 3 || index === 7 || index === 12;
+                          const gradients = [
+                            'from-pink-500 via-rose-400 to-pink-300',
+                            'from-violet-500 via-purple-400 to-violet-300',
+                            'from-amber-500 via-orange-400 to-amber-300',
+                            'from-cyan-500 via-sky-400 to-cyan-300',
+                            'from-emerald-500 via-teal-400 to-emerald-300'
                           ];
-                          const colorClass = colors[index % colors.length];
+                          const gradient = gradients[index % gradients.length];
+                          const emojis = ['✨', '🌟', '💫', '🎯', '🏆', '🎉', '💪', '⭐', '🔥', '💎', '🌈', '🦋', '⚡', '🎊', '🌺'];
+                          
                           return (
                             <div
                               key={win.id || index}
-                              className={`bg-gradient-to-r ${colorClass} rounded-xl p-3 border shadow-sm`}
+                              className={`relative rounded-2xl overflow-hidden ${
+                                isLarge ? 'col-span-2 min-h-[160px]' : 'min-h-[120px]'
+                              }`}
                             >
-                              <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center flex-shrink-0">
-                                  <Trophy className="w-4 h-4 text-pink-500" />
+                              <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+                              <div className="absolute inset-0 opacity-20" style={{
+                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+                              }} />
+                              
+                              <div className="relative p-4 h-full flex flex-col justify-between">
+                                <div className="flex justify-between items-start">
+                                  <span className="text-4xl filter drop-shadow-lg">{emojis[index % emojis.length]}</span>
+                                  <span className="text-[10px] font-black text-white/90 bg-black/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                                    #{String(index + 1).padStart(2, '0')}
+                                  </span>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-800">
-                                    {win.text}
+                                <div>
+                                  <p className={`font-bold text-white leading-tight drop-shadow-md ${isLarge ? 'text-lg' : 'text-sm'}`}>
+                                    {win.text.length > (isLarge ? 80 : 40) ? win.text.substring(0, isLarge ? 80 : 40) + '...' : win.text}
                                   </p>
-                                  <p className="text-xs text-gray-500 mt-1">
+                                  <p className="text-[11px] text-white/80 mt-2 font-medium">
                                     {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                      weekday: 'short',
                                       day: 'numeric',
-                                      month: 'short',
-                                      year: 'numeric'
+                                      month: 'short'
                                     })}
                                   </p>
                                 </div>
@@ -2997,60 +3003,287 @@ PROCESO OBLIGATORIO:
                           );
                         })}
                       </div>
+                      
                       {bonusProgress.smallWins.length >= 15 && (
                         <button
                           onClick={() => router.push('/small-wins')}
-                          className="w-full py-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all"
+                          className="w-full py-4 bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white rounded-2xl font-bold text-sm hover:shadow-2xl transition-all flex items-center justify-center gap-3"
                         >
-                          {language === 'fr'
-                            ? `Voir les ${bonusProgress.smallWins.length - 15} autres succès`
-                            : language === 'en'
-                              ? `See ${bonusProgress.smallWins.length - 15} more wins`
-                              : `Ver ${bonusProgress.smallWins.length - 15} éxitos más`}
+                          <Sparkles className="w-5 h-5" />
+                          <span>
+                            {language === 'fr'
+                              ? `Découvrir ${bonusProgress.smallWins.length - 15} autres succès`
+                              : language === 'en'
+                                ? `Discover ${bonusProgress.smallWins.length - 15} more wins`
+                                : `Descubrir ${bonusProgress.smallWins.length - 15} éxitos más`}
+                          </span>
+                          <ArrowRight className="w-5 h-5" />
                         </button>
                       )}
                     </div>
                   )}
 
-                  {/* DESIGN 3: Minimal (design épuré sans bordures) */}
-                  {prideJournalDesign === 'minimal' && (
-                    <div className="space-y-1">
-                      {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
-                        <div
-                          key={win.id || index}
-                          className="py-3 border-b border-gray-100 last:border-0"
-                        >
-                          <p className="text-sm text-gray-800 font-medium">
-                            {win.text}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">
-                              {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                                day: 'numeric',
-                                month: 'long'
-                              })}
-                            </span>
+                  {/* DESIGN 2: Timeline - Chronologie verticale immersive */}
+                  {prideJournalDesign === 'timeline' && (
+                    <div className="relative pb-6">
+                      {/* Ligne verticale avec dégradé */}
+                      <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-400 via-purple-400 via-indigo-400 to-blue-400 rounded-full" />
+                      
+                      {/* Header */}
+                      <div className="relative mb-8">
+                        <div className="flex items-center gap-4">
+                          <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-xl shadow-pink-200">
+                            <span className="text-3xl">🚀</span>
+                          </div>
+                          <div className="flex-1 bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-5 border border-pink-100 shadow-sm">
+                            <p className="text-xs text-pink-600 font-bold uppercase tracking-wider mb-1">
+                              {language === 'fr' ? 'Début du voyage' : language === 'en' ? 'Journey start' : 'Inicio del viaje'}
+                            </p>
+                            <p className="text-gray-800 font-semibold">
+                              {language === 'fr' 
+                                ? `${bonusProgress.smallWins.length} victoires enregistrées`
+                                : language === 'en'
+                                  ? `${bonusProgress.smallWins.length} wins recorded`
+                                  : `${bonusProgress.smallWins.length} victorias registradas`}
+                            </p>
                           </div>
                         </div>
-                      ))}
+                      </div>
+
+                      {/* Éléments de la timeline */}
+                      <div className="space-y-6">
+                        {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
+                          const isMilestone = (index + 1) % 5 === 0;
+                          
+                          return (
+                            <div key={win.id || index} className="relative flex items-start gap-4">
+                              {/* Point sur la timeline */}
+                              <div className="relative z-10 flex-shrink-0 ml-1">
+                                <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${
+                                  isMilestone 
+                                    ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200 ring-4 ring-amber-100' 
+                                    : 'bg-white border-3 border-pink-300'
+                                }`}>
+                                  {isMilestone ? (
+                                    <Crown className="w-6 h-6 text-white" />
+                                  ) : (
+                                    <span className="text-lg font-bold text-pink-500">{index + 1}</span>
+                                  )}
+                                </div>
+                                {isMilestone && (
+                                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-[10px] shadow-md">
+                                    ⭐
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Contenu */}
+                              <div className="flex-1 pt-2">
+                                <div className={`rounded-2xl p-5 shadow-md ${
+                                  isMilestone 
+                                    ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200' 
+                                    : 'bg-white border border-gray-100'
+                                }`}>
+                                  <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-xs font-bold text-gray-400">
+                                      {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                        day: 'numeric',
+                                        month: 'short'
+                                      })}
+                                    </span>
+                                    {isMilestone && (
+                                      <span className="text-[10px] bg-amber-400 text-white px-3 py-1 rounded-full font-bold shadow-sm">
+                                        {language === 'fr' ? 'JALON' : language === 'en' ? 'MILESTONE' : 'HITO'}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className={`text-gray-800 font-semibold leading-relaxed ${isMilestone ? 'text-base' : 'text-sm'}`}>
+                                    {win.text}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Footer */}
                       {bonusProgress.smallWins.length >= 15 && (
-                        <button
-                          onClick={() => router.push('/small-wins')}
-                          className="w-full py-3 text-sm text-gray-500 hover:text-gray-700 border-t border-gray-200 transition-colors flex items-center justify-center gap-1"
-                        >
-                          <span>
-                            {language === 'fr'
-                              ? `+ ${bonusProgress.smallWins.length - 15} autres`
-                              : language === 'en'
-                                ? `+ ${bonusProgress.smallWins.length - 15} more`
-                                : `+ ${bonusProgress.smallWins.length - 15} más`}
-                          </span>
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
+                        <div className="relative mt-8">
+                          <div className="flex items-center gap-4">
+                            <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-xl">
+                              <span className="text-3xl">🎯</span>
+                            </div>
+                            <button
+                              onClick={() => router.push('/small-wins')}
+                              className="flex-1 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 border-2 border-indigo-100 text-left hover:shadow-lg transition-all"
+                            >
+                              <p className="text-xs text-indigo-600 font-bold uppercase">
+                                {language === 'fr' ? 'Continuer l\'exploration' : language === 'en' ? 'Continue exploring' : 'Continuar explorando'}
+                              </p>
+                              <p className="text-gray-800 font-semibold mt-1">
+                                {language === 'fr'
+                                  ? `+ ${bonusProgress.smallWins.length - 15} victoires à découvrir`
+                                  : language === 'en'
+                                    ? `+ ${bonusProgress.smallWins.length - 15} wins to discover`
+                                    : `+ ${bonusProgress.smallWins.length - 15} victorias por descubrir`}
+                              </p>
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
-                </>
+
+                  {/* DESIGN 3: Celebrate - Design festif avec niveaux et badges */}
+                  {prideJournalDesign === 'celebrate' && (
+                    <div className="space-y-5">
+                      {/* Carte de niveau avec effet 3D */}
+                      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-400 via-pink-500 to-purple-600 p-1">
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMiI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTAiLz48L3N2Zz4=')] opacity-30" />
+                        
+                        <div className="relative bg-gradient-to-br from-yellow-300/90 to-orange-400/90 rounded-[22px] p-6 text-white">
+                          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl" />
+                          
+                          <div className="relative text-center">
+                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm border-4 border-white/40 mb-4 shadow-2xl">
+                              <span className="text-5xl">
+                                {bonusProgress.smallWins.length >= 15 ? '👑' : 
+                                 bonusProgress.smallWins.length >= 10 ? '🏆' : 
+                                 bonusProgress.smallWins.length >= 5 ? '🥇' : '⭐'}
+                              </span>
+                            </div>
+                            <h4 className="text-2xl font-bold mb-2 drop-shadow-lg">
+                              {bonusProgress.smallWins.length >= 15 
+                                ? (language === 'fr' ? 'Champion Incontesté' : language === 'en' ? 'Undisputed Champion' : 'Campeón Indiscutible')
+                                : bonusProgress.smallWins.length >= 10 
+                                  ? (language === 'fr' ? 'Expert en Progression' : language === 'en' ? 'Progression Expert' : 'Experto en Progresión')
+                                  : bonusProgress.smallWins.length >= 5
+                                    ? (language === 'fr' ? 'Accumulateur de Succès' : language === 'en' ? 'Win Collector' : 'Colector de Éxitos')
+                                    : (language === 'fr' ? 'Débutant Motivé' : language === 'en' ? 'Motivated Beginner' : 'Principiante Motivado')}
+                            </h4>
+                            <p className="text-base text-white/95 font-medium">
+                              {bonusProgress.smallWins.length} {language === 'fr' ? 'victoires célébrées' : language === 'en' ? 'wins celebrated' : 'victorias celebradas'}
+                            </p>
+                            
+                            {/* Barre de progression circulaire simplifiée */}
+                            <div className="mt-5 flex items-center gap-3 justify-center">
+                              <span className="text-sm font-bold">Niv. {Math.floor(bonusProgress.smallWins.length / 5) + 1}</span>
+                              <div className="w-32 h-3 bg-black/20 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-white rounded-full shadow-lg transition-all duration-700"
+                                  style={{ width: `${((bonusProgress.smallWins.length % 5) / 5) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-bold">Niv. {Math.floor(bonusProgress.smallWins.length / 5) + 2}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Liste des victoires avec rareté */}
+                      <div className="space-y-3">
+                        {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
+                          const rarity = index < 3 ? 'legendary' : index < 7 ? 'epic' : index < 12 ? 'rare' : 'common';
+                          const rarityConfig = {
+                            legendary: { 
+                              bg: 'bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400', 
+                              border: 'border-amber-400',
+                              badge: 'LÉGENDAIRE',
+                              emoji: '🔥',
+                              textColor: 'text-amber-900'
+                            },
+                            epic: { 
+                              bg: 'bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400', 
+                              border: 'border-purple-400',
+                              badge: 'ÉPIQUE',
+                              emoji: '💎',
+                              textColor: 'text-white'
+                            },
+                            rare: { 
+                              bg: 'bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400', 
+                              border: 'border-cyan-400',
+                              badge: 'RARE',
+                              emoji: '⭐',
+                              textColor: 'text-white'
+                            },
+                            common: { 
+                              bg: 'bg-white', 
+                              border: 'border-gray-200',
+                              badge: null,
+                              emoji: '✨',
+                              textColor: 'text-gray-800'
+                            }
+                          };
+                          const config = rarityConfig[rarity];
+                          
+                          return (
+                            <div
+                              key={win.id || index}
+                              className={`relative rounded-2xl overflow-hidden shadow-lg border-2 ${config.border} transform transition-transform hover:scale-[1.02]`}
+                            >
+                              <div className={`${config.bg}`}>
+                                <div className="relative p-5">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-2xl">{config.emoji}</span>
+                                        {config.badge && (
+                                          <span className={`text-[9px] font-black px-2 py-1 rounded-full shadow-sm ${
+                                            rarity === 'legendary' ? 'bg-amber-200 text-amber-800' :
+                                            rarity === 'epic' ? 'bg-white/30 text-white backdrop-blur-sm' :
+                                            'bg-white/30 text-white backdrop-blur-sm'
+                                          }`}>
+                                            {config.badge}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className={`font-bold ${rarity === 'legendary' ? 'text-lg' : rarity === 'epic' ? 'text-base' : 'text-sm'} ${config.textColor}`}>
+                                        {win.text}
+                                      </p>
+                                      <p className={`text-xs mt-2 ${rarity === 'common' ? 'text-gray-500' : 'text-white/80'}`}>
+                                        {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                          weekday: 'long',
+                                          day: 'numeric',
+                                          month: 'long'
+                                        })}
+                                      </p>
+                                    </div>
+                                    
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                                      rarity !== 'common' ? 'bg-white/20 backdrop-blur-sm' : 'bg-gray-100'
+                                    }`}>
+                                      <span className={`text-sm font-black ${rarity !== 'common' ? 'text-white' : 'text-gray-500'}`}>
+                                        #{index + 1}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {bonusProgress.smallWins.length >= 15 && (
+                        <button
+                          onClick={() => router.push('/small-wins')}
+                          className="w-full py-5 bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 text-white rounded-2xl font-bold text-base shadow-xl shadow-pink-200 hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
+                        >
+                          <span>🎊</span>
+                          <span>
+                            {language === 'fr'
+                              ? `Voir les ${bonusProgress.smallWins.length - 15} autres victoires`
+                              : language === 'en'
+                                ? `See ${bonusProgress.smallWins.length - 15} more wins`
+                                : `Ver ${bonusProgress.smallWins.length - 15} victorias más`}
+                          </span>
+                          <span>🎊</span>
+                        </button>
+                      )}
+                    </div>
+                  )}                </>
               ) : (
                 <p className="text-sm text-gray-400 italic">
                   {language === 'fr' ? 'Aucun succès enregistré' : language === 'en' ? 'No wins recorded' : 'Ningún éxito registrado'}
@@ -3067,93 +3300,90 @@ PROCESO OBLIGATORIO:
                   </DrawerTitle>
                 </DrawerHeader>
                 <div className="px-4 pb-6 space-y-3">
-                  {/* Design Classic */}
+                  {/* Design Gallery */}
                   <button
                     onClick={() => {
-                      setPrideJournalDesign('classic');
+                      setPrideJournalDesign('gallery');
                       setShowPrideDesignPicker(false);
                     }}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                      prideJournalDesign === 'classic'
+                      prideJournalDesign === 'gallery'
                         ? 'border-pink-500 bg-pink-50'
                         : 'border-gray-200 hover:border-pink-200'
                     }`}
                   >
-                    <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
-                      <div className="flex flex-col items-center">
-                        <span className="text-gray-400 text-xs">●</span>
-                        <span className="text-gray-300 text-[8px]">'</span>
-                      </div>
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 via-pink-500 to-rose-400 flex items-center justify-center text-xl shadow-md">
+                      🖼️
                     </div>
                     <div className="flex-1 text-left">
                       <h3 className="font-bold text-gray-800">
-                        {language === 'fr' ? 'Classique' : language === 'en' ? 'Classic' : 'Clásico'}
+                        {language === 'fr' ? 'Galerie' : language === 'en' ? 'Gallery' : 'Galería'}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Liste simple et élégante' : language === 'en' ? 'Simple and elegant list' : 'Lista simple y elegante'}
+                        {language === 'fr' ? 'Grille masonry avec cartes colorées et statistiques' : language === 'en' ? 'Masonry grid with colorful cards and stats' : 'Cuadrícula masonry con tarjetas coloridas y estadísticas'}
                       </p>
                     </div>
-                    {prideJournalDesign === 'classic' && (
+                    {prideJournalDesign === 'gallery' && (
                       <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
                   </button>
 
-                  {/* Design Cards */}
+                  {/* Design Timeline */}
                   <button
                     onClick={() => {
-                      setPrideJournalDesign('cards');
+                      setPrideJournalDesign('timeline');
                       setShowPrideDesignPicker(false);
                     }}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                      prideJournalDesign === 'cards'
+                      prideJournalDesign === 'timeline'
                         ? 'border-pink-500 bg-pink-50'
                         : 'border-gray-200 hover:border-pink-200'
                     }`}
                   >
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-pink-100 to-rose-100 border border-pink-200 flex items-center justify-center">
-                      <Trophy className="w-5 h-5 text-pink-500" />
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-pink-400 to-purple-600 flex items-center justify-center text-xl shadow-md">
+                      ⏱️
                     </div>
                     <div className="flex-1 text-left">
                       <h3 className="font-bold text-gray-800">
-                        {language === 'fr' ? 'Cartes' : language === 'en' ? 'Cards' : 'Tarjetas'}
+                        {language === 'fr' ? 'Chronologie' : language === 'en' ? 'Timeline' : 'Cronología'}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Cartes colorées avec icônes' : language === 'en' ? 'Colorful cards with icons' : 'Tarjetas coloridas con iconos'}
+                        {language === 'fr' ? 'Timeline verticale avec milestones et jalons' : language === 'en' ? 'Vertical timeline with milestones and achievements' : 'Línea de tiempo vertical con hitos y logros'}
                       </p>
                     </div>
-                    {prideJournalDesign === 'cards' && (
+                    {prideJournalDesign === 'timeline' && (
                       <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
                   </button>
 
-                  {/* Design Minimal */}
+                  {/* Design Celebrate */}
                   <button
                     onClick={() => {
-                      setPrideJournalDesign('minimal');
+                      setPrideJournalDesign('celebrate');
                       setShowPrideDesignPicker(false);
                     }}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                      prideJournalDesign === 'minimal'
+                      prideJournalDesign === 'celebrate'
                         ? 'border-pink-500 bg-pink-50'
                         : 'border-gray-200 hover:border-pink-200'
                     }`}
                   >
-                    <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
-                      <div className="w-8 h-px bg-gray-300" />
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 flex items-center justify-center text-xl shadow-md">
+                      🎉
                     </div>
                     <div className="flex-1 text-left">
                       <h3 className="font-bold text-gray-800">
-                        {language === 'fr' ? 'Minimaliste' : language === 'en' ? 'Minimal' : 'Minimalista'}
+                        {language === 'fr' ? 'Célébration' : language === 'en' ? 'Celebrate' : 'Celebración'}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Design épuré sans bordures' : language === 'en' ? 'Clean design without borders' : 'Diseño limpio sin bordes'}
+                        {language === 'fr' ? 'Design festif avec niveaux et badges de rareté' : language === 'en' ? 'Festive design with levels and rarity badges' : 'Diseño festivo con niveles y badges de rareza'}
                       </p>
                     </div>
-                    {prideJournalDesign === 'minimal' && (
+                    {prideJournalDesign === 'celebrate' && (
                       <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>

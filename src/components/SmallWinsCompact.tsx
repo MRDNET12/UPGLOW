@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
 import { Trophy, Plus, Award, Crown, ChevronDown, ChevronUp, Palette, Sparkles, Target } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface SmallWinsCompactProps {
   theme?: 'light' | 'dark';
@@ -256,12 +256,6 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     }
   };
 
-  const getDesignName = (d: DesignConfig) => {
-    if (language === 'fr') return d.name;
-    if (language === 'en') return d.nameEn;
-    return d.nameEs;
-  };
-
   return (
     <div className="w-full">
       {/* Styles pour l'animation de 10 secondes */}
@@ -372,34 +366,34 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
              <rank.icon className="w-32 h-32 text-white" />
            </div>
 
-            {/* Bouton de personnalisation en haut */}
-            <div className="absolute top-6 right-4 z-20">
-             <button
-               onClick={(e) => {
-                 e.stopPropagation();
-                 setShowDesignPicker(true);
-               }}
-               className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
-               title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
-             >
-               <Palette className="w-4 h-4 text-white" />
-             </button>
-           </div>
- 
-           <div className="relative z-10 flex items-center justify-start gap-5">
-             {/* Gauche : Emoji avec animation */}
-             <div className={`transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-text-pop' : ''}`}>
-               <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
-             </div>
- 
-             {/* Droite : Phrase avec animation */}
-             <div className="flex-1">
-               <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-shake' : ''}`}>
-                 {rank.name}
-               </h3>
-             </div>
-           </div>
-        </div>
+            <div className="relative z-10 flex items-center justify-start gap-5">
+              {/* Gauche : Emoji avec animation */}
+              <div className={`transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-text-pop' : ''}`}>
+                <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
+              </div>
+  
+              {/* Droite : Phrase avec animation */}
+              <div className="flex-1">
+                <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-shake' : ''}`}>
+                  {rank.name}
+                </h3>
+              </div>
+            </div>
+
+            {/* Bouton de personnalisation en bas */}
+            <div className="absolute bottom-2 right-2 z-20">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDesignPicker(true);
+                }}
+                className="p-1.5 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
+                title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
+              >
+                <Palette className="w-3 h-3 text-white" />
+              </button>
+            </div>
+         </div>
       ) : null}
 
       {/* Section expandée - Design magnifique */}
@@ -540,13 +534,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       {/* Design Picker Dialog */}
       <Dialog open={showDesignPicker} onOpenChange={setShowDesignPicker}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {language === 'fr' ? 'Choisir un design' : language === 'en' ? 'Choose a design' : 'Elegir un diseño'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-3 mt-4">
+        <DialogContent className="sm:max-w-sm">
+          <div className="flex justify-center gap-4 py-4">
             {(Object.keys(DESIGN_THEMES) as DesignTheme[]).map((theme) => (
               <button
                 key={theme}
@@ -554,28 +543,13 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                   setCurrentDesign(theme);
                   setShowDesignPicker(false);
                 }}
-                className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${DESIGN_THEMES[theme].bgGradient} flex items-center justify-center text-white text-2xl transition-all ${
                   currentDesign === theme 
-                    ? 'border-pink-500 bg-pink-50' 
-                    : 'border-gray-200 hover:border-pink-200'
+                    ? 'ring-4 ring-pink-400 scale-110' 
+                    : 'opacity-70 hover:opacity-100 hover:scale-105'
                 }`}
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${DESIGN_THEMES[theme].bgGradient} flex items-center justify-center text-white`}>
-                  {DESIGN_THEMES[theme].icon}
-                </div>
-                <div className="flex-1 text-left">
-                  <h3 className="font-bold text-gray-800">{getDesignName(DESIGN_THEMES[theme])}</h3>
-                  <p className="text-sm text-gray-500">
-                    {theme === 'modern' && (language === 'fr' ? 'Style doux et coloré' : 'Soft and colorful style')}
-                    {theme === 'celebration' && (language === 'fr' ? 'Ambiance festive' : 'Festive vibe')}
-                    {theme === 'minimal' && (language === 'fr' ? 'Épuré et élégant' : 'Clean and elegant')}
-                  </p>
-                </div>
-                {currentDesign === theme && (
-                  <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
-                )}
+                {DESIGN_THEMES[theme].icon}
               </button>
             ))}
           </div>

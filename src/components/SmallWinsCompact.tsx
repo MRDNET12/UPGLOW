@@ -398,7 +398,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
-        <div className="mt-3 px-1.5 py-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
+        <div className="mt-[100px] px-1.5 py-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
           {/* Titre */}
           <h4 className="font-bold text-gray-800">
             {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}

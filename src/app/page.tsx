@@ -396,7 +396,7 @@ export default function GlowUpChallengeApp() {
   const [showSmallWinsHelp, setShowSmallWinsHelp] = useState(false);
 
   // Design du carnet de fierté
-  type PrideJournalDesign = 'gallery' | 'timeline' | 'celebrate';
+  type PrideJournalDesign = 'gallery' | 'timeline' | 'celebrate' | 'minimal';
   const [prideJournalDesign, setPrideJournalDesign] = useState<PrideJournalDesign>('gallery');
   const [showPrideDesignPicker, setShowPrideDesignPicker] = useState(false);
 
@@ -2915,7 +2915,7 @@ PROCESO OBLIGATORIO:
             </div>
 
             {/* Section Carnet de fierté */}
-            <div className="px-4">
+            <div className="px-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-gray-900 font-semibold text-base font-sans">
                   {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
@@ -2935,38 +2935,6 @@ PROCESO OBLIGATORIO:
                   {/* DESIGN 1: Gallery - Grille masonry élaborée */}
                   {prideJournalDesign === 'gallery' && (
                     <div className="space-y-4">
-                      {/* Header avec statistiques */}
-                      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 rounded-2xl p-5 text-white shadow-lg">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-xs font-medium opacity-90 uppercase tracking-wider">
-                              {language === 'fr' ? 'Ma collection de victoires' : language === 'en' ? 'My win collection' : 'Mi colección de victorias'}
-                            </p>
-                            <div className="flex items-baseline gap-2 mt-1">
-                              <p className="text-3xl font-bold">{bonusProgress.smallWins.length}</p>
-                              <p className="text-sm opacity-75">
-                                {language === 'fr' ? 'succès' : language === 'en' ? 'wins' : 'éxitos'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border-2 border-white/30">
-                            <span className="text-3xl">🏆</span>
-                          </div>
-                        </div>
-                        <div className="mt-4">
-                          <div className="flex justify-between text-xs mb-1 opacity-90">
-                            <span>{language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}</span>
-                            <span>{Math.min(bonusProgress.smallWins.length, 15)}/15</span>
-                          </div>
-                          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-white rounded-full transition-all duration-700"
-                              style={{ width: `${Math.min((bonusProgress.smallWins.length / 15) * 100, 100)}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
                       {/* Grille masonry 2 colonnes */}
                       <div className="grid grid-cols-2 gap-3">
                         {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
@@ -3036,112 +3004,43 @@ PROCESO OBLIGATORIO:
                     </div>
                   )}
 
-                  {/* DESIGN 2: Timeline - Chronologie verticale immersive */}
+                  {/* DESIGN 2: Timeline - Chronologie moderne et épurée */}
                   {prideJournalDesign === 'timeline' && (
-                    <div className="relative pb-6">
-                      {/* Ligne verticale avec dégradé */}
-                      <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-400 via-purple-400 via-indigo-400 to-blue-400 rounded-full" />
-
-                      {/* Header */}
-                      <div className="relative mb-8">
-                        <div className="flex items-center gap-4">
-                          <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-xl shadow-pink-200">
-                            <span className="text-3xl">🚀</span>
+                    <div className="space-y-4">
+                      {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
+                        <div key={win.id || index} className="flex items-start gap-4">
+                          <div className="flex flex-col items-center">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                              {index + 1}
+                            </div>
+                            {index < bonusProgress.smallWins.slice(0, 15).length - 1 && (
+                              <div className="w-0.5 h-full bg-gradient-to-b from-pink-300 to-transparent mt-2" />
+                            )}
                           </div>
-                          <div className="flex-1 bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-5 border border-pink-100 shadow-sm">
-                            <p className="text-xs text-pink-600 font-bold uppercase tracking-wider mb-1">
-                              {language === 'fr' ? 'Début du voyage' : language === 'en' ? 'Journey start' : 'Inicio del viaje'}
-                            </p>
-                            <p className="text-gray-800 font-semibold">
-                              {language === 'fr'
-                                ? `${bonusProgress.smallWins.length} victoires enregistrées`
-                                : language === 'en'
-                                  ? `${bonusProgress.smallWins.length} wins recorded`
-                                  : `${bonusProgress.smallWins.length} victorias registradas`}
+                          <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                            <p className="text-sm font-semibold text-gray-800">{win.text}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: '2-digit'
+                              })}
                             </p>
                           </div>
                         </div>
-                      </div>
-
-                      {/* Éléments de la timeline */}
-                      <div className="space-y-6">
-                        {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
-                          const isMilestone = (index + 1) % 5 === 0;
-
-                          return (
-                            <div key={win.id || index} className="relative flex items-start gap-4">
-                              {/* Point sur la timeline */}
-                              <div className="relative z-10 flex-shrink-0 ml-1">
-                                <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${isMilestone
-                                    ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200 ring-4 ring-amber-100'
-                                    : 'bg-white border-3 border-pink-300'
-                                  }`}>
-                                  {isMilestone ? (
-                                    <Crown className="w-6 h-6 text-white" />
-                                  ) : (
-                                    <span className="text-lg font-bold text-pink-500">{index + 1}</span>
-                                  )}
-                                </div>
-                                {isMilestone && (
-                                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-[10px] shadow-md">
-                                    ⭐
-                                  </div>
-                                )}
-                              </div>
-
-                              {/* Contenu */}
-                              <div className="flex-1 pt-2">
-                                <div className={`rounded-2xl p-5 shadow-md ${isMilestone
-                                    ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200'
-                                    : 'bg-white border border-gray-100'
-                                  }`}>
-                                  <div className="flex items-center gap-3 mb-3">
-                                    <span className="text-xs font-bold text-gray-400">
-                                      {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                                        day: 'numeric',
-                                        month: 'short'
-                                      })}
-                                    </span>
-                                    {isMilestone && (
-                                      <span className="text-[10px] bg-amber-400 text-white px-3 py-1 rounded-full font-bold shadow-sm">
-                                        {language === 'fr' ? 'JALON' : language === 'en' ? 'MILESTONE' : 'HITO'}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <p className={`text-gray-800 font-semibold leading-relaxed ${isMilestone ? 'text-base' : 'text-sm'}`}>
-                                    {win.text}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Footer */}
+                      ))}
+                      
                       {bonusProgress.smallWins.length >= 15 && (
-                        <div className="relative mt-8">
-                          <div className="flex items-center gap-4">
-                            <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-xl">
-                              <span className="text-3xl">🎯</span>
-                            </div>
-                            <button
-                              onClick={() => router.push('/small-wins')}
-                              className="flex-1 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 border-2 border-indigo-100 text-left hover:shadow-lg transition-all"
-                            >
-                              <p className="text-xs text-indigo-600 font-bold uppercase">
-                                {language === 'fr' ? 'Continuer l\'exploration' : language === 'en' ? 'Continue exploring' : 'Continuar explorando'}
-                              </p>
-                              <p className="text-gray-800 font-semibold mt-1">
-                                {language === 'fr'
-                                  ? `+ ${bonusProgress.smallWins.length - 15} victoires à découvrir`
-                                  : language === 'en'
-                                    ? `+ ${bonusProgress.smallWins.length - 15} wins to discover`
-                                    : `+ ${bonusProgress.smallWins.length - 15} victorias por descubrir`}
-                              </p>
-                            </button>
-                          </div>
-                        </div>
+                        <button
+                          onClick={() => router.push('/small-wins')}
+                          className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors"
+                        >
+                          {language === 'fr'
+                            ? `+ ${bonusProgress.smallWins.length - 15} autres`
+                            : language === 'en'
+                              ? `+ ${bonusProgress.smallWins.length - 15} more`
+                              : `+ ${bonusProgress.smallWins.length - 15} más`}
+                        </button>
                       )}
                     </div>
                   )}
@@ -3308,93 +3207,64 @@ PROCESO OBLIGATORIO:
                     {language === 'fr' ? 'Choisir un design' : language === 'en' ? 'Choose a design' : 'Elegir un diseño'}
                   </DrawerTitle>
                 </DrawerHeader>
-                <div className="px-4 pb-6 space-y-3">
-                  {/* Design Gallery */}
-                  <button
-                    onClick={() => {
-                      setPrideJournalDesign('gallery');
-                      setShowPrideDesignPicker(false);
-                    }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${prideJournalDesign === 'gallery'
-                        ? 'border-pink-500 bg-pink-50'
-                        : 'border-gray-200 hover:border-pink-200'
-                      }`}
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 via-pink-500 to-rose-400 flex items-center justify-center text-xl shadow-md">
+                <div className="px-5 pb-6">
+                  <div className="grid grid-cols-4 gap-3">
+                    {/* Design Gallery */}
+                    <button
+                      onClick={() => {
+                        setPrideJournalDesign('gallery');
+                        setShowPrideDesignPicker(false);
+                      }}
+                      className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'gallery'
+                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        }`}
+                    >
                       🖼️
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="font-bold text-gray-800">
-                        {language === 'fr' ? 'Galerie' : language === 'en' ? 'Gallery' : 'Galería'}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Grille masonry avec cartes colorées et statistiques' : language === 'en' ? 'Masonry grid with colorful cards and stats' : 'Cuadrícula masonry con tarjetas coloridas y estadísticas'}
-                      </p>
-                    </div>
-                    {prideJournalDesign === 'gallery' && (
-                      <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </button>
+                    </button>
 
-                  {/* Design Timeline */}
-                  <button
-                    onClick={() => {
-                      setPrideJournalDesign('timeline');
-                      setShowPrideDesignPicker(false);
-                    }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${prideJournalDesign === 'timeline'
-                        ? 'border-pink-500 bg-pink-50'
-                        : 'border-gray-200 hover:border-pink-200'
-                      }`}
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-pink-400 to-purple-600 flex items-center justify-center text-xl shadow-md">
+                    {/* Design Timeline */}
+                    <button
+                      onClick={() => {
+                        setPrideJournalDesign('timeline');
+                        setShowPrideDesignPicker(false);
+                      }}
+                      className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'timeline'
+                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        }`}
+                    >
                       ⏱️
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="font-bold text-gray-800">
-                        {language === 'fr' ? 'Chronologie' : language === 'en' ? 'Timeline' : 'Cronología'}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Timeline verticale avec milestones et jalons' : language === 'en' ? 'Vertical timeline with milestones and achievements' : 'Línea de tiempo vertical con hitos y logros'}
-                      </p>
-                    </div>
-                    {prideJournalDesign === 'timeline' && (
-                      <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </button>
+                    </button>
 
-                  {/* Design Celebrate */}
-                  <button
-                    onClick={() => {
-                      setPrideJournalDesign('celebrate');
-                      setShowPrideDesignPicker(false);
-                    }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${prideJournalDesign === 'celebrate'
-                        ? 'border-pink-500 bg-pink-50'
-                        : 'border-gray-200 hover:border-pink-200'
-                      }`}
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 flex items-center justify-center text-xl shadow-md">
+                    {/* Design Celebrate */}
+                    <button
+                      onClick={() => {
+                        setPrideJournalDesign('celebrate');
+                        setShowPrideDesignPicker(false);
+                      }}
+                      className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'celebrate'
+                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        }`}
+                    >
                       🎉
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="font-bold text-gray-800">
-                        {language === 'fr' ? 'Célébration' : language === 'en' ? 'Celebrate' : 'Celebración'}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Design festif avec niveaux et badges de rareté' : language === 'en' ? 'Festive design with levels and rarity badges' : 'Diseño festivo con niveles y badges de rareza'}
-                      </p>
-                    </div>
-                    {prideJournalDesign === 'celebrate' && (
-                      <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </button>
+                    </button>
+
+                    {/* Design Minimal */}
+                    <button
+                      onClick={() => {
+                        setPrideJournalDesign('minimal');
+                        setShowPrideDesignPicker(false);
+                      }}
+                      className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'minimal'
+                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        }`}
+                    >
+                      ⚪
+                    </button>
+                  </div>
                 </div>
               </DrawerContent>
             </Drawer>

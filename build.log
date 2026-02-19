@@ -1,0 +1,104 @@
+﻿node.exe :  ÔÜá Linting is 
+disabled.
+Au caractère C:\Program 
+Files\nodejs\npx.ps1:29 : 3
++   & $NODE_EXE $NPX_CLI_JS 
+$args
++   ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo          
+    : NotSpecified: ( ÔÜá   
+  Linting is disabled.:St   
+ ring) [], RemoteExcepti    
+on
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+   Ôû▓ Next.js 15.3.5
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/app/page.tsx
+Module parse failed: 
+Identifier 'theme' has 
+already been declared 
+(71:403)
+File was processed with 
+these loaders:
+ * ./node_modules/next/dist/
+build/webpack/loaders/next-f
+light-client-module-loader.j
+s
+ * ./node_modules/next/dist/
+build/webpack/loaders/next-s
+wc-loader.js
+You may need an additional 
+loader to handle the result 
+of these loaders.
+|         theme
+|     ]);
+>     const { currentView, 
+setCurrentView, currentDay, 
+setCurrentDay, 
+selectedGoalId, 
+setSelectedGoalId, 
+selectedChallenge, 
+setSelectedChallenge, 
+hasStarted, startChallenge, 
+challengeProgress, 
+toggleDayCompletion, 
+updateDayNotes, 
+toggleActionCompletion, 
+isActionCompleted, routine, 
+updateRoutine, 
+routineCompletedDates, 
+setRoutineCompleted, 
+visionBoardImages, 
+addVisionBoardImage, 
+removeVisionBoardImage, 
+theme, setTheme, 
+notificationsEnabled, 
+setNotificationsEnabled, 
+getProgressPercentage, 
+completedThingsAlone, 
+toggleThingAlone, language, 
+setLanguage, 
+hasSelectedLanguage, 
+confirmLanguageSelection, 
+canAccessDay, 
+getCurrentUnlockedDay, 
+bonusProgress, addSmallWin, 
+toggleWeeklyBonus, 
+updateWeeklyBonusNotes, 
+toggleChecklistCompleted, 
+toggleMiniGuideStep, 
+getWeeklyBonusProgress, 
+getSectionWeeklyCompletion, 
+// Subscription & Trial
+|     subscription, 
+initializeFirstOpen, 
+getRemainingFreeDays, 
+isTrialExpired, 
+canAccessApp, 
+hasExceededFreeTrial, 
+canAccessFeature, // Beauty 
+Pillars
+|     
+beautyPillarsProgress, 
+beautyValidatedDates, 
+toggleBeautyPillar, 
+selectBeautyChoice, 
+toggleBeautySubtask, 
+getBeautyProgressForDate, 
+validateBeautyDate, // 
+Trackers
+
+Import trace for requested 
+module:
+./src/app/page.tsx
+
+
+> Build failed because of 
+webpack errors

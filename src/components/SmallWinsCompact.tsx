@@ -360,53 +360,38 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             </>
           )}
 
-          {/* Décoration d'arrière-plan */}
-          <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12">
-            <rank.icon className="w-32 h-32 text-white" />
-          </div>
+           {/* Décoration d'arrière-plan */}
+           <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12">
+             <rank.icon className="w-32 h-32 text-white" />
+           </div>
 
-          <div className="relative z-10 flex items-center justify-start gap-5">
-            {/* Gauche : Emoji avec animation */}
-            <div className={`transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-text-pop' : ''}`}>
-              <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
-            </div>
-
-            {/* Droite : Phrase avec animation */}
-            <div className="flex-1">
-              <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-shake' : ''}`}>
-                {rank.name}
-              </h3>
-            </div>
-          </div>
-
-          {/* Ligne avec badge, barre de progression et bouton design */}
-          <div className="mt-4 flex items-center gap-3">
-            {/* Badge de compteur avec animation */}
-            <div className={`flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm transition-all duration-500 ${isAnimating ? 'scale-110 bg-white/30' : ''}`}>
-              <Trophy className="w-3 h-3 text-white" />
-              <span className="text-xs font-bold text-white">{winsThisWeek.length}/7</span>
-            </div>
-
-            {/* Barre de progression animée */}
-            <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
-              <div 
-                className={`h-full bg-white/60 rounded-full transition-all duration-700 ${isAnimating ? 'animate-pulse' : ''}`}
-                style={{ width: `${Math.min((winsThisWeek.length / 7) * 100, 100)}%` }}
-              />
-            </div>
-
-            {/* Icône de personnalisation */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDesignPicker(true);
-              }}
-              className="flex-shrink-0 p-1.5 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
-              title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
-            >
-              <Palette className="w-4 h-4 text-white" />
-            </button>
-          </div>
+           {/* Bouton de personnalisation en haut */}
+           <div className="absolute top-4 right-4 z-20">
+             <button
+               onClick={(e) => {
+                 e.stopPropagation();
+                 setShowDesignPicker(true);
+               }}
+               className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
+               title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
+             >
+               <Palette className="w-4 h-4 text-white" />
+             </button>
+           </div>
+ 
+           <div className="relative z-10 flex items-center justify-start gap-5">
+             {/* Gauche : Emoji avec animation */}
+             <div className={`transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-text-pop' : ''}`}>
+               <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
+             </div>
+ 
+             {/* Droite : Phrase avec animation */}
+             <div className="flex-1">
+               <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-shake' : ''}`}>
+                 {rank.name}
+               </h3>
+             </div>
+           </div>
         </div>
       ) : (
         <div

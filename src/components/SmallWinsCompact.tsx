@@ -337,7 +337,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       {/* Carte compacte - Conditionnelle */}
       {winsThisWeek.length > 0 ? (
         <div
-          className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
+          className={`rounded-[1.5rem] p-4 shadow-xl shadow-gray-200/50 w-full transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
             isAnimating ? `win-animate-phase-${animationPhase}` : ''
           }`}
         >
@@ -403,7 +403,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
-        <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
+        <div className="mt-3 px-1.5 py-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
           {/* Titre */}
           <h4 className="font-bold text-gray-800">
             {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}

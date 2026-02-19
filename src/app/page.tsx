@@ -4293,11 +4293,33 @@ PROCESO OBLIGATORIO:
                           </div>
                         </div>
 
-                        {/* Time placeholder */}
-                        <div className="text-sm text-stone-300 font-light font-tabular-nums pt-1">
-                          {/* Fake time based on index to look like schedule */}
-                          {`${9 + (i % 8)}:00`}
-                        </div>
+                        {/* Delete button */}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            const confirmed = window.confirm(
+                              language === 'fr' 
+                                ? 'Supprimer cette tâche ?' 
+                                : language === 'en' 
+                                  ? 'Delete this task?' 
+                                  : '¿Eliminar esta tarea?'
+                            );
+                            if (confirmed) {
+                              setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
+                              if (user && task.id.startsWith('firebase_')) {
+                                try {
+                                  await deleteTaskFromFirebase(task.id);
+                                } catch (error) {
+                                  console.error('Error deleting task from Firebase:', error);
+                                }
+                              }
+                            }
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-50 rounded-lg"
+                          title={language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
+                        >
+                          <X className="w-4 h-4 text-stone-400 hover:text-red-500 transition-colors" />
+                        </button>
                       </div>
                     ));
                   })()}

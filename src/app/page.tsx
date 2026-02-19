@@ -358,6 +358,7 @@ export default function GlowUpChallengeApp() {
 
   // État pour le menu Ajouter (+)
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showPersonalHabits, setShowPersonalHabits] = useState(false);
   const [showTimeCapsuleDrawer, setShowTimeCapsuleDrawer] = useState(false);
   const [newWinText, setNewWinText] = useState('');
 
@@ -3887,152 +3888,13 @@ PROCESO OBLIGATORIO:
                 )}
 
               </div>
-
-              {/* Custom Habits */}
-              <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div className="p-4 pb-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-800 font-sans">
-                      {language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'}
-                    </h3>
-                    <span className="text-xs font-bold text-gray-600">
-                      {customHabits.filter(h => {
-                        const today = getLocalDateString();
-                        const tracker = trackers.find(t => t.date === today);
-                        return tracker?.habits?.[h.id] || false;
-                      }).length}/{customHabits.length}
-                    </span>
-                  </div>
-                </div>
-                <div className="h-px bg-gray-200 mx-4" />
-
-                {customHabits.length === 0 ? (
-                  <div className="p-4">
-                    <button
-                      onClick={() => setShowAddHabit(true)}
-                      className="w-full py-4 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-emerald-400 hover:text-emerald-600 transition-all duration-200 active:scale-98 flex items-center justify-center gap-2"
-                    >
-                      <Plus className="w-5 h-5" />
-                      <span className="text-sm font-bold">
-                        {language === 'fr' ? 'Créer ma première habitude' : language === 'en' ? 'Create my first habit' : 'Crear mi primer hábito'}
-                      </span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="p-4 space-y-1">
-                    {customHabits.map((habit) => {
-                      const today = getLocalDateString();
-                      const tracker = trackers.find(t => t.date === today);
-                      const isCompleted = tracker?.habits?.[habit.id] || false;
-
-                      return (
-                        <div
-                          key={habit.id}
-                          className="flex items-center justify-between p-3 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-all duration-200"
-                          onClick={() => {
-                            const today = getLocalDateString();
-                            const existingTracker = trackers.find(t => t.date === today);
-                            if (existingTracker) {
-                              updateTracker(today, {
-                                habits: {
-                                  ...existingTracker.habits,
-                                  [habit.id]: !isCompleted
-                                }
-                              });
-                            } else {
-                              updateTracker(today, {
-                                habits: { [habit.id]: true }
-                              });
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-3 flex-1">
-                            <div
-                              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isCompleted
-                                ? 'bg-white border-2 border-emerald-400 text-emerald-500'
-                                : 'bg-gray-100 text-gray-400'
-                                }`}
-                            >
-                              {isCompleted && <Check className="w-4 h-4" />}
-                            </div>
-                            <div className="flex flex-col flex-1">
-                              <span className={`text-sm font-bold ${isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'
-                                }`}>
-                                {habit.label}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Bouton créer - si des habitudes existent */}
-              {customHabits.length > 0 && (
-                <button
-                  onClick={() => setShowAddHabit(true)}
-                  className="w-full py-4 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 hover:scale-102 active:scale-98"
-                  style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)', boxShadow: '0 2px 8px rgba(52, 211, 153, 0.3)' }}
-                >
-                  <Plus className="w-5 h-5" />
-                  {language === 'fr' ? 'Créer une habitude' : language === 'en' ? 'Create a habit' : 'Crear un hábito'}
-                </button>
-              )}
             </div>
-
-            {/* Modal Ajouter une habitude */}
-            {showAddHabit && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                <div className="bg-white rounded-2xl p-6 w-full max-w-sm" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
-                  <h3 className="text-base font-bold text-gray-800 mb-4">
-                    {language === 'fr' ? 'Nouvelle habitude' : language === 'en' ? 'New habit' : 'Nuevo hábito'}
-                  </h3>
-                  <Input
-                    value={newHabitLabel}
-                    onChange={(e) => setNewHabitLabel(e.target.value)}
-                    placeholder={language === 'fr' ? 'Nom de l\'habitude' : language === 'en' ? 'Habit name' : 'Nombre del hábito'}
-                    className="mb-4 rounded-xl border-gray-200 focus:border-emerald-400 focus:ring-emerald-400"
-                  />
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => {
-                        if (newHabitLabel.trim()) {
-                          setCustomHabits([...customHabits, {
-                            id: `habit_${Date.now()}`,
-                            label: newHabitLabel.trim(),
-                            type: 'good'
-                          }]);
-                          setNewHabitLabel('');
-                          setShowAddHabit(false);
-                        }
-                      }}
-                      className="flex-1 rounded-xl text-white font-semibold py-3"
-                      style={{ background: 'linear-gradient(135deg, #34d399, #14b8a6)' }}
-                    >
-                      {language === 'fr' ? 'Créer' : language === 'en' ? 'Create' : 'Crear'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setNewHabitLabel('');
-                        setShowAddHabit(false);
-                      }}
-                      className="flex-1 rounded-xl py-3"
-                    >
-                      {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
         {/* Habit Progress View */}
         {currentView === 'habit-progress' && (
-          <div className="pb-24 min-h-screen" style={{ background: 'linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #ecfeff 100%)' }}>
+          <div className="pb-24 min-h-screen bg-[#F7F8FA]">
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">
@@ -4048,18 +3910,32 @@ PROCESO OBLIGATORIO:
                     Progression
                   </h1>
                 </div>
+                {/* Bouton Perso */}
+                <button
+                  onClick={() => setShowPersonalHabits(!showPersonalHabits)}
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+                    showPersonalHabits 
+                      ? 'bg-emerald-500 text-white' 
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                  style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+                >
+                  {language === 'fr' ? 'Perso' : language === 'en' ? 'Custom' : 'Perso'}
+                </button>
               </div>
             </div>
 
             <div className="px-4 pb-8 space-y-4">
               {/* All Habits - 30 Day Checklist depuis firstOpenDate */}
               <div className="space-y-4">
-                {/* Combine newMeHabits and customHabits */}
+                {/* Combine newMeHabits and customHabits, filtre selon bouton Perso */}
                 {(() => {
-                  const allHabits = [
-                    ...newMeHabits.map(h => ({ ...h, source: 'newme' as const })),
-                    ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
-                  ];
+                  const allHabits = showPersonalHabits
+                    ? customHabits.map(h => ({ ...h, source: 'custom' as const }))
+                    : [
+                        ...newMeHabits.map(h => ({ ...h, source: 'newme' as const })),
+                        ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
+                      ];
 
                   // Récupérer firstOpenDate
                   const firstOpenStr = typeof window !== 'undefined'
@@ -4168,12 +4044,18 @@ PROCESO OBLIGATORIO:
               </div>
 
               {/* Empty state if no habits at all */}
-              {newMeHabits.length === 0 && customHabits.length === 0 && (
+              {(showPersonalHabits ? customHabits.length === 0 : newMeHabits.length === 0 && customHabits.length === 0) && (
                 <div className="bg-white rounded-2xl p-8 shadow-sm text-center">
                   <Target className="w-16 h-16 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium mb-1">Aucune habitude</p>
+                  <p className="text-gray-600 font-medium mb-1">
+                    {showPersonalHabits 
+                      ? (language === 'fr' ? 'Aucune habitude personnalisée' : language === 'en' ? 'No custom habits' : 'Ningún hábito personalizado')
+                      : (language === 'fr' ? 'Aucune habitude' : language === 'en' ? 'No habits' : 'Ningún hábito')}
+                  </p>
                   <p className="text-gray-500 text-sm">
-                    Ajoutez des habitudes pour commencer à suivre votre progression
+                    {showPersonalHabits
+                      ? (language === 'fr' ? 'Ajoutez des habitudes personnalisées dans la page Habitudes' : language === 'en' ? 'Add custom habits in the Habits page' : 'Añada hábitos personalizados en la página de Hábitos')
+                      : (language === 'fr' ? 'Ajoutez des habitudes pour commencer à suivre votre progression' : language === 'en' ? 'Add habits to start tracking your progress' : 'Añada hábitos para comenzar a seguir su progreso')}
                   </p>
                 </div>
               )}
@@ -5846,6 +5728,111 @@ PROCESO OBLIGATORIO:
                 </div>
               </div>
             </div>
+
+            {/* Section Mes Habitudes - Visible uniquement sur la page Habitudes */}
+            {currentView === 'trackers' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-gray-800 text-lg">
+                    {language === 'fr' ? "Mes habitudes" : language === 'en' ? "My habits" : 'Mis hábitos'}
+                  </h3>
+                  <span className="text-sm text-gray-500">
+                    {customHabits.length} {language === 'fr' ? 'habitude(s)' : language === 'en' ? 'habit(s)' : 'hábito(s)'}
+                  </span>
+                </div>
+
+                {/* Liste des habitudes */}
+                <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                  {customHabits.length === 0 ? (
+                    <p className="text-sm text-gray-400 text-center py-4">
+                      {language === 'fr' ? "Aucune habitude créée" : language === 'en' ? "No habits created" : 'Ningún hábito creado'}
+                    </p>
+                  ) : (
+                    customHabits.map((habit) => {
+                      const today = getLocalDateString();
+                      const tracker = trackers.find(t => t.date === today);
+                      const isCompleted = tracker?.habits?.[habit.id] || false;
+
+                      return (
+                        <div
+                          key={habit.id}
+                          className="flex items-center justify-between p-3 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-all duration-200"
+                          onClick={() => {
+                            const existingTracker = trackers.find(t => t.date === today);
+                            if (existingTracker) {
+                              updateTracker(today, {
+                                habits: {
+                                  ...existingTracker.habits,
+                                  [habit.id]: !isCompleted
+                                }
+                              });
+                            } else {
+                              updateTracker(today, {
+                                habits: { [habit.id]: true }
+                              });
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <div
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                                isCompleted
+                                  ? 'bg-emerald-100 border-2 border-emerald-400 text-emerald-600'
+                                  : 'bg-gray-200 text-gray-400'
+                              }`}
+                            >
+                              {isCompleted && <Check className="w-4 h-4" />}
+                            </div>
+                            <span className={`text-sm font-medium ${isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+                              {habit.label}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* Formulaire d'ajout d'habitude */}
+                <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      value={newHabitLabel}
+                      onChange={(e) => setNewHabitLabel(e.target.value)}
+                      placeholder={language === 'fr' ? 'Nouvelle habitude...' : language === 'en' ? 'New habit...' : 'Nuevo hábito...'}
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-gray-700 placeholder-gray-400 bg-white text-sm"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && newHabitLabel.trim()) {
+                          setCustomHabits([...customHabits, {
+                            id: `habit_${Date.now()}`,
+                            label: newHabitLabel.trim(),
+                            type: 'good'
+                          }]);
+                          setNewHabitLabel('');
+                        }
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (newHabitLabel.trim()) {
+                        setCustomHabits([...customHabits, {
+                          id: `habit_${Date.now()}`,
+                          label: newHabitLabel.trim(),
+                          type: 'good'
+                        }]);
+                        setNewHabitLabel('');
+                      }
+                    }}
+                    disabled={!newHabitLabel.trim()}
+                    className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                  >
+                    <Plus className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </DrawerContent>
       </Drawer>

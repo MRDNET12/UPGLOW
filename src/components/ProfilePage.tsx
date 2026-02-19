@@ -186,28 +186,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 </div>
 
                 {/* Goals Section - "Get tested" style list */}
-                {objectifPrincipal && (
-                    <div className="bg-white dark:bg-stone-800 rounded-[2.5rem] p-6 shadow-sm mb-8">
-                        <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                            <Star className="w-5 h-5 text-orange-400 fill-orange-400" />
-                            {language === 'fr' ? 'Focus Principal' : 'Main Focus'}
-                        </h3>
-
-                        <div className="bg-[#F2F6F5] dark:bg-stone-900 rounded-2xl p-4 border border-emerald-100/50 dark:border-stone-700 flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-white dark:bg-stone-800 flex items-center justify-center shadow-sm text-2xl">
-                                🎯
-                            </div>
-                            <div>
-                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                                    {objectifPrincipal}
-                                </p>
-                                <p className="text-xs text-slate-500 mt-0.5">
-                                    {objectifsPrioritaires.length} {language === 'fr' ? 'sous-objectifs' : 'sub-goals'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {/* Settings List - "Visualisation" style or "Get tested" checkmarks */}
                 <div className="space-y-4 mb-8">
@@ -215,67 +193,18 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         {language === 'fr' ? 'Paramètres' : 'Settings'}
                     </h3>
 
-                    {/* Theme Selection */}
-                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-4 shadow-sm overflow-hidden">
-                        <div className="flex items-center gap-4 mb-3 px-2">
-                            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
-                                <Sun className="w-5 h-5 text-indigo-500" />
-                            </div>
-                            <span className="font-bold text-slate-700 dark:text-slate-200">
-                                {language === 'fr' ? 'Thème' : 'Theme'}
-                            </span>
-                        </div>
-
-                        <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide snap-x">
-                            {/* Light */}
-                            <button
-                                onClick={() => setTheme('light')}
-                                className={`flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[80px] rounded-2xl border-2 transition-all snap-start ${theme === 'light' ? 'border-indigo-400 bg-indigo-50' : 'border-transparent bg-slate-50 hover:bg-slate-100'}`}
-                            >
-                                <div className="w-10 h-10 rounded-full bg-white border shadow-sm flex items-center justify-center">
-                                    <Sun className="w-5 h-5 text-indigo-500" />
-                                </div>
-                                <span className="text-xs font-bold text-slate-600">Light</span>
-                            </button>
-
-                            {/* Yellow (Energy) */}
-                            <button
-                                onClick={() => setTheme('yellow')}
-                                className={`flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[80px] rounded-2xl border-2 transition-all snap-start ${theme === 'yellow' ? 'border-yellow-400 bg-yellow-50' : 'border-transparent bg-slate-50 hover:bg-yellow-50/50'}`}
-                            >
-                                <div className="w-10 h-10 rounded-full bg-yellow-100 border border-yellow-200 shadow-sm flex items-center justify-center">
-                                    <Zap className="w-5 h-5 text-yellow-600" />
-                                </div>
-                                <span className="text-xs font-bold text-slate-600">Energy</span>
-                            </button>
-
-                            {/* Blue (Ocean) */}
-                            <button
-                                onClick={() => setTheme('blue')}
-                                className={`flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[80px] rounded-2xl border-2 transition-all snap-start ${theme === 'blue' ? 'border-sky-400 bg-sky-50' : 'border-transparent bg-slate-50 hover:bg-sky-50/50'}`}
-                            >
-                                <div className="w-10 h-10 rounded-full bg-sky-100 border border-sky-200 shadow-sm flex items-center justify-center">
-                                    <Droplet className="w-5 h-5 text-sky-600" />
-                                </div>
-                                <span className="text-xs font-bold text-slate-600">Ocean</span>
-                            </button>
-                        </div>
-                    </div>
 
                     {/* Notifications */}
-                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-2 pr-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow group cursor-pointer" onClick={() => setNotificationsEnabled(!notificationsEnabled)}>
-                        <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-[1.5rem] bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center group-hover:scale-95 transition-transform">
-                                {notificationsEnabled ? <Bell className="w-6 h-6 text-rose-500" /> : <BellOff className="w-6 h-6 text-slate-400" />}
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="font-bold text-slate-700 dark:text-slate-200">Notifications</span>
-                                <span className="text-xs text-slate-400">
-                                    {notificationsEnabled ? 'On' : 'Off'}
-                                </span>
-                            </div>
+                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-2 pr-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow group cursor-pointer" onClick={() => alert(language === 'fr' ? "Il est préférable de télécharger l'application avant d'activer les notifications." : language === 'en' ? "It is preferable to download the application before enabling notifications." : "Es preferible descargar la aplicación antes de activar las notificaciones.")}>
+                        <div className="w-14 h-14 rounded-[1.5rem] bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center group-hover:scale-95 transition-transform">
+                             <Bell className="w-6 h-6 text-rose-500" />
                         </div>
-                        <Switch checked={notificationsEnabled} onCheckedChange={setNotificationsEnabled} />
+                        <div className="flex flex-col">
+                            <span className="font-bold text-slate-700 dark:text-slate-200">Notifications</span>
+                             <span className="text-xs text-slate-400">
+                                {language === 'fr' ? 'Toucher pour activer' : 'Tap to enable'}
+                            </span>
+                        </div>
                     </div>
 
                     {/* Language */}

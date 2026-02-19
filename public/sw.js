@@ -1,8 +1,11 @@
-const CACHE_NAME = 'upglow-v2';
+const CACHE_NAME = 'upglow-v3';
 const urlsToCache = [
+  '/',
+  '/offline.html',
   '/manifest.json',
   '/logo.svg',
-  '/icon.svg'
+  '/icon.svg',
+  '/apple-icon.png'
 ];
 
 // Install event - cache resources
@@ -34,7 +37,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network first for HTML pages
+// Network first for HTML pages
   if (request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request)
@@ -42,7 +45,14 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          return caches.match(request);
+          // Return offline page if available
+          return caches.match('/offline.html')
+            .then((offlineResponse) => {
+              if (offlineResponse) {
+                return offlineResponse;
+              }
+              return caches.match(request);
+            });
         })
     );
     return;

@@ -117,13 +117,6 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-6 pb-8 space-y-4 scrollbar-hide">
 
-          {/* Description */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-[1.5rem] p-4 border border-white/50">
-            <p className="text-sm text-[#2D2a2e]/80 text-center leading-relaxed">
-              {texts.description}
-            </p>
-          </div>
-
           {/* Glow Start Card */}
           <div className="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-purple-200/50 border-2 border-white relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
             <div className="flex justify-between items-end mb-4">
@@ -158,6 +151,13 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
             >
               {texts.glowStart.cta}
             </button>
+          </div>
+
+          {/* Description */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-[1.5rem] p-4 border border-white/50">
+            <p className="text-sm text-[#2D2a2e]/80 text-center leading-relaxed">
+              {texts.description}
+            </p>
           </div>
 
           {/* Trust Badges */}

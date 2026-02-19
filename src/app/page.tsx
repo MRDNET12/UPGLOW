@@ -5506,133 +5506,38 @@ PROCESO OBLIGATORIO:
         </DrawerContent>
       </Drawer>
 
-      {/* Drawer Menu Ajouter (+) - Style Adaptatif */}
+      {/* Drawer Menu Ajouter (+) - Slide du bas vers le haut */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
-        <DrawerContent className={`max-w-lg mx-auto shadow-2xl ${currentView === 'trackers' ? 'bg-[#E9F6F1] border-none rounded-t-[2.5rem]' : 'bg-[#FAFAFA] rounded-t-[2rem]'}`}>
-          <DrawerHeader className={currentView === 'trackers' ? "px-6 pt-8 pb-4" : "px-5 pt-6 pb-2"}>
+        <DrawerContent className="max-w-lg mx-auto bg-white">
+          <DrawerHeader className="border-b">
             <div className="flex items-center justify-between">
-              <DrawerTitle className={`tracking-tight ${currentView === 'trackers' ? "text-xl font-bold text-[#1C2C26]" : "text-lg font-medium text-gray-900"}`}>
-                {currentView === 'trackers' ? (
-                  language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'
-                ) : (
-                  language === 'fr' ? 'Nouveau' : language === 'en' ? 'New' : 'Nuevo'
-                )}
+              <DrawerTitle className="text-xl">
+                {language === 'fr' ? 'Que veux-tu ajouter ?' : language === 'en' ? 'What do you want to add?' : '¿Qué quieres añadir?'}
               </DrawerTitle>
               <DrawerClose asChild>
-                <button className={`flex items-center justify-center transition-colors shadow-sm ${currentView === 'trackers' ? "w-10 h-10 rounded-full bg-white hover:bg-emerald-50" : "w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200"}`}>
-                  <X className={`${currentView === 'trackers' ? "w-5 h-5 text-[#1C2C26]" : "w-4 h-4 text-gray-600"}`} />
-                </button>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <X className="w-5 h-5" />
+                </Button>
               </DrawerClose>
             </div>
           </DrawerHeader>
 
-          {currentView === 'trackers' ? (
-            /* Contenu spécifique à la page Habitudes - Style Austria */
-            <div className="px-5 pb-8 space-y-5">
-              {/* Carte Nouvelle habitude */}
-              <div className="bg-white rounded-[2rem] p-5 shadow-sm">
-                <div className="flex items-center gap-4">
-                  <input
-                    type="text"
-                    value={newHabitLabel}
-                    onChange={(e) => setNewHabitLabel(e.target.value)}
-                    placeholder={language === 'fr' ? 'Ajouter une habitude...' : language === 'en' ? 'Add a habit...' : 'Añadir un hábito...'}
-                    className="flex-1 text-base text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-medium"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                        setShowAddMenu(false);
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      if (newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                        setShowAddMenu(false);
-                      }
-                    }}
-                    disabled={!newHabitLabel.trim()}
-                    className="w-12 h-12 rounded-[1.2rem] bg-[#1C2C26] flex items-center justify-center hover:bg-[#2C3E36] transition-colors disabled:opacity-30 shadow-md"
-                  >
-                    <Plus className="w-6 h-6 text-white" />
-                  </button>
-                </div>
-              </div>
+          <div className="p-6 space-y-6">
+            {/* Section Célèbre tes petits succès */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-gray-800 text-lg">
+                {language === 'fr' ? "Ma fierté du jour !" : language === 'en' ? "My pride of the day!" : '¡Mi orgullo del día!'}
+              </h3>
 
-              {/* Liste des habitudes */}
-              <div className="space-y-3">
-                {customHabits.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-sm text-gray-500 font-medium">
-                      {language === 'fr' ? "Commencez par ajouter une habitude" : language === 'en' ? "Start by adding a habit" : 'Comience añadiendo un hábito'}
-                    </p>
-                  </div>
-                ) : (
-                  customHabits.map((habit) => {
-                    const today = getLocalDateString();
-                    const tracker = trackers.find(t => t.date === today);
-                    const isCompleted = tracker?.habits?.[habit.id] || false;
-
-                    return (
-                      <div
-                        key={habit.id}
-                        onClick={() => {
-                          const existingTracker = trackers.find(t => t.date === today);
-                          if (existingTracker) {
-                            updateTracker(today, {
-                              habits: {
-                                ...existingTracker.habits,
-                                [habit.id]: !isCompleted
-                              }
-                            });
-                          } else {
-                            updateTracker(today, {
-                              habits: { [habit.id]: true }
-                            });
-                          }
-                        }}
-                        className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-                      >
-                        <div
-                          className={`w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all ${isCompleted
-                            ? 'bg-[#1C2C26] text-white shadow-md'
-                            : 'bg-[#F5F7F6] border-2 border-transparent hover:border-emerald-100'
-                            }`}
-                        >
-                          {isCompleted && <Check className="w-5 h-5" />}
-                        </div>
-                        <span className={`text-base font-medium flex-1 ${isCompleted ? 'text-gray-400 line-through decoration-gray-300' : 'text-[#1C2C26]'}`}>
-                          {habit.label}
-                        </span>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          ) : (
-            /* Contenu général pour les autres pages (Dashboard/Accueil) - Style Minimaliste Original Restauré */
-            <div className="px-5 pb-8 space-y-4">
-              {/* Carte Petite victoire */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm">
-                <div className="flex items-center gap-3">
+              {/* Champ de saisie avec bouton + */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 relative">
                   <input
                     type="text"
                     value={newWinText}
                     onChange={(e) => setNewWinText(e.target.value)}
-                    placeholder={language === 'fr' ? 'Ma fierté du jour...' : language === 'en' ? 'My pride of the day...' : 'Mi orgullo del día...'}
-                    className="flex-1 text-sm text-gray-700 placeholder-gray-400 bg-transparent focus:outline-none"
+                    placeholder={language === 'fr' ? 'Décris ton petit succès...' : language === 'en' ? 'Describe your small win...' : 'Describe tu pequeño éxito...'}
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none text-gray-700 placeholder-gray-400 bg-white"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && newWinText.trim()) {
                         checkFeatureAccess('petites_victoires', () => {
@@ -5643,49 +5548,57 @@ PROCESO OBLIGATORIO:
                       }
                     }}
                   />
-                  <button
-                    onClick={() => {
-                      if (newWinText.trim()) {
-                        checkFeatureAccess('petites_victoires', () => {
-                          addSmallWin(newWinText.trim());
-                          setNewWinText('');
-                          setShowAddMenu(false);
-                        });
-                      }
-                    }}
-                    disabled={!newWinText.trim()}
-                    className="w-9 h-9 rounded-xl bg-gray-900 flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-30"
-                  >
-                    <Plus className="w-5 h-5 text-white" />
-                  </button>
                 </div>
+                <button
+                  onClick={() => {
+                    if (newWinText.trim()) {
+                      checkFeatureAccess('petites_victoires', () => {
+                        addSmallWin(newWinText.trim());
+                        setNewWinText('');
+                        setShowAddMenu(false);
+                      });
+                    }
+                  }}
+                  disabled={!newWinText.trim()}
+                  className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                >
+                  <Plus className="w-6 h-6 text-white" />
+                </button>
+              </div>
+            </div>
+
+            {/* Carte Mon Journal */}
+            <div
+              onClick={() => {
+                setShowAddMenu(false);
+                checkFeatureAccess('journal', () => setCurrentView('journal'));
+              }}
+              className="w-full bg-[#E9D8FD] rounded-[2rem] p-5 relative h-[160px] overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-98 shadow-sm group"
+            >
+              <h3 className="text-lg font-bold text-[#2D2a2e] max-w-[60%] leading-snug relative z-10">
+                {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
+              </h3>
+
+              <div className="absolute bottom-[-15px] left-[-5px] transform rotate-[-5deg] transition-transform group-hover:rotate-0 duration-500">
+                <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#F0ABFC" />
+                  <circle cx="65" cy="85" r="3.5" fill="#000" />
+                  <circle cx="95" cy="85" r="3.5" fill="#000" />
+                  <path d="M68 100 Q 80 115 92 100" stroke="#000" strokeWidth="3.5" strokeLinecap="round" />
+                  <path d="M50 45 Q 40 25 60 30" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+                  <path d="M55 40 Q 50 20 65 25" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" transform="translate(10, -5) rotate(20)" />
+                  <circle cx="58" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+                  <circle cx="102" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
+                </svg>
               </div>
 
-              {/* Carte Journal */}
-              <div
-                onClick={() => {
-                  setShowAddMenu(false);
-                  checkFeatureAccess('journal', () => setCurrentView('journal'));
-                }}
-                className="bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">
-                      {language === 'fr' ? 'Journal' : language === 'en' ? 'Journal' : 'Diario'}
-                    </h4>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {language === 'fr' ? 'Écrire mes pensées' : language === 'en' ? 'Write my thoughts' : 'Escribir mis pensamientos'}
-                    </p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-300" />
+              <div className="absolute bottom-4 right-4">
+                <div className="bg-black text-white text-xs font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
+                  {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </DrawerContent>
       </Drawer>
 

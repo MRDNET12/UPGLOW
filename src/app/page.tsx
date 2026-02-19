@@ -65,7 +65,6 @@ import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } 
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
 import { useInstallTracking } from '@/hooks/useInstallTracking';
 import { useTrafficTracking, linkTrackingToUser, trackSubscription } from '@/hooks/useTrafficTracking';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 // Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
 const getLocalDateString = (date: Date = new Date()): string => {
@@ -2446,9 +2445,6 @@ PROCESO OBLIGATORIO:
 
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-gradient-to-br from-white via-gray-50 to-gray-100 text-stone-900'}`}>
-      {/* Indicateur de connexion */}
-      <OfflineIndicator />
-
       {/* Main Content */}
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}

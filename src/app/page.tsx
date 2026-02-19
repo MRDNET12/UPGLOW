@@ -79,6 +79,19 @@ export default function GlowUpChallengeApp() {
   const router = useRouter();
   const [isHydrated, setIsHydrated] = useState(false);
   const { user, userData, signOut } = useAuth();
+  const theme = useStore((state) => state.theme);
+
+  // Gestion du Thème
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const root = window.document.documentElement;
+      root.classList.remove('dark', 'theme-yellow', 'theme-blue');
+
+      if (theme === 'dark') root.classList.add('dark');
+      if (theme === 'yellow') root.classList.add('theme-yellow');
+      if (theme === 'blue') root.classList.add('theme-blue');
+    }
+  }, [theme]);
 
   const {
     currentView,
@@ -381,7 +394,7 @@ export default function GlowUpChallengeApp() {
   const [isDayView, setIsDayView] = useState(false);
   const [selectedDayViewDate, setSelectedDayViewDate] = useState(new Date());
   const [showSmallWinsHelp, setShowSmallWinsHelp] = useState(false);
-  
+
   // Design du carnet de fierté
   type PrideJournalDesign = 'gallery' | 'timeline' | 'celebrate';
   const [prideJournalDesign, setPrideJournalDesign] = useState<PrideJournalDesign>('gallery');
@@ -2946,7 +2959,7 @@ PROCESO OBLIGATORIO:
                             <span>{Math.min(bonusProgress.smallWins.length, 15)}/15</span>
                           </div>
                           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                            <div 
+                            <div
                               className="h-full bg-white rounded-full transition-all duration-700"
                               style={{ width: `${Math.min((bonusProgress.smallWins.length / 15) * 100, 100)}%` }}
                             />
@@ -2967,19 +2980,18 @@ PROCESO OBLIGATORIO:
                           ];
                           const gradient = gradients[index % gradients.length];
                           const emojis = ['✨', '🌟', '💫', '🎯', '🏆', '🎉', '💪', '⭐', '🔥', '💎', '🌈', '🦋', '⚡', '🎊', '🌺'];
-                          
+
                           return (
                             <div
                               key={win.id || index}
-                              className={`relative rounded-2xl overflow-hidden ${
-                                isLarge ? 'col-span-2 min-h-[160px]' : 'min-h-[120px]'
-                              }`}
+                              className={`relative rounded-2xl overflow-hidden ${isLarge ? 'col-span-2 min-h-[160px]' : 'min-h-[120px]'
+                                }`}
                             >
                               <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
                               <div className="absolute inset-0 opacity-20" style={{
                                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
                               }} />
-                              
+
                               <div className="relative p-4 h-full flex flex-col justify-between">
                                 <div className="flex justify-between items-start">
                                   <span className="text-4xl filter drop-shadow-lg">{emojis[index % emojis.length]}</span>
@@ -3004,7 +3016,7 @@ PROCESO OBLIGATORIO:
                           );
                         })}
                       </div>
-                      
+
                       {bonusProgress.smallWins.length >= 15 && (
                         <button
                           onClick={() => router.push('/small-wins')}
@@ -3029,7 +3041,7 @@ PROCESO OBLIGATORIO:
                     <div className="relative pb-6">
                       {/* Ligne verticale avec dégradé */}
                       <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-400 via-purple-400 via-indigo-400 to-blue-400 rounded-full" />
-                      
+
                       {/* Header */}
                       <div className="relative mb-8">
                         <div className="flex items-center gap-4">
@@ -3041,7 +3053,7 @@ PROCESO OBLIGATORIO:
                               {language === 'fr' ? 'Début du voyage' : language === 'en' ? 'Journey start' : 'Inicio del viaje'}
                             </p>
                             <p className="text-gray-800 font-semibold">
-                              {language === 'fr' 
+                              {language === 'fr'
                                 ? `${bonusProgress.smallWins.length} victoires enregistrées`
                                 : language === 'en'
                                   ? `${bonusProgress.smallWins.length} wins recorded`
@@ -3055,16 +3067,15 @@ PROCESO OBLIGATORIO:
                       <div className="space-y-6">
                         {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
                           const isMilestone = (index + 1) % 5 === 0;
-                          
+
                           return (
                             <div key={win.id || index} className="relative flex items-start gap-4">
                               {/* Point sur la timeline */}
                               <div className="relative z-10 flex-shrink-0 ml-1">
-                                <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${
-                                  isMilestone 
-                                    ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200 ring-4 ring-amber-100' 
+                                <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg ${isMilestone
+                                    ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200 ring-4 ring-amber-100'
                                     : 'bg-white border-3 border-pink-300'
-                                }`}>
+                                  }`}>
                                   {isMilestone ? (
                                     <Crown className="w-6 h-6 text-white" />
                                   ) : (
@@ -3080,11 +3091,10 @@ PROCESO OBLIGATORIO:
 
                               {/* Contenu */}
                               <div className="flex-1 pt-2">
-                                <div className={`rounded-2xl p-5 shadow-md ${
-                                  isMilestone 
-                                    ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200' 
+                                <div className={`rounded-2xl p-5 shadow-md ${isMilestone
+                                    ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200'
                                     : 'bg-white border border-gray-100'
-                                }`}>
+                                  }`}>
                                   <div className="flex items-center gap-3 mb-3">
                                     <span className="text-xs font-bold text-gray-400">
                                       {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
@@ -3142,23 +3152,23 @@ PROCESO OBLIGATORIO:
                       {/* Carte de niveau avec effet 3D */}
                       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-400 via-pink-500 to-purple-600 p-1">
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMiI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTAiLz48L3N2Zz4=')] opacity-30" />
-                        
+
                         <div className="relative bg-gradient-to-br from-yellow-300/90 to-orange-400/90 rounded-[22px] p-6 text-white">
                           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                           <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl" />
-                          
+
                           <div className="relative text-center">
                             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm border-4 border-white/40 mb-4 shadow-2xl">
                               <span className="text-5xl">
-                                {bonusProgress.smallWins.length >= 15 ? '👑' : 
-                                 bonusProgress.smallWins.length >= 10 ? '🏆' : 
-                                 bonusProgress.smallWins.length >= 5 ? '🥇' : '⭐'}
+                                {bonusProgress.smallWins.length >= 15 ? '👑' :
+                                  bonusProgress.smallWins.length >= 10 ? '🏆' :
+                                    bonusProgress.smallWins.length >= 5 ? '🥇' : '⭐'}
                               </span>
                             </div>
                             <h4 className="text-2xl font-bold mb-2 drop-shadow-lg">
-                              {bonusProgress.smallWins.length >= 15 
+                              {bonusProgress.smallWins.length >= 15
                                 ? (language === 'fr' ? 'Champion Incontesté' : language === 'en' ? 'Undisputed Champion' : 'Campeón Indiscutible')
-                                : bonusProgress.smallWins.length >= 10 
+                                : bonusProgress.smallWins.length >= 10
                                   ? (language === 'fr' ? 'Expert en Progression' : language === 'en' ? 'Progression Expert' : 'Experto en Progresión')
                                   : bonusProgress.smallWins.length >= 5
                                     ? (language === 'fr' ? 'Accumulateur de Succès' : language === 'en' ? 'Win Collector' : 'Colector de Éxitos')
@@ -3167,12 +3177,12 @@ PROCESO OBLIGATORIO:
                             <p className="text-base text-white/95 font-medium">
                               {bonusProgress.smallWins.length} {language === 'fr' ? 'victoires célébrées' : language === 'en' ? 'wins celebrated' : 'victorias celebradas'}
                             </p>
-                            
+
                             {/* Barre de progression circulaire simplifiée */}
                             <div className="mt-5 flex items-center gap-3 justify-center">
                               <span className="text-sm font-bold">Niv. {Math.floor(bonusProgress.smallWins.length / 5) + 1}</span>
                               <div className="w-32 h-3 bg-black/20 rounded-full overflow-hidden">
-                                <div 
+                                <div
                                   className="h-full bg-white rounded-full shadow-lg transition-all duration-700"
                                   style={{ width: `${((bonusProgress.smallWins.length % 5) / 5) * 100}%` }}
                                 />
@@ -3188,29 +3198,29 @@ PROCESO OBLIGATORIO:
                         {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
                           const rarity = index < 3 ? 'legendary' : index < 7 ? 'epic' : index < 12 ? 'rare' : 'common';
                           const rarityConfig = {
-                            legendary: { 
-                              bg: 'bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400', 
+                            legendary: {
+                              bg: 'bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400',
                               border: 'border-amber-400',
                               badge: 'LÉGENDAIRE',
                               emoji: '🔥',
                               textColor: 'text-amber-900'
                             },
-                            epic: { 
-                              bg: 'bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400', 
+                            epic: {
+                              bg: 'bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400',
                               border: 'border-purple-400',
                               badge: 'ÉPIQUE',
                               emoji: '💎',
                               textColor: 'text-white'
                             },
-                            rare: { 
-                              bg: 'bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400', 
+                            rare: {
+                              bg: 'bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400',
                               border: 'border-cyan-400',
                               badge: 'RARE',
                               emoji: '⭐',
                               textColor: 'text-white'
                             },
-                            common: { 
-                              bg: 'bg-white', 
+                            common: {
+                              bg: 'bg-white',
                               border: 'border-gray-200',
                               badge: null,
                               emoji: '✨',
@@ -3218,7 +3228,7 @@ PROCESO OBLIGATORIO:
                             }
                           };
                           const config = rarityConfig[rarity];
-                          
+
                           return (
                             <div
                               key={win.id || index}
@@ -3231,11 +3241,10 @@ PROCESO OBLIGATORIO:
                                       <div className="flex items-center gap-2 mb-2">
                                         <span className="text-2xl">{config.emoji}</span>
                                         {config.badge && (
-                                          <span className={`text-[9px] font-black px-2 py-1 rounded-full shadow-sm ${
-                                            rarity === 'legendary' ? 'bg-amber-200 text-amber-800' :
-                                            rarity === 'epic' ? 'bg-white/30 text-white backdrop-blur-sm' :
-                                            'bg-white/30 text-white backdrop-blur-sm'
-                                          }`}>
+                                          <span className={`text-[9px] font-black px-2 py-1 rounded-full shadow-sm ${rarity === 'legendary' ? 'bg-amber-200 text-amber-800' :
+                                              rarity === 'epic' ? 'bg-white/30 text-white backdrop-blur-sm' :
+                                                'bg-white/30 text-white backdrop-blur-sm'
+                                            }`}>
                                             {config.badge}
                                           </span>
                                         )}
@@ -3251,10 +3260,9 @@ PROCESO OBLIGATORIO:
                                         })}
                                       </p>
                                     </div>
-                                    
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                      rarity !== 'common' ? 'bg-white/20 backdrop-blur-sm' : 'bg-gray-100'
-                                    }`}>
+
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${rarity !== 'common' ? 'bg-white/20 backdrop-blur-sm' : 'bg-gray-100'
+                                      }`}>
                                       <span className={`text-sm font-black ${rarity !== 'common' ? 'text-white' : 'text-gray-500'}`}>
                                         #{index + 1}
                                       </span>
@@ -3307,11 +3315,10 @@ PROCESO OBLIGATORIO:
                       setPrideJournalDesign('gallery');
                       setShowPrideDesignPicker(false);
                     }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                      prideJournalDesign === 'gallery'
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${prideJournalDesign === 'gallery'
                         ? 'border-pink-500 bg-pink-50'
                         : 'border-gray-200 hover:border-pink-200'
-                    }`}
+                      }`}
                   >
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 via-pink-500 to-rose-400 flex items-center justify-center text-xl shadow-md">
                       🖼️
@@ -3337,11 +3344,10 @@ PROCESO OBLIGATORIO:
                       setPrideJournalDesign('timeline');
                       setShowPrideDesignPicker(false);
                     }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                      prideJournalDesign === 'timeline'
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${prideJournalDesign === 'timeline'
                         ? 'border-pink-500 bg-pink-50'
                         : 'border-gray-200 hover:border-pink-200'
-                    }`}
+                      }`}
                   >
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-pink-400 to-purple-600 flex items-center justify-center text-xl shadow-md">
                       ⏱️
@@ -3367,11 +3373,10 @@ PROCESO OBLIGATORIO:
                       setPrideJournalDesign('celebrate');
                       setShowPrideDesignPicker(false);
                     }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
-                      prideJournalDesign === 'celebrate'
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${prideJournalDesign === 'celebrate'
                         ? 'border-pink-500 bg-pink-50'
                         : 'border-gray-200 hover:border-pink-200'
-                    }`}
+                      }`}
                   >
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 flex items-center justify-center text-xl shadow-md">
                       🎉
@@ -3913,11 +3918,10 @@ PROCESO OBLIGATORIO:
                 {/* Bouton Perso */}
                 <button
                   onClick={() => setShowPersonalHabits(!showPersonalHabits)}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
-                    showPersonalHabits 
-                      ? 'bg-emerald-500 text-white' 
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${showPersonalHabits
+                      ? 'bg-emerald-500 text-white'
                       : 'bg-white text-gray-700 hover:bg-gray-50'
-                  }`}
+                    }`}
                   style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                 >
                   {language === 'fr' ? 'Perso' : language === 'en' ? 'Custom' : 'Perso'}
@@ -3933,9 +3937,9 @@ PROCESO OBLIGATORIO:
                   const allHabits = showPersonalHabits
                     ? customHabits.map(h => ({ ...h, source: 'custom' as const }))
                     : [
-                        ...newMeHabits.map(h => ({ ...h, source: 'newme' as const })),
-                        ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
-                      ];
+                      ...newMeHabits.map(h => ({ ...h, source: 'newme' as const })),
+                      ...customHabits.map(h => ({ ...h, source: 'custom' as const }))
+                    ];
 
                   // Récupérer firstOpenDate
                   const firstOpenStr = typeof window !== 'undefined'
@@ -4048,7 +4052,7 @@ PROCESO OBLIGATORIO:
                 <div className="bg-white rounded-2xl p-8 shadow-sm text-center">
                   <Target className="w-16 h-16 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium mb-1">
-                    {showPersonalHabits 
+                    {showPersonalHabits
                       ? (language === 'fr' ? 'Aucune habitude personnalisée' : language === 'en' ? 'No custom habits' : 'Ningún hábito personalizado')
                       : (language === 'fr' ? 'Aucune habitude' : language === 'en' ? 'No habits' : 'Ningún hábito')}
                   </p>
@@ -5775,11 +5779,10 @@ PROCESO OBLIGATORIO:
                         >
                           <div className="flex items-center gap-3 flex-1">
                             <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
-                                isCompleted
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${isCompleted
                                   ? 'bg-emerald-100 border-2 border-emerald-400 text-emerald-600'
                                   : 'bg-gray-200 text-gray-400'
-                              }`}
+                                }`}
                             >
                               {isCompleted && <Check className="w-4 h-4" />}
                             </div>

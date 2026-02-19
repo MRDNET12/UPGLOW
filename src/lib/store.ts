@@ -231,8 +231,8 @@ interface AppState {
   removeVisionBoardImage: (id: string) => void;
 
   // Settings
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
+  theme: 'light' | 'dark' | 'yellow' | 'blue';
+  setTheme: (theme: 'light' | 'dark' | 'yellow' | 'blue') => void;
   notificationsEnabled: boolean;
   setNotificationsEnabled: (enabled: boolean) => void;
   language: Language;
@@ -1228,7 +1228,7 @@ export const useStore = create<AppState>()(
   - "Être plus confiant"(pas actionnable)`;
 
             const historyText = validationHistory ? `\n\n📊 HISTORIQUE DES VALIDATIONS PRÉCÉDENTES :\n${validationHistory}` : '';
-            
+
             const userPrompt = `CONTEXTE COMPLET DE L'UTILISATEUR :
 
 📋 DESCRIPTION DÉTAILLÉE:

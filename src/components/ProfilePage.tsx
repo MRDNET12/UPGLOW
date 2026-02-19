@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
     User, LogOut, LogIn, ChevronLeft, Calendar,
     Crown, Star, Settings, Bell, BellOff, HelpCircle,
-    Globe, Moon, Sun, ChevronRight, Mail, Check,
+    Globe, Moon, Sun, ChevronRight, Mail, Check, Zap, Droplet,
     TrendingUp, Image as ImageIcon, Shield, Smartphone, Trophy
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -144,7 +144,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             </button>
                         )}
 
-                        <button 
+                        <button
                             onClick={() => setShowInstallDrawer(true)}
                             className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/5 hover:bg-white/20 transition-colors"
                         >
@@ -164,7 +164,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="w-full space-y-4">
                         {/* Progress Box */}
                         <div className="bg-gradient-to-br from-pink-50 to-white dark:from-stone-800 dark:to-stone-900 rounded-[2rem] p-5 shadow-lg shadow-pink-100/50 dark:shadow-none hover:shadow-xl hover:scale-[1.02] transition-all relative overflow-hidden border border-pink-100 dark:border-stone-700 group">
                             <div className="absolute -right-4 -bottom-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-500">
@@ -181,26 +181,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             </p>
                         </div>
 
-                        {/* Days Box */}
-                        <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <Check className="w-24 h-24 text-blue-600" />
-                            </div>
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-3">
-                                <Check className="w-5 h-5 text-blue-600" />
-                            </div>
-                            <p className="text-3xl font-bold text-slate-800 dark:text-white mb-1">
-                                {challengeProgress.completedDays.length}
-                            </p>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                                {language === 'fr' ? 'Jours Complétés' : 'Days Done'}
-                            </p>
-                            <div className="mt-3 flex gap-1">
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= (challengeProgress.completedDays.length % 5 || 5) ? 'bg-blue-500' : 'bg-slate-100'}`} />
-                                ))}
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
@@ -234,17 +215,51 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         {language === 'fr' ? 'Paramètres' : 'Settings'}
                     </h3>
 
-                    {/* Theme Toggle */}
-                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-2 pr-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow group cursor-pointer" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-                        <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-95 transition-transform">
-                                {theme === 'light' ? <Sun className="w-6 h-6 text-indigo-500" /> : <Moon className="w-6 h-6 text-indigo-400" />}
+                    {/* Theme Selection */}
+                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-4 shadow-sm overflow-hidden">
+                        <div className="flex items-center gap-4 mb-3 px-2">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
+                                <Sun className="w-5 h-5 text-indigo-500" />
                             </div>
                             <span className="font-bold text-slate-700 dark:text-slate-200">
-                                {language === 'fr' ? 'Apparence' : 'Appearance'}
+                                {language === 'fr' ? 'Thème' : 'Theme'}
                             </span>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-slate-300" />
+
+                        <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide snap-x">
+                            {/* Light */}
+                            <button
+                                onClick={() => setTheme('light')}
+                                className={`flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[80px] rounded-2xl border-2 transition-all snap-start ${theme === 'light' ? 'border-indigo-400 bg-indigo-50' : 'border-transparent bg-slate-50 hover:bg-slate-100'}`}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-white border shadow-sm flex items-center justify-center">
+                                    <Sun className="w-5 h-5 text-indigo-500" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-600">Light</span>
+                            </button>
+
+                            {/* Yellow (Energy) */}
+                            <button
+                                onClick={() => setTheme('yellow')}
+                                className={`flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[80px] rounded-2xl border-2 transition-all snap-start ${theme === 'yellow' ? 'border-yellow-400 bg-yellow-50' : 'border-transparent bg-slate-50 hover:bg-yellow-50/50'}`}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-yellow-100 border border-yellow-200 shadow-sm flex items-center justify-center">
+                                    <Zap className="w-5 h-5 text-yellow-600" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-600">Energy</span>
+                            </button>
+
+                            {/* Blue (Ocean) */}
+                            <button
+                                onClick={() => setTheme('blue')}
+                                className={`flex-shrink-0 flex flex-col items-center gap-2 p-3 min-w-[80px] rounded-2xl border-2 transition-all snap-start ${theme === 'blue' ? 'border-sky-400 bg-sky-50' : 'border-transparent bg-slate-50 hover:bg-sky-50/50'}`}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-sky-100 border border-sky-200 shadow-sm flex items-center justify-center">
+                                    <Droplet className="w-5 h-5 text-sky-600" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-600">Ocean</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Notifications */}
@@ -361,7 +376,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             </DrawerClose>
                         </div>
                     </DrawerHeader>
-                    
+
                     <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
                         {/* iOS Instructions */}
                         <div className="space-y-3">

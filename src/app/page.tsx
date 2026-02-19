@@ -6176,8 +6176,8 @@ PROCESO OBLIGATORIO:
           setNewTaskDestination('priority');
         }
       }}>
-        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] overflow-y-auto bg-white rounded-t-[2rem] font-sans">
-          <DrawerHeader className="pb-2">
+        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] bg-white rounded-t-[2rem] font-sans flex flex-col">
+          <DrawerHeader className="pb-2 flex-shrink-0">
             <div className="flex items-center justify-between">
               <DrawerTitle className="text-2xl font-bold text-gray-900">
                 {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
@@ -6194,7 +6194,7 @@ PROCESO OBLIGATORIO:
           </DrawerHeader>
 
           {/* Onglets modernes */}
-          <div className="px-6 pt-2">
+          <div className="px-6 pt-2 flex-shrink-0">
             <div className="flex gap-2 p-1 bg-gray-100 rounded-2xl">
               <button
                 onClick={() => setAddTaskTab('manuel')}
@@ -6218,7 +6218,7 @@ PROCESO OBLIGATORIO:
             </div>
           </div>
 
-          <div className="p-6 space-y-6">
+          <div className="p-6 space-y-6 overflow-y-auto flex-1">
             {/* ONGLET MANUEL */}
             {addTaskTab === 'manuel' && (
               <>
@@ -6365,13 +6365,22 @@ PROCESO OBLIGATORIO:
                           className="w-full h-full object-contain"
                         />
                       </div>
-                      <p className="text-lg font-semibold text-gray-800 text-center w-full">
-                        {language === 'fr'
-                          ? "Quelle sera ta prochaine petite victoire ?"
-                          : language === 'en'
-                            ? "What will be your next small victory?"
-                            : "¿Cuál será tu próxima pequeña victoria?"}
-                      </p>
+                      <div className="text-center space-y-2">
+                        <p className="text-sm text-stone-600 italic">
+                          {language === 'fr'
+                            ? "On veut tous accumuler de petits succès qui nous font grandir. Mais parfois, on ne sait pas quoi faire."
+                            : language === 'en'
+                              ? "We all want to accumulate small successes that make us grow. But sometimes, we don't know what to do."
+                              : "Todos queremos acumular pequeños éxitos que nos hagan crecer. Pero a veces, no sabemos qué hacer."}
+                        </p>
+                        <p className="text-lg font-semibold text-gray-800">
+                          {language === 'fr'
+                            ? "Quelle sera ta prochaine petite victoire ?"
+                            : language === 'en'
+                              ? "What will be your next small victory?"
+                              : "¿Cuál será tu próxima pequeña victoria?"}
+                        </p>
+                      </div>
                     </div>
 
                     {/* Nombre de jours */}

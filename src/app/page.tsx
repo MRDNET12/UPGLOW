@@ -79,19 +79,7 @@ export default function GlowUpChallengeApp() {
   const router = useRouter();
   const [isHydrated, setIsHydrated] = useState(false);
   const { user, userData, signOut } = useAuth();
-  const theme = useStore((state) => state.theme);
 
-  // Gestion du Thème
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const root = window.document.documentElement;
-      root.classList.remove('dark', 'theme-yellow', 'theme-blue');
-
-      if (theme === 'dark') root.classList.add('dark');
-      if (theme === 'yellow') root.classList.add('theme-yellow');
-      if (theme === 'blue') root.classList.add('theme-blue');
-    }
-  }, [theme]);
 
   const {
     currentView,
@@ -187,6 +175,18 @@ export default function GlowUpChallengeApp() {
     toggleChallengeCard,
     toggleFlowCard
   } = useStore();
+
+  // Gestion du Thème
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const root = window.document.documentElement;
+      root.classList.remove('dark', 'theme-yellow', 'theme-blue');
+
+      if (theme === 'dark') root.classList.add('dark');
+      if (theme === 'yellow') root.classList.add('theme-yellow');
+      if (theme === 'blue') root.classList.add('theme-blue');
+    }
+  }, [theme]);
 
   const { t } = useTranslation();
 
@@ -3029,7 +3029,7 @@ PROCESO OBLIGATORIO:
                           </div>
                         </div>
                       ))}
-                      
+
                       {bonusProgress.smallWins.length >= 15 && (
                         <button
                           onClick={() => router.push('/small-wins')}
@@ -3141,8 +3141,8 @@ PROCESO OBLIGATORIO:
                                         <span className="text-2xl">{config.emoji}</span>
                                         {config.badge && (
                                           <span className={`text-[9px] font-black px-2 py-1 rounded-full shadow-sm ${rarity === 'legendary' ? 'bg-amber-200 text-amber-800' :
-                                              rarity === 'epic' ? 'bg-white/30 text-white backdrop-blur-sm' :
-                                                'bg-white/30 text-white backdrop-blur-sm'
+                                            rarity === 'epic' ? 'bg-white/30 text-white backdrop-blur-sm' :
+                                              'bg-white/30 text-white backdrop-blur-sm'
                                             }`}>
                                             {config.badge}
                                           </span>
@@ -3216,8 +3216,8 @@ PROCESO OBLIGATORIO:
                         setShowPrideDesignPicker(false);
                       }}
                       className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'gallery'
-                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
-                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                        : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
                         }`}
                     >
                       🖼️
@@ -3230,8 +3230,8 @@ PROCESO OBLIGATORIO:
                         setShowPrideDesignPicker(false);
                       }}
                       className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'timeline'
-                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
-                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                        : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
                         }`}
                     >
                       ⏱️
@@ -3244,8 +3244,8 @@ PROCESO OBLIGATORIO:
                         setShowPrideDesignPicker(false);
                       }}
                       className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'celebrate'
-                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
-                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                        : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
                         }`}
                     >
                       🎉
@@ -3258,8 +3258,8 @@ PROCESO OBLIGATORIO:
                         setShowPrideDesignPicker(false);
                       }}
                       className={`aspect-square rounded-2xl flex items-center justify-center text-3xl transition-all ${prideJournalDesign === 'minimal'
-                          ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
-                          : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
+                        ? 'bg-pink-100 border-2 border-pink-500 shadow-md'
+                        : 'bg-gray-50 border-2 border-gray-200 hover:border-pink-300'
                         }`}
                     >
                       ⚪
@@ -3789,8 +3789,8 @@ PROCESO OBLIGATORIO:
                 <button
                   onClick={() => setShowPersonalHabits(!showPersonalHabits)}
                   className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${showPersonalHabits
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
                     }`}
                   style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                 >
@@ -5541,7 +5541,7 @@ PROCESO OBLIGATORIO:
                 <h3 className="font-bold text-gray-800 text-lg">
                   {language === 'fr' ? "Nouvelle habitude" : language === 'en' ? "New habit" : 'Nuevo hábito'}
                 </h3>
-                
+
                 <div className="flex items-center gap-3">
                   <div className="flex-1 relative">
                     <input
@@ -5628,8 +5628,8 @@ PROCESO OBLIGATORIO:
                           <div className="flex items-center gap-3 flex-1">
                             <div
                               className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${isCompleted
-                                  ? 'bg-emerald-100 border-2 border-emerald-400 text-emerald-600'
-                                  : 'bg-gray-200 text-gray-400'
+                                ? 'bg-emerald-100 border-2 border-emerald-400 text-emerald-600'
+                                : 'bg-gray-200 text-gray-400'
                                 }`}
                             >
                               {isCompleted && <Check className="w-4 h-4" />}

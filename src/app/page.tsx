@@ -6079,11 +6079,11 @@ PROCESO OBLIGATORIO:
           setNewTaskDestination('priority');
         }
       }}>
-        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col bg-white rounded-t-[2rem] font-sans">
-          <DrawerHeader className="flex-shrink-0 pb-2">
+        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] overflow-y-auto bg-white rounded-t-[2rem] font-sans">
+          <DrawerHeader className="pb-2">
             <div className="flex items-center justify-between">
               <DrawerTitle className="text-2xl font-bold text-gray-900">
-                {language === 'fr' ? 'Nouvelle tâche' : language === 'en' ? 'New task' : 'Nueva tarea'}
+                {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
               </DrawerTitle>
               <DrawerClose asChild>
                 <button className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
@@ -6121,17 +6121,17 @@ PROCESO OBLIGATORIO:
             </div>
           </div>
 
-          <div className="p-6 space-y-6 overflow-y-auto flex-1">
+          <div className="p-6 space-y-6">
             {/* ONGLET MANUEL */}
             {addTaskTab === 'manuel' && (
               <>
                 {/* Champ de texte pour la tâche */}
                 <div className="space-y-3">
                   <label className="text-sm font-semibold text-gray-700">
-                    {language === 'fr' ? 'Que dois-tu faire ?' : language === 'en' ? 'What do you need to do?' : '¿Qué necesitas hacer?'}
+                    {language === 'fr' ? 'Tâche' : language === 'en' ? 'Task' : 'Tarea'}
                   </label>
                   <Input
-                    placeholder={language === 'fr' ? 'Ex: Réviser mes cours, Faire du sport...' : language === 'en' ? 'Ex: Study, Exercise...' : 'Ej: Estudiar, Hacer ejercicio...'}
+                    placeholder={language === 'fr' ? 'Entrez votre tâche...' : language === 'en' ? 'Enter your task...' : 'Ingresa tu tarea...'}
                     value={newTaskText}
                     onChange={(e) => setNewTaskText(e.target.value)}
                     className={`h-14 text-base rounded-xl border-2 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-gray-200'}`}
@@ -6141,8 +6141,12 @@ PROCESO OBLIGATORIO:
                 {/* Sélection de la destination */}
                 <div className="space-y-4">
                   <label className="text-sm font-semibold text-gray-700">
-                    {language === 'fr' ? 'Quand ?' : language === 'en' ? 'When?' : '¿Cuándo?'}
+                    {language === 'fr' ? 'Destination' : language === 'en' ? 'Destination' : 'Destino'}
                   </label>
+                  
+                  <p className="text-xs font-semibold text-stone-500">
+                    {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Próximos días'}
+                  </p>
 
                   {/* Jours de la semaine avec dates - Design moderne */}
                   <div className="grid grid-cols-2 gap-3">
@@ -6194,7 +6198,7 @@ PROCESO OBLIGATORIO:
                   </div>
                 </div>
 
-                {/* Bouton Ajouter - Design moderne */}
+                {/* Bouton Planifier - Design moderne */}
                 <button
                   className={`w-full h-14 rounded-2xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2 ${newTaskText.trim()
                     ? 'bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:shadow-xl hover:scale-[1.02]'
@@ -6251,8 +6255,7 @@ PROCESO OBLIGATORIO:
                     }
                   }}
                 >
-                  <Plus className="w-5 h-5" />
-                  {language === 'fr' ? 'Ajouter la tâche' : language === 'en' ? 'Add task' : 'Agregar tarea'}
+                  {language === 'fr' ? 'Planifier' : language === 'en' ? 'Schedule' : 'Planificar'}
                 </button>
               </>
             )}
@@ -6263,79 +6266,76 @@ PROCESO OBLIGATORIO:
                 {!gloweeProposedTasks ? (
                   /* Étape 1: Saisie de la victoire */
                   <div className="space-y-6">
-                    {/* Header Glowee */}
-                    <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-5 border border-rose-100">
-                      <div className="flex items-start gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center flex-shrink-0">
-                          <img
-                            src="/Glowee/glowee.webp"
-                            alt="Glowee"
-                            className="w-10 h-10 object-contain"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-600 leading-relaxed">
-                            {language === 'fr'
-                              ? "Tu veux atteindre un objectif mais tu ne sais pas par où commencer ?"
-                              : language === 'en'
-                                ? "You want to achieve a goal but don't know where to start?"
-                                : "¿Quieres alcanzar un objetivo pero no sabes por dónde empezar?"}
-                          </p>
-                          <p className="text-base font-bold text-gray-900 mt-2">
-                            {language === 'fr'
-                              ? "Je te crée un plan sur mesure"
-                              : language === 'en'
-                                ? "I'll create a custom plan for you"
-                                : "Te crearé un plan a medida"}
-                          </p>
-                        </div>
+                    {/* Image et message de Glowee */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-[20%] flex-shrink-0">
+                        <img
+                          src="/Glowee/glowee.webp"
+                          alt="Glowee"
+                          className="w-full h-auto object-contain"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-2 pt-2">
+                        <p className="text-sm text-stone-600 italic">
+                          {language === 'fr'
+                            ? "On veut tous accumuler de petits succès qui nous font grandir. Mais parfois, on ne sait pas quoi faire."
+                            : language === 'en'
+                              ? "We all want to accumulate small successes that make us grow. But sometimes, we don't know what to do."
+                              : "Todos queremos acumular pequeños éxitos que nos hagan crecer. Pero a veces, no sabemos qué hacer."}
+                        </p>
+                        <p className="text-lg font-semibold text-gray-800">
+                          {language === 'fr'
+                            ? "Quelle sera ta prochaine petite victoire ?"
+                            : language === 'en'
+                              ? "What will be your next small victory?"
+                              : "¿Cuál será tu próxima pequeña victoria?"}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Nombre de jours - Design moderne */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-semibold text-gray-700">
-                        {language === 'fr' ? 'Durée du plan' : language === 'en' ? 'Plan duration' : 'Duración del plan'}
+                    {/* Nombre de jours */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold">
+                        {language === 'fr' ? 'Sur combien de jours ?' : language === 'en' ? 'Over how many days?' : '¿En cuántos días?'}
                       </label>
-                      <div className="flex gap-3">
+                      <div className="flex gap-2">
                         {[3, 5, 7].map((days) => (
                           <button
                             key={days}
                             onClick={() => setGloweeDayCount(days)}
-                            className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${gloweeDayCount === days
-                              ? 'bg-gray-900 text-white shadow-lg'
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${gloweeDayCount === days
+                              ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                              : theme === 'dark'
+                                ? 'bg-stone-800 hover:bg-stone-700'
+                                : 'bg-stone-100 hover:bg-stone-200'
                               }`}
                           >
-                            {days} {language === 'fr' ? 'j' : language === 'en' ? 'd' : 'd'}
+                            {days} {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    {/* Champ de saisie - Design moderne */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-semibold text-gray-700">
-                        {language === 'fr' ? 'Ton objectif' : language === 'en' ? 'Your goal' : 'Tu objetivo'}
+                    {/* Champ de saisie */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold">
+                        {language === 'fr' ? 'Décris ta victoire' : language === 'en' ? 'Describe your victory' : 'Describe tu victoria'}
                       </label>
                       <textarea
                         placeholder={language === 'fr'
-                          ? "Ex: Je veux courir 5km, apprendre une nouvelle recette..."
+                          ? "Ex: Je veux courir 5km, Je veux lire un livre, Je veux apprendre une nouvelle recette..."
                           : language === 'en'
-                            ? "Ex: I want to run 5km, learn a new recipe..."
-                            : "Ej: Quiero correr 5km, aprender una nueva receta..."}
+                            ? "Ex: I want to run 5km, I want to read a book, I want to learn a new recipe..."
+                            : "Ej: Quiero correr 5km, Quiero leer un libro, Quiero aprender una nueva receta..."}
                         value={gloweeVictoryText}
                         onChange={(e) => setGloweeVictoryText(e.target.value)}
-                        className={`w-full p-4 rounded-xl resize-none h-28 text-base border-2 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-gray-200'}`}
+                        className={`w-full p-4 rounded-xl resize-none h-24 ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-200'} border focus:outline-none focus:ring-2 focus:ring-rose-400`}
                       />
                     </div>
 
-                    {/* Bouton Générer - Design moderne */}
-                    <button
-                      className={`w-full h-14 rounded-2xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2 ${gloweeVictoryText.trim() && !isGloweeLoading
-                        ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        }`}
+                    {/* Bouton J'y vais */}
+                    <Button
+                      className="w-full h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
                       onClick={async () => {
                         if (!gloweeVictoryText.trim()) return;
 
@@ -6413,39 +6413,32 @@ PROCESO OBLIGATORIO:
                       disabled={!gloweeVictoryText.trim() || isGloweeLoading}
                     >
                       {isGloweeLoading ? (
-                        <>
+                        <div className="flex items-center gap-2">
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          {language === 'fr' ? 'Création...' : language === 'en' ? 'Creating...' : 'Creando...'}
-                        </>
+                          {language === 'fr' ? 'Génération...' : language === 'en' ? 'Generating...' : 'Generando...'}
+                        </div>
                       ) : (
-                        <>
-                          <Sparkles className="w-5 h-5" />
-                          {language === 'fr' ? 'Créer mon plan' : language === 'en' ? 'Create my plan' : 'Crear mi plan'}
-                        </>
+                        language === 'fr' ? "J'y vais" : language === 'en' ? "Let's go" : "Vamos"
                       )}
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   /* Étape 2: Validation des tâches proposées */
                   <div className="space-y-6">
-                    {/* Header succès */}
-                    <div className="text-center bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-5 border border-rose-100">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-400 flex items-center justify-center mx-auto mb-3 shadow-lg">
-                        <Sparkles className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900">
+                    <div className="text-center">
+                      <h3 className="text-lg font-semibold text-gray-800">
                         {language === 'fr' ? 'Voici ton plan !' : language === 'en' ? 'Here is your plan!' : '¡Aquí está tu plan!'}
                       </h3>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm text-stone-500 mt-1">
                         {language === 'fr'
-                          ? `${gloweeProposedTasks.length} tâches sur ${gloweeDayCount} jours`
+                          ? 'Valide ces tâches pour les ajouter à ton planning'
                           : language === 'en'
-                            ? `${gloweeProposedTasks.length} tasks over ${gloweeDayCount} days`
-                            : `${gloweeProposedTasks.length} tareas en ${gloweeDayCount} días`}
+                            ? 'Validate these tasks to add them to your schedule'
+                            : 'Valida estas tareas para agregarlas a tu calendario'}
                       </p>
                     </div>
 
-                    {/* Liste des tâches proposées - Design moderne */}
+                    {/* Liste des tâches proposées */}
                     <div className="space-y-3 max-h-[300px] overflow-y-auto">
                       {gloweeProposedTasks.map((task, index) => {
                         const today = new Date();
@@ -6453,21 +6446,21 @@ PROCESO OBLIGATORIO:
                         targetDate.setDate(today.getDate() + task.dayIndex);
                         const dateLabel = targetDate.toLocaleDateString(
                           language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES',
-                          { weekday: 'short', day: 'numeric', month: 'short' }
+                          { weekday: 'long', day: 'numeric', month: 'short' }
                         );
 
                         return (
                           <div
                             key={index}
-                            className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-white'} border border-gray-100 shadow-sm`}
+                            className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'} border-l-4 border-rose-400`}
                           >
                             <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                 {task.dayIndex + 1}
                               </div>
                               <div className="flex-1">
                                 <p className="text-sm font-medium text-gray-800">{task.text}</p>
-                                <p className="text-xs text-gray-400 mt-1 uppercase tracking-wide">{dateLabel}</p>
+                                <p className="text-xs text-stone-400 mt-1 capitalize">{dateLabel}</p>
                               </div>
                             </div>
                           </div>
@@ -6475,19 +6468,20 @@ PROCESO OBLIGATORIO:
                       })}
                     </div>
 
-                    {/* Boutons d'action - Design moderne */}
+                    {/* Boutons d'action */}
                     <div className="flex gap-3">
-                      <button
-                        className="flex-1 h-14 rounded-2xl font-semibold text-base transition-all duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      <Button
+                        variant="outline"
+                        className="flex-1 h-12"
                         onClick={() => {
                           setGloweeProposedTasks(null);
                           setGloweeVictoryText('');
                         }}
                       >
                         {language === 'fr' ? 'Recommencer' : language === 'en' ? 'Start over' : 'Recomenzar'}
-                      </button>
-                      <button
-                        className="flex-1 h-14 rounded-2xl font-bold text-base transition-all duration-200 bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
+                      </Button>
+                      <Button
+                        className="flex-1 h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
                         onClick={async () => {
                           const today = new Date();
 
@@ -6513,9 +6507,8 @@ PROCESO OBLIGATORIO:
                           setAddTaskTab('manuel');
                         }}
                       >
-                        <Check className="w-5 h-5" />
-                        {language === 'fr' ? 'Ajouter à mon planning' : language === 'en' ? 'Add to my schedule' : 'Agregar a mi calendario'}
-                      </button>
+                        {language === 'fr' ? 'Valider et ajouter' : language === 'en' ? 'Validate and add' : 'Validar y agregar'}
+                      </Button>
                     </div>
                   </div>
                 )}

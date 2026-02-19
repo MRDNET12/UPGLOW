@@ -129,7 +129,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     const count = winsThisWeek.length;
     const design = DESIGN_THEMES[currentDesign];
     
-    if (count === 5) {
+    if (count >= 7) {
       return {
         name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
         icon: Crown,
@@ -137,7 +137,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         bgGradient: 'from-purple-400 via-pink-400 to-rose-400',
         emoji: '👑'
       };
-    } else if (count === 3) {
+    } else if (count >= 4) {
       return {
         name: 'Alpha',
         icon: Award,
@@ -261,11 +261,23 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
               <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating ? 'scale-105' : ''}`}>
                 {rank.name}
               </h3>
-              {/* Badge de compteur avec animation */}
-              <div className={`mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm transition-all duration-500 ${isAnimating ? 'scale-110 bg-white/30' : ''}`}>
-                <Trophy className="w-3 h-3 text-white" />
-                <span className="text-xs font-bold text-white">{winsThisWeek.length}</span>
-              </div>
+            </div>
+          </div>
+
+          {/* Ligne avec badge, barre de progression et bouton design */}
+          <div className="mt-4 flex items-center gap-3">
+            {/* Badge de compteur avec animation */}
+            <div className={`flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm transition-all duration-500 ${isAnimating ? 'scale-110 bg-white/30' : ''}`}>
+              <Trophy className="w-3 h-3 text-white" />
+              <span className="text-xs font-bold text-white">{winsThisWeek.length}/7</span>
+            </div>
+
+            {/* Barre de progression animée */}
+            <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+              <div 
+                className={`h-full bg-white/60 rounded-full transition-all duration-700 ${isAnimating ? 'animate-pulse' : ''}`}
+                style={{ width: `${Math.min((winsThisWeek.length / 7) * 100, 100)}%` }}
+              />
             </div>
 
             {/* Icône de personnalisation */}
@@ -274,19 +286,11 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
                 e.stopPropagation();
                 setShowDesignPicker(true);
               }}
-              className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
+              className="flex-shrink-0 p-1.5 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
               title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
             >
-              <Palette className="w-5 h-5 text-white" />
+              <Palette className="w-4 h-4 text-white" />
             </button>
-          </div>
-
-          {/* Barre de progression animée en bas */}
-          <div className="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
-            <div 
-              className={`h-full bg-white/60 rounded-full transition-all duration-700 ${isAnimating ? 'animate-pulse' : ''}`}
-              style={{ width: `${Math.min((winsThisWeek.length / 5) * 100, 100)}%` }}
-            />
           </div>
         </div>
       ) : (
@@ -308,19 +312,10 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       {/* Section expandée - Design magnifique */}
       {isExpanded && (
         <div className="mt-3 p-5 bg-white/80 backdrop-blur-md rounded-[1.5rem] shadow-xl shadow-gray-200/50 border border-pink-100/50 space-y-4 transition-all duration-300 ease-out">
-          {/* Titre avec icône de personnalisation */}
-          <div className="flex items-center justify-between">
-            <h4 className="font-bold text-gray-800">
-              {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
-            </h4>
-            <button
-              onClick={() => setShowDesignPicker(true)}
-              className="p-2 bg-gray-100 rounded-full hover:bg-pink-100 transition-all"
-              title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
-            >
-              <Palette className="w-4 h-4 text-gray-600" />
-            </button>
-          </div>
+          {/* Titre */}
+          <h4 className="font-bold text-gray-800">
+            {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
+          </h4>
 
           {/* FAQ Pourquoi ? - Design compact */}
           <div>

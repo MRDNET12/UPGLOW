@@ -2915,7 +2915,7 @@ PROCESO OBLIGATORIO:
             </div>
 
             {/* Section Carnet de fierté */}
-            <div className="px-5">
+            <div className="px-2.5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-gray-900 font-semibold text-base font-sans">
                   {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}

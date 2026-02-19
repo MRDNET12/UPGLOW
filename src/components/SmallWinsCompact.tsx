@@ -102,19 +102,24 @@ const ALPHA_RANKS = {
 // Messages d'auto-validation pour moins de 4 victoires (aléatoires)
 const AUTO_VALIDATIONS = {
   fr: [
-    'Je grandis.',
-    'Je progresse.',
-    'Je mérite cette victoire.',
-    'Ma discipline paie.',
-    'Un pas de plus.',
-    'J\'ai de la valeur.',
-    'Ma constance me rend fier.',
-    'Merci moi.',
-    'Je fais bien.',
-    'Je m\'élève.',
-    'Je me valide.',
-    'Je suis constant.',
-    'Je m\'honore.'
+    "Je suis légitime dans cette réussite",
+    "Même quand c'était difficile, je n'ai pas abandonné",
+    "C'est la preuve que je suis capable de grandes choses.",
+    "Je m'autorise à ressentir pleinement la joie de ce moment.",
+    "Je valide chaque effort qui m'a mené(e) ici.",
+    "Je m'accorde le mérite de cette réussite méritée.",
+    "Merci moi.",
+    "Je suis fier(e) d'avoir cru en mon propre potentiel.",
+    "Je savoure ce succès que j'ai construit pas à pas.",
+    "Je valide la qualité du travail que j'ai fourni.",
+    "Je savoure la récompense de ma propre discipline.",
+    "Je sais que j'ai donné le meilleur de moi-même.",
+    "Je mérite cette victoire.",
+    "Ma constance me rend fier.",
+    "Je félicite ma détermination sans faille.",
+    "Je brille par mes propres moyens.",
+    "Un pas de plus.",
+    "Ma discipline paie."
   ],
   en: [
     'I\'m growing.',
@@ -325,10 +330,9 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       {/* Carte compacte - Conditionnelle */}
       {winsThisWeek.length > 0 ? (
         <div
-          className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
-            isAnimating ? `win-animate-phase-${animationPhase}` : 'hover:scale-[1.02]'
+          className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
+            isAnimating ? `win-animate-phase-${animationPhase}` : ''
           }`}
-          onClick={() => setIsExpanded(!isExpanded)}
         >
           {/* Effet shimmer lors de l'animation */}
           {isAnimating && animationPhase >= 2 && animationPhase <= 4 && (
@@ -405,14 +409,13 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         </div>
       ) : (
         <div
-          className="rounded-[1.5rem] p-4 shadow-sm w-full cursor-pointer transition-all hover:shadow-md border border-dashed border-gray-300 bg-white/50 hover:bg-white hover:border-pink-300 group"
-          onClick={() => setIsExpanded(!isExpanded)}
+          className="rounded-[1.5rem] p-4 shadow-sm w-full transition-all border border-dashed border-gray-300 bg-white/50"
         >
           <div className="flex items-center gap-3 justify-center py-2">
-            <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-pink-100 flex items-center justify-center transition-colors shadow-sm">
-              <Plus className="w-5 h-5 text-gray-400 group-hover:text-pink-500 transition-colors" />
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shadow-sm">
+              <Plus className="w-5 h-5 text-gray-400" />
             </div>
-            <span className="text-sm font-medium text-gray-500 group-hover:text-pink-600 transition-colors">
+            <span className="text-sm font-medium text-gray-500">
               {language === 'fr' ? 'Ajouter une première victoire...' : language === 'en' ? 'Add a first win...' : 'Añadir una primera victoria...'}
             </span>
           </div>

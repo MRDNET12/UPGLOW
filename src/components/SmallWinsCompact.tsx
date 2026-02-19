@@ -174,16 +174,16 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   // Ref pour tracker le nombre précédent de wins
   const prevCountRef = useRef(winsThisWeek.length);
 
-  // Trigger animation on win add - 10 secondes avec 3 phases d'explosion
+  // Trigger animation on win add - 10 secondes avec phase 2 répétée 3 fois
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
       setAnimationPhase(2); // Phase 2: première explosion (1-3s)
       
-      // Animation en 3 phases d'explosion sur 10 secondes
+      // Animation avec phase 2 répétée 3 fois sur 10 secondes
       const phaseTimers = [
-        setTimeout(() => setAnimationPhase(3), 3000),   // Phase 3: deuxième explosion (4-6s)
-        setTimeout(() => setAnimationPhase(4), 6000),   // Phase 4: troisième explosion (7-10s)
+        setTimeout(() => setAnimationPhase(2), 3000),   // Phase 2: deuxième explosion (4-6s)
+        setTimeout(() => setAnimationPhase(2), 6000),   // Phase 2: troisième explosion (7-10s)
         setTimeout(() => {
           setIsAnimating(false);
           setAnimationPhase(0);
@@ -393,20 +393,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
              </div>
            </div>
         </div>
-      ) : (
-        <div
-          className="rounded-[1.5rem] p-4 shadow-sm w-full transition-all border border-dashed border-gray-300 bg-white/50"
-        >
-          <div className="flex items-center gap-3 justify-center py-2">
-            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shadow-sm">
-              <Plus className="w-5 h-5 text-gray-400" />
-            </div>
-            <span className="text-sm font-medium text-gray-500">
-              {language === 'fr' ? 'Ajouter une première victoire...' : language === 'en' ? 'Add a first win...' : 'Añadir una primera victoria...'}
-            </span>
-          </div>
-        </div>
-      )}
+      ) : null}
 
       {/* Section expandée - Design magnifique */}
       {isExpanded && (

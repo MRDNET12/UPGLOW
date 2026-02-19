@@ -166,20 +166,34 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                     </div>
 
                     <div className="w-full space-y-4">
-                        {/* Progress Box */}
-                        <div className="bg-gradient-to-br from-pink-50 to-white dark:from-stone-800 dark:to-stone-900 rounded-[2rem] p-5 shadow-lg shadow-pink-100/50 dark:shadow-none hover:shadow-xl hover:scale-[1.02] transition-all relative overflow-hidden border border-pink-100 dark:border-stone-700 group">
-                            <div className="absolute -right-4 -bottom-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-500">
-                                <Trophy className="w-32 h-32 text-pink-600" />
+                        {/* Progress Box - Dégradé Orange-Jaune */}
+                        <div className="bg-gradient-to-br from-amber-400 via-orange-400 to-yellow-300 rounded-[2rem] p-6 shadow-xl shadow-orange-200/50 hover:shadow-2xl hover:shadow-orange-300/50 hover:scale-[1.02] transition-all relative overflow-hidden group">
+                            {/* Motif décoratif en arrière-plan */}
+                            <div className="absolute inset-0 opacity-20">
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-white/30 rounded-full blur-3xl transform translate-x-10 -translate-y-10" />
+                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-yellow-300/30 rounded-full blur-2xl transform -translate-x-5 translate-y-5" />
                             </div>
-                            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-stone-700 flex items-center justify-center mb-4 shadow-sm text-pink-500">
-                                <Trophy className="w-6 h-6" />
+                            
+                            {/* Icône décorative grande */}
+                            <div className="absolute -right-6 -bottom-6 opacity-20 transform rotate-12 group-hover:scale-110 transition-transform duration-500">
+                                <Trophy className="w-40 h-40 text-white" />
                             </div>
-                            <p className="text-4xl font-extrabold text-slate-800 dark:text-white mb-1 tracking-tight">
-                                {bonusProgress?.smallWins?.length || 0}
-                            </p>
-                            <p className="text-xs font-bold text-pink-500/80 uppercase tracking-wider">
-                                {language === 'fr' ? 'Petits Succès' : language === 'en' ? 'Small Wins' : 'Pequeños Éxitos'}
-                            </p>
+                            
+                            {/* Contenu */}
+                            <div className="relative z-10">
+                                <div className="w-14 h-14 rounded-2xl bg-white/90 backdrop-blur-sm flex items-center justify-center mb-5 shadow-lg text-orange-500">
+                                    <Trophy className="w-7 h-7" />
+                                </div>
+                                <p className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-sm">
+                                    {bonusProgress?.smallWins?.length || 0}
+                                </p>
+                                <p className="text-sm font-bold text-white/90 uppercase tracking-wider">
+                                    {language === 'fr' ? 'Petits Succès' : language === 'en' ? 'Small Wins' : 'Pequeños Éxitos'}
+                                </p>
+                                <p className="text-xs text-white/70 mt-1">
+                                    {language === 'fr' ? 'Continue sur cette lancée !' : language === 'en' ? 'Keep up the momentum!' : '¡Sigue con ese impulso!'}
+                                </p>
+                            </div>
                         </div>
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useStore } from '@/lib/store';
 import { useTranslation } from '@/lib/useTranslation';
 import { Trophy, Plus, Award, Crown, ChevronDown, ChevronUp, Palette, Sparkles, Target } from 'lucide-react';
@@ -71,23 +71,82 @@ const DESIGN_THEMES: Record<DesignTheme, DesignConfig> = {
   }
 };
 
-// Messages d'auto-validation qui tournent à chaque ajout
-const AUTO_VALIDATIONS = [
-  'Je suis une légende.',
-  'Je grandis.',
-  'Je progresse.',
-  'Je mérite cette victoire.',
-  'Ma discipline paie.',
-  'Un pas de plus.',
-  'J\'ai de la valeur.',
-  'Ma constance me rend fier.',
-  'Merci moi.',
-  'Je fais bien.',
-  'Je m\'élève.',
-  'Je me valide.',
-  'Je suis constant.',
-  'Je m\'honore.'
-];
+// Messages pour les rangs 4-6 victoires (tournent aléatoirement)
+const ALPHA_RANKS = {
+  fr: [
+    { text: 'Je savais que je pouvais le faire', emoji: '🏆' },
+    { text: 'Je suis fier(e) de moi, tout simplement', emoji: '💪' },
+    { text: 'J\'ai relevé le défi, et je savoure l\'instant', emoji: '⭐' },
+    { text: 'Je célèbre ma détermination', emoji: '🎉' },
+    { text: 'Je transforme mes efforts en victoire', emoji: '✨' },
+    { text: 'Je suis capable de grandes choses', emoji: '🌟' }
+  ],
+  en: [
+    { text: 'I knew I could do it', emoji: '🏆' },
+    { text: 'I\'m proud of myself, plain and simple', emoji: '💪' },
+    { text: 'I took on the challenge, and I\'m savoring the moment', emoji: '⭐' },
+    { text: 'I celebrate my determination', emoji: '🎉' },
+    { text: 'I turn my efforts into victory', emoji: '✨' },
+    { text: 'I am capable of great things', emoji: '🌟' }
+  ],
+  es: [
+    { text: 'Sabía que podía hacerlo', emoji: '🏆' },
+    { text: 'Estoy orgulloso(a) de mí mismo(a), sencillamente', emoji: '💪' },
+    { text: 'Acepté el desafío, y saboreo el momento', emoji: '⭐' },
+    { text: 'Celebro mi determinación', emoji: '🎉' },
+    { text: 'Convierto mis esfuerzos en victoria', emoji: '✨' },
+    { text: 'Soy capaz de grandes cosas', emoji: '🌟' }
+  ]
+};
+
+// Messages d'auto-validation pour moins de 4 victoires (aléatoires)
+const AUTO_VALIDATIONS = {
+  fr: [
+    'Je grandis.',
+    'Je progresse.',
+    'Je mérite cette victoire.',
+    'Ma discipline paie.',
+    'Un pas de plus.',
+    'J\'ai de la valeur.',
+    'Ma constance me rend fier.',
+    'Merci moi.',
+    'Je fais bien.',
+    'Je m\'élève.',
+    'Je me valide.',
+    'Je suis constant.',
+    'Je m\'honore.'
+  ],
+  en: [
+    'I\'m growing.',
+    'I\'m making progress.',
+    'I deserve this victory.',
+    'My discipline pays off.',
+    'One more step.',
+    'I have value.',
+    'My consistency makes me proud.',
+    'Thank you, me.',
+    'I\'m doing well.',
+    'I rise.',
+    'I validate myself.',
+    'I am consistent.',
+    'I honor myself.'
+  ],
+  es: [
+    'Estoy creciendo.',
+    'Estoy progresando.',
+    'Merezco esta victoria.',
+    'Mi disciplina da frutos.',
+    'Un paso más.',
+    'Tengo valor.',
+    'Mi constancia me llena de orgullo.',
+    'Gracias, yo.',
+    'Lo estoy haciendo bien.',
+    'Me elevo.',
+    'Me valido a mí mismo.',
+    'Soy constante.',
+    'Me honro.'
+  ]
+};
 
 export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   const { t, language } = useTranslation();
@@ -99,6 +158,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   // Animation state
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationPhase, setAnimationPhase] = useState(0);
 
   const addSmallWin = useStore((state) => state.addSmallWin);
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
@@ -109,21 +169,44 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   // Ref pour tracker le nombre précédent de wins
   const prevCountRef = useRef(winsThisWeek.length);
 
-  // Trigger animation on win add
+  // Trigger animation on win add - 10 secondes
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 10000);
-      return () => clearTimeout(timer);
+      setAnimationPhase(0);
+      
+      // Animation en 4 phases sur 10 secondes
+      const phaseTimers = [
+        setTimeout(() => setAnimationPhase(1), 1000),   // Phase 1: apparition
+        setTimeout(() => setAnimationPhase(2), 3000),   // Phase 2: explosion
+        setTimeout(() => setAnimationPhase(3), 6000),   // Phase 3: maintien
+        setTimeout(() => {
+          setAnimationPhase(4);
+          setTimeout(() => {
+            setIsAnimating(false);
+            setAnimationPhase(0);
+          }, 3000); // Phase 4: disparition
+        }, 7000)
+      ];
+      
+      return () => phaseTimers.forEach(timer => clearTimeout(timer));
     }
     prevCountRef.current = winsThisWeek.length;
   }, [winsThisWeek.length]);
 
-  const getAutoValidation = () => {
-    const count = winsThisWeek.length;
-    if (count === 0) return AUTO_VALIDATIONS[0];
-    return AUTO_VALIDATIONS[count % AUTO_VALIDATIONS.length];
-  };
+  // Générer un message aléatoire pour les rangs Alpha (4-6 victoires)
+  const getAlphaRank = useMemo(() => {
+    const messages = ALPHA_RANKS[language as keyof typeof ALPHA_RANKS] || ALPHA_RANKS.fr;
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
+  }, [language, winsThisWeek.length]); // Change quand on ajoute une victoire
+
+  // Générer un message aléatoire pour les auto-validations (< 4 victoires)
+  const getAutoValidation = useMemo(() => {
+    const messages = AUTO_VALIDATIONS[language as keyof typeof AUTO_VALIDATIONS] || AUTO_VALIDATIONS.fr;
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
+  }, [language, winsThisWeek.length]);
 
   const getRank = () => {
     const count = winsThisWeek.length;
@@ -131,7 +214,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     
     if (count >= 7) {
       return {
-        name: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
+        name: language === 'fr' ? 'Je suis une Légende' : language === 'en' ? 'I am a Legend' : 'Soy una Leyenda',
         icon: Crown,
         color: 'text-purple-600',
         bgGradient: 'from-purple-400 via-pink-400 to-rose-400',
@@ -139,15 +222,15 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
       };
     } else if (count >= 4) {
       return {
-        name: 'Alpha',
+        name: getAlphaRank.text,
         icon: Award,
         color: 'text-amber-600',
         bgGradient: 'from-amber-400 via-orange-400 to-rose-400',
-        emoji: '🏆'
+        emoji: getAlphaRank.emoji
       };
     }
     return {
-      name: getAutoValidation(),
+      name: getAutoValidation,
       icon: Trophy,
       color: 'text-pink-600',
       bgGradient: design.bgGradient,
@@ -173,62 +256,109 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
   return (
     <div className="w-full">
-      {/* Styles pour l'animation avancée */}
+      {/* Styles pour l'animation de 10 secondes */}
       <style>{`
-        @keyframes badge-bounce {
-          0%, 100% { transform: scale(1) translateY(0); }
-          25% { transform: scale(1.08) translateY(-4px); }
-          50% { transform: scale(1.05) translateY(-2px); }
-          75% { transform: scale(1.02) translateY(-1px); }
+        @keyframes win-entrance {
+          0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-        @keyframes badge-shine {
+        @keyframes win-explode {
+          0% { transform: scale(1); }
+          25% { transform: scale(1.1) rotate(-2deg); }
+          50% { transform: scale(1.05) rotate(2deg); }
+          75% { transform: scale(1.08) rotate(-1deg); }
+          100% { transform: scale(1.05); }
+        }
+        @keyframes win-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+          50% { box-shadow: 0 0 40px rgba(255,255,255,0.6), 0 0 60px rgba(255,182,193,0.4); }
+        }
+        @keyframes win-particles {
+          0% { opacity: 0; transform: translateY(0) scale(0); }
+          20% { opacity: 1; transform: translateY(-20px) scale(1); }
+          80% { opacity: 1; transform: translateY(-60px) scale(0.8); }
+          100% { opacity: 0; transform: translateY(-80px) scale(0); }
+        }
+        @keyframes win-ring-pulse {
+          0% { transform: scale(1); opacity: 1; }
+          100% { transform: scale(1.3); opacity: 0; }
+        }
+        @keyframes win-shimmer {
           0% { background-position: -200% center; }
           100% { background-position: 200% center; }
         }
-        @keyframes sparkle {
-          0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-          50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        @keyframes win-shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+          20%, 40%, 60%, 80% { transform: translateX(3px); }
         }
-        @keyframes float-up {
-          0% { opacity: 0; transform: translateY(20px) scale(0.5); }
-          50% { opacity: 1; transform: translateY(-10px) scale(1.2); }
-          100% { opacity: 0; transform: translateY(-40px) scale(0.8); }
+        
+        .win-animate-phase-1 {
+          animation: win-entrance 1s ease-out forwards;
         }
-        .badge-animate {
-          animation: badge-bounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        .win-animate-phase-2 {
+          animation: win-explode 2s ease-in-out forwards, win-glow 3s ease-in-out infinite;
         }
-        .badge-shine {
+        .win-animate-phase-3 {
+          animation: win-glow 2s ease-in-out infinite;
+        }
+        .win-animate-phase-4 {
+          animation: win-entrance 0.5s ease-in reverse forwards;
+        }
+        
+        .win-particle {
+          position: absolute;
+          animation: win-particles 3s ease-out forwards;
+        }
+        .win-ring {
+          position: absolute;
+          border-radius: 50%;
+          border: 3px solid rgba(255,255,255,0.6);
+          animation: win-ring-pulse 1.5s ease-out forwards;
+        }
+        .win-shimmer {
           background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
           background-size: 200% 100%;
-          animation: badge-shine 1.5s ease-in-out;
+          animation: win-shimmer 2s ease-in-out infinite;
         }
-        .sparkle-1 { animation: sparkle 0.6s ease-out 0s; }
-        .sparkle-2 { animation: sparkle 0.6s ease-out 0.15s; }
-        .sparkle-3 { animation: sparkle 0.6s ease-out 0.3s; }
-        .float-1 { animation: float-up 1s ease-out 0s; }
-        .float-2 { animation: float-up 1s ease-out 0.2s; }
-        .float-3 { animation: float-up 1s ease-out 0.4s; }
+        .win-text-pop {
+          animation: win-explode 0.5s ease-out;
+        }
+        .win-shake {
+          animation: win-shake 0.5s ease-in-out;
+        }
       `}</style>
 
       {/* Carte compacte - Conditionnelle */}
       {winsThisWeek.length > 0 ? (
         <div
           className={`rounded-[1.5rem] p-6 shadow-xl shadow-gray-200/50 w-full cursor-pointer transition-all duration-300 relative overflow-hidden border-none bg-gradient-to-br ${rank.bgGradient} ${
-            isAnimating ? 'badge-animate' : 'hover:scale-[1.02]'
+            isAnimating ? `win-animate-phase-${animationPhase}` : 'hover:scale-[1.02]'
           }`}
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          {/* Effet de brillance lors de l'animation */}
-          {isAnimating && (
-            <div className="absolute inset-0 badge-shine pointer-events-none z-20" />
+          {/* Effet shimmer lors de l'animation */}
+          {isAnimating && animationPhase >= 2 && animationPhase <= 3 && (
+            <div className="absolute inset-0 win-shimmer pointer-events-none z-10" />
           )}
 
-          {/* Particules flottantes lors de l'animation */}
-          {isAnimating && (
+          {/* Anneaux d'explosion lors de la phase 2 */}
+          {isAnimating && animationPhase === 2 && (
             <>
-              <div className="absolute top-2 left-1/4 text-2xl float-1">✨</div>
-              <div className="absolute top-4 right-1/3 text-xl float-2">🌟</div>
-              <div className="absolute bottom-4 left-1/3 text-lg float-3">⭐</div>
+              <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32" />
+              <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48" style={{ animationDelay: '0.3s' }} />
+              <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64" style={{ animationDelay: '0.6s' }} />
+            </>
+          )}
+
+          {/* Particules flottantes */}
+          {isAnimating && animationPhase >= 2 && animationPhase <= 3 && (
+            <>
+              <span className="win-particle top-4 left-1/4 text-2xl" style={{ animationDelay: '0s' }}>✨</span>
+              <span className="win-particle top-4 right-1/4 text-xl" style={{ animationDelay: '0.2s' }}>🌟</span>
+              <span className="win-particle bottom-8 left-1/3 text-lg" style={{ animationDelay: '0.4s' }}>⭐</span>
+              <span className="win-particle top-8 right-1/3 text-2xl" style={{ animationDelay: '0.6s' }}>💫</span>
+              <span className="win-particle bottom-4 right-1/4 text-xl" style={{ animationDelay: '0.8s' }}>✦</span>
             </>
           )}
 
@@ -237,28 +367,15 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
             <rank.icon className="w-32 h-32 text-white" />
           </div>
 
-          {/* Effet de bordure lumineuse pulsante */}
-          {isAnimating && (
-            <div className="absolute inset-0 rounded-[1.5rem] ring-4 ring-white/50 ring-offset-2 ring-offset-transparent animate-pulse" />
-          )}
-
           <div className="relative z-10 flex items-center justify-start gap-5">
             {/* Gauche : Emoji avec animation */}
-            <div className={`transition-all duration-500 ${isAnimating ? 'scale-130 rotate-12 drop-shadow-2xl' : ''}`}>
+            <div className={`transition-all duration-500 ${isAnimating && animationPhase === 2 ? 'win-text-pop' : ''}`}>
               <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
-              {/* Éclats autour de l'emoji */}
-              {isAnimating && (
-                <>
-                  <span className="absolute -top-1 -right-1 text-sm sparkle-1">✦</span>
-                  <span className="absolute -bottom-1 -left-1 text-lg sparkle-2">✦</span>
-                  <span className="absolute top-1/2 -right-2 text-xs sparkle-3">✦</span>
-                </>
-              )}
             </div>
 
             {/* Droite : Phrase avec animation */}
             <div className="flex-1">
-              <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating ? 'scale-105' : ''}`}>
+              <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && animationPhase === 2 ? 'win-shake' : ''}`}>
                 {rank.name}
               </h3>
             </div>

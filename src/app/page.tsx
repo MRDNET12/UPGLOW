@@ -5506,12 +5506,12 @@ PROCESO OBLIGATORIO:
         </DrawerContent>
       </Drawer>
 
-      {/* Drawer Menu Ajouter (+) - Style Soft Austria */}
+      {/* Drawer Menu Ajouter (+) - Style Adaptatif */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
-        <DrawerContent className="max-w-lg mx-auto bg-[#E9F6F1] border-none rounded-t-[2.5rem] shadow-2xl">
-          <DrawerHeader className="px-6 pt-8 pb-4">
+        <DrawerContent className={`max-w-lg mx-auto shadow-2xl ${currentView === 'trackers' ? 'bg-[#E9F6F1] border-none rounded-t-[2.5rem]' : 'bg-[#FAFAFA] rounded-t-[2rem]'}`}>
+          <DrawerHeader className={currentView === 'trackers' ? "px-6 pt-8 pb-4" : "px-5 pt-6 pb-2"}>
             <div className="flex items-center justify-between">
-              <DrawerTitle className="text-xl font-bold text-[#1C2C26] tracking-tight">
+              <DrawerTitle className={`tracking-tight ${currentView === 'trackers' ? "text-xl font-bold text-[#1C2C26]" : "text-lg font-medium text-gray-900"}`}>
                 {currentView === 'trackers' ? (
                   language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'
                 ) : (
@@ -5519,8 +5519,8 @@ PROCESO OBLIGATORIO:
                 )}
               </DrawerTitle>
               <DrawerClose asChild>
-                <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-emerald-50 transition-colors shadow-sm">
-                  <X className="w-5 h-5 text-[#1C2C26]" />
+                <button className={`flex items-center justify-center transition-colors shadow-sm ${currentView === 'trackers' ? "w-10 h-10 rounded-full bg-white hover:bg-emerald-50" : "w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200"}`}>
+                  <X className={`${currentView === 'trackers' ? "w-5 h-5 text-[#1C2C26]" : "w-4 h-4 text-gray-600"}`} />
                 </button>
               </DrawerClose>
             </div>
@@ -5622,20 +5622,17 @@ PROCESO OBLIGATORIO:
               </div>
             </div>
           ) : (
-            /* Contenu général pour les autres pages - Style Austria */
+            /* Contenu général pour les autres pages (Dashboard/Accueil) - Style Minimaliste Original Restauré */
             <div className="px-5 pb-8 space-y-4">
-              {/* Carte Petite victoire - Style Austria */}
-              <div className="bg-white rounded-[2rem] p-5 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-[1.2rem] bg-[#FEF3C7] flex items-center justify-center shadow-sm flex-shrink-0">
-                    <Trophy className="w-6 h-6 text-amber-500" />
-                  </div>
+              {/* Carte Petite victoire */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <div className="flex items-center gap-3">
                   <input
                     type="text"
                     value={newWinText}
                     onChange={(e) => setNewWinText(e.target.value)}
                     placeholder={language === 'fr' ? 'Ma fierté du jour...' : language === 'en' ? 'My pride of the day...' : 'Mi orgullo del día...'}
-                    className="flex-1 text-base text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-medium"
+                    className="flex-1 text-sm text-gray-700 placeholder-gray-400 bg-transparent focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && newWinText.trim()) {
                         checkFeatureAccess('petites_victoires', () => {
@@ -5657,36 +5654,34 @@ PROCESO OBLIGATORIO:
                       }
                     }}
                     disabled={!newWinText.trim()}
-                    className="w-10 h-10 rounded-[1rem] bg-[#1C2C26] flex items-center justify-center hover:bg-[#2C3E36] transition-colors disabled:opacity-30 shadow-md flex-shrink-0"
+                    className="w-9 h-9 rounded-xl bg-gray-900 flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-30"
                   >
                     <Plus className="w-5 h-5 text-white" />
                   </button>
                 </div>
               </div>
 
-              {/* Carte Journal - Style Austria */}
+              {/* Carte Journal */}
               <div
                 onClick={() => {
                   setShowAddMenu(false);
                   checkFeatureAccess('journal', () => setCurrentView('journal'));
                 }}
-                className="bg-white rounded-[2rem] p-5 shadow-sm cursor-pointer hover:shadow-md transition-all active:scale-[0.98]"
+                className="bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-[1.5rem] bg-[#F3E8FF] flex items-center justify-center shadow-sm flex-shrink-0">
-                    <BookOpen className="w-7 h-7 text-purple-600" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-lg font-bold text-[#1C2C26]">
+                    <h4 className="text-sm font-medium text-gray-900">
                       {language === 'fr' ? 'Journal' : language === 'en' ? 'Journal' : 'Diario'}
                     </h4>
-                    <p className="text-sm text-gray-500 font-medium mt-0.5">
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {language === 'fr' ? 'Écrire mes pensées' : language === 'en' ? 'Write my thoughts' : 'Escribir mis pensamientos'}
                     </p>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-[#F5F7F6] flex items-center justify-center">
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-300" />
                 </div>
               </div>
             </div>

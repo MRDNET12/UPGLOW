@@ -65,6 +65,7 @@ import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } 
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
 import { useInstallTracking } from '@/hooks/useInstallTracking';
 import { useTrafficTracking, linkTrackingToUser, trackSubscription } from '@/hooks/useTrafficTracking';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 // Fonction utilitaire pour formater une date en YYYY-MM-DD sans problème de timezone
 const getLocalDateString = (date: Date = new Date()): string => {
@@ -2445,6 +2446,9 @@ PROCESO OBLIGATORIO:
 
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-navy-900 text-stone-100' : 'bg-gradient-to-br from-white via-gray-50 to-gray-100 text-stone-900'}`}>
+      {/* Indicateur de connexion */}
+      <OfflineIndicator />
+
       {/* Main Content */}
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
@@ -5506,12 +5510,12 @@ PROCESO OBLIGATORIO:
         </DrawerContent>
       </Drawer>
 
-      {/* Drawer Menu Ajouter (+) - Style Adaptatif */}
+      {/* Drawer Menu Ajouter (+) - Style minimaliste */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
-        <DrawerContent className={`max-w-lg mx-auto shadow-2xl ${currentView === 'trackers' ? 'bg-[#E9F6F1] border-none rounded-t-[2.5rem]' : 'bg-[#FAFAFA] rounded-t-[2rem]'}`}>
-          <DrawerHeader className={currentView === 'trackers' ? "px-6 pt-8 pb-4" : "px-5 pt-6 pb-2"}>
+        <DrawerContent className="max-w-lg mx-auto bg-[#FAFAFA] rounded-t-[2rem] shadow-2xl">
+          <DrawerHeader className="px-5 pt-6 pb-2">
             <div className="flex items-center justify-between">
-              <DrawerTitle className={`tracking-tight ${currentView === 'trackers' ? "text-xl font-bold text-[#1C2C26]" : "text-lg font-medium text-gray-900"}`}>
+              <DrawerTitle className="text-lg font-medium text-gray-900 tracking-tight">
                 {currentView === 'trackers' ? (
                   language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos'
                 ) : (
@@ -5519,110 +5523,220 @@ PROCESO OBLIGATORIO:
                 )}
               </DrawerTitle>
               <DrawerClose asChild>
-                <button className={`flex items-center justify-center transition-colors shadow-sm ${currentView === 'trackers' ? "w-10 h-10 rounded-full bg-white hover:bg-emerald-50" : "w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200"}`}>
-                  <X className={`${currentView === 'trackers' ? "w-5 h-5 text-[#1C2C26]" : "w-4 h-4 text-gray-600"}`} />
+                <button className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                  <X className="w-4 h-4 text-gray-600" />
                 </button>
               </DrawerClose>
             </div>
           </DrawerHeader>
 
           {currentView === 'trackers' ? (
-            /* Contenu spécifique à la page Habitudes - Style Austria */
-            <div className="px-5 pb-8 space-y-5">
-              {/* Carte Nouvelle habitude */}
-              <div className="bg-white rounded-[2rem] p-5 shadow-sm">
-                <div className="flex items-center gap-4">
-                  <input
-                    type="text"
-                    value={newHabitLabel}
-                    onChange={(e) => setNewHabitLabel(e.target.value)}
-                    placeholder={language === 'fr' ? 'Ajouter une habitude...' : language === 'en' ? 'Add a habit...' : 'Añadir un hábito...'}
-                    className="flex-1 text-base text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-medium"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                        setShowAddMenu(false);
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      if (newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                        setShowAddMenu(false);
-                      }
-                    }}
-                    disabled={!newHabitLabel.trim()}
-                    className="w-12 h-12 rounded-[1.2rem] bg-[#1C2C26] flex items-center justify-center hover:bg-[#2C3E36] transition-colors disabled:opacity-30 shadow-md"
-                  >
-                    <Plus className="w-6 h-6 text-white" />
-                  </button>
+            /* Contenu spécifique à la page Habitudes - DESIGN SPECTACULAIRE */
+            <div className="relative overflow-hidden">
+              {/* Arrière-plan animé avec dégradé */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
+                <div className="absolute inset-0 opacity-30">
+                  <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                  <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-300 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse delay-1000" />
+                  <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse delay-500" />
                 </div>
+                {/* Grille de points subtile */}
+                <div className="absolute inset-0 opacity-10" style={{
+                  backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+                  backgroundSize: '40px 40px'
+                }} />
               </div>
 
-              {/* Liste des habitudes */}
-              <div className="space-y-3">
-                {customHabits.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-sm text-gray-500 font-medium">
-                      {language === 'fr' ? "Commencez par ajouter une habitude" : language === 'en' ? "Start by adding a habit" : 'Comience añadiendo un hábito'}
-                    </p>
-                  </div>
-                ) : (
-                  customHabits.map((habit) => {
-                    const today = getLocalDateString();
-                    const tracker = trackers.find(t => t.date === today);
-                    const isCompleted = tracker?.habits?.[habit.id] || false;
-
-                    return (
-                      <div
-                        key={habit.id}
-                        onClick={() => {
-                          const existingTracker = trackers.find(t => t.date === today);
-                          if (existingTracker) {
-                            updateTracker(today, {
-                              habits: {
-                                ...existingTracker.habits,
-                                [habit.id]: !isCompleted
-                              }
-                            });
-                          } else {
-                            updateTracker(today, {
-                              habits: { [habit.id]: true }
-                            });
-                          }
-                        }}
-                        className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-                      >
-                        <div
-                          className={`w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all ${isCompleted
-                            ? 'bg-[#1C2C26] text-white shadow-md'
-                            : 'bg-[#F5F7F6] border-2 border-transparent hover:border-emerald-100'
-                            }`}
-                        >
-                          {isCompleted && <Check className="w-5 h-5" />}
+              {/* Contenu */}
+              <div className="relative z-10 px-6 pb-8 pt-4">
+                {/* Header avec statistiques */}
+                <div className="mb-6">
+                  <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white/70 text-sm font-medium mb-1">
+                          {language === 'fr' ? 'Habitudes actives' : language === 'en' ? 'Active habits' : 'Hábitos activos'}
+                        </p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-5xl font-bold text-white">{customHabits.length}</span>
+                          <span className="text-white/60 text-lg">habitudes</span>
                         </div>
-                        <span className={`text-base font-medium flex-1 ${isCompleted ? 'text-gray-400 line-through decoration-gray-300' : 'text-[#1C2C26]'}`}>
-                          {habit.label}
+                      </div>
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
+                        <Sparkles className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                    
+                    {/* Barre de progression circulaire stylisée */}
+                    {customHabits.length > 0 && (
+                      <div className="mt-4 flex items-center gap-3">
+                        <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 rounded-full transition-all duration-700"
+                            style={{ width: `${Math.min((customHabits.filter(h => {
+                              const today = getLocalDateString();
+                              const tracker = trackers.find(t => t.date === today);
+                              return tracker?.habits?.[h.id];
+                            }).length / customHabits.length) * 100, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-white/80 text-sm font-medium">
+                          {customHabits.filter(h => {
+                            const today = getLocalDateString();
+                            const tracker = trackers.find(t => t.date === today);
+                            return tracker?.habits?.[h.id];
+                          }).length}/{customHabits.length}
                         </span>
                       </div>
-                    );
-                  })
-                )}
+                    )}
+                  </div>
+                </div>
+
+                {/* Carte d'ajout avec effet glassmorphism */}
+                <div className="mb-6">
+                  <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-2 border border-white/30 shadow-2xl">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={newHabitLabel}
+                        onChange={(e) => setNewHabitLabel(e.target.value)}
+                        placeholder={language === 'fr' ? 'Nouvelle habitude...' : language === 'en' ? 'New habit...' : 'Nuevo hábito...'}
+                        className="flex-1 bg-transparent text-white placeholder-white/50 text-lg font-medium px-4 py-4 focus:outline-none"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newHabitLabel.trim()) {
+                            setCustomHabits([...customHabits, {
+                              id: `habit_${Date.now()}`,
+                              label: newHabitLabel.trim(),
+                              type: 'good'
+                            }]);
+                            setNewHabitLabel('');
+                            setShowAddMenu(false);
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          if (newHabitLabel.trim()) {
+                            setCustomHabits([...customHabits, {
+                              id: `habit_${Date.now()}`,
+                              label: newHabitLabel.trim(),
+                              type: 'good'
+                            }]);
+                            setNewHabitLabel('');
+                            setShowAddMenu(false);
+                          }
+                        }}
+                        disabled={!newHabitLabel.trim()}
+                        className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-40 shadow-lg"
+                      >
+                        <Plus className="w-7 h-7 text-purple-600" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Liste des habitudes en cards 3D */}
+                <div className="space-y-4">
+                  {customHabits.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center">
+                        <Target className="w-12 h-12 text-white/50" />
+                      </div>
+                      <p className="text-white/70 text-lg font-medium">
+                        {language === 'fr' ? "Créez votre première habitude" : language === 'en' ? "Create your first habit" : 'Crea tu primer hábito'}
+                      </p>
+                      <p className="text-white/40 text-sm mt-2">
+                        {language === 'fr' ? "Commencez votre transformation" : language === 'en' ? "Start your transformation" : 'Comienza tu transformación'}
+                      </p>
+                    </div>
+                  ) : (
+                    customHabits.map((habit, index) => {
+                      const today = getLocalDateString();
+                      const tracker = trackers.find(t => t.date === today);
+                      const isCompleted = tracker?.habits?.[habit.id] || false;
+                      const colors = [
+                        'from-pink-500 to-rose-500',
+                        'from-purple-500 to-indigo-500',
+                        'from-blue-500 to-cyan-500',
+                        'from-emerald-500 to-teal-500',
+                        'from-orange-500 to-amber-500',
+                        'from-violet-500 to-purple-500'
+                      ];
+                      const colorClass = colors[index % colors.length];
+
+                      return (
+                        <div
+                          key={habit.id}
+                          onClick={() => {
+                            const existingTracker = trackers.find(t => t.date === today);
+                            if (existingTracker) {
+                              updateTracker(today, {
+                                habits: {
+                                  ...existingTracker.habits,
+                                  [habit.id]: !isCompleted
+                                }
+                              });
+                            } else {
+                              updateTracker(today, {
+                                habits: { [habit.id]: true }
+                              });
+                            }
+                          }}
+                          className={`group relative overflow-hidden rounded-3xl p-5 cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 ${
+                            isCompleted 
+                              ? 'bg-gradient-to-r ' + colorClass + ' shadow-2xl shadow-purple-500/30' 
+                              : 'bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20'
+                          }`}
+                        >
+                          {/* Effet de brillance au survol */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                          
+                          <div className="relative flex items-center gap-4">
+                            {/* Checkbox animée */}
+                            <div
+                              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                                isCompleted
+                                  ? 'bg-white/30 backdrop-blur-sm'
+                                  : 'bg-white/10 border-2 border-white/30 group-hover:border-white/50'
+                              }`}
+                            >
+                              {isCompleted ? (
+                                <div className="animate-in zoom-in duration-300">
+                                  <Check className="w-6 h-6 text-white" strokeWidth={3} />
+                                </div>
+                              ) : (
+                                <div className="w-3 h-3 rounded-full bg-white/30" />
+                              )}
+                            </div>
+                            
+                            {/* Texte de l'habitude */}
+                            <div className="flex-1">
+                              <span className={`text-lg font-semibold block transition-all ${isCompleted ? 'text-white' : 'text-white'}`}>
+                                {habit.label}
+                              </span>
+                              {isCompleted && (
+                                <span className="text-white/70 text-sm animate-in fade-in duration-500">
+                                  {language === 'fr' ? 'Complété ! 🎉' : language === 'en' ? 'Completed! 🎉' : '¡Completado! 🎉'}
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* Numéro de l'habitude */}
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold ${
+                              isCompleted ? 'bg-white/20 text-white' : 'bg-white/10 text-white/60'
+                            }`}>
+                              {index + 1}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </div>
           ) : (
-            /* Contenu général pour les autres pages (Dashboard/Accueil) - Style Minimaliste Original Restauré */
+            /* Contenu général pour les autres pages - Style minimaliste */
             <div className="px-5 pb-8 space-y-4">
               {/* Carte Petite victoire */}
               <div className="bg-white rounded-2xl p-4 shadow-sm">

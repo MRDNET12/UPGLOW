@@ -37,7 +37,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-// Network first for HTML pages
+// Network first for HTML pages - return cached version if offline
   if (request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request)
@@ -45,14 +45,7 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          // Return offline page if available
-          return caches.match('/offline.html')
-            .then((offlineResponse) => {
-              if (offlineResponse) {
-                return offlineResponse;
-              }
-              return caches.match(request);
-            });
+          return caches.match(request);
         })
     );
     return;

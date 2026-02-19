@@ -3,7 +3,7 @@ import {
     User, LogOut, LogIn, ChevronLeft, Calendar,
     Crown, Star, Settings, Bell, BellOff, HelpCircle,
     Globe, Moon, Sun, ChevronRight, Mail, Check, Zap, Droplet,
-    TrendingUp, Image as ImageIcon, Shield, Smartphone, Trophy
+    TrendingUp, Image as ImageIcon, Shield, Download, Trophy, Share, X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/lib/store';
@@ -44,6 +44,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
     const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
     const [showInstallDrawer, setShowInstallDrawer] = useState(false);
+    const [showNotificationDrawer, setShowNotificationDrawer] = useState(false);
 
     const handleSignOut = () => {
         if (confirm(language === 'fr' ? 'Voulez-vous vous déconnecter ?' : language === 'en' ? 'Sign out?' : '¿Cerrar sesión?')) {
@@ -148,7 +149,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             onClick={() => setShowInstallDrawer(true)}
                             className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/5 hover:bg-white/20 transition-colors"
                         >
-                            <Smartphone className="w-6 h-6 text-emerald-100" />
+                            <Download className="w-6 h-6 text-emerald-100" />
                         </button>
                     </div>
                 </div>
@@ -195,7 +196,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
 
                     {/* Notifications */}
-                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-2 pr-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow group cursor-pointer" onClick={() => alert(language === 'fr' ? "Il est préférable de télécharger l'application avant d'activer les notifications." : language === 'en' ? "It is preferable to download the application before enabling notifications." : "Es preferible descargar la aplicación antes de activar las notificaciones.")}>
+                    <div className="bg-white dark:bg-stone-800 rounded-[2rem] p-2 pr-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow group cursor-pointer" onClick={() => setShowNotificationDrawer(true)}>
                         <div className="w-14 h-14 rounded-[1.5rem] bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center group-hover:scale-95 transition-transform">
                              <Bell className="w-6 h-6 text-rose-500" />
                         </div>
@@ -292,15 +293,15 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
             {/* Install App Drawer */}
             <Drawer open={showInstallDrawer} onOpenChange={setShowInstallDrawer}>
-                <DrawerContent className="max-w-lg mx-auto bg-white">
-                    <DrawerHeader className="border-b">
+                <DrawerContent className="max-w-lg mx-auto bg-white rounded-t-[2rem]">
+                    <DrawerHeader className="border-b pb-4">
                         <div className="flex items-center justify-between">
-                            <DrawerTitle className="text-xl">
+                            <DrawerTitle className="text-xl font-bold">
                                 {language === 'fr' ? 'Installer l\'application' : language === 'en' ? 'Install the app' : 'Instalar la aplicación'}
                             </DrawerTitle>
                             <DrawerClose asChild>
-                                <Button variant="ghost" size="icon" className="rounded-full">
-                                    <ChevronLeft className="w-5 h-5" />
+                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
+                                    <X className="w-5 h-5" />
                                 </Button>
                             </DrawerClose>
                         </div>
@@ -308,46 +309,152 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
                     <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
                         {/* iOS Instructions */}
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                        <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-5 border border-gray-100">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center shadow-lg">
                                     <span className="text-2xl">🍎</span>
                                 </div>
-                                <h3 className="font-bold text-gray-800">iOS (iPhone/iPad)</h3>
+                                <div>
+                                    <h3 className="font-bold text-gray-800 text-lg">iOS</h3>
+                                    <p className="text-xs text-gray-500">iPhone & iPad</p>
+                                </div>
                             </div>
-                            <ol className="space-y-2 text-sm text-gray-600 list-decimal list-inside">
-                                <li>Ouvrez Safari et visitez glowup.app</li>
-                                <li>Appuyez sur le bouton <strong>Partager</strong> (rectangle avec flèche)</li>
-                                <li>Faites défiler et appuyez sur <strong>"Sur l'écran d'accueil"</strong></li>
-                                <li>Appuyez sur <strong>Ajouter</strong> en haut à droite</li>
-                                <li>L'icône GlowUp apparaît sur votre écran d'accueil !</li>
+                            <ol className="space-y-3 text-sm text-gray-600">
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                                    <span>Ouvrez <strong>Safari</strong> et visitez cette app</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                                    <span>Appuyez sur le bouton <Share className="w-3 h-3 inline mx-1" /> <strong>Partager</strong></span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                                    <span>Faites défiler et appuyez sur <strong>"Ajouter à l'écran d'accueil"</strong></span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                                    <span>Appuyez sur <strong>Ajouter</strong> en haut à droite</span>
+                                </li>
                             </ol>
                         </div>
-
-                        <div className="h-px bg-gray-200" />
 
                         {/* Android Instructions */}
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                        <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg">
                                     <span className="text-2xl">🤖</span>
                                 </div>
-                                <h3 className="font-bold text-gray-800">Android</h3>
+                                <div>
+                                    <h3 className="font-bold text-gray-800 text-lg">Android</h3>
+                                    <p className="text-xs text-gray-500">Chrome recommandé</p>
+                                </div>
                             </div>
-                            <ol className="space-y-2 text-sm text-gray-600 list-decimal list-inside">
-                                <li>Ouvrez Chrome et visitez glowup.app</li>
-                                <li>Appuyez sur le menu <strong>⋮</strong> (3 points)</li>
-                                <li>Sélectionnez <strong>"Ajouter à l'écran d'accueil"</strong> ou <strong>"Installer l'application"</strong></li>
-                                <li>Confirmez en appuyant sur <strong>Ajouter</strong></li>
-                                <li>L'icône GlowUp apparaît sur votre écran d'accueil !</li>
+                            <ol className="space-y-3 text-sm text-gray-600">
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                                    <span>Ouvrez <strong>Chrome</strong> et visitez cette app</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                                    <span>Appuyez sur le menu <strong>⋮</strong> (3 points en haut)</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                                    <span>Sélectionnez <strong>"Ajouter à l'écran d'accueil"</strong> ou <strong>"Installer"</strong></span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                                    <span>Confirmez en appuyant sur <strong>Ajouter</strong></span>
+                                </li>
                             </ol>
                         </div>
 
-                        <div className="bg-emerald-50 rounded-2xl p-4 mt-4">
-                            <p className="text-sm text-emerald-700 text-center">
-                                💡 <strong>Astuce :</strong> En installant l'application, vous aurez un accès plus rapide et une meilleure expérience !
+                        <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-orange-50 rounded-2xl p-5 border border-purple-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-lg flex-shrink-0">
+                                    💡
+                                </div>
+                                <p className="text-sm text-gray-700">
+                                    <strong>Astuce :</strong> Une fois installée, l'application fonctionne hors-ligne et offre une expérience optimale !
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
+
+            {/* Notification Drawer */}
+            <Drawer open={showNotificationDrawer} onOpenChange={setShowNotificationDrawer}>
+                <DrawerContent className="max-w-lg mx-auto bg-white rounded-t-[2rem]">
+                    <DrawerHeader className="border-b pb-4">
+                        <div className="flex items-center justify-between">
+                            <DrawerTitle className="text-xl font-bold">
+                                {language === 'fr' ? 'Notifications' : language === 'en' ? 'Notifications' : 'Notificaciones'}
+                            </DrawerTitle>
+                            <DrawerClose asChild>
+                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
+                                    <X className="w-5 h-5" />
+                                </Button>
+                            </DrawerClose>
+                        </div>
+                    </DrawerHeader>
+
+                    <div className="p-6 space-y-6">
+                        <div className="text-center">
+                            <div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-4">
+                                <Bell className="w-10 h-10 text-rose-500" />
+                            </div>
+                            <h3 className="font-bold text-lg text-gray-800 mb-2">
+                                {language === 'fr' ? 'Activez les notifications' : language === 'en' ? 'Enable notifications' : 'Activa las notificaciones'}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                                {language === 'fr' 
+                                    ? "Pour une meilleure expérience, nous vous recommandons d'installer l'application avant d'activer les notifications."
+                                    : language === 'en' 
+                                        ? "For a better experience, we recommend installing the app before enabling notifications."
+                                        : "Para una mejor experiencia, le recomendamos instalar la aplicación antes de activar las notificaciones."}
                             </p>
                         </div>
+
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-100">
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-white text-lg flex-shrink-0">
+                                    📱
+                                </div>
+                                <div>
+                                    <p className="font-bold text-gray-800 mb-1">
+                                        {language === 'fr' ? 'Conseil' : language === 'en' ? 'Tip' : 'Consejo'}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                        {language === 'fr' 
+                                            ? "Installez l'application pour recevoir des rappels quotidiens et ne jamais manquer vos objectifs !"
+                                            : language === 'en' 
+                                                ? "Install the app to receive daily reminders and never miss your goals!"
+                                                : "¡Instale la aplicación para recibir recordatorios diarios y nunca pierda sus objetivos!"}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Button 
+                            onClick={() => {
+                                setShowNotificationDrawer(false);
+                                setShowInstallDrawer(true);
+                            }}
+                            className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-xl py-6 font-bold shadow-lg shadow-rose-500/30"
+                        >
+                            <Download className="w-5 h-5 mr-2" />
+                            {language === 'fr' ? "Installer l'application" : language === 'en' ? "Install the app" : "Instalar la aplicación"}
+                        </Button>
+
+                        <Button 
+                            variant="ghost"
+                            onClick={() => setShowNotificationDrawer(false)}
+                            className="w-full text-gray-500"
+                        >
+                            {language === 'fr' ? 'Plus tard' : language === 'en' ? 'Later' : 'Más tarde'}
+                        </Button>
                     </div>
                 </DrawerContent>
             </Drawer>

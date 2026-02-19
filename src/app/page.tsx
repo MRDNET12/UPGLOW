@@ -6079,36 +6079,46 @@ PROCESO OBLIGATORIO:
           setNewTaskDestination('priority');
         }
       }}>
-        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col bg-white">
-          <DrawerHeader className="border-b flex-shrink-0">
-            <DrawerTitle className="text-xl">
-              {language === 'fr' ? 'Construire ma victoire' : language === 'en' ? 'Build my victory' : 'Construir mi victoria'}
-            </DrawerTitle>
-            <DrawerDescription>
+        <DrawerContent className="max-w-lg mx-auto max-h-[90vh] flex flex-col bg-white rounded-t-[2rem] font-sans">
+          <DrawerHeader className="flex-shrink-0 pb-2">
+            <div className="flex items-center justify-between">
+              <DrawerTitle className="text-2xl font-bold text-gray-900">
+                {language === 'fr' ? 'Nouvelle tâche' : language === 'en' ? 'New task' : 'Nueva tarea'}
+              </DrawerTitle>
+              <DrawerClose asChild>
+                <button className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </DrawerClose>
+            </div>
+            <DrawerDescription className="text-gray-500 text-sm mt-1">
               {language === 'fr' ? 'Planifiez votre semaine efficacement' : language === 'en' ? 'Plan your week efficiently' : 'Planifica tu semana eficientemente'}
             </DrawerDescription>
           </DrawerHeader>
 
-          {/* Onglets */}
-          <div className="flex border-b">
-            <button
-              onClick={() => setAddTaskTab('manuel')}
-              className={`flex-1 py-3 text-sm font-semibold transition-all ${addTaskTab === 'manuel'
-                ? 'text-rose-500 border-b-2 border-rose-500'
-                : 'text-stone-400 hover:text-stone-600'
-                }`}
-            >
-              {language === 'fr' ? 'Manuel' : language === 'en' ? 'Manual' : 'Manual'}
-            </button>
-            <button
-              onClick={() => setAddTaskTab('glowee')}
-              className={`flex-1 py-3 text-sm font-semibold transition-all ${addTaskTab === 'glowee'
-                ? 'text-rose-500 border-b-2 border-rose-500'
-                : 'text-stone-400 hover:text-stone-600'
-                }`}
-            >
-              Glowee
-            </button>
+          {/* Onglets modernes */}
+          <div className="px-6 pt-2">
+            <div className="flex gap-2 p-1 bg-gray-100 rounded-2xl">
+              <button
+                onClick={() => setAddTaskTab('manuel')}
+                className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all ${addTaskTab === 'manuel'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+                  }`}
+              >
+                {language === 'fr' ? 'Manuel' : language === 'en' ? 'Manual' : 'Manual'}
+              </button>
+              <button
+                onClick={() => setAddTaskTab('glowee')}
+                className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-1 ${addTaskTab === 'glowee'
+                  ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-md'
+                  : 'text-gray-500 hover:text-gray-700'
+                  }`}
+              >
+                <Sparkles className="w-4 h-4" />
+                Glowee
+              </button>
+            </div>
           </div>
 
           <div className="p-6 space-y-6 overflow-y-auto flex-1">
@@ -6116,92 +6126,81 @@ PROCESO OBLIGATORIO:
             {addTaskTab === 'manuel' && (
               <>
                 {/* Champ de texte pour la tâche */}
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold">
-                    {language === 'fr' ? 'Tâche' : language === 'en' ? 'Task' : 'Tarea'}
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-gray-700">
+                    {language === 'fr' ? 'Que dois-tu faire ?' : language === 'en' ? 'What do you need to do?' : '¿Qué necesitas hacer?'}
                   </label>
                   <Input
-                    placeholder={language === 'fr' ? 'Entrez votre tâche...' : language === 'en' ? 'Enter your task...' : 'Ingresa tu tarea...'}
+                    placeholder={language === 'fr' ? 'Ex: Réviser mes cours, Faire du sport...' : language === 'en' ? 'Ex: Study, Exercise...' : 'Ej: Estudiar, Hacer ejercicio...'}
                     value={newTaskText}
                     onChange={(e) => setNewTaskText(e.target.value)}
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                    className={`h-14 text-base rounded-xl border-2 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-gray-200'}`}
                   />
                 </div>
 
                 {/* Sélection de la destination */}
-                <div className="space-y-3">
-                  <label className="text-sm font-semibold">
-                    {language === 'fr' ? 'Destination' : language === 'en' ? 'Destination' : 'Destino'}
+                <div className="space-y-4">
+                  <label className="text-sm font-semibold text-gray-700">
+                    {language === 'fr' ? 'Quand ?' : language === 'en' ? 'When?' : '¿Cuándo?'}
                   </label>
 
-                  {/* Jours de la semaine avec dates */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-stone-500 dark:text-stone-400">
-                      {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Próximos días'}
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {(() => {
-                        const today = new Date();
-                        const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
-                        const nextDays: Array<{
-                          key: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-                          dayLabel: string;
-                          dateLabel: string;
-                          isToday: boolean;
-                        }> = [];
-                        for (let i = 0; i < 7; i++) {
-                          const date = new Date(today);
-                          date.setDate(today.getDate() + i);
-                          const dayIndex = date.getDay();
-                          const dayKey = dayKeys[dayIndex];
-                          const dayLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long' });
-                          const dateLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'short' });
-                          const isToday = i === 0;
-                          nextDays.push({ key: dayKey, dayLabel, dateLabel, isToday });
-                        }
-                        return nextDays.map((day) => (
-                          <button
-                            key={day.key}
-                            onClick={() => setNewTaskDestination(day.key as any)}
-                            className={`p-2.5 rounded-xl text-xs font-semibold transition-all ${newTaskDestination === day.key
-                              ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                              : theme === 'dark'
-                                ? 'bg-stone-800 hover:bg-stone-700'
-                                : 'bg-stone-100 hover:bg-stone-200'
-                              }`}
-                          >
-                            <div className="flex flex-col gap-1.5">
-                              <div className="flex items-center gap-1.5">
-                                <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${newTaskDestination === day.key
-                                  ? 'border-white bg-white'
-                                  : 'border-stone-400'
-                                  }`}>
-                                  {newTaskDestination === day.key && <Check className="w-2 h-2 text-rose-400" />}
-                                </div>
-                                <span className="capitalize text-left flex-1">{day.dayLabel}</span>
-                              </div>
-                              <div className="flex items-center justify-between pl-5">
-                                <span className={`text-[10px] ${newTaskDestination === day.key ? 'opacity-90' : 'opacity-70'}`}>
-                                  {day.dateLabel}
-                                </span>
-                                {day.isToday && (
-                                  <Badge variant="outline" className={`text-[9px] px-1 py-0 ${newTaskDestination === day.key ? 'border-white text-white' : 'border-rose-400 text-rose-400'
-                                    }`}>
-                                    {language === 'fr' ? "Auj." : language === 'en' ? 'Today' : 'Hoy'}
-                                  </Badge>
-                                )}
-                              </div>
+                  {/* Jours de la semaine avec dates - Design moderne */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {(() => {
+                      const today = new Date();
+                      const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+                      const nextDays: Array<{
+                        key: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+                        dayLabel: string;
+                        dateLabel: string;
+                        isToday: boolean;
+                      }> = [];
+                      for (let i = 0; i < 7; i++) {
+                        const date = new Date(today);
+                        date.setDate(today.getDate() + i);
+                        const dayIndex = date.getDay();
+                        const dayKey = dayKeys[dayIndex];
+                        const dayLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' });
+                        const dateLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric' });
+                        const isToday = i === 0;
+                        nextDays.push({ key: dayKey, dayLabel, dateLabel, isToday });
+                      }
+                      return nextDays.map((day) => (
+                        <button
+                          key={day.key}
+                          onClick={() => setNewTaskDestination(day.key as any)}
+                          className={`p-4 rounded-2xl transition-all duration-200 flex items-center justify-between ${newTaskDestination === day.key
+                            ? 'bg-gray-900 text-white shadow-lg'
+                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                          <div className="flex flex-col items-start">
+                            <span className="text-xs font-medium opacity-70 uppercase tracking-wide">{day.dayLabel}</span>
+                            <span className="text-lg font-bold">{day.dateLabel}</span>
+                          </div>
+                          {day.isToday && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${newTaskDestination === day.key ? 'bg-white/20' : 'bg-rose-100 text-rose-600'}`}>
+                              {language === 'fr' ? "Auj" : language === 'en' ? 'Now' : 'Hoy'}
+                            </span>
+                          )}
+                          {newTaskDestination === day.key && !day.isToday && (
+                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+                              <Check className="w-3 h-3" />
                             </div>
-                          </button>
-                        ));
-                      })()}
-                    </div>
+                          )}
+                        </button>
+                      ));
+                    })()}
                   </div>
                 </div>
 
-                {/* Bouton Planifier */}
-                <Button
-                  className="w-full h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
+                {/* Bouton Ajouter - Design moderne */}
+                <button
+                  className={`w-full h-14 rounded-2xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2 ${newTaskText.trim()
+                    ? 'bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:shadow-xl hover:scale-[1.02]'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    }`}
+                  disabled={!newTaskText.trim()}
                   onClick={async () => {
                     if (newTaskText.trim()) {
                       if (newTaskDestination === 'priority') {
@@ -6244,19 +6243,6 @@ PROCESO OBLIGATORIO:
                         };
 
                         setTasksWithDates(prev => [...prev, newTaskWithDate]);
-
-                        // Sauvegarder dans Firebase si l'utilisateur est connecté
-                        if (user) {
-                          try {
-                            const firebaseId = await saveTask(user.uid, newTaskWithDate);
-                            // Mettre à jour l'ID local avec l'ID Firebase
-                            setTasksWithDates(prev => prev.map(t =>
-                              t.id === newTaskWithDate.id ? { ...t, id: firebaseId } : t
-                            ));
-                          } catch (error) {
-                            console.error('Error saving task to Firebase:', error);
-                          }
-                        }
                       }
 
                       setNewTaskText('');
@@ -6265,8 +6251,9 @@ PROCESO OBLIGATORIO:
                     }
                   }}
                 >
-                  {language === 'fr' ? 'Planifier' : language === 'en' ? 'Schedule' : 'Planificar'}
-                </Button>
+                  <Plus className="w-5 h-5" />
+                  {language === 'fr' ? 'Ajouter la tâche' : language === 'en' ? 'Add task' : 'Agregar tarea'}
+                </button>
               </>
             )}
 
@@ -6276,76 +6263,79 @@ PROCESO OBLIGATORIO:
                 {!gloweeProposedTasks ? (
                   /* Étape 1: Saisie de la victoire */
                   <div className="space-y-6">
-                    {/* Image et message de Glowee */}
-                    <div className="flex items-start gap-3">
-                      <div className="w-[20%] flex-shrink-0">
-                        <img
-                          src="/Glowee/glowee.webp"
-                          alt="Glowee"
-                          className="w-full h-auto object-contain"
-                        />
-                      </div>
-                      <div className="flex-1 space-y-2 pt-2">
-                        <p className="text-sm text-stone-600 italic">
-                          {language === 'fr'
-                            ? "On veut tous accumuler de petits succès qui nous font grandir. Mais parfois, on ne sait pas quoi faire."
-                            : language === 'en'
-                              ? "We all want to accumulate small successes that make us grow. But sometimes, we don't know what to do."
-                              : "Todos queremos acumular pequeños éxitos que nos hagan crecer. Pero a veces, no sabemos qué hacer."}
-                        </p>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {language === 'fr'
-                            ? "Quelle sera ta prochaine petite victoire ?"
-                            : language === 'en'
-                              ? "What will be your next small victory?"
-                              : "¿Cuál será tu próxima pequeña victoria?"}
-                        </p>
+                    {/* Header Glowee */}
+                    <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-5 border border-rose-100">
+                      <div className="flex items-start gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center flex-shrink-0">
+                          <img
+                            src="/Glowee/glowee.webp"
+                            alt="Glowee"
+                            className="w-10 h-10 object-contain"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            {language === 'fr'
+                              ? "Tu veux atteindre un objectif mais tu ne sais pas par où commencer ?"
+                              : language === 'en'
+                                ? "You want to achieve a goal but don't know where to start?"
+                                : "¿Quieres alcanzar un objetivo pero no sabes por dónde empezar?"}
+                          </p>
+                          <p className="text-base font-bold text-gray-900 mt-2">
+                            {language === 'fr'
+                              ? "Je te crée un plan sur mesure"
+                              : language === 'en'
+                                ? "I'll create a custom plan for you"
+                                : "Te crearé un plan a medida"}
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Nombre de jours */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold">
-                        {language === 'fr' ? 'Sur combien de jours ?' : language === 'en' ? 'Over how many days?' : '¿En cuántos días?'}
+                    {/* Nombre de jours - Design moderne */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-semibold text-gray-700">
+                        {language === 'fr' ? 'Durée du plan' : language === 'en' ? 'Plan duration' : 'Duración del plan'}
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-3">
                         {[3, 5, 7].map((days) => (
                           <button
                             key={days}
                             onClick={() => setGloweeDayCount(days)}
-                            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${gloweeDayCount === days
-                              ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                              : theme === 'dark'
-                                ? 'bg-stone-800 hover:bg-stone-700'
-                                : 'bg-stone-100 hover:bg-stone-200'
+                            className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${gloweeDayCount === days
+                              ? 'bg-gray-900 text-white shadow-lg'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                               }`}
                           >
-                            {days} {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}
+                            {days} {language === 'fr' ? 'j' : language === 'en' ? 'd' : 'd'}
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    {/* Champ de saisie */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold">
-                        {language === 'fr' ? 'Décris ta victoire' : language === 'en' ? 'Describe your victory' : 'Describe tu victoria'}
+                    {/* Champ de saisie - Design moderne */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-semibold text-gray-700">
+                        {language === 'fr' ? 'Ton objectif' : language === 'en' ? 'Your goal' : 'Tu objetivo'}
                       </label>
                       <textarea
                         placeholder={language === 'fr'
-                          ? "Ex: Je veux courir 5km, Je veux lire un livre, Je veux apprendre une nouvelle recette..."
+                          ? "Ex: Je veux courir 5km, apprendre une nouvelle recette..."
                           : language === 'en'
-                            ? "Ex: I want to run 5km, I want to read a book, I want to learn a new recipe..."
-                            : "Ej: Quiero correr 5km, Quiero leer un libro, Quiero aprender una nueva receta..."}
+                            ? "Ex: I want to run 5km, learn a new recipe..."
+                            : "Ej: Quiero correr 5km, aprender una nueva receta..."}
                         value={gloweeVictoryText}
                         onChange={(e) => setGloweeVictoryText(e.target.value)}
-                        className={`w-full p-4 rounded-xl resize-none h-24 ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50 border-stone-200'} border focus:outline-none focus:ring-2 focus:ring-rose-400`}
+                        className={`w-full p-4 rounded-xl resize-none h-28 text-base border-2 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all ${theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-white border-gray-200'}`}
                       />
                     </div>
 
-                    {/* Bouton J'y vais */}
-                    <Button
-                      className="w-full h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
+                    {/* Bouton Générer - Design moderne */}
+                    <button
+                      className={`w-full h-14 rounded-2xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2 ${gloweeVictoryText.trim() && !isGloweeLoading
+                        ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 text-white shadow-lg hover:shadow-xl hover:scale-[1.02]'
+                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        }`}
                       onClick={async () => {
                         if (!gloweeVictoryText.trim()) return;
 
@@ -6423,32 +6413,39 @@ PROCESO OBLIGATORIO:
                       disabled={!gloweeVictoryText.trim() || isGloweeLoading}
                     >
                       {isGloweeLoading ? (
-                        <div className="flex items-center gap-2">
+                        <>
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          {language === 'fr' ? 'Génération...' : language === 'en' ? 'Generating...' : 'Generando...'}
-                        </div>
+                          {language === 'fr' ? 'Création...' : language === 'en' ? 'Creating...' : 'Creando...'}
+                        </>
                       ) : (
-                        language === 'fr' ? "J'y vais" : language === 'en' ? "Let's go" : "Vamos"
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          {language === 'fr' ? 'Créer mon plan' : language === 'en' ? 'Create my plan' : 'Crear mi plan'}
+                        </>
                       )}
-                    </Button>
+                    </button>
                   </div>
                 ) : (
                   /* Étape 2: Validation des tâches proposées */
                   <div className="space-y-6">
-                    <div className="text-center">
-                      <h3 className="text-lg font-semibold text-gray-800">
+                    {/* Header succès */}
+                    <div className="text-center bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-5 border border-rose-100">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-400 flex items-center justify-center mx-auto mb-3 shadow-lg">
+                        <Sparkles className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900">
                         {language === 'fr' ? 'Voici ton plan !' : language === 'en' ? 'Here is your plan!' : '¡Aquí está tu plan!'}
                       </h3>
-                      <p className="text-sm text-stone-500 mt-1">
+                      <p className="text-sm text-gray-500 mt-1">
                         {language === 'fr'
-                          ? 'Valide ces tâches pour les ajouter à ton planning'
+                          ? `${gloweeProposedTasks.length} tâches sur ${gloweeDayCount} jours`
                           : language === 'en'
-                            ? 'Validate these tasks to add them to your schedule'
-                            : 'Valida estas tareas para agregarlas a tu calendario'}
+                            ? `${gloweeProposedTasks.length} tasks over ${gloweeDayCount} days`
+                            : `${gloweeProposedTasks.length} tareas en ${gloweeDayCount} días`}
                       </p>
                     </div>
 
-                    {/* Liste des tâches proposées */}
+                    {/* Liste des tâches proposées - Design moderne */}
                     <div className="space-y-3 max-h-[300px] overflow-y-auto">
                       {gloweeProposedTasks.map((task, index) => {
                         const today = new Date();
@@ -6456,21 +6453,21 @@ PROCESO OBLIGATORIO:
                         targetDate.setDate(today.getDate() + task.dayIndex);
                         const dateLabel = targetDate.toLocaleDateString(
                           language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES',
-                          { weekday: 'long', day: 'numeric', month: 'short' }
+                          { weekday: 'short', day: 'numeric', month: 'short' }
                         );
 
                         return (
                           <div
                             key={index}
-                            className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50'} border-l-4 border-rose-400`}
+                            className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-stone-800' : 'bg-white'} border border-gray-100 shadow-sm`}
                           >
                             <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                              <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                 {task.dayIndex + 1}
                               </div>
                               <div className="flex-1">
                                 <p className="text-sm font-medium text-gray-800">{task.text}</p>
-                                <p className="text-xs text-stone-400 mt-1 capitalize">{dateLabel}</p>
+                                <p className="text-xs text-gray-400 mt-1 uppercase tracking-wide">{dateLabel}</p>
                               </div>
                             </div>
                           </div>
@@ -6478,20 +6475,19 @@ PROCESO OBLIGATORIO:
                       })}
                     </div>
 
-                    {/* Boutons d'action */}
+                    {/* Boutons d'action - Design moderne */}
                     <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        className="flex-1 h-12"
+                      <button
+                        className="flex-1 h-14 rounded-2xl font-semibold text-base transition-all duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
                         onClick={() => {
                           setGloweeProposedTasks(null);
                           setGloweeVictoryText('');
                         }}
                       >
                         {language === 'fr' ? 'Recommencer' : language === 'en' ? 'Start over' : 'Recomenzar'}
-                      </Button>
-                      <Button
-                        className="flex-1 h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 hover:from-rose-500 hover:via-pink-500 hover:to-orange-400 text-white font-semibold"
+                      </button>
+                      <button
+                        className="flex-1 h-14 rounded-2xl font-bold text-base transition-all duration-200 bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
                         onClick={async () => {
                           const today = new Date();
 
@@ -6508,18 +6504,6 @@ PROCESO OBLIGATORIO:
                             };
 
                             setTasksWithDates(prev => [...prev, newTaskWithDate]);
-
-                            // Sauvegarder dans Firebase si l'utilisateur est connecté
-                            if (user) {
-                              try {
-                                const firebaseId = await saveTask(user.uid, newTaskWithDate);
-                                setTasksWithDates(prev => prev.map(t =>
-                                  t.id === newTaskWithDate.id ? { ...t, id: firebaseId } : t
-                                ));
-                              } catch (error) {
-                                console.error('Error saving task to Firebase:', error);
-                              }
-                            }
                           }
 
                           // Reset et fermer
@@ -6529,8 +6513,9 @@ PROCESO OBLIGATORIO:
                           setAddTaskTab('manuel');
                         }}
                       >
-                        {language === 'fr' ? 'Valider et ajouter' : language === 'en' ? 'Validate and add' : 'Validar y agregar'}
-                      </Button>
+                        <Check className="w-5 h-5" />
+                        {language === 'fr' ? 'Ajouter à mon planning' : language === 'en' ? 'Add to my schedule' : 'Agregar a mi calendario'}
+                      </button>
                     </div>
                   </div>
                 )}

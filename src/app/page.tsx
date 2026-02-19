@@ -4562,11 +4562,11 @@ PROCESO OBLIGATORIO:
               {/* Tab 1: Suivi journalier */}
               {newMeActiveTab === 'daily' && (
                 <>
-                  {/* Carte Glowee avec message et progression */}
-                  <div className="relative mb-6">
+                  {/* Carte Glowee avec message et progression - Statique */}
+                  <div className="mb-6">
                     <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
-                      <CardContent className="p-4 pl-20">
-                        <p className="text-xs text-gray-700 leading-relaxed font-medium mb-3">
+                      <CardContent className="p-4">
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium mb-3">
                           {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
                             language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
                               '30 días. 3 gestos al día. Para un verdadero glow up.'}
@@ -4576,7 +4576,7 @@ PROCESO OBLIGATORIO:
                           <div className="flex-1 max-w-[150px]">
                             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
+                                className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300"
                                 style={{
                                   width: `${(() => {
                                     const dayProgress = getBeautyProgressForDate(beautySelectedDate);
@@ -4599,18 +4599,6 @@ PROCESO OBLIGATORIO:
                         </div>
                       </CardContent>
                     </Card>
-
-                    {/* Image Glowee */}
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[60px] h-[64px] z-10">
-                      <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
-                      <Image
-                        src="/Glowee/glowee.webp"
-                        alt="Glowee"
-                        width={60}
-                        height={64}
-                        className="object-contain relative z-10 drop-shadow-2xl"
-                      />
-                    </div>
                   </div>
 
                   {/* Liste des 3 piliers beauté */}

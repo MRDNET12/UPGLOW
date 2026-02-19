@@ -57,7 +57,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
     );
 
     return (
-        <div className="pb-28 min-h-screen bg-[#F7F8FA] dark:bg-stone-900 font-sans animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="pb-28 bg-[#F7F8FA] dark:bg-stone-900 font-sans animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Background decoration */}
             <div className="fixed top-0 left-0 w-full h-[400px] bg-gradient-to-b from-[#F7F8FA] to-transparent dark:from-[#1c2e2c] pointer-events-none" />
 

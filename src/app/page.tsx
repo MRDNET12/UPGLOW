@@ -3646,7 +3646,7 @@ PROCESO OBLIGATORIO:
 
         {/* Trackers View - Project Glow Design System */}
         {currentView === 'trackers' && (
-          <div className="pb-24 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500 bg-[#F7F8FA]">
+          <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-[#F7F8FA]">
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">
@@ -3899,7 +3899,7 @@ PROCESO OBLIGATORIO:
 
         {/* Habit Progress View */}
         {currentView === 'habit-progress' && (
-          <div className="pb-24 min-h-screen bg-[#F7F8FA]">
+          <div className="pb-24 bg-[#F7F8FA]">
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">
@@ -4486,7 +4486,7 @@ PROCESO OBLIGATORIO:
 
         {/* New Me View */}
         {currentView === 'new-me' && (
-          <div className="pb-24 min-h-screen bg-white">
+          <div className="pb-24 bg-white">
             {/* Header */}
             <div className="p-4 pb-0 bg-white">
               <div className="flex items-center gap-3 mb-3">
@@ -5380,7 +5380,7 @@ PROCESO OBLIGATORIO:
 
         {/* Bonus View - Refonte Glassmorphism */}
         {currentView === 'bonus' && (
-          <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 min-h-screen">
+          <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50">
             {/* Header élégant */}
             <div className="flex items-center gap-3 p-5 pb-4 max-w-3xl mx-auto">
               <Button
@@ -7405,7 +7405,7 @@ PROCESO OBLIGATORIO:
 
       {/* Glow Mirror View */}
       {currentView === 'glow-mirror' && canAccessFeature('glow_mirror') && (
-        <div className="pb-24 min-h-screen bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="pb-24 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Header */}
           <div className="p-4 pb-0 bg-white">
             <div className="flex items-center gap-3 mb-3">

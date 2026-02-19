@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Sparkles, Check, Crown, Star, Heart } from 'lucide-react';
+import { X, Sparkles, Check, Crown, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Language } from '@/lib/translations';
@@ -38,65 +38,41 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
     switch (language) {
       case 'fr':
         return {
-          title: 'Deviens ta meilleure version',
+          title: 'Continue de Briller',
           subtitle: 'Investis en toi dès aujourd\'hui',
+          description: 'Cette app est un projet qui nous tient à cœur et nous ajoutons constamment des nouvelles mises à jour, fonctionnalités et améliorations. Nous avons besoin de vous.',
           glowStart: {
             name: 'Glow Start',
             price: '1.99€',
             period: '/mois',
             features: ['Message à moi', 'Petites victoires', 'Mes habitudes', 'Mon journal'],
             cta: 'Commencer'
-          },
-          glowPlus: {
-            name: 'Glow Plus',
-            price: '3.99€',
-            period: '/mois',
-            description: 'Le choix le plus populaire',
-            features: ['Tout Glow Start', 'Glow Mirror AI', 'Analyses avancées', 'Support prioritaire'],
-            cta: 'Rejoindre le club',
-            popular: 'LOVE IT'
           }
         };
       case 'en':
         return {
-          title: 'Become your best self',
+          title: 'Keep Shining',
           subtitle: 'Invest in yourself today',
+          description: 'This app is a project close to our hearts, and we are constantly adding new updates, features, and improvements. We need you.',
           glowStart: {
             name: 'Glow Start',
             price: '1.99€',
             period: '/month',
             features: ['Message to myself', 'Small wins', 'My habits', 'My journal'],
             cta: 'Start'
-          },
-          glowPlus: {
-            name: 'Glow Plus',
-            price: '3.99€',
-            period: '/month',
-            description: 'Most popular choice',
-            features: ['All Glow Start', 'Glow Mirror AI', 'Advanced insights', 'Priority support'],
-            cta: 'Join the club',
-            popular: 'LOVE IT'
           }
         };
       case 'es':
         return {
-          title: 'Conviértete en tu mejor versión',
+          title: 'Sigue Brillando',
           subtitle: 'Invierte en ti hoy mismo',
+          description: 'Esta aplicación es un proyecto que nos importa mucho y constantemente agregamos nuevas actualizaciones, funciones y mejoras. Te necesitamos.',
           glowStart: {
             name: 'Glow Start',
             price: '1.99€',
             period: '/mes',
             features: ['Mensaje a mí', 'Pequeñas victorias', 'Mis hábitos', 'Mi diario'],
             cta: 'Empezar'
-          },
-          glowPlus: {
-            name: 'Glow Plus',
-            price: '3.99€',
-            period: '/mes',
-            description: 'La opción más popular',
-            features: ['Todo Glow Start', 'Glow Mirror AI', 'Análisis avanzados', 'Soporte prioritario'],
-            cta: 'Únete al club',
-            popular: 'LOVE IT'
           }
         };
       default: return null; // Should not happen
@@ -141,29 +117,31 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-6 pb-8 space-y-4 scrollbar-hide">
 
-          {/* Glow Plus Card - Highlighted */}
-          <div className="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-purple-200/50 border-2 border-white relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
-            <div className="absolute top-0 right-0 bg-black text-white text-xs font-bold px-4 py-2 rounded-bl-2xl">
-              {texts.glowPlus.popular}
-            </div>
+          {/* Description */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-[1.5rem] p-4 border border-white/50">
+            <p className="text-sm text-[#2D2a2e]/80 text-center leading-relaxed">
+              {texts.description}
+            </p>
+          </div>
 
+          {/* Glow Start Card */}
+          <div className="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-purple-200/50 border-2 border-white relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
             <div className="flex justify-between items-end mb-4">
               <div>
                 <h3 className="text-xl font-black text-[#2D2a2e] flex items-center gap-2">
-                  {texts.glowPlus.name}
+                  {texts.glowStart.name}
                   <Sparkles className="w-5 h-5 text-purple-500 fill-purple-500" />
                 </h3>
-                <p className="text-sm text-gray-500 font-medium">{texts.glowPlus.description}</p>
               </div>
             </div>
 
             <div className="mb-6">
-              <span className="text-4xl font-black text-[#2D2a2e]">{texts.glowPlus.price}</span>
-              <span className="text-gray-400 font-medium">{texts.glowPlus.period}</span>
+              <span className="text-4xl font-black text-[#2D2a2e]">{texts.glowStart.price}</span>
+              <span className="text-gray-400 font-medium">{texts.glowStart.period}</span>
             </div>
 
             <div className="space-y-3 mb-6">
-              {texts.glowPlus.features.map((feature, i) => (
+              {texts.glowStart.features.map((feature, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-[#E9D8FD] flex items-center justify-center flex-shrink-0">
                     <Check className="w-3.5 h-3.5 text-purple-700" />
@@ -174,37 +152,9 @@ export function PlanSelectionPopup({ isOpen, onClose, onSelectPlan, language }: 
             </div>
 
             <button
-              onClick={() => handleSelectPlan('glow_plus')}
-              disabled={isLoading}
-              className="w-full py-4 rounded-[1.5rem] bg-black text-white font-bold text-lg shadow-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
-            >
-              {texts.glowPlus.cta}
-            </button>
-          </div>
-
-          {/* Glow Start Card */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-6 border border-white/50 hover:bg-white/60 transition-colors">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-[#2D2a2e]">{texts.glowStart.name}</h3>
-              <div className="text-right">
-                <span className="text-xl font-bold text-[#2D2a2e]">{texts.glowStart.price}</span>
-                <span className="text-xs text-gray-500">{texts.glowStart.period}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {texts.glowStart.features.map((feature, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs text-gray-600 font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                  {feature}
-                </div>
-              ))}
-            </div>
-
-            <button
               onClick={() => handleSelectPlan('glow_start')}
               disabled={isLoading}
-              className="w-full py-3 rounded-[1.5rem] bg-white text-[#2D2a2e] font-bold border-2 border-transparent hover:border-black/10 transition-colors text-sm"
+              className="w-full py-4 rounded-[1.5rem] bg-black text-white font-bold text-lg shadow-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
             >
               {texts.glowStart.cta}
             </button>

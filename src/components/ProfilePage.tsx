@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/drawer';
 import { Language } from '@/lib/translations';
 
 interface ProfilePageProps {
@@ -42,6 +43,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
     } = useStore();
 
     const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
+    const [showInstallDrawer, setShowInstallDrawer] = useState(false);
 
     const handleSignOut = () => {
         if (confirm(language === 'fr' ? 'Voulez-vous vous déconnecter ?' : language === 'en' ? 'Sign out?' : '¿Cerrar sesión?')) {
@@ -142,8 +144,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             </button>
                         )}
 
-                        <button className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/5 hover:bg-white/20 transition-colors">
-                            <Calendar className="w-6 h-6 text-emerald-100" />
+                        <button 
+                            onClick={() => setShowInstallDrawer(true)}
+                            className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/5 hover:bg-white/20 transition-colors"
+                        >
+                            <Smartphone className="w-6 h-6 text-emerald-100" />
                         </button>
                     </div>
                 </div>
@@ -340,6 +345,68 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                     </div>
                 </DialogContent>
             </Dialog>
+
+            {/* Install App Drawer */}
+            <Drawer open={showInstallDrawer} onOpenChange={setShowInstallDrawer}>
+                <DrawerContent className="max-w-lg mx-auto bg-white">
+                    <DrawerHeader className="border-b">
+                        <div className="flex items-center justify-between">
+                            <DrawerTitle className="text-xl">
+                                {language === 'fr' ? 'Installer l\'application' : language === 'en' ? 'Install the app' : 'Instalar la aplicación'}
+                            </DrawerTitle>
+                            <DrawerClose asChild>
+                                <Button variant="ghost" size="icon" className="rounded-full">
+                                    <ChevronLeft className="w-5 h-5" />
+                                </Button>
+                            </DrawerClose>
+                        </div>
+                    </DrawerHeader>
+                    
+                    <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                        {/* iOS Instructions */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                                    <span className="text-2xl">🍎</span>
+                                </div>
+                                <h3 className="font-bold text-gray-800">iOS (iPhone/iPad)</h3>
+                            </div>
+                            <ol className="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+                                <li>Ouvrez Safari et visitez glowup.app</li>
+                                <li>Appuyez sur le bouton <strong>Partager</strong> (rectangle avec flèche)</li>
+                                <li>Faites défiler et appuyez sur <strong>"Sur l'écran d'accueil"</strong></li>
+                                <li>Appuyez sur <strong>Ajouter</strong> en haut à droite</li>
+                                <li>L'icône GlowUp apparaît sur votre écran d'accueil !</li>
+                            </ol>
+                        </div>
+
+                        <div className="h-px bg-gray-200" />
+
+                        {/* Android Instructions */}
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                                    <span className="text-2xl">🤖</span>
+                                </div>
+                                <h3 className="font-bold text-gray-800">Android</h3>
+                            </div>
+                            <ol className="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+                                <li>Ouvrez Chrome et visitez glowup.app</li>
+                                <li>Appuyez sur le menu <strong>⋮</strong> (3 points)</li>
+                                <li>Sélectionnez <strong>"Ajouter à l'écran d'accueil"</strong> ou <strong>"Installer l'application"</strong></li>
+                                <li>Confirmez en appuyant sur <strong>Ajouter</strong></li>
+                                <li>L'icône GlowUp apparaît sur votre écran d'accueil !</li>
+                            </ol>
+                        </div>
+
+                        <div className="bg-emerald-50 rounded-2xl p-4 mt-4">
+                            <p className="text-sm text-emerald-700 text-center">
+                                💡 <strong>Astuce :</strong> En installant l'application, vous aurez un accès plus rapide et une meilleure expérience !
+                            </p>
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
         </div>
     );
 };

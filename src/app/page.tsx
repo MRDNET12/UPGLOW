@@ -4295,7 +4295,7 @@ PROCESO OBLIGATORIO:
 
                         {/* Delete button */}
                         <button
-                          onClick={async (e) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             const confirmed = window.confirm(
                               language === 'fr' 
@@ -4306,13 +4306,6 @@ PROCESO OBLIGATORIO:
                             );
                             if (confirmed) {
                               setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
-                              if (user && task.id.startsWith('firebase_')) {
-                                try {
-                                  await deleteTaskFromFirebase(task.id);
-                                } catch (error) {
-                                  console.error('Error deleting task from Firebase:', error);
-                                }
-                              }
                             }
                           }}
                           className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-50 rounded-lg"

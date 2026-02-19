@@ -6680,11 +6680,6 @@ PROCESO OBLIGATORIO:
       <Dialog open={showDeleteTaskConfirm} onOpenChange={setShowDeleteTaskConfirm}>
         <DialogContent className={`max-w-md ${theme === 'dark' ? 'bg-stone-900 border-stone-800' : 'bg-white'}`}>
           <div className="flex flex-col items-center gap-4 py-4">
-            <img
-              src="/Glowee/glowee-happy.webp"
-              alt="Glowee"
-              className="w-32 h-32 object-contain"
-            />
             <DialogHeader className="text-center">
               <DialogTitle className="text-xl">
                 {language === 'fr' ? 'Supprimer cette tâche ?' : language === 'en' ? 'Delete this task?' : '¿Eliminar esta tarea?'}

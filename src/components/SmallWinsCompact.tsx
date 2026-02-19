@@ -169,15 +169,16 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   // Ref pour tracker le nombre précédent de wins
   const prevCountRef = useRef(winsThisWeek.length);
 
-  // Trigger animation on win add - 10 secondes
+  // Trigger animation on win add - 10 secondes avec 3 phases d'explosion
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
-      setAnimationPhase(2); // Commence directement à la phase 2 (explosion)
+      setAnimationPhase(2); // Phase 2: première explosion (1-3s)
       
-      // Animation en 2 phases sur 10 secondes
+      // Animation en 3 phases d'explosion sur 10 secondes
       const phaseTimers = [
-        setTimeout(() => setAnimationPhase(3), 3000),   // Phase 3: maintien après 3s
+        setTimeout(() => setAnimationPhase(3), 3000),   // Phase 3: deuxième explosion (4-6s)
+        setTimeout(() => setAnimationPhase(4), 6000),   // Phase 4: troisième explosion (7-10s)
         setTimeout(() => {
           setIsAnimating(false);
           setAnimationPhase(0);
@@ -289,10 +290,13 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         }
         
         .win-animate-phase-2 {
-          animation: win-explode 9s ease-in-out forwards, win-glow 9s ease-in-out infinite;
+          animation: win-explode 3s ease-in-out forwards, win-glow 3s ease-in-out infinite;
         }
         .win-animate-phase-3 {
-          animation: win-glow 7s ease-in-out infinite;
+          animation: win-explode 3s ease-in-out forwards, win-glow 3s ease-in-out infinite;
+        }
+        .win-animate-phase-4 {
+          animation: win-explode 3s ease-in-out forwards, win-glow 3s ease-in-out infinite;
         }
         
         .win-particle {
@@ -327,12 +331,12 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {/* Effet shimmer lors de l'animation */}
-          {isAnimating && animationPhase >= 2 && animationPhase <= 3 && (
+          {isAnimating && animationPhase >= 2 && animationPhase <= 4 && (
             <div className="absolute inset-0 win-shimmer pointer-events-none z-10" />
           )}
 
-          {/* Anneaux d'explosion lors de la phase 2 */}
-          {isAnimating && animationPhase === 2 && (
+          {/* Anneaux d'explosion lors des phases 2, 3 et 4 */}
+          {isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) && (
             <>
               <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32" />
               <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48" style={{ animationDelay: '0.3s' }} />
@@ -341,7 +345,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
           )}
 
           {/* Particules flottantes */}
-          {isAnimating && animationPhase >= 2 && animationPhase <= 3 && (
+          {isAnimating && animationPhase >= 2 && animationPhase <= 4 && (
             <>
               <span className="win-particle top-4 left-1/4 text-2xl" style={{ animationDelay: '0s' }}>✨</span>
               <span className="win-particle top-4 right-1/4 text-xl" style={{ animationDelay: '0.2s' }}>🌟</span>
@@ -358,13 +362,13 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
 
           <div className="relative z-10 flex items-center justify-start gap-5">
             {/* Gauche : Emoji avec animation */}
-            <div className={`transition-all duration-500 ${isAnimating && animationPhase === 2 ? 'win-text-pop' : ''}`}>
+            <div className={`transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-text-pop' : ''}`}>
               <span className="text-5xl filter drop-shadow-lg">{rank.emoji}</span>
             </div>
 
             {/* Droite : Phrase avec animation */}
             <div className="flex-1">
-              <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && animationPhase === 2 ? 'win-shake' : ''}`}>
+              <h3 className={`text-2xl font-bold text-white leading-tight drop-shadow-md transition-all duration-500 ${isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) ? 'win-shake' : ''}`}>
                 {rank.name}
               </h3>
             </div>

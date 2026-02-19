@@ -6267,30 +6267,21 @@ PROCESO OBLIGATORIO:
                   /* Étape 1: Saisie de la victoire */
                   <div className="space-y-6">
                     {/* Image et message de Glowee */}
-                    <div className="flex items-start gap-3">
-                      <div className="w-[20%] flex-shrink-0">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-24 h-24 flex-shrink-0">
                         <img
                           src="/Glowee/glowee.webp"
                           alt="Glowee"
-                          className="w-full h-auto object-contain"
+                          className="w-full h-full object-contain"
                         />
                       </div>
-                      <div className="flex-1 space-y-2 pt-2">
-                        <p className="text-sm text-stone-600 italic">
-                          {language === 'fr'
-                            ? "On veut tous accumuler de petits succès qui nous font grandir. Mais parfois, on ne sait pas quoi faire."
-                            : language === 'en'
-                              ? "We all want to accumulate small successes that make us grow. But sometimes, we don't know what to do."
-                              : "Todos queremos acumular pequeños éxitos que nos hagan crecer. Pero a veces, no sabemos qué hacer."}
-                        </p>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {language === 'fr'
-                            ? "Quelle sera ta prochaine petite victoire ?"
-                            : language === 'en'
-                              ? "What will be your next small victory?"
-                              : "¿Cuál será tu próxima pequeña victoria?"}
-                        </p>
-                      </div>
+                      <p className="text-lg font-semibold text-gray-800 text-center w-full">
+                        {language === 'fr'
+                          ? "Quelle sera ta prochaine petite victoire ?"
+                          : language === 'en'
+                            ? "What will be your next small victory?"
+                            : "¿Cuál será tu próxima pequeña victoria?"}
+                      </p>
                     </div>
 
                     {/* Nombre de jours */}

@@ -4297,18 +4297,14 @@ PROCESO OBLIGATORIO:
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            const confirmed = window.confirm(
-                              language === 'fr' 
-                                ? 'Supprimer cette tâche ?' 
-                                : language === 'en' 
-                                  ? 'Delete this task?' 
-                                  : '¿Eliminar esta tarea?'
-                            );
-                            if (confirmed) {
-                              setTasksWithDates(prev => prev.filter(t => t.id !== task.id));
-                            }
+                            setTaskToDelete({ 
+                              id: task.id, 
+                              day: 'daily', 
+                              type: 'task' 
+                            });
+                            setShowDeleteTaskConfirm(true);
                           }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-50 rounded-lg"
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                           title={language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
                         >
                           <X className="w-4 h-4 text-stone-400 hover:text-red-500 transition-colors" />
@@ -6148,8 +6144,8 @@ PROCESO OBLIGATORIO:
                     {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Próximos días'}
                   </p>
 
-                  {/* Jours de la semaine avec dates - Design moderne */}
-                  <div className="grid grid-cols-2 gap-3">
+                  {/* Jours de la semaine avec dates - Design compact */}
+                  <div className="grid grid-cols-4 gap-2">
                     {(() => {
                       const today = new Date();
                       const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
@@ -6164,7 +6160,7 @@ PROCESO OBLIGATORIO:
                         date.setDate(today.getDate() + i);
                         const dayIndex = date.getDay();
                         const dayKey = dayKeys[dayIndex];
-                        const dayLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' });
+                        const dayLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'narrow' });
                         const dateLabel = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric' });
                         const isToday = i === 0;
                         nextDays.push({ key: dayKey, dayLabel, dateLabel, isToday });
@@ -6173,24 +6169,17 @@ PROCESO OBLIGATORIO:
                         <button
                           key={day.key}
                           onClick={() => setNewTaskDestination(day.key as any)}
-                          className={`p-4 rounded-2xl transition-all duration-200 flex items-center justify-between ${newTaskDestination === day.key
-                            ? 'bg-gray-900 text-white shadow-lg'
+                          className={`p-2 rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-0.5 ${newTaskDestination === day.key
+                            ? 'bg-gray-900 text-white shadow-md'
                             : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                             }`}
                         >
-                          <div className="flex flex-col items-start">
-                            <span className="text-xs font-medium opacity-70 uppercase tracking-wide">{day.dayLabel}</span>
-                            <span className="text-lg font-bold">{day.dateLabel}</span>
-                          </div>
+                          <span className="text-[10px] font-medium opacity-70 uppercase">{day.dayLabel}</span>
+                          <span className="text-base font-bold">{day.dateLabel}</span>
                           {day.isToday && (
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${newTaskDestination === day.key ? 'bg-white/20' : 'bg-rose-100 text-rose-600'}`}>
+                            <span className={`text-[8px] px-1.5 py-0 rounded-full font-medium mt-0.5 ${newTaskDestination === day.key ? 'bg-white/20' : 'bg-rose-100 text-rose-600'}`}>
                               {language === 'fr' ? "Auj" : language === 'en' ? 'Now' : 'Hoy'}
                             </span>
-                          )}
-                          {newTaskDestination === day.key && !day.isToday && (
-                            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                              <Check className="w-3 h-3" />
-                            </div>
                           )}
                         </button>
                       ));
@@ -6663,6 +6652,9 @@ PROCESO OBLIGATORIO:
                   if (taskToDelete) {
                     if (taskToDelete.type === 'priority') {
                       setWeekPriorities(weekPriorities.filter(p => p.id !== taskToDelete.id));
+                    } else if (taskToDelete.day === 'daily') {
+                      // Suppression depuis la vue journalière
+                      setTasksWithDates(prev => prev.filter(t => t.id !== taskToDelete.id));
                     } else {
                       setWeeklyTasks({
                         ...weeklyTasks,

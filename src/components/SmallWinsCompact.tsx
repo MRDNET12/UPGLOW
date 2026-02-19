@@ -164,6 +164,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   // Animation state
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationPhase, setAnimationPhase] = useState(0);
+  const [explosionCount, setExplosionCount] = useState(0);
 
   const addSmallWin = useStore((state) => state.addSmallWin);
   const getSmallWinsThisWeek = useStore((state) => state.getSmallWinsThisWeek);
@@ -178,12 +179,17 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
-      setAnimationPhase(2); // Phase 2: première explosion (1-3s)
+      setAnimationPhase(2);
+      setExplosionCount(prev => prev + 1); // Première explosion
       
       // Animation avec phase 2 répétée 3 fois sur 10 secondes
       const phaseTimers = [
-        setTimeout(() => setAnimationPhase(2), 3000),   // Phase 2: deuxième explosion (4-6s)
-        setTimeout(() => setAnimationPhase(2), 6000),   // Phase 2: troisième explosion (7-10s)
+        setTimeout(() => {
+          setExplosionCount(prev => prev + 1); // Deuxième explosion (4-6s)
+        }, 3000),
+        setTimeout(() => {
+          setExplosionCount(prev => prev + 1); // Troisième explosion (7-10s)
+        }, 6000),
         setTimeout(() => {
           setIsAnimating(false);
           setAnimationPhase(0);
@@ -343,20 +349,20 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
           {/* Anneaux d'explosion lors des phases 2, 3 et 4 */}
           {isAnimating && (animationPhase === 2 || animationPhase === 3 || animationPhase === 4) && (
             <>
-              <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32" />
-              <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48" style={{ animationDelay: '0.3s' }} />
-              <div className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64" style={{ animationDelay: '0.6s' }} />
+              <div key={`ring1-${explosionCount}`} className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32" />
+              <div key={`ring2-${explosionCount}`} className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48" style={{ animationDelay: '0.3s' }} />
+              <div key={`ring3-${explosionCount}`} className="win-ring absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64" style={{ animationDelay: '0.6s' }} />
             </>
           )}
 
           {/* Particules flottantes */}
           {isAnimating && animationPhase >= 2 && animationPhase <= 4 && (
             <>
-              <span className="win-particle top-4 left-1/4 text-2xl" style={{ animationDelay: '0s' }}>✨</span>
-              <span className="win-particle top-4 right-1/4 text-xl" style={{ animationDelay: '0.2s' }}>🌟</span>
-              <span className="win-particle bottom-8 left-1/3 text-lg" style={{ animationDelay: '0.4s' }}>⭐</span>
-              <span className="win-particle top-8 right-1/3 text-2xl" style={{ animationDelay: '0.6s' }}>💫</span>
-              <span className="win-particle bottom-4 right-1/4 text-xl" style={{ animationDelay: '0.8s' }}>✦</span>
+              <span key={`p1-${explosionCount}`} className="win-particle top-4 left-1/4 text-2xl" style={{ animationDelay: '0s' }}>✨</span>
+              <span key={`p2-${explosionCount}`} className="win-particle top-4 right-1/4 text-xl" style={{ animationDelay: '0.2s' }}>🌟</span>
+              <span key={`p3-${explosionCount}`} className="win-particle bottom-8 left-1/3 text-lg" style={{ animationDelay: '0.4s' }}>⭐</span>
+              <span key={`p4-${explosionCount}`} className="win-particle top-8 right-1/3 text-2xl" style={{ animationDelay: '0.6s' }}>💫</span>
+              <span key={`p5-${explosionCount}`} className="win-particle bottom-4 right-1/4 text-xl" style={{ animationDelay: '0.8s' }}>✦</span>
             </>
           )}
 

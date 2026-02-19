@@ -365,8 +365,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
              <rank.icon className="w-32 h-32 text-white" />
            </div>
 
-           {/* Bouton de personnalisation en haut */}
-           <div className="absolute top-4 right-4 z-20">
+            {/* Bouton de personnalisation en haut */}
+            <div className="absolute top-6 right-4 z-20">
              <button
                onClick={(e) => {
                  e.stopPropagation();

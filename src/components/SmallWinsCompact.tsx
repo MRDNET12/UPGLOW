@@ -173,20 +173,15 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
   useEffect(() => {
     if (winsThisWeek.length > prevCountRef.current) {
       setIsAnimating(true);
-      setAnimationPhase(0);
+      setAnimationPhase(2); // Commence directement à la phase 2 (explosion)
       
-      // Animation en 4 phases sur 10 secondes
+      // Animation en 2 phases sur 10 secondes
       const phaseTimers = [
-        setTimeout(() => setAnimationPhase(1), 1000),   // Phase 1: apparition
-        setTimeout(() => setAnimationPhase(2), 3000),   // Phase 2: explosion
-        setTimeout(() => setAnimationPhase(3), 6000),   // Phase 3: maintien
+        setTimeout(() => setAnimationPhase(3), 3000),   // Phase 3: maintien après 3s
         setTimeout(() => {
-          setAnimationPhase(4);
-          setTimeout(() => {
-            setIsAnimating(false);
-            setAnimationPhase(0);
-          }, 3000); // Phase 4: disparition
-        }, 7000)
+          setIsAnimating(false);
+          setAnimationPhase(0);
+        }, 10000) // Fin après 10s
       ];
       
       return () => phaseTimers.forEach(timer => clearTimeout(timer));
@@ -293,17 +288,11 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
           20%, 40%, 60%, 80% { transform: translateX(3px); }
         }
         
-        .win-animate-phase-1 {
-          animation: win-entrance 1s ease-out forwards;
-        }
         .win-animate-phase-2 {
-          animation: win-explode 2s ease-in-out forwards, win-glow 3s ease-in-out infinite;
+          animation: win-explode 9s ease-in-out forwards, win-glow 9s ease-in-out infinite;
         }
         .win-animate-phase-3 {
-          animation: win-glow 2s ease-in-out infinite;
-        }
-        .win-animate-phase-4 {
-          animation: win-entrance 0.5s ease-in reverse forwards;
+          animation: win-glow 7s ease-in-out infinite;
         }
         
         .win-particle {

@@ -2440,7 +2440,7 @@ PROCESO OBLIGATORIO:
       <main className="flex-1 pb-28 overflow-y-auto">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <div className="p-5 space-y-5 max-w-md mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="p-5 space-y-5 max-w-md mx-auto relative z-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header avec avatar et notification */}
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-3">

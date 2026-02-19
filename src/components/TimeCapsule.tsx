@@ -491,7 +491,7 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                     <p className="text-xs font-medium text-gray-600 mb-2">
                       {language === 'fr' ? 'Après' : language === 'en' ? 'After' : 'Después de'}
                     </p>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mb-3">
                       {PRESET_WIN_THRESHOLDS.map((threshold) => (
                         <button
                           key={threshold.wins}
@@ -504,6 +504,24 @@ export function TimeCapsule({ theme = 'light', isExpanded, onToggle, standalone 
                           {threshold.label[language as keyof typeof threshold.label]}
                         </button>
                       ))}
+                    </div>
+                    {/* Input personnalisé pour le nombre de victoires */}
+                    <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 border border-gray-200">
+                      <span className="text-xs text-gray-600">
+                        {language === 'fr' ? 'Personnalisé:' : language === 'en' ? 'Custom:' : 'Personalizado:'}
+                      </span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={100}
+                        value={selectedWinThreshold}
+                        onChange={(e) => setSelectedWinThreshold(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
+                        className="w-16 px-2 py-1 text-xs bg-white border border-purple-200 rounded text-center font-medium"
+                        placeholder="10"
+                      />
+                      <span className="text-xs text-gray-500">
+                        {language === 'fr' ? 'victoires' : language === 'en' ? 'wins' : 'victorias'}
+                      </span>
                     </div>
                     <p className="text-[10px] text-gray-500 mt-2 flex items-center gap-1">
                       <Trophy className="w-3 h-3" />

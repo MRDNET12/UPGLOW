@@ -16,7 +16,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame, LayoutGrid } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame, LayoutGrid, Palette, Trophy } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -380,6 +380,11 @@ export default function GlowUpChallengeApp() {
   const [isDayView, setIsDayView] = useState(false);
   const [selectedDayViewDate, setSelectedDayViewDate] = useState(new Date());
   const [showSmallWinsHelp, setShowSmallWinsHelp] = useState(false);
+  
+  // Design du carnet de fierté
+  type PrideJournalDesign = 'classic' | 'cards' | 'minimal';
+  const [prideJournalDesign, setPrideJournalDesign] = useState<PrideJournalDesign>('classic');
+  const [showPrideDesignPicker, setShowPrideDesignPicker] = useState(false);
 
   // Charger les entrées du journal depuis localStorage
   useEffect(() => {
@@ -2897,53 +2902,266 @@ PROCESO OBLIGATORIO:
 
             {/* Section Carnet de fierté */}
             <div className="px-4">
-              <h3 className="text-gray-900 font-semibold text-base mb-3 font-sans">
-                {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-gray-900 font-semibold text-base font-sans">
+                  {language === 'fr' ? 'Carnet de fierté' : language === 'en' ? 'Pride Journal' : 'Diario de orgullo'}
+                </h3>
+                {/* Icône de sélection du design */}
+                <button
+                  onClick={() => setShowPrideDesignPicker(true)}
+                  className="p-2 bg-gray-100 rounded-full hover:bg-pink-100 transition-all"
+                  title={language === 'fr' ? 'Changer le design' : language === 'en' ? 'Change design' : 'Cambiar diseño'}
+                >
+                  <Palette className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
 
               {bonusProgress?.smallWins && bonusProgress.smallWins.length > 0 ? (
-                <div className="space-y-2">
-                  {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
-                    <div
-                      key={win.id || index}
-                      className="flex items-start gap-3"
-                    >
-                      <div className="flex flex-col items-center pt-1">
-                        <span className="text-gray-400 text-xs">●</span>
-                        <span className="text-gray-300 text-xs leading-none">'</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-700">
-                          {win.text}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
-                            day: 'numeric',
-                            month: 'short'
-                          })}
-                        </p>
-                      </div>
+                <>
+                  {/* DESIGN 1: Classic (liste simple avec points) */}
+                  {prideJournalDesign === 'classic' && (
+                    <div className="space-y-2">
+                      {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
+                        <div
+                          key={win.id || index}
+                          className="flex items-start gap-3"
+                        >
+                          <div className="flex flex-col items-center pt-1">
+                            <span className="text-gray-400 text-xs">●</span>
+                            <span className="text-gray-300 text-xs leading-none">'</span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-700">
+                              {win.text}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                day: 'numeric',
+                                month: 'short'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {bonusProgress.smallWins.length >= 15 && (
+                        <button
+                          onClick={() => router.push('/small-wins')}
+                          className="text-sm text-pink-500 hover:text-pink-600"
+                        >
+                          {language === 'fr'
+                            ? `+ ${bonusProgress.smallWins.length - 15} autres`
+                            : language === 'en'
+                              ? `+ ${bonusProgress.smallWins.length - 15} more`
+                              : `+ ${bonusProgress.smallWins.length - 15} más`}
+                        </button>
+                      )}
                     </div>
-                  ))}
-                  {bonusProgress.smallWins.length >= 15 && (
-                    <button
-                      onClick={() => router.push('/small-wins')}
-                      className="text-sm text-pink-500 hover:text-pink-600"
-                    >
-                      {language === 'fr'
-                        ? `+ ${bonusProgress.smallWins.length - 15} autres`
-                        : language === 'en'
-                          ? `+ ${bonusProgress.smallWins.length - 15} more`
-                          : `+ ${bonusProgress.smallWins.length - 15} más`}
-                    </button>
                   )}
-                </div>
+
+                  {/* DESIGN 2: Cards (cartes colorées avec icônes) */}
+                  {prideJournalDesign === 'cards' && (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-1 gap-3">
+                        {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
+                          const colors = [
+                            'from-pink-100 to-rose-100 border-pink-200',
+                            'from-purple-100 to-violet-100 border-purple-200',
+                            'from-blue-100 to-indigo-100 border-blue-200',
+                            'from-green-100 to-emerald-100 border-green-200',
+                            'from-orange-100 to-yellow-100 border-orange-200'
+                          ];
+                          const colorClass = colors[index % colors.length];
+                          return (
+                            <div
+                              key={win.id || index}
+                              className={`bg-gradient-to-r ${colorClass} rounded-xl p-3 border shadow-sm`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center flex-shrink-0">
+                                  <Trophy className="w-4 h-4 text-pink-500" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {win.text}
+                                  </p>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                      day: 'numeric',
+                                      month: 'short',
+                                      year: 'numeric'
+                                    })}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {bonusProgress.smallWins.length >= 15 && (
+                        <button
+                          onClick={() => router.push('/small-wins')}
+                          className="w-full py-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all"
+                        >
+                          {language === 'fr'
+                            ? `Voir les ${bonusProgress.smallWins.length - 15} autres succès`
+                            : language === 'en'
+                              ? `See ${bonusProgress.smallWins.length - 15} more wins`
+                              : `Ver ${bonusProgress.smallWins.length - 15} éxitos más`}
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* DESIGN 3: Minimal (design épuré sans bordures) */}
+                  {prideJournalDesign === 'minimal' && (
+                    <div className="space-y-1">
+                      {bonusProgress.smallWins.slice(0, 15).map((win, index) => (
+                        <div
+                          key={win.id || index}
+                          className="py-3 border-b border-gray-100 last:border-0"
+                        >
+                          <p className="text-sm text-gray-800 font-medium">
+                            {win.text}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">
+                              {new Date(win.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', {
+                                day: 'numeric',
+                                month: 'long'
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                      {bonusProgress.smallWins.length >= 15 && (
+                        <button
+                          onClick={() => router.push('/small-wins')}
+                          className="w-full py-3 text-sm text-gray-500 hover:text-gray-700 border-t border-gray-200 transition-colors flex items-center justify-center gap-1"
+                        >
+                          <span>
+                            {language === 'fr'
+                              ? `+ ${bonusProgress.smallWins.length - 15} autres`
+                              : language === 'en'
+                                ? `+ ${bonusProgress.smallWins.length - 15} more`
+                                : `+ ${bonusProgress.smallWins.length - 15} más`}
+                          </span>
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
               ) : (
                 <p className="text-sm text-gray-400 italic">
                   {language === 'fr' ? 'Aucun succès enregistré' : language === 'en' ? 'No wins recorded' : 'Ningún éxito registrado'}
                 </p>
               )}
             </div>
+
+            {/* Drawer de sélection du design pour le carnet de fierté */}
+            <Drawer open={showPrideDesignPicker} onOpenChange={setShowPrideDesignPicker}>
+              <DrawerContent className="bg-white">
+                <DrawerHeader className="text-left">
+                  <DrawerTitle className="text-lg font-bold text-gray-900">
+                    {language === 'fr' ? 'Choisir un design' : language === 'en' ? 'Choose a design' : 'Elegir un diseño'}
+                  </DrawerTitle>
+                </DrawerHeader>
+                <div className="px-4 pb-6 space-y-3">
+                  {/* Design Classic */}
+                  <button
+                    onClick={() => {
+                      setPrideJournalDesign('classic');
+                      setShowPrideDesignPicker(false);
+                    }}
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                      prideJournalDesign === 'classic'
+                        ? 'border-pink-500 bg-pink-50'
+                        : 'border-gray-200 hover:border-pink-200'
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                      <div className="flex flex-col items-center">
+                        <span className="text-gray-400 text-xs">●</span>
+                        <span className="text-gray-300 text-[8px]">'</span>
+                      </div>
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="font-bold text-gray-800">
+                        {language === 'fr' ? 'Classique' : language === 'en' ? 'Classic' : 'Clásico'}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {language === 'fr' ? 'Liste simple et élégante' : language === 'en' ? 'Simple and elegant list' : 'Lista simple y elegante'}
+                      </p>
+                    </div>
+                    {prideJournalDesign === 'classic' && (
+                      <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Design Cards */}
+                  <button
+                    onClick={() => {
+                      setPrideJournalDesign('cards');
+                      setShowPrideDesignPicker(false);
+                    }}
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                      prideJournalDesign === 'cards'
+                        ? 'border-pink-500 bg-pink-50'
+                        : 'border-gray-200 hover:border-pink-200'
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-pink-100 to-rose-100 border border-pink-200 flex items-center justify-center">
+                      <Trophy className="w-5 h-5 text-pink-500" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="font-bold text-gray-800">
+                        {language === 'fr' ? 'Cartes' : language === 'en' ? 'Cards' : 'Tarjetas'}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {language === 'fr' ? 'Cartes colorées avec icônes' : language === 'en' ? 'Colorful cards with icons' : 'Tarjetas coloridas con iconos'}
+                      </p>
+                    </div>
+                    {prideJournalDesign === 'cards' && (
+                      <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Design Minimal */}
+                  <button
+                    onClick={() => {
+                      setPrideJournalDesign('minimal');
+                      setShowPrideDesignPicker(false);
+                    }}
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                      prideJournalDesign === 'minimal'
+                        ? 'border-pink-500 bg-pink-50'
+                        : 'border-gray-200 hover:border-pink-200'
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
+                      <div className="w-8 h-px bg-gray-300" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="font-bold text-gray-800">
+                        {language === 'fr' ? 'Minimaliste' : language === 'en' ? 'Minimal' : 'Minimalista'}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {language === 'fr' ? 'Design épuré sans bordures' : language === 'en' ? 'Clean design without borders' : 'Diseño limpio sin bordes'}
+                      </p>
+                    </div>
+                    {prideJournalDesign === 'minimal' && (
+                      <div className="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </DrawerContent>
+            </Drawer>
 
             {/* Grille de cartes - Layout moderne compact - Carte Mes Habitudes MASQUÉE */}
             {/* <div className="grid grid-cols-5 gap-3">

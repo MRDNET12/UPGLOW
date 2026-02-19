@@ -213,7 +213,8 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
     const count = winsThisWeek.length;
     const design = DESIGN_THEMES[currentDesign];
     
-    if (count >= 7) {
+    // Badge Légende uniquement au 7e succès exactement
+    if (count === 7) {
       return {
         name: language === 'fr' ? 'Je suis une Légende' : language === 'en' ? 'I am a Legend' : 'Soy una Leyenda',
         icon: Crown,
@@ -221,7 +222,7 @@ export function SmallWinsCompact({ theme = 'light' }: SmallWinsCompactProps) {
         bgGradient: 'from-purple-400 via-pink-400 to-rose-400',
         emoji: '👑'
       };
-    } else if (count >= 4) {
+    } else if (count >= 4 && count < 7) {
       return {
         name: getAlphaRank.text,
         icon: Award,

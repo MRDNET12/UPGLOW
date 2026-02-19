@@ -1,0 +1,23 @@
+﻿node.exe :  ÔÜá Linting is 
+disabled.
+Au caractère C:\Program 
+Files\nodejs\npx.ps1:29 : 3
++   & $NODE_EXE $NPX_CLI_JS 
+$args
++   ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo          
+    : NotSpecified: ( ÔÜá   
+  Linting is disabled.:St   
+ ring) [], RemoteExcepti    
+on
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+   Ôû▓ Next.js 15.3.5
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 27.0s
+   Skipping validation of types
+   Collecting page data ...

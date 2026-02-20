@@ -4536,7 +4536,7 @@ PROCESO OBLIGATORIO:
                   <div className="mb-6">
                     <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                       <CardContent className="p-4">
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium mb-3">
+                        <p className="text-base text-gray-700 leading-relaxed font-medium mb-3">
                           {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
                             language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
                               '30 días. 3 gestos al día. Para un verdadero glow up.'}

@@ -6468,35 +6468,54 @@ PROCESO OBLIGATORIO:
                         setIsGloweeLoading(true);
 
                         try {
-                          // Appel à l'API OpenRouter
-                          const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
-                              'HTTP-Referer': window.location.origin,
-                            },
-                            body: JSON.stringify({
-                              model: 'openrouter/aurora-alpha',
-                              messages: [
-                                {
-                                  role: 'system',
-                                  content: `Tu es un assistant spécialisé dans la décomposition d'objectifs en petites tâches actionnables. Tu dois créer un plan de ${gloweeDayCount} jours maximum pour aider l'utilisateur à atteindre sa victoire. Chaque jour doit avoir 1-2 tâches concrètes et réalisables. Réponds uniquement au format JSON avec cette structure: {"tasks": [{"text": "description de la tâche", "dayIndex": 0}, ...]}. Le dayIndex commence à 0 pour le premier jour.`
+                          // Appel à l'API OpenRouter avec fallback de modèles
+                          const models = [
+                            'deepseek/deepseek-r1-0528:free',
+                            'arcee-ai/trinity-large-preview:free'
+                          ];
+                          
+                          let lastError = null;
+                          let data = null;
+                          
+                          for (const model of models) {
+                            try {
+                              const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+                                  'HTTP-Referer': window.location.origin,
                                 },
-                                {
-                                  role: 'user',
-                                  content: `Mon objectif: ${gloweeVictoryText}. Crée-moi un plan sur ${gloweeDayCount} jours maximum.`
-                                }
-                              ],
-                              temperature: 0.7,
-                            }),
-                          });
+                                body: JSON.stringify({
+                                  model: model,
+                                  messages: [
+                                    {
+                                      role: 'system',
+                                      content: `Tu es un assistant spécialisé dans la décomposition d'objectifs en petites tâches actionnables. Tu dois créer un plan de ${gloweeDayCount} jours maximum pour aider l'utilisateur à atteindre sa victoire. Chaque jour doit avoir 1-2 tâches concrètes et réalisables. Réponds uniquement au format JSON avec cette structure: {"tasks": [{"text": "description de la tâche", "dayIndex": 0}, ...]}. Le dayIndex commence à 0 pour le premier jour.`
+                                    },
+                                    {
+                                      role: 'user',
+                                      content: `Mon objectif: ${gloweeVictoryText}. Crée-moi un plan sur ${gloweeDayCount} jours maximum.`
+                                    }
+                                  ],
+                                  temperature: 0.7,
+                                }),
+                              });
 
-                          if (!response.ok) {
-                            throw new Error('API request failed');
+                              if (response.ok) {
+                                data = await response.json();
+                                break;
+                              }
+                            } catch (modelError) {
+                              lastError = modelError;
+                              console.log(`Model ${model} failed, trying next...`);
+                            }
                           }
 
-                          const data = await response.json();
+                          if (!data) {
+                            throw new Error(lastError || 'All models failed');
+                          }
+
                           const content = data.choices[0]?.message?.content;
 
                           // Parse la réponse JSON

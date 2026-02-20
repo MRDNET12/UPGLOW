@@ -431,26 +431,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             </p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-100">
-                            <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-white text-lg flex-shrink-0">
-                                    📱
-                                </div>
-                                <div>
-                                    <p className="font-bold text-gray-800 mb-1">
-                                        {language === 'fr' ? 'Conseil' : language === 'en' ? 'Tip' : 'Consejo'}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                        {language === 'fr' 
-                                            ? "Installez l'application pour recevoir des rappels quotidiens et ne jamais manquer vos objectifs !"
-                                            : language === 'en' 
-                                                ? "Install the app to receive daily reminders and never miss your goals!"
-                                                : "¡Instale la aplicación para recibir recordatorios diarios y nunca pierda sus objetivos!"}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
                         <Button 
                             onClick={() => {
                                 setShowNotificationDrawer(false);

@@ -2548,10 +2548,10 @@ PROCESO OBLIGATORIO:
             <div className="relative">
               <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
                 <CardContent className="p-0">
-                  <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
+                  <div className="flex items-center gap-1.5 py-2 px-3 pl-20">
                     {/* Message avec rotation et effet typing - sans mention Glowee */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] text-gray-700 leading-tight font-medium">
+                      <p className="text-sm text-gray-700 leading-tight font-medium">
                         {displayedMessage}
                         {isTyping && <span className="animate-pulse">|</span>}
                       </p>

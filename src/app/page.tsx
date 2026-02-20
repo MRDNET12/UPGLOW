@@ -220,7 +220,6 @@ export default function GlowUpChallengeApp() {
   const [gloweeMessageIndex, setGloweeMessageIndex] = useState(0);
   const [displayedMessage, setDisplayedMessage] = useState('');
   const [isTyping, setIsTyping] = useState(true);
-  const [hasShownFirstMessage, setHasShownFirstMessage] = useState(false);
 
   // État pour le dialogue d'authentification
   const [showAuthDialog, setShowAuthDialog] = useState(false);
@@ -1719,41 +1718,30 @@ PROCESO OBLIGATORIO:
     ]
   };
 
-  // Effet typing pour le premier message
+  // Effet typing pour chaque message
   useEffect(() => {
     if (!isHydrated) return;
 
     const langMessages = gloweeHomepageMessages[language] || gloweeHomepageMessages.fr;
     const currentMessage = langMessages[gloweeMessageIndex % langMessages.length];
 
-    // Vérifier si c'est la première apparition
-    const hasShownTyping = localStorage.getItem('gloweeTypingShown');
+    // Effet typing pour chaque nouveau message
+    setIsTyping(true);
+    setDisplayedMessage('');
+    let charIndex = 0;
 
-    if (!hasShownTyping && !hasShownFirstMessage) {
-      // Effet typing pour la première fois
-      setIsTyping(true);
-      let charIndex = 0;
-      setDisplayedMessage('');
+    const typingInterval = setInterval(() => {
+      if (charIndex < currentMessage.length) {
+        setDisplayedMessage(currentMessage.slice(0, charIndex + 1));
+        charIndex++;
+      } else {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+      }
+    }, 25);
 
-      const typingInterval = setInterval(() => {
-        if (charIndex < currentMessage.length) {
-          setDisplayedMessage(currentMessage.slice(0, charIndex + 1));
-          charIndex++;
-        } else {
-          clearInterval(typingInterval);
-          setIsTyping(false);
-          setHasShownFirstMessage(true);
-          localStorage.setItem('gloweeTypingShown', 'true');
-        }
-      }, 30);
-
-      return () => clearInterval(typingInterval);
-    } else {
-      // Pas d'effet typing pour les messages suivants
-      setDisplayedMessage(currentMessage);
-      setIsTyping(false);
-    }
-  }, [isHydrated, gloweeMessageIndex, language, hasShownFirstMessage]);
+    return () => clearInterval(typingInterval);
+  }, [isHydrated, gloweeMessageIndex, language]);
 
   // Rotation des messages toutes les 10 minutes
   useEffect(() => {

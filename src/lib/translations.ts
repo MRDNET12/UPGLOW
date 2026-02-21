@@ -7,13 +7,13 @@ export interface Translation {
     challenge: string;
     journal: string;
     glowee: string;
-    trackers: string;
+    circle: string;
     routine: string;
     visionBoard: string;
     bonus: string;
     settings: string;
   };
-  
+
   // Onboarding
   onboarding: {
     title: string;
@@ -31,7 +31,7 @@ export interface Translation {
     gloweeMessage: string;
     gloweeButton: string;
   };
-  
+
   // Language Selection
   languageSelection: {
     title: string;
@@ -106,7 +106,7 @@ export interface Translation {
     week: string;
     continueYourChallenge: string;
   };
-  
+
   // Challenge
   challenge: {
     title: string;
@@ -137,7 +137,7 @@ export interface Translation {
     progression: string;
     days: string;
   };
-  
+
   // Journal
   journal: {
     title: string;
@@ -166,7 +166,7 @@ export interface Translation {
     glowOfDay: string;
     entries: string;
   };
-  
+
   // Trackers
   trackers: {
     title: string;
@@ -196,7 +196,7 @@ export interface Translation {
     minutes: string;
     minutesPlaceholder: string;
   };
-  
+
   // Routine
   routine: {
     title: string;
@@ -213,7 +213,7 @@ export interface Translation {
     markWhenDone: string;
     steps: string;
   };
-  
+
   // Vision Board
   visionBoard: {
     title: string;
@@ -233,7 +233,7 @@ export interface Translation {
     addToVisionBoard: string;
     images: string;
   };
-  
+
   // Bonus
   bonus: {
     title: string;
@@ -291,7 +291,7 @@ export interface Translation {
     boundariesFaqTitle: string;
     boundariesFaqContent: string;
   };
-  
+
   // Settings
   settings: {
     title: string;
@@ -308,7 +308,7 @@ export interface Translation {
     downloadData: string;
     percentage: string;
   };
-  
+
   // New Me
   newMe: {
     title: string;
@@ -334,8 +334,8 @@ export interface Translation {
     the13Pillars: string; // "Les 13 piliers"
     completedDay: string; // "Jour X complété !"
     completeThisDay: string; // "J'ai complété ce jour"
-      trackingShort: string; // "Suivi" (version courte pour mobile)
-      progressShort: string; // "Progrès" (version courte pour mobile)
+    trackingShort: string; // "Suivi" (version courte pour mobile)
+    progressShort: string; // "Progrès" (version courte pour mobile)
     // Badges
     badgeFirstDay: string;
     badgeFirstDayDesc: string;
@@ -383,9 +383,10 @@ export const translations: Record<Language, Translation> = {
       challenge: 'Challenge',
       journal: 'Journal',
       glowee: 'Glowee',
-      trackers: 'Habitudes',
+      circle: 'Le Cercle',
       routine: 'Routine',
       visionBoard: 'Vision Board',
+
       bonus: 'Bonus',
       settings: 'Profil',
     },
@@ -722,9 +723,10 @@ export const translations: Record<Language, Translation> = {
       challenge: 'Challenge',
       journal: 'Journal',
       glowee: 'Glowee',
-      trackers: 'Habits',
+      circle: 'The Circle',
       routine: 'Routine',
       visionBoard: 'Vision Board',
+
       bonus: 'Bonus',
       settings: 'Profile',
     },
@@ -1061,9 +1063,10 @@ export const translations: Record<Language, Translation> = {
       challenge: 'Desafío',
       journal: 'Diario',
       glowee: 'Glowee',
-      trackers: 'Hábitos',
+      circle: 'El Círculo',
       routine: 'Rutina',
       visionBoard: 'Tablero de Visión',
+
       bonus: 'Bonus',
       settings: 'Perfil',
     },

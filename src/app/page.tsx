@@ -16,7 +16,7 @@ import {
 import { newMePillars, newMeGloweeMessage, specialNewMePillars } from '@/lib/new-me-data';
 import { beautyPillars, beautyChoices, gloweeMessages as beautyGloweeMessages } from '@/lib/beauty-pillars';
 import { boundaries } from '@/lib/boundaries-data';
-import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame, LayoutGrid, Palette, Trophy } from 'lucide-react';
+import { Sparkles, BookOpen, TrendingUp, Home, Heart, Target, Layers, Gift, Settings, ChevronRight, ChevronLeft, ChevronDown, Check, Plus, X, Minus, Calendar, Moon, Sun, Droplet, Zap, Smile, Activity, Utensils, Lightbulb, Wand2, Image as ImageIcon, Trash2, Download, Bell, BellOff, Star, CheckSquare, ListChecks, Award, Globe, LogIn, LogOut, User, Crown, Shield, Frown, Meh, HelpCircle, MoreHorizontal, Mail, Share2, ArrowRight, Eye, EyeOff, Flame, LayoutGrid, Palette, Trophy, Users } from 'lucide-react';
 import { useTranslation } from '@/lib/useTranslation';
 import { Language } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
@@ -60,6 +60,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
 import { ProfilePage } from '@/components/ProfilePage';
+import { CirclePage } from '@/components/CirclePage';
 
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
@@ -147,6 +148,8 @@ export default function GlowUpChallengeApp() {
     // Goal Setup
     objectifsInitiaux,
     objectifsPrioritaires,
+    currentUserUid,
+    setCurrentUserUid,
     objectifPrincipal,
     setObjectifsInitiaux,
     setObjectifsPrioritaires,
@@ -1406,6 +1409,13 @@ PROCESO OBLIGATORIO:
       localStorage.setItem(`dailyIntention_${getLocalDateString()}`, dailyIntention);
     }
   }, [dailyIntention]);
+
+  // Sync user UID with store for circle activity
+  useEffect(() => {
+    if (user?.uid !== currentUserUid) {
+      setCurrentUserUid(user?.uid || null);
+    }
+  }, [user, currentUserUid, setCurrentUserUid]);
 
   // États pour Planning
   // Planning tab is now simplified to only 'my-tasks'
@@ -3089,7 +3099,7 @@ PROCESO OBLIGATORIO:
                           <div className="absolute top-1/2 right-8 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-300" />
                           <div className="absolute bottom-10 right-1/4 w-1 h-1 bg-white rounded-full animate-pulse delay-500" />
                         </div>
-                        
+
                         <div className="relative text-center">
                           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-yellow-200 via-amber-300 to-orange-400 mb-3 shadow-2xl shadow-yellow-500/50">
                             <span className="text-4xl">✨</span>
@@ -3115,7 +3125,7 @@ PROCESO OBLIGATORIO:
                           ];
                           const starSizes = index < 3 ? 'col-span-2 row-span-2' : index < 7 ? 'col-span-1 row-span-2' : '';
                           const starGlow = index < 3 ? 'shadow-2xl shadow-yellow-500/50' : index < 7 ? 'shadow-xl shadow-blue-500/40' : 'shadow-lg shadow-purple-500/30';
-                          
+
                           return (
                             <div
                               key={win.id || index}
@@ -3123,12 +3133,12 @@ PROCESO OBLIGATORIO:
                             >
                               <div className={`absolute inset-0 bg-gradient-to-br ${starColors[index % starColors.length]}`} />
                               <div className="absolute inset-0 bg-black/20" />
-                              
+
                               {/* Étoile brillante */}
                               <div className="absolute top-2 right-2 text-lg animate-pulse">
                                 {index < 3 ? '⭐' : index < 7 ? '✦' : '✧'}
                               </div>
-                              
+
                               <div className="relative p-4 h-full flex flex-col justify-between min-h-[100px]">
                                 <p className={`font-bold text-white leading-tight drop-shadow-lg ${index < 3 ? 'text-lg' : 'text-sm'}`}>
                                   {win.text.length > (index < 3 ? 60 : 30) ? win.text.substring(0, index < 3 ? 60 : 30) + '...' : win.text}
@@ -3173,7 +3183,7 @@ PROCESO OBLIGATORIO:
                             <path d="M0,120 L120,50 L220,85 L320,25 L400,50 L400,120 Z" fill="rgba(4, 120, 87, 0.5)" />
                           </svg>
                         </div>
-                        
+
                         {/* Sommet avec drapeau */}
                         <div className="relative text-center">
                           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 mb-2 shadow-xl">
@@ -3199,7 +3209,7 @@ PROCESO OBLIGATORIO:
                             'from-blue-400 to-indigo-500'
                           ];
                           const isPeak = index % 5 === 4;
-                          
+
                           return (
                             <div
                               key={win.id || index}
@@ -3214,7 +3224,7 @@ PROCESO OBLIGATORIO:
                                   <div className="w-0.5 h-6 bg-gradient-to-b from-emerald-300 to-transparent" />
                                 )}
                               </div>
-                              
+
                               {/* Carte de victoire */}
                               <div className="flex-1 bg-white rounded-xl p-3 shadow-sm border border-emerald-100">
                                 <div className="flex items-center justify-between">
@@ -3263,7 +3273,7 @@ PROCESO OBLIGATORIO:
                         {/* Polaroids décoratifs en arrière-plan */}
                         <div className="absolute top-2 right-4 w-16 h-20 bg-white rounded-lg shadow-md transform rotate-12 opacity-60" />
                         <div className="absolute bottom-4 left-4 w-14 h-18 bg-white rounded-lg shadow-md transform -rotate-6 opacity-40" />
-                        
+
                         <div className="relative text-center">
                           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-pink-400 mb-3 shadow-xl">
                             <span className="text-4xl">📸</span>
@@ -3282,7 +3292,7 @@ PROCESO OBLIGATORIO:
                         {bonusProgress.smallWins.slice(0, 15).map((win, index) => {
                           const rotations = [-3, 2, -2, 4, -4, 3, -1, 2, -3, 1, -2, 3, -1, 2, -3];
                           const tapeColors = ['bg-pink-300', 'bg-blue-300', 'bg-yellow-300', 'bg-green-300', 'bg-purple-300'];
-                          
+
                           return (
                             <div
                               key={win.id || index}
@@ -3291,7 +3301,7 @@ PROCESO OBLIGATORIO:
                             >
                               {/* Scotch tape */}
                               <div className={`absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-6 ${tapeColors[index % tapeColors.length]} opacity-60 rounded-sm transform -rotate-1`} />
-                              
+
                               {/* Polaroid frame */}
                               <div className="bg-white rounded-lg p-3 pb-12 shadow-lg hover:shadow-2xl transition-all hover:scale-105 hover:rotate-0 hover:z-10">
                                 {/* Photo area avec emoji */}
@@ -3300,7 +3310,7 @@ PROCESO OBLIGATORIO:
                                     {['✨', '🌟', '💫', '🎯', '🏆', '🎉', '💪', '⭐', '🔥', '💎', '🌈', '🦋', '⚡', '🎊', '🌺'][index % 15]}
                                   </span>
                                 </div>
-                                
+
                                 {/* Caption */}
                                 <p className="text-xs font-bold text-gray-800 leading-tight line-clamp-2">
                                   {win.text}
@@ -3657,256 +3667,10 @@ PROCESO OBLIGATORIO:
           </div>
         )}
 
-        {/* Trackers View - Project Glow Design System */}
-        {currentView === 'trackers' && (
-          <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-[#F7F8FA]">
-            {/* Header */}
-            <div className="px-4 pt-4 pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setCurrentView('dashboard')}
-                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
-                    style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
-                  >
-                    <ChevronLeft className="w-5 h-5 text-gray-800" />
-                  </button>
-                  <div>
-                    <h1 className="text-lg font-bold text-gray-800">
-                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
-                    </h1>
-                    {(() => {
-                      const completedNewMe = newMeHabits.filter(h => h.completed).length;
-                      const completedCustom = customHabits.filter(h => {
-                        const today = getLocalDateString();
-                        const tracker = trackers.find(t => t.date === today);
-                        return tracker?.habits?.[h.id] || false;
-                      }).length;
-                      const completedCount = completedNewMe + completedCustom;
-                      const totalCount = newMeHabits.length + customHabits.length;
-                      return (
-                        <p className="text-xs font-medium text-gray-500">
-                          {completedCount}/{totalCount} {language === 'fr' ? 'aujourd\'hui' : language === 'en' ? 'today' : 'hoy'}
-                        </p>
-                      );
-                    })()}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setCurrentView('habit-progress')}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200"
-                  >
-                    <TrendingUp className="w-4 h-4 text-gray-600" />
-                    <span className="text-xs font-medium text-gray-700">
-                      {language === 'fr' ? 'Progression' : language === 'en' ? 'Progress' : 'Progreso'}
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setShowAddHabit(true)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-102 active:scale-98"
-                    style={{ background: 'linear-gradient(135deg, #34d399, #10b981)' }}
-                  >
-                    <Plus className="w-5 h-5 text-white" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Contenu principal */}
-            <div className="px-4 space-y-3">
-              {/* Barre de progression */}
-              {(() => {
-                const completedNewMe = newMeHabits.filter(h => h.completed).length;
-                const completedCustom = customHabits.filter(h => {
-                  const today = getLocalDateString();
-                  const tracker = trackers.find(t => t.date === today);
-                  return tracker?.habits?.[h.id] || false;
-                }).length;
-                const completedCount = completedNewMe + completedCustom;
-                const totalCount = newMeHabits.length + customHabits.length;
-                const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
-                return (
-                  <div className="bg-white rounded-2xl p-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-gray-500">Progression du jour</span>
-                      <span className="text-xs font-bold" style={{ color: '#10b981' }}>{progressPercent}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${progressPercent}%`,
-                          background: 'linear-gradient(90deg, #34d399, #14b8a6)'
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* SECTION INTENTION */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 font-sans">
-                  <span>🎯</span>
-                  {language === 'fr' ? 'Aujourd\'hui, je suis quelqu\'un qui…' : language === 'en' ? 'Today, I am someone who…' : 'Hoy, soy alguien que…'}
-                </h3>
-
-                {dailyIntention ? (
-                  <div className="bg-violet-50 rounded-xl p-3">
-                    <p className="text-sm font-semibold text-violet-700">
-                      {dailyIntention}
-                    </p>
-                    {showIntentionFeedback && (
-                      <p className="text-xs text-violet-500 mt-1">
-                        {intentionFeedbackMessage}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {INTENTIONS_DATA.map((intention) => {
-                      const label = language === 'fr' ? intention.fr : language === 'en' ? intention.en : intention.es;
-                      return (
-                        <button
-                          key={intention.id}
-                          onClick={() => {
-                            setDailyIntention(label);
-                            const msg = INTENTION_MESSAGES[Math.floor(Math.random() * INTENTION_MESSAGES.length)];
-                            setIntentionFeedbackMessage(msg);
-                            setShowIntentionFeedback(true);
-                            setTimeout(() => setShowIntentionFeedback(false), 3000);
-                          }}
-                          className="px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-600 active:scale-95 transition-all"
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* SECTION HUMEUR - Icônes grises quand non sélectionnées, couleur quand sélectionnées */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 font-sans">
-                  <span>😊</span>
-                  {language === 'fr' ? 'Comment je me sens ?' : language === 'en' ? 'How do I feel?' : '¿Cómo me siento?'}
-                </h3>
-                <div className="flex gap-2">
-                  {MOODS_DATA.map((mood) => {
-                    const label = language === 'fr' ? mood.fr : language === 'en' ? mood.en : mood.es;
-                    const isSelected = dailyFeeling === label;
-                    return (
-                      <button
-                        key={mood.id}
-                        onClick={() => setDailyFeeling(label)}
-                        className={`flex-1 py-2 px-1 rounded-xl flex flex-col items-center gap-1 transition-all active:scale-95 ${isSelected ? `bg-gradient-to-br ${mood.gradient} shadow-sm` : 'bg-gray-50'
-                          }`}
-                      >
-                        <mood.icon
-                          className={`w-5 h-5 transition-all duration-200 ${isSelected ? "text-white drop-shadow-sm" : ""}`}
-                          style={{
-                            filter: isSelected ? "none" : "grayscale(100%) brightness(1.3)",
-                            opacity: isSelected ? 1 : 0.5,
-                            transform: isSelected ? "scale(1.1)" : "scale(1)",
-                          }}
-                        />
-                        <span className={`text-[10px] font-medium ${isSelected ? 'text-white' : 'text-gray-500'}`}>
-                          {label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* New Me Habits */}
-              <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div className="p-4 pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2 font-sans">
-                        <span style={{ color: '#fb7185' }}>✨</span>
-                        {language === 'fr' ? 'Nouveau Moi' : language === 'en' ? 'New Me' : 'Nuevo Yo'}
-                      </h3>
-                      <button
-                        onClick={() => setShowNewMeSection(!showNewMeSection)}
-                        className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                      >
-                        {showNewMeSection ? (
-                          <Eye className="w-4 h-4 text-gray-400" />
-                        ) : (
-                          <EyeOff className="w-4 h-4 text-gray-400" />
-                        )}
-                      </button>
-                    </div>
-                    <span className="text-xs font-bold text-gray-600">
-                      {newMeHabits.filter(h => h.completed).length}/{newMeHabits.length}
-                    </span>
-                  </div>
-                </div>
-                {showNewMeSection && (
-                  <>
-                    <div className="h-px bg-gray-200 mx-4" />
-                    <div className="p-4 space-y-1">
-                      {newMeHabits.map((habit) => (
-                        <button
-                          key={habit.id}
-                          onClick={() => {
-                            const newCompletedState = !habit.completed;
-
-                            // Mettre à jour le state
-                            setNewMeHabits(newMeHabits.map(h =>
-                              h.id === habit.id ? { ...h, completed: newCompletedState } : h
-                            ));
-
-                            // Enregistrer dans localStorage pour la page de progression
-                            const today = getLocalDateString();
-                            const storageKey = `newme_${habit.id}_${today}`;
-                            if (newCompletedState) {
-                              localStorage.setItem(storageKey, 'true');
-                            } else {
-                              localStorage.removeItem(storageKey);
-                            }
-                          }}
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            // TODO: Ouvrir la vue détail 30 jours
-                          }}
-                          className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl transition-all duration-200 ${habit.completed
-                            ? ''
-                            : 'hover:bg-gray-50'
-                            }`}
-                        >
-                          <div className="flex items-center gap-3 flex-1">
-                            <span className="text-xl">{habit.icon}</span>
-                            <span className={`text-sm font-medium flex-1 text-left ${habit.completed ? 'text-gray-700 line-through' : 'text-gray-700'
-                              }`}>
-                              {habit.label}
-                            </span>
-                          </div>
-                          <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${habit.completed
-                              ? 'bg-emerald-400'
-                              : 'bg-gray-200'
-                              }`}
-                          >
-                            {habit.completed ? (
-                              <Check className="w-4 h-4 text-white" />
-                            ) : (
-                              <Check className="w-4 h-4 text-gray-400" />
-                            )}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-              </div>
-            </div>
+        {/* Le Cercle View */}
+        {currentView === 'circle' && (
+          <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white min-h-[70vh]">
+            <CirclePage />
           </div>
         )}
 
@@ -4078,14 +3842,334 @@ PROCESO OBLIGATORIO:
               )}
             </div>
           </div>
-        )}
+        )
+        }
 
         {/* Planning View - Ma Semaine */}
-        {currentView === 'routine' && (
-          <div className="pb-24 relative z-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Header */}
-            <div className="p-4 pb-0 flex items-center justify-between">
-              <div className="flex items-center gap-3 mb-3">
+        {
+          currentView === 'routine' && (
+            <div className="pb-24 relative z-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {/* Header */}
+              <div className="p-4 pb-0 flex items-center justify-between">
+                <div className="flex items-center gap-3 mb-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setCurrentView('dashboard')}
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                  <h1 className="text-xl font-bold">
+                    {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
+                  </h1>
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsDayView(!isDayView)}
+                  className="rounded-full hover:bg-stone-100 dark:hover:bg-stone-800"
+                >
+                  {isDayView ? <LayoutGrid className="w-5 h-5 text-stone-500" /> : <Eye className="w-5 h-5 text-stone-500" />}
+                </Button>
+              </div>
+
+              {!isDayView ? (
+                <>
+                  {/* Navigation par semaine */}
+                  <div className="px-4 pb-2">
+                    <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
+                      <div className="flex items-center justify-between gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setCurrentWeekOffset(prev => prev - 1)}
+                          className="flex-shrink-0 h-8 w-8 p-0"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </Button>
+
+                        <div className="flex-1 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-rose-400" />
+                            <p className="text-xs font-semibold">
+                              {currentWeekOffset === 0
+                                ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
+                                : currentWeekOffset === 1
+                                  ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
+                                  : currentWeekOffset === -1
+                                    ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
+                                    : formatWeekRange(currentWeekOffset)
+                              }
+                            </p>
+                          </div>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setCurrentWeekOffset(prev => prev + 1)}
+                          className="flex-shrink-0 h-8 w-8 p-0"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="px-4 space-y-3 max-w-lg mx-auto">
+                    {/* Jours de la semaine - 2 par ligne */}
+                    <div className="grid grid-cols-2 gap-2 items-start">
+                      {(() => {
+                        const today = new Date();
+                        const todayStr = getLocalDateString(today);
+                        const weekDates = getWeekDates(currentWeekOffset);
+
+                        return [
+                          { key: 'monday', label: language === 'fr' ? 'Lun' : language === 'en' ? 'Mon' : 'Lun', index: 0 },
+                          { key: 'tuesday', label: language === 'fr' ? 'Mar' : language === 'en' ? 'Tue' : 'Mar', index: 1 },
+                          { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mié', index: 2 },
+                          { key: 'thursday', label: language === 'fr' ? 'Jeu' : language === 'en' ? 'Thu' : 'Jue', index: 3 },
+                          { key: 'friday', label: language === 'fr' ? 'Ven' : language === 'en' ? 'Fri' : 'Vie', index: 4 },
+                          { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'Sáb', index: 5 },
+                          { key: 'sunday', label: language === 'fr' ? 'Dim' : language === 'en' ? 'Sun' : 'Dom', index: 6 }
+                        ].map((day) => {
+                          const dateStr = weekDates[day.index];
+                          const isToday = dateStr === todayStr;
+                          const dayDate = new Date(dateStr);
+                          const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
+
+                          // Récupérer les tâches pour cette date
+                          const dayTasks = getTasksForDate(dateStr, "user");
+
+                          return (
+                            <div
+                              key={day.key}
+                              className={`rounded-xl shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden min-h-[160px] cursor-pointer hover:shadow-lg transition-shadow`}
+                              onClick={() => {
+                                setSelectedDayViewDate(dayDate);
+                                setIsDayView(true);
+                              }}
+                            >
+                              {/* Bordure en haut pour le jour actuel */}
+                              {isToday && (
+                                <div className="absolute top-0 left-[20%] right-[20%] h-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
+                              )}
+                              <div className="p-2.5">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h3 className="font-bold text-xs">{day.label}</h3>
+                                  <span className="text-[10px] text-stone-400">{formattedDate}</span>
+                                </div>
+                                <div className="space-y-1.5">
+                                  {dayTasks.length === 0 ? (
+                                    <p className="text-[10px] text-stone-400 text-center py-1">
+                                      {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
+                                    </p>
+                                  ) : (
+                                    dayTasks.map((task) => {
+                                      // Obtenir l'index de l'objectif pour déterminer la couleur du dégradé (3 couleurs max)
+                                      const getGradientForGoal = () => {
+                                        if (task.type !== 'glowee' || !task.goalId) return null;
+                                        const activeGoals = getActiveGoals();
+                                        const goalIndex = activeGoals.findIndex(g => g.id === task.goalId);
+                                        if (goalIndex === -1) return null;
+                                        // 3 dégradés distincts pour les 3 objectifs possibles
+                                        const gradients = [
+                                          'from-rose-200/60 via-pink-200/60 to-rose-100/60', // Objectif 1 - Rose
+                                          'from-violet-200/60 via-purple-200/60 to-violet-100/60', // Objectif 2 - Violet
+                                          'from-amber-200/60 via-orange-200/60 to-amber-100/60' // Objectif 3 - Orange
+                                        ];
+                                        return gradients[goalIndex % 3];
+                                      };
+                                      const taskGradient = getGradientForGoal();
+
+                                      return (
+                                        <div
+                                          key={task.id}
+                                          className={`p-1.5 rounded-lg text-[10px] relative overflow-hidden group ${taskGradient
+                                            ? `bg-gradient-to-r ${taskGradient} text-gray-800`
+                                            : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50 text-stone-600'
+                                            }`}
+                                        >
+                                          <div className="flex items-start gap-1.5 relative z-10">
+                                            <div className={`mt-0.5 w-2.5 h-2.5 rounded border flex items-center justify-center flex-shrink-0 ${task.completed
+                                              ? 'bg-emerald-500 border-emerald-500'
+                                              : 'border-stone-300 bg-white/50'
+                                              }`}>
+                                              {task.completed && <Check className="w-2 h-2 text-white" />}
+                                            </div>
+                                            <span className={`leading-tight line-clamp-2 ${task.completed ? 'line-through opacity-50' : ''}`}>
+                                              {task.text}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      );
+                                    })
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      })()}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* VUE JOUR TYPE APPLE CALENDAR */
+                <div className="px-4 py-2 space-y-6 animate-in slide-in-from-right-4 duration-300">
+                  {/* Gros Header Date & Nav Mois */}
+                  <div className="flex items-end justify-between mb-4">
+                    <div className="flex items-start gap-1">
+                      <h2 className="text-4xl font-bold text-gray-900 leading-none">
+                        {selectedDayViewDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3)}
+                      </h2>
+                      <div className="w-2 h-2 rounded-full bg-rose-500 mt-2 shadow-sm shadow-rose-200"></div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xl text-stone-400 font-light leading-tight capitalize">
+                        {selectedDayViewDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', day: 'numeric' })}
+                      </p>
+                      <p className="text-lg text-stone-300 font-light leading-tight">
+                        {selectedDayViewDate.getFullYear()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bandeau des jours (Strip) */}
+                  <div className="flex justify-between items-center overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide select-none touch-pan-x">
+                    {[-3, -2, -1, 0, 1, 2, 3].map(offset => {
+                      const d = new Date(selectedDayViewDate);
+                      d.setDate(d.getDate() + offset);
+                      const isSelected = offset === 0;
+                      const isToday = getLocalDateString(d) === getLocalDateString(new Date());
+
+                      return (
+                        <button
+                          key={offset}
+                          onClick={() => setSelectedDayViewDate(d)}
+                          className={`flex flex-col items-center justify-center min-w-[48px] h-[64px] rounded-2xl transition-all duration-300 flex-shrink-0 mx-1 ${isSelected ? 'bg-white shadow-md scale-105 ring-1 ring-black/5' : 'text-stone-400 hover:text-stone-600 hover:bg-white/50'}`}
+                        >
+                          <span className="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">
+                            {d.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3)}
+                          </span>
+                          <span className={`text-xl font-bold ${isSelected ? 'text-gray-900' : 'text-stone-400'}`}>
+                            {d.getDate()}
+                          </span>
+                          {isToday && !isSelected && <span className="block w-1 h-1 bg-rose-400 rounded-full mt-1 opacity-50"></span>}
+                          {isSelected && <span className="block w-1 h-1 bg-gray-900 rounded-full mt-1"></span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Liste des tâches */}
+                  <div className="space-y-0 min-h-[300px]">
+                    {(() => {
+                      const dateString = getLocalDateString(selectedDayViewDate);
+                      const tasks = getTasksForDate(dateString, "user");
+
+                      if (tasks.length === 0) {
+                        return (
+                          <div className="py-20 text-center flex flex-col items-center justify-center gap-4 opacity-50">
+                            <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center">
+                              <Calendar className="w-8 h-8 text-stone-400 stroke-1" />
+                            </div>
+                            <p className="text-sm font-light text-stone-500">
+                              {language === 'fr' ? 'Rien de prévu pour ce jour' : language === 'en' ? 'Nothing planned for today' : 'Nada planeado para hoy'}
+                            </p>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setShowAddTask(true)}
+                              className="mt-2 rounded-full border-dashed"
+                            >
+                              <Plus className="w-4 h-4 mr-2" />
+                              {language === 'fr' ? 'Ajouter' : 'Add'}
+                            </Button>
+                          </div>
+                        );
+                      }
+
+                      return tasks.map((task, i) => (
+                        <div key={task.id} className="group flex items-start gap-4 py-4 border-b border-gray-100 border-dashed last:border-0 hover:bg-stone-50/50 -mx-2 px-4 rounded-lg transition-colors cursor-pointer"
+                          onClick={async () => {
+                            const newCompleted = !task.completed;
+                            setTasksWithDates(prev => prev.map(t =>
+                              t.id === task.id ? { ...t, completed: newCompleted } : t
+                            ));
+                            if (user && task.id.startsWith('firebase_')) {
+                              try {
+                                await updateTaskCompletion(task.id, newCompleted);
+                              } catch (error) {
+                                console.error('Error updating task completion in Firebase:', error);
+                              }
+                            }
+                          }}
+                        >
+                          {/* Left Icon - Checkbox style but bigger */}
+                          <div className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${task.completed
+                            ? 'bg-emerald-500 border-emerald-500'
+                            : 'border-stone-200 bg-white group-hover:border-rose-300'
+                            }`}>
+                            {task.completed && <Check className="w-4 h-4 text-white" />}
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0 pt-0.5">
+                            <p className={`text-base font-medium leading-normal break-words ${task.completed ? 'line-through text-stone-400' : 'text-gray-900'}`}>
+                              {task.text}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              {task.goalId && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-medium">
+                                  Objectif
+                                </span>
+                              )}
+                              {task.generated && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 font-medium flex items-center gap-1">
+                                  <Sparkles className="w-2.5 h-2.5" />
+                                  IA
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Delete button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTaskToDelete({
+                                id: task.id,
+                                day: 'daily',
+                                type: 'task'
+                              });
+                              setShowDeleteTaskConfirm(true);
+                            }}
+                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                            title={language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
+                          >
+                            <X className="w-4 h-4 text-stone-400 hover:text-red-500 transition-colors" />
+                          </button>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+
+
+                </div>
+              )}
+
+            </div>
+          )
+        }
+
+        {/* Vision Board View */}
+        {
+          currentView === 'vision-board' && (
+            <div className="p-6 space-y-6 max-w-lg mx-auto">
+              {/* Header */}
+              <div className="flex items-center gap-4">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -4093,1542 +4177,1235 @@ PROCESO OBLIGATORIO:
                 >
                   <X className="w-5 h-5" />
                 </Button>
-                <h1 className="text-xl font-bold">
-                  {language === 'fr' ? 'Ma semaine' : language === 'en' ? 'My week' : 'Mi semana'}
-                </h1>
+                <h1 className="text-2xl font-bold">{t.visionBoard.title}</h1>
               </div>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsDayView(!isDayView)}
-                className="rounded-full hover:bg-stone-100 dark:hover:bg-stone-800"
-              >
-                {isDayView ? <LayoutGrid className="w-5 h-5 text-stone-500" /> : <Eye className="w-5 h-5 text-stone-500" />}
-              </Button>
-            </div>
-
-            {!isDayView ? (
-              <>
-                {/* Navigation par semaine */}
-                <div className="px-4 pb-2">
-                  <div className={`p-3 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} shadow-sm`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentWeekOffset(prev => prev - 1)}
-                        className="flex-shrink-0 h-8 w-8 p-0"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </Button>
-
-                      <div className="flex-1 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-rose-400" />
-                          <p className="text-xs font-semibold">
-                            {currentWeekOffset === 0
-                              ? (language === 'fr' ? 'Cette semaine' : language === 'en' ? 'This week' : 'Esta semana')
-                              : currentWeekOffset === 1
-                                ? (language === 'fr' ? 'Semaine prochaine' : language === 'en' ? 'Next week' : 'Próxima semana')
-                                : currentWeekOffset === -1
-                                  ? (language === 'fr' ? 'Semaine dernière' : language === 'en' ? 'Last week' : 'Semana pasada')
-                                  : formatWeekRange(currentWeekOffset)
-                            }
-                          </p>
-                        </div>
-                      </div>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentWeekOffset(prev => prev + 1)}
-                        className="flex-shrink-0 h-8 w-8 p-0"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </Button>
-                    </div>
+              {/* Add Image Form */}
+              <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                <CardHeader>
+                  <CardTitle>{t.visionBoard.addImage}</CardTitle>
+                  <CardDescription>{t.visionBoard.uploadInspire}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">{t.visionBoard.imageUrl}</label>
+                    <Input
+                      placeholder="https://example.com/image.jpg"
+                      id="vision-image-url"
+                      className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                    />
                   </div>
-                </div>
-
-                <div className="px-4 space-y-3 max-w-lg mx-auto">
-                  {/* Jours de la semaine - 2 par ligne */}
-                  <div className="grid grid-cols-2 gap-2 items-start">
-                    {(() => {
-                      const today = new Date();
-                      const todayStr = getLocalDateString(today);
-                      const weekDates = getWeekDates(currentWeekOffset);
-
-                      return [
-                        { key: 'monday', label: language === 'fr' ? 'Lun' : language === 'en' ? 'Mon' : 'Lun', index: 0 },
-                        { key: 'tuesday', label: language === 'fr' ? 'Mar' : language === 'en' ? 'Tue' : 'Mar', index: 1 },
-                        { key: 'wednesday', label: language === 'fr' ? 'Mer' : language === 'en' ? 'Wed' : 'Mié', index: 2 },
-                        { key: 'thursday', label: language === 'fr' ? 'Jeu' : language === 'en' ? 'Thu' : 'Jue', index: 3 },
-                        { key: 'friday', label: language === 'fr' ? 'Ven' : language === 'en' ? 'Fri' : 'Vie', index: 4 },
-                        { key: 'saturday', label: language === 'fr' ? 'Sam' : language === 'en' ? 'Sat' : 'Sáb', index: 5 },
-                        { key: 'sunday', label: language === 'fr' ? 'Dim' : language === 'en' ? 'Sun' : 'Dom', index: 6 }
-                      ].map((day) => {
-                        const dateStr = weekDates[day.index];
-                        const isToday = dateStr === todayStr;
-                        const dayDate = new Date(dateStr);
-                        const formattedDate = `${dayDate.getDate().toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')}`;
-
-                        // Récupérer les tâches pour cette date
-                        const dayTasks = getTasksForDate(dateStr, "user");
-
-                        return (
-                          <div
-                            key={day.key}
-                            className={`rounded-xl shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'} relative overflow-hidden min-h-[160px] cursor-pointer hover:shadow-lg transition-shadow`}
-                            onClick={() => {
-                              setSelectedDayViewDate(dayDate);
-                              setIsDayView(true);
-                            }}
-                          >
-                            {/* Bordure en haut pour le jour actuel */}
-                            {isToday && (
-                              <div className="absolute top-0 left-[20%] right-[20%] h-1 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 rounded-b-full" />
-                            )}
-                            <div className="p-2.5">
-                              <div className="flex items-center justify-between mb-2">
-                                <h3 className="font-bold text-xs">{day.label}</h3>
-                                <span className="text-[10px] text-stone-400">{formattedDate}</span>
-                              </div>
-                              <div className="space-y-1.5">
-                                {dayTasks.length === 0 ? (
-                                  <p className="text-[10px] text-stone-400 text-center py-1">
-                                    {language === 'fr' ? 'Aucune tâche' : language === 'en' ? 'No tasks' : 'Sin tareas'}
-                                  </p>
-                                ) : (
-                                  dayTasks.map((task) => {
-                                    // Obtenir l'index de l'objectif pour déterminer la couleur du dégradé (3 couleurs max)
-                                    const getGradientForGoal = () => {
-                                      if (task.type !== 'glowee' || !task.goalId) return null;
-                                      const activeGoals = getActiveGoals();
-                                      const goalIndex = activeGoals.findIndex(g => g.id === task.goalId);
-                                      if (goalIndex === -1) return null;
-                                      // 3 dégradés distincts pour les 3 objectifs possibles
-                                      const gradients = [
-                                        'from-rose-200/60 via-pink-200/60 to-rose-100/60', // Objectif 1 - Rose
-                                        'from-violet-200/60 via-purple-200/60 to-violet-100/60', // Objectif 2 - Violet
-                                        'from-amber-200/60 via-orange-200/60 to-amber-100/60' // Objectif 3 - Orange
-                                      ];
-                                      return gradients[goalIndex % 3];
-                                    };
-                                    const taskGradient = getGradientForGoal();
-
-                                    return (
-                                      <div
-                                        key={task.id}
-                                        className={`p-1.5 rounded-lg text-[10px] relative overflow-hidden group ${taskGradient
-                                          ? `bg-gradient-to-r ${taskGradient} text-gray-800`
-                                          : theme === 'dark' ? 'bg-stone-800' : 'bg-stone-50 text-stone-600'
-                                          }`}
-                                      >
-                                        <div className="flex items-start gap-1.5 relative z-10">
-                                          <div className={`mt-0.5 w-2.5 h-2.5 rounded border flex items-center justify-center flex-shrink-0 ${task.completed
-                                            ? 'bg-emerald-500 border-emerald-500'
-                                            : 'border-stone-300 bg-white/50'
-                                            }`}>
-                                            {task.completed && <Check className="w-2 h-2 text-white" />}
-                                          </div>
-                                          <span className={`leading-tight line-clamp-2 ${task.completed ? 'line-through opacity-50' : ''}`}>
-                                            {task.text}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    );
-                                  })
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    })()}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">{t.visionBoard.caption} ({t.visionBoard.optional})</label>
+                    <Input
+                      placeholder={t.visionBoard.descriptionPlaceholder}
+                      id="vision-image-caption"
+                      className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
+                    />
                   </div>
-                </div>
-              </>
-            ) : (
-              /* VUE JOUR TYPE APPLE CALENDAR */
-              <div className="px-4 py-2 space-y-6 animate-in slide-in-from-right-4 duration-300">
-                {/* Gros Header Date & Nav Mois */}
-                <div className="flex items-end justify-between mb-4">
-                  <div className="flex items-start gap-1">
-                    <h2 className="text-4xl font-bold text-gray-900 leading-none">
-                      {selectedDayViewDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3)}
-                    </h2>
-                    <div className="w-2 h-2 rounded-full bg-rose-500 mt-2 shadow-sm shadow-rose-200"></div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xl text-stone-400 font-light leading-tight capitalize">
-                      {selectedDayViewDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', day: 'numeric' })}
-                    </p>
-                    <p className="text-lg text-stone-300 font-light leading-tight">
-                      {selectedDayViewDate.getFullYear()}
-                    </p>
-                  </div>
-                </div>
+                  <Button
+                    onClick={() => {
+                      const urlInput = document.getElementById('vision-image-url') as HTMLInputElement;
+                      const captionInput = document.getElementById('vision-image-caption') as HTMLInputElement;
+                      if (urlInput.value) {
+                        addVisionBoardImage(urlInput.value, captionInput.value);
+                        urlInput.value = '';
+                        captionInput.value = '';
+                      }
+                    }}
+                    className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white"
+                  >
+                    <Plus className="mr-2 w-4 h-4" />
+                    {t.visionBoard.addToVisionBoard}
+                  </Button>
+                </CardContent>
+              </Card>
 
-                {/* Bandeau des jours (Strip) */}
-                <div className="flex justify-between items-center overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide select-none touch-pan-x">
-                  {[-3, -2, -1, 0, 1, 2, 3].map(offset => {
-                    const d = new Date(selectedDayViewDate);
-                    d.setDate(d.getDate() + offset);
-                    const isSelected = offset === 0;
-                    const isToday = getLocalDateString(d) === getLocalDateString(new Date());
-
-                    return (
-                      <button
-                        key={offset}
-                        onClick={() => setSelectedDayViewDate(d)}
-                        className={`flex flex-col items-center justify-center min-w-[48px] h-[64px] rounded-2xl transition-all duration-300 flex-shrink-0 mx-1 ${isSelected ? 'bg-white shadow-md scale-105 ring-1 ring-black/5' : 'text-stone-400 hover:text-stone-600 hover:bg-white/50'}`}
-                      >
-                        <span className="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">
-                          {d.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3)}
-                        </span>
-                        <span className={`text-xl font-bold ${isSelected ? 'text-gray-900' : 'text-stone-400'}`}>
-                          {d.getDate()}
-                        </span>
-                        {isToday && !isSelected && <span className="block w-1 h-1 bg-rose-400 rounded-full mt-1 opacity-50"></span>}
-                        {isSelected && <span className="block w-1 h-1 bg-gray-900 rounded-full mt-1"></span>}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Liste des tâches */}
-                <div className="space-y-0 min-h-[300px]">
-                  {(() => {
-                    const dateString = getLocalDateString(selectedDayViewDate);
-                    const tasks = getTasksForDate(dateString, "user");
-
-                    if (tasks.length === 0) {
-                      return (
-                        <div className="py-20 text-center flex flex-col items-center justify-center gap-4 opacity-50">
-                          <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center">
-                            <Calendar className="w-8 h-8 text-stone-400 stroke-1" />
-                          </div>
-                          <p className="text-sm font-light text-stone-500">
-                            {language === 'fr' ? 'Rien de prévu pour ce jour' : language === 'en' ? 'Nothing planned for today' : 'Nada planeado para hoy'}
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowAddTask(true)}
-                            className="mt-2 rounded-full border-dashed"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            {language === 'fr' ? 'Ajouter' : 'Add'}
-                          </Button>
-                        </div>
-                      );
-                    }
-
-                    return tasks.map((task, i) => (
-                      <div key={task.id} className="group flex items-start gap-4 py-4 border-b border-gray-100 border-dashed last:border-0 hover:bg-stone-50/50 -mx-2 px-4 rounded-lg transition-colors cursor-pointer"
-                        onClick={async () => {
-                          const newCompleted = !task.completed;
-                          setTasksWithDates(prev => prev.map(t =>
-                            t.id === task.id ? { ...t, completed: newCompleted } : t
-                          ));
-                          if (user && task.id.startsWith('firebase_')) {
-                            try {
-                              await updateTaskCompletion(task.id, newCompleted);
-                            } catch (error) {
-                              console.error('Error updating task completion in Firebase:', error);
-                            }
-                          }
-                        }}
-                      >
-                        {/* Left Icon - Checkbox style but bigger */}
-                        <div className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${task.completed
-                          ? 'bg-emerald-500 border-emerald-500'
-                          : 'border-stone-200 bg-white group-hover:border-rose-300'
-                          }`}>
-                          {task.completed && <Check className="w-4 h-4 text-white" />}
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0 pt-0.5">
-                          <p className={`text-base font-medium leading-normal break-words ${task.completed ? 'line-through text-stone-400' : 'text-gray-900'}`}>
-                            {task.text}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            {task.goalId && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-medium">
-                                Objectif
-                              </span>
-                            )}
-                            {task.generated && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 font-medium flex items-center gap-1">
-                                <Sparkles className="w-2.5 h-2.5" />
-                                IA
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Delete button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setTaskToDelete({ 
-                              id: task.id, 
-                              day: 'daily', 
-                              type: 'task' 
-                            });
-                            setShowDeleteTaskConfirm(true);
-                          }}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                          title={language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
-                        >
-                          <X className="w-4 h-4 text-stone-400 hover:text-red-500 transition-colors" />
-                        </button>
-                      </div>
-                    ));
-                  })()}
-                </div>
-
-
-              </div>
-            )}
-
-          </div>
-        )}
-
-        {/* Vision Board View */}
-        {currentView === 'vision-board' && (
-          <div className="p-6 space-y-6 max-w-lg mx-auto">
-            {/* Header */}
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-              <h1 className="text-2xl font-bold">{t.visionBoard.title}</h1>
-            </div>
-
-            {/* Add Image Form */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-              <CardHeader>
-                <CardTitle>{t.visionBoard.addImage}</CardTitle>
-                <CardDescription>{t.visionBoard.uploadInspire}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.visionBoard.imageUrl}</label>
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    id="vision-image-url"
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t.visionBoard.caption} ({t.visionBoard.optional})</label>
-                  <Input
-                    placeholder={t.visionBoard.descriptionPlaceholder}
-                    id="vision-image-caption"
-                    className={theme === 'dark' ? 'bg-stone-800 border-stone-700' : 'bg-stone-50'}
-                  />
-                </div>
-                <Button
-                  onClick={() => {
-                    const urlInput = document.getElementById('vision-image-url') as HTMLInputElement;
-                    const captionInput = document.getElementById('vision-image-caption') as HTMLInputElement;
-                    if (urlInput.value) {
-                      addVisionBoardImage(urlInput.value, captionInput.value);
-                      urlInput.value = '';
-                      captionInput.value = '';
-                    }
-                  }}
-                  className="w-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white"
-                >
-                  <Plus className="mr-2 w-4 h-4" />
-                  {t.visionBoard.addToVisionBoard}
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Affirmations Section */}
-            <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <Star className="w-5 h-5 text-rose-400" />
-                  {t.bonus.affirmationOfDay}
-                </h3>
-                <p className="text-lg italic text-stone-700 dark:text-stone-300 font-serif">
-                  "{bonusAffirmations[Math.floor(Math.random() * bonusAffirmations.length)]}"
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Images Grid */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">{t.visionBoard.myImages}</h2>
-              {visionBoardImages.length === 0 ? (
-                <div className={`text-center p-8 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                  <ImageIcon className="w-12 h-12 mx-auto mb-3 text-stone-400" />
-                  <p className="text-stone-500 dark:text-stone-500">{t.visionBoard.noImages}</p>
-                  <p className="text-xs text-stone-400 dark:text-stone-600 mt-1">{t.visionBoard.addImagesInspire}</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-4">
-                  {visionBoardImages.map((image) => (
-                    <div key={image.id} className={`relative rounded-xl overflow-hidden shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                      <img
-                        src={image.url}
-                        alt={image.caption || 'Vision board image'}
-                        className="w-full aspect-square object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                      {image.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                          <p className="text-xs text-white font-medium">{image.caption}</p>
-                        </div>
-                      )}
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-2 right-2 w-8 h-8"
-                        onClick={() => removeVisionBoardImage(image.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* New Me View */}
-        {currentView === 'new-me' && (
-          <div className="pb-24 bg-white">
-            {/* Header */}
-            <div className="p-4 pb-0 bg-white">
-              <div className="flex items-center gap-3 mb-3">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-8 h-8"
-                  onClick={() => setCurrentView('dashboard')}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <div className="flex-1">
-                  <h1 className="text-lg font-bold flex items-center gap-2">
-                    <div className="relative w-6 h-6">
-                      <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
-                    </div>
-                    {t.newMe.title}
-                  </h1>
-                  <p className="text-xs text-stone-600 dark:text-stone-400">
-                    {t.newMe.subtitle}
+              {/* Affirmations Section */}
+              <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-gradient-to-br from-rose-900/30 to-pink-900/30' : 'bg-gradient-to-br from-rose-50 to-pink-50'}`}>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-4 flex items-center gap-2">
+                    <Star className="w-5 h-5 text-rose-400" />
+                    {t.bonus.affirmationOfDay}
+                  </h3>
+                  <p className="text-lg italic text-stone-700 dark:text-stone-300 font-serif">
+                    "{bonusAffirmations[Math.floor(Math.random() * bonusAffirmations.length)]}"
                   </p>
-                </div>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
 
-            {/* Sélecteur de dates - Oval pill design */}
-            <div className="px-4 py-2">
-              <div className="flex justify-between items-center gap-1">
-                {(() => {
-                  const today = new Date();
-                  const dates: Date[] = [];
-                  // Générer 9 jours (4 avant, aujourd'hui, 4 après)
-                  for (let i = -4; i <= 4; i++) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() + i);
-                    dates.push(date);
-                  }
-                  return dates.map((date, index) => {
-                    const isToday = index === 4;
-                    const dateString = getLocalDateString(date);
-                    const isSelected = dateString === beautySelectedDate;
-                    const isValidated = beautyValidatedDates.includes(dateString);
-                    const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
-                    const dayNumber = date.getDate();
-                    return (
-                      <button
-                        key={index}
-                        className={`relative flex flex-col items-center cursor-pointer transition-all px-3 py-2 rounded-full ${isSelected
-                          ? 'bg-gray-900 text-white scale-105'
-                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                          }`}
-                        onClick={() => setBeautySelectedDate(dateString)}
-                      >
-                        <span className={`text-[10px] uppercase font-bold ${isSelected ? 'text-white' : 'text-gray-500'}`}>
-                          {dayName}
-                        </span>
-                        <span className={`text-base font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-                          {dayNumber}
-                        </span>
-                        {/* Croix de validation */}
-                        {isValidated && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-in zoom-in duration-500">
-                            <Check className="w-3 h-3 text-white" />
+              {/* Images Grid */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">{t.visionBoard.myImages}</h2>
+                {visionBoardImages.length === 0 ? (
+                  <div className={`text-center p-8 rounded-xl ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                    <ImageIcon className="w-12 h-12 mx-auto mb-3 text-stone-400" />
+                    <p className="text-stone-500 dark:text-stone-500">{t.visionBoard.noImages}</p>
+                    <p className="text-xs text-stone-400 dark:text-stone-600 mt-1">{t.visionBoard.addImagesInspire}</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    {visionBoardImages.map((image) => (
+                      <div key={image.id} className={`relative rounded-xl overflow-hidden shadow-md ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                        <img
+                          src={image.url}
+                          alt={image.caption || 'Vision board image'}
+                          className="w-full aspect-square object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                        {image.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                            <p className="text-xs text-white font-medium">{image.caption}</p>
                           </div>
                         )}
-                      </button>
-                    );
-                  });
-                })()}
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 w-8 h-8"
+                          onClick={() => removeVisionBoardImage(image.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
+          )
+        }
 
-            {/* Navigation Tabs - Scrollable Design with Yellow */}
-            <div className="p-4 pb-0 pt-2">
-              <div className="flex gap-1.5 max-w-lg mx-auto">
-                <button
-                  onClick={() => setNewMeActiveTab('daily')}
-                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'daily'
-                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                    : theme === 'dark'
-                      ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                    }`}
-                >
-                  <div className="flex items-center gap-1 justify-center">
-                    <CheckSquare className="w-3 h-3" />
-                    <span className="hidden sm:inline">{t.newMe.dailyTracking}</span>
-                    <span className="sm:hidden">{t.newMe.trackingShort}</span>
+        {/* New Me View */}
+        {
+          currentView === 'new-me' && (
+            <div className="pb-24 bg-white">
+              {/* Header */}
+              <div className="p-4 pb-0 bg-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-8 h-8"
+                    onClick={() => setCurrentView('dashboard')}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                  <div className="flex-1">
+                    <h1 className="text-lg font-bold flex items-center gap-2">
+                      <div className="relative w-6 h-6">
+                        <Image src="/Glowee/glowee.webp" alt="Glowee" fill className="object-contain" />
+                      </div>
+                      {t.newMe.title}
+                    </h1>
+                    <p className="text-xs text-stone-600 dark:text-stone-400">
+                      {t.newMe.subtitle}
+                    </p>
                   </div>
-                </button>
-                <button
-                  onClick={() => setNewMeActiveTab('progress')}
-                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'progress'
-                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                    : theme === 'dark'
-                      ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                    }`}
-                >
-                  <div className="flex items-center gap-1 justify-center">
-                    <TrendingUp className="w-3 h-3" />
-                    <span className="hidden sm:inline">{t.newMe.progressOn30Days}</span>
-                    <span className="sm:hidden">{t.newMe.progressShort}</span>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setNewMeActiveTab('badges')}
-                  className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'badges'
-                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
-                    : theme === 'dark'
-                      ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
-                    }`}
-                >
-                  <div className="flex items-center gap-1 justify-center">
-                    <Award className="w-3 h-3" />
-                    {t.newMe.badges}
-                  </div>
-                </button>
+                </div>
               </div>
-            </div>
 
-            {/* Content based on active tab */}
-            <div className="p-6 space-y-6 max-w-lg mx-auto">
-              {/* Tab 1: Suivi journalier */}
-              {newMeActiveTab === 'daily' && (
-                <>
-                  {/* Carte Glowee avec message et progression - Statique */}
-                  <div className="mb-6">
-                    <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
-                      <CardContent className="p-4">
-                        <p className="text-base text-gray-700 leading-relaxed font-medium mb-3">
-                          {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
-                            language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
-                              '30 días. 3 gestos al día. Para un verdadero glow up.'}
-                        </p>
-                        {/* Barre de progression en bas à droite */}
-                        <div className="flex items-center gap-2 justify-end">
-                          <div className="flex-1 max-w-[150px]">
-                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300"
-                                style={{
-                                  width: `${(() => {
-                                    const dayProgress = getBeautyProgressForDate(beautySelectedDate);
-                                    const completedCount = dayProgress ?
-                                      [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
-                                    return (completedCount / 3) * 100;
-                                  })()}%`
-                                }}
-                              />
-                            </div>
-                          </div>
-                          <span className="text-xs font-bold text-gray-600">
-                            {(() => {
-                              const dayProgress = getBeautyProgressForDate(beautySelectedDate);
-                              const completedCount = dayProgress ?
-                                [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
-                              return `${completedCount}/3`;
-                            })()}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Liste des 3 piliers beauté */}
-                  <div className="space-y-4">
-                    {beautyPillars.map((pillar) => {
-                      const dayProgress = getBeautyProgressForDate(beautySelectedDate);
-                      const isCompleted = dayProgress?.[pillar.id as keyof typeof dayProgress] || false;
-                      const isChoicePillar = pillar.type === 'choice';
-
-                      const isExpanded = expandedPillar === pillar.id;
-
+              {/* Sélecteur de dates - Oval pill design */}
+              <div className="px-4 py-2">
+                <div className="flex justify-between items-center gap-1">
+                  {(() => {
+                    const today = new Date();
+                    const dates: Date[] = [];
+                    // Générer 9 jours (4 avant, aujourd'hui, 4 après)
+                    for (let i = -4; i <= 4; i++) {
+                      const date = new Date(today);
+                      date.setDate(today.getDate() + i);
+                      dates.push(date);
+                    }
+                    return dates.map((date, index) => {
+                      const isToday = index === 4;
+                      const dateString = getLocalDateString(date);
+                      const isSelected = dateString === beautySelectedDate;
+                      const isValidated = beautyValidatedDates.includes(dateString);
+                      const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { weekday: 'short' }).slice(0, 3);
+                      const dayNumber = date.getDate();
                       return (
-                        <div key={pillar.id}>
-                          {/* Pillar Card */}
-                          <div
-                            className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''
-                              }`}
-                            onClick={() => {
-                              if (isChoicePillar) {
-                                setBeautyChoiceExpanded(!beautyChoiceExpanded);
-                              } else {
-                                toggleBeautyPillar(beautySelectedDate, pillar.id);
-                              }
-                            }}
-                          >
-                            <div className="flex items-start gap-3">
-                              <span className="text-3xl drop-shadow-lg">{pillar.icon}</span>
-                              <div className="flex-1">
-                                <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted && !isChoicePillar ? 'line-through' : ''}`}>
-                                  {pillar.title[language]}
-                                </h4>
-                                <p className={`text-sm ${isCompleted && !isChoicePillar ? 'line-through text-gray-400' : 'text-gray-600'}`}>
-                                  {pillar.description[language]}
-                                </p>
-                              </div>
-                              {/* Flèche d'ouverture pour tous les piliers */}
-                              <div
-                                className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors"
-                                onClick={(e) => {
-                                  e.stopPropagation(); // Empêcher la propagation pour ne pas cocher la tâche
-                                  setExpandedPillar(isExpanded ? null : pillar.id);
-                                }}
-                              >
-                                <ChevronDown
-                                  className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${(isChoicePillar && beautyChoiceExpanded) || (!isChoicePillar && isExpanded) ? 'rotate-180' : ''
-                                    }`}
+                        <button
+                          key={index}
+                          className={`relative flex flex-col items-center cursor-pointer transition-all px-3 py-2 rounded-full ${isSelected
+                            ? 'bg-gray-900 text-white scale-105'
+                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                            }`}
+                          onClick={() => setBeautySelectedDate(dateString)}
+                        >
+                          <span className={`text-[10px] uppercase font-bold ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                            {dayName}
+                          </span>
+                          <span className={`text-base font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
+                            {dayNumber}
+                          </span>
+                          {/* Croix de validation */}
+                          {isValidated && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-in zoom-in duration-500">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    });
+                  })()}
+                </div>
+              </div>
+
+              {/* Navigation Tabs - Scrollable Design with Yellow */}
+              <div className="p-4 pb-0 pt-2">
+                <div className="flex gap-1.5 max-w-lg mx-auto">
+                  <button
+                    onClick={() => setNewMeActiveTab('daily')}
+                    className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'daily'
+                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                      }`}
+                  >
+                    <div className="flex items-center gap-1 justify-center">
+                      <CheckSquare className="w-3 h-3" />
+                      <span className="hidden sm:inline">{t.newMe.dailyTracking}</span>
+                      <span className="sm:hidden">{t.newMe.trackingShort}</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setNewMeActiveTab('progress')}
+                    className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'progress'
+                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                      }`}
+                  >
+                    <div className="flex items-center gap-1 justify-center">
+                      <TrendingUp className="w-3 h-3" />
+                      <span className="hidden sm:inline">{t.newMe.progressOn30Days}</span>
+                      <span className="sm:hidden">{t.newMe.progressShort}</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setNewMeActiveTab('badges')}
+                    className={`flex-1 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${newMeActiveTab === 'badges'
+                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-stone-800/50 text-stone-400 hover:bg-stone-800 hover:text-stone-300'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900'
+                      }`}
+                  >
+                    <div className="flex items-center gap-1 justify-center">
+                      <Award className="w-3 h-3" />
+                      {t.newMe.badges}
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Content based on active tab */}
+              <div className="p-6 space-y-6 max-w-lg mx-auto">
+                {/* Tab 1: Suivi journalier */}
+                {newMeActiveTab === 'daily' && (
+                  <>
+                    {/* Carte Glowee avec message et progression - Statique */}
+                    <div className="mb-6">
+                      <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                        <CardContent className="p-4">
+                          <p className="text-base text-gray-700 leading-relaxed font-medium mb-3">
+                            {language === 'fr' ? '30 jours. 3 gestes par jour. Pour un vrai glow up.' :
+                              language === 'en' ? '30 days. 3 gestures per day. For a real glow up.' :
+                                '30 días. 3 gestos al día. Para un verdadero glow up.'}
+                          </p>
+                          {/* Barre de progression en bas à droite */}
+                          <div className="flex items-center gap-2 justify-end">
+                            <div className="flex-1 max-w-[150px]">
+                              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300"
+                                  style={{
+                                    width: `${(() => {
+                                      const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                                      const completedCount = dayProgress ?
+                                        [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+                                      return (completedCount / 3) * 100;
+                                    })()}%`
+                                  }}
                                 />
                               </div>
                             </div>
+                            <span className="text-xs font-bold text-gray-600">
+                              {(() => {
+                                const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                                const completedCount = dayProgress ?
+                                  [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+                                return `${completedCount}/3`;
+                              })()}
+                            </span>
                           </div>
+                        </CardContent>
+                      </Card>
+                    </div>
 
-                          {/* Section dépliable avec explications pour tous les piliers */}
-                          {!isChoicePillar && (
+                    {/* Liste des 3 piliers beauté */}
+                    <div className="space-y-4">
+                      {beautyPillars.map((pillar) => {
+                        const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                        const isCompleted = dayProgress?.[pillar.id as keyof typeof dayProgress] || false;
+                        const isChoicePillar = pillar.type === 'choice';
+
+                        const isExpanded = expandedPillar === pillar.id;
+
+                        return (
+                          <div key={pillar.id}>
+                            {/* Pillar Card */}
                             <div
-                              className={`overflow-hidden transition-all duration-300 ease-out ${isExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+                              className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] bg-gradient-to-br from-white to-pink-50 shadow-md hover:shadow-lg ${isCompleted ? 'opacity-60' : ''
                                 }`}
+                              onClick={() => {
+                                if (isChoicePillar) {
+                                  setBeautyChoiceExpanded(!beautyChoiceExpanded);
+                                } else {
+                                  toggleBeautyPillar(beautySelectedDate, pillar.id);
+                                }
+                              }}
                             >
-                              <div className="bg-pink-50/50 rounded-xl p-4 mx-2">
-                                <h5 className="font-semibold text-sm text-pink-700 mb-2">
-                                  {language === 'fr' ? 'Conseils & Explications' : language === 'en' ? 'Tips & Explanations' : 'Consejos y Explicaciones'}
-                                </h5>
-                                <p className="text-xs text-gray-600 leading-relaxed">
-                                  {pillar.id === 'walk-sport' && (language === 'fr'
-                                    ? 'La marche rapide ou le sport quotidien améliorent la circulation sanguine, boostent l\'énergie et favorisent un sommeil réparateur. 30 minutes suffisent pour activer le métabolisme et libérer des endorphines.'
-                                    : language === 'en'
-                                      ? 'Brisk walking or daily sport improve blood circulation, boost energy and promote restorative sleep. 30 minutes is enough to activate metabolism and release endorphins.'
-                                      : 'Caminar rápido o hacer deporte diariamente mejora la circulación sanguínea, aumenta la energía y favorece un sueño reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
-                                  )}
-                                  {pillar.id === 'water' && (language === 'fr'
-                                    ? 'Boire 2 litres d\'eau par jour hydrate la peau de l\'intérieur, réduit les cernes et améliore l\'élasticité de la peau. L\'hydratation optimale favorise aussi l\'élimination des toxines et la brillance des cheveux.'
-                                    : language === 'en'
-                                      ? 'Drinking 2 liters of water per day hydrates skin from within, reduces dark circles and improves skin elasticity. Optimal hydration also promotes toxin elimination and hair shine.'
-                                      : 'Beber 2 litros de agua al día hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidratación óptima también favorece la eliminación de toxinas y el brillo del cabello.'
-                                  )}
-                                </p>
-                                <div className="mt-3 flex items-center justify-between">
-                                  <span className="text-xs text-pink-500 font-medium">
-                                    {isCompleted ? '✓ ' : ''}{language === 'fr' ? 'Pilier' : language === 'en' ? 'Pillar' : 'Pilar'} {isCompleted ? (language === 'fr' ? 'complété' : language === 'en' ? 'completed' : 'completado') : (language === 'fr' ? 'à faire' : language === 'en' ? 'to do' : 'por hacer')}
-                                  </span>
-                                  <button
-                                    onClick={() => toggleBeautyPillar(beautySelectedDate, pillar.id)}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${isCompleted
-                                      ? 'bg-gray-200 text-gray-600'
-                                      : 'bg-pink-500 text-white hover:bg-pink-600'
+                              <div className="flex items-start gap-3">
+                                <span className="text-3xl drop-shadow-lg">{pillar.icon}</span>
+                                <div className="flex-1">
+                                  <h4 className={`font-bold text-sm mb-1 text-gray-800 ${isCompleted && !isChoicePillar ? 'line-through' : ''}`}>
+                                    {pillar.title[language]}
+                                  </h4>
+                                  <p className={`text-sm ${isCompleted && !isChoicePillar ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                                    {pillar.description[language]}
+                                  </p>
+                                </div>
+                                {/* Flèche d'ouverture pour tous les piliers */}
+                                <div
+                                  className="flex-shrink-0 p-1 rounded-full hover:bg-pink-100 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Empêcher la propagation pour ne pas cocher la tâche
+                                    setExpandedPillar(isExpanded ? null : pillar.id);
+                                  }}
+                                >
+                                  <ChevronDown
+                                    className={`w-5 h-5 text-pink-400 transition-transform duration-300 ${(isChoicePillar && beautyChoiceExpanded) || (!isChoicePillar && isExpanded) ? 'rotate-180' : ''
                                       }`}
-                                  >
-                                    {isCompleted
-                                      ? (language === 'fr' ? 'Annuler' : language === 'en' ? 'Undo' : 'Deshacer')
-                                      : (language === 'fr' ? 'Valider' : language === 'en' ? 'Complete' : 'Completar')
-                                    }
-                                  </button>
+                                  />
                                 </div>
                               </div>
                             </div>
-                          )}
 
-                          {/* Slide content for choice pillar */}
-                          {isChoicePillar && (
-                            <div
-                              className={`overflow-hidden transition-all duration-300 ease-out ${beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
-                                }`}
-                            >
-                              <div className="space-y-3">
-                                {/* Message Glowee - With typing effect */}
-                                <div className="relative">
-                                  <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
-                                    <CardContent className="p-0">
-                                      <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
-                                        <div className="flex-1 min-w-0">
-                                          <p className="text-[10px] text-gray-700 leading-tight font-medium">
-                                            {beautyGloweeDisplayedMessage}
-                                            {beautyGloweeIsTyping && <span className="animate-pulse">|</span>}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-
-                                  {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
-                                  <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
-                                    <Image
-                                      src="/Glowee/glowee.webp"
-                                      alt="Glowee"
-                                      width={96}
-                                      height={104}
-                                      className="object-contain relative z-10 drop-shadow-2xl"
-                                    />
+                            {/* Section dépliable avec explications pour tous les piliers */}
+                            {!isChoicePillar && (
+                              <div
+                                className={`overflow-hidden transition-all duration-300 ease-out ${isExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+                                  }`}
+                              >
+                                <div className="bg-pink-50/50 rounded-xl p-4 mx-2">
+                                  <h5 className="font-semibold text-sm text-pink-700 mb-2">
+                                    {language === 'fr' ? 'Conseils & Explications' : language === 'en' ? 'Tips & Explanations' : 'Consejos y Explicaciones'}
+                                  </h5>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    {pillar.id === 'walk-sport' && (language === 'fr'
+                                      ? 'La marche rapide ou le sport quotidien améliorent la circulation sanguine, boostent l\'énergie et favorisent un sommeil réparateur. 30 minutes suffisent pour activer le métabolisme et libérer des endorphines.'
+                                      : language === 'en'
+                                        ? 'Brisk walking or daily sport improve blood circulation, boost energy and promote restorative sleep. 30 minutes is enough to activate metabolism and release endorphins.'
+                                        : 'Caminar rápido o hacer deporte diariamente mejora la circulación sanguínea, aumenta la energía y favorece un sueño reparador. 30 minutos son suficientes para activar el metabolismo y liberar endorfinas.'
+                                    )}
+                                    {pillar.id === 'water' && (language === 'fr'
+                                      ? 'Boire 2 litres d\'eau par jour hydrate la peau de l\'intérieur, réduit les cernes et améliore l\'élasticité de la peau. L\'hydratation optimale favorise aussi l\'élimination des toxines et la brillance des cheveux.'
+                                      : language === 'en'
+                                        ? 'Drinking 2 liters of water per day hydrates skin from within, reduces dark circles and improves skin elasticity. Optimal hydration also promotes toxin elimination and hair shine.'
+                                        : 'Beber 2 litros de agua al día hidrata la piel desde el interior, reduce las ojeras y mejora la elasticidad de la piel. La hidratación óptima también favorece la eliminación de toxinas y el brillo del cabello.'
+                                    )}
+                                  </p>
+                                  <div className="mt-3 flex items-center justify-between">
+                                    <span className="text-xs text-pink-500 font-medium">
+                                      {isCompleted ? '✓ ' : ''}{language === 'fr' ? 'Pilier' : language === 'en' ? 'Pillar' : 'Pilar'} {isCompleted ? (language === 'fr' ? 'complété' : language === 'en' ? 'completed' : 'completado') : (language === 'fr' ? 'à faire' : language === 'en' ? 'to do' : 'por hacer')}
+                                    </span>
+                                    <button
+                                      onClick={() => toggleBeautyPillar(beautySelectedDate, pillar.id)}
+                                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${isCompleted
+                                        ? 'bg-gray-200 text-gray-600'
+                                        : 'bg-pink-500 text-white hover:bg-pink-600'
+                                        }`}
+                                    >
+                                      {isCompleted
+                                        ? (language === 'fr' ? 'Annuler' : language === 'en' ? 'Undo' : 'Deshacer')
+                                        : (language === 'fr' ? 'Valider' : language === 'en' ? 'Complete' : 'Completar')
+                                      }
+                                    </button>
                                   </div>
                                 </div>
-
-                                {/* Barre verticale */}
-                                <div className="flex justify-center">
-                                  <div className="w-0.5 h-8 bg-gradient-to-b from-pink-300 to-transparent"></div>
-                                </div>
-
-                                {/* Beauty Choices */}
-                                {beautyChoices.map((choice) => {
-                                  const isSelected = dayProgress?.selectedChoice === choice.id;
-                                  const hasSubtasks = choice.subtasks && choice.subtasks.length > 0;
-                                  const hasDetailedExplanation = choice.detailedExplanation && choice.detailedExplanation[language];
-
-                                  return (
-                                    <div key={choice.id}>
-                                      <div
-                                        className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${isSelected
-                                          ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
-                                          : 'bg-white shadow-md hover:shadow-lg'
-                                          }`}
-                                        onClick={() => selectBeautyChoice(beautySelectedDate, choice.id)}
-                                      >
-                                        <div className="flex items-center gap-3">
-                                          <span className="text-2xl">{choice.icon}</span>
-                                          <div className="flex-1">
-                                            <h5 className="font-bold text-sm text-gray-800">{choice.title[language]}</h5>
-                                            {choice.description && (
-                                              <p className="text-xs text-gray-600">{choice.description[language]}</p>
-                                            )}
-                                          </div>
-                                          {isSelected && <Check className="w-5 h-5 text-green-600 flex-shrink-0" />}
-                                        </div>
-                                      </div>
-
-                                      {/* Explications détaillées avec flèche */}
-                                      {hasDetailedExplanation && (
-                                        <div className="mt-2">
-                                          <Accordion type="single" collapsible className="w-full">
-                                            <AccordionItem value={`explanation-${choice.id}`} className="border-none">
-                                              <AccordionTrigger className="py-2 px-4 text-xs font-medium text-pink-600 hover:text-pink-700 hover:no-underline bg-pink-50 rounded-xl">
-                                                {language === 'fr' ? 'En savoir plus' : language === 'en' ? 'Learn more' : 'Saber más'}
-                                              </AccordionTrigger>
-                                              <AccordionContent className="pt-2">
-                                                <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-4 space-y-4">
-                                                  {/* Explication détaillée */}
-                                                  <p className="text-sm text-gray-700 leading-relaxed">
-                                                    {choice.detailedExplanation![language]}
-                                                  </p>
-
-                                                  {/* Résultats promis */}
-                                                  {choice.promisedResults && choice.promisedResults[language] && (
-                                                    <div className="space-y-2">
-                                                      <p className="text-xs font-bold text-pink-600 uppercase tracking-wide">
-                                                        {language === 'fr' ? 'Résultats promis :' : language === 'en' ? 'Promised results:' : 'Resultados prometidos:'}
-                                                      </p>
-                                                      <ul className="space-y-1">
-                                                        {choice.promisedResults[language].map((result, idx) => (
-                                                          <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                                                            <span className="text-pink-400 mt-1">✦</span>
-                                                            {result}
-                                                          </li>
-                                                        ))}
-                                                      </ul>
-                                                    </div>
-                                                  )}
-
-                                                  {/* Message Glowee */}
-                                                  {choice.gloweeMessage && choice.gloweeMessage[language] && (
-                                                    <div className="bg-white rounded-xl p-3 shadow-sm">
-                                                      <p className="text-xs text-pink-500 font-medium italic">
-                                                        Glowee : "{choice.gloweeMessage[language]}"
-                                                      </p>
-                                                    </div>
-                                                  )}
-                                                </div>
-                                              </AccordionContent>
-                                            </AccordionItem>
-                                          </Accordion>
-                                        </div>
-                                      )}
-
-                                      {/* Subtasks for this choice */}
-                                      {hasSubtasks && isSelected && (
-                                        <div className="ml-8 mt-2 space-y-2">
-                                          {choice.subtasks!.map((subtask) => {
-                                            const isSubtaskCompleted = dayProgress?.subtasks?.[subtask.id] || false;
-
-                                            return (
-                                              <div
-                                                key={subtask.id}
-                                                className={`p-3 rounded-xl cursor-pointer transition-all duration-300 ${isSubtaskCompleted
-                                                  ? 'bg-green-50 opacity-60'
-                                                  : 'bg-pink-50 hover:bg-pink-100'
-                                                  }`}
-                                                onClick={() => toggleBeautySubtask(beautySelectedDate, subtask.id)}
-                                              >
-                                                <div className="flex items-center gap-2">
-                                                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isSubtaskCompleted ? 'bg-green-500 border-green-500' : 'border-pink-300'
-                                                    }`}>
-                                                    {isSubtaskCompleted && <Check className="w-3 h-3 text-white" />}
-                                                  </div>
-                                                  <span className={`text-xs font-medium ${isSubtaskCompleted ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                                                    {subtask.title[language]}
-                                                  </span>
-                                                </div>
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
                               </div>
+                            )}
+
+                            {/* Slide content for choice pillar */}
+                            {isChoicePillar && (
+                              <div
+                                className={`overflow-hidden transition-all duration-300 ease-out ${beautyChoiceExpanded ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+                                  }`}
+                              >
+                                <div className="space-y-3">
+                                  {/* Message Glowee - With typing effect */}
+                                  <div className="relative">
+                                    <Card className="border-none shadow-xl shadow-gray-200/50 bg-white/80 backdrop-blur-md rounded-3xl overflow-visible">
+                                      <CardContent className="p-0">
+                                        <div className="flex items-center gap-1.5 py-0.5 px-2 pl-20 min-h-[2px]">
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] text-gray-700 leading-tight font-medium">
+                                              {beautyGloweeDisplayedMessage}
+                                              {beautyGloweeIsTyping && <span className="animate-pulse">|</span>}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+
+                                    {/* Image Glowee agrandie de 40px - positionnée à l'extérieur de la carte */}
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/3 w-[96px] h-[104px] z-10">
+                                      <div className="absolute inset-0 bg-gradient-to-br from-pink-200 to-pink-300 rounded-lg blur-md opacity-8"></div>
+                                      <Image
+                                        src="/Glowee/glowee.webp"
+                                        alt="Glowee"
+                                        width={96}
+                                        height={104}
+                                        className="object-contain relative z-10 drop-shadow-2xl"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* Barre verticale */}
+                                  <div className="flex justify-center">
+                                    <div className="w-0.5 h-8 bg-gradient-to-b from-pink-300 to-transparent"></div>
+                                  </div>
+
+                                  {/* Beauty Choices */}
+                                  {beautyChoices.map((choice) => {
+                                    const isSelected = dayProgress?.selectedChoice === choice.id;
+                                    const hasSubtasks = choice.subtasks && choice.subtasks.length > 0;
+                                    const hasDetailedExplanation = choice.detailedExplanation && choice.detailedExplanation[language];
+
+                                    return (
+                                      <div key={choice.id}>
+                                        <div
+                                          className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.01] ${isSelected
+                                            ? 'bg-gradient-to-br from-green-100 to-green-200 shadow-lg'
+                                            : 'bg-white shadow-md hover:shadow-lg'
+                                            }`}
+                                          onClick={() => selectBeautyChoice(beautySelectedDate, choice.id)}
+                                        >
+                                          <div className="flex items-center gap-3">
+                                            <span className="text-2xl">{choice.icon}</span>
+                                            <div className="flex-1">
+                                              <h5 className="font-bold text-sm text-gray-800">{choice.title[language]}</h5>
+                                              {choice.description && (
+                                                <p className="text-xs text-gray-600">{choice.description[language]}</p>
+                                              )}
+                                            </div>
+                                            {isSelected && <Check className="w-5 h-5 text-green-600 flex-shrink-0" />}
+                                          </div>
+                                        </div>
+
+                                        {/* Explications détaillées avec flèche */}
+                                        {hasDetailedExplanation && (
+                                          <div className="mt-2">
+                                            <Accordion type="single" collapsible className="w-full">
+                                              <AccordionItem value={`explanation-${choice.id}`} className="border-none">
+                                                <AccordionTrigger className="py-2 px-4 text-xs font-medium text-pink-600 hover:text-pink-700 hover:no-underline bg-pink-50 rounded-xl">
+                                                  {language === 'fr' ? 'En savoir plus' : language === 'en' ? 'Learn more' : 'Saber más'}
+                                                </AccordionTrigger>
+                                                <AccordionContent className="pt-2">
+                                                  <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-4 space-y-4">
+                                                    {/* Explication détaillée */}
+                                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                                      {choice.detailedExplanation![language]}
+                                                    </p>
+
+                                                    {/* Résultats promis */}
+                                                    {choice.promisedResults && choice.promisedResults[language] && (
+                                                      <div className="space-y-2">
+                                                        <p className="text-xs font-bold text-pink-600 uppercase tracking-wide">
+                                                          {language === 'fr' ? 'Résultats promis :' : language === 'en' ? 'Promised results:' : 'Resultados prometidos:'}
+                                                        </p>
+                                                        <ul className="space-y-1">
+                                                          {choice.promisedResults[language].map((result, idx) => (
+                                                            <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                                              <span className="text-pink-400 mt-1">✦</span>
+                                                              {result}
+                                                            </li>
+                                                          ))}
+                                                        </ul>
+                                                      </div>
+                                                    )}
+
+                                                    {/* Message Glowee */}
+                                                    {choice.gloweeMessage && choice.gloweeMessage[language] && (
+                                                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                                                        <p className="text-xs text-pink-500 font-medium italic">
+                                                          Glowee : "{choice.gloweeMessage[language]}"
+                                                        </p>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </AccordionContent>
+                                              </AccordionItem>
+                                            </Accordion>
+                                          </div>
+                                        )}
+
+                                        {/* Subtasks for this choice */}
+                                        {hasSubtasks && isSelected && (
+                                          <div className="ml-8 mt-2 space-y-2">
+                                            {choice.subtasks!.map((subtask) => {
+                                              const isSubtaskCompleted = dayProgress?.subtasks?.[subtask.id] || false;
+
+                                              return (
+                                                <div
+                                                  key={subtask.id}
+                                                  className={`p-3 rounded-xl cursor-pointer transition-all duration-300 ${isSubtaskCompleted
+                                                    ? 'bg-green-50 opacity-60'
+                                                    : 'bg-pink-50 hover:bg-pink-100'
+                                                    }`}
+                                                  onClick={() => toggleBeautySubtask(beautySelectedDate, subtask.id)}
+                                                >
+                                                  <div className="flex items-center gap-2">
+                                                    <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isSubtaskCompleted ? 'bg-green-500 border-green-500' : 'border-pink-300'
+                                                      }`}>
+                                                      {isSubtaskCompleted && <Check className="w-3 h-3 text-white" />}
+                                                    </div>
+                                                    <span className={`text-xs font-medium ${isSubtaskCompleted ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                                                      {subtask.title[language]}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Bouton Valider */}
+                    <div className="flex justify-center mt-8">
+                      <button
+                        onClick={() => {
+                          const dayProgress = getBeautyProgressForDate(beautySelectedDate);
+                          const completedCount = dayProgress ?
+                            [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
+
+                          if (completedCount === 3) {
+                            setShowBeautyStreakPopup(true);
+                            validateBeautyDate(beautySelectedDate);
+                          } else {
+                            setShowBeautyIncompletePopup(true);
+                          }
+                        }}
+                        className="px-8 py-3 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                      >
+                        {language === 'fr' ? 'Valider' : language === 'en' ? 'Validate' : 'Validar'}
+                      </button>
+                    </div>
+
+                  </>
+                )}
+
+                {/* Tab 2: Progression sur 30 jours */}
+                {newMeActiveTab === 'progress' && (
+                  <>
+                    <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Target className="w-5 h-5 text-rose-400" />
+                          {language === 'fr' ? 'Progression sur 30 jours' : language === 'en' ? 'Progress over 30 days' : 'Progreso en 30 días'}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {/* Statistiques globales */}
+                        <div className="grid grid-cols-3 gap-3 mb-6">
+                          <div className="text-center p-3 rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
+                            <div className="text-2xl font-bold text-rose-500">
+                              {(() => {
+                                const allDates = Object.keys(beautyPillarsProgress);
+                                return allDates.filter(date => {
+                                  const dayProgress = beautyPillarsProgress[date];
+                                  return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
+                                }).length;
+                              })()}
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Bouton Valider */}
-                  <div className="flex justify-center mt-8">
-                    <button
-                      onClick={() => {
-                        const dayProgress = getBeautyProgressForDate(beautySelectedDate);
-                        const completedCount = dayProgress ?
-                          [dayProgress['walk-sport'], dayProgress['water'], dayProgress['self-care-choice']].filter(Boolean).length : 0;
-
-                        if (completedCount === 3) {
-                          setShowBeautyStreakPopup(true);
-                          validateBeautyDate(beautySelectedDate);
-                        } else {
-                          setShowBeautyIncompletePopup(true);
-                        }
-                      }}
-                      className="px-8 py-3 bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                    >
-                      {language === 'fr' ? 'Valider' : language === 'en' ? 'Validate' : 'Validar'}
-                    </button>
-                  </div>
-
-                </>
-              )}
-
-              {/* Tab 2: Progression sur 30 jours */}
-              {newMeActiveTab === 'progress' && (
-                <>
-                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Target className="w-5 h-5 text-rose-400" />
-                        {language === 'fr' ? 'Progression sur 30 jours' : language === 'en' ? 'Progress over 30 days' : 'Progreso en 30 días'}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {/* Statistiques globales */}
-                      <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="text-center p-3 rounded-lg bg-gradient-to-br from-pink-50 to-rose-50">
-                          <div className="text-2xl font-bold text-rose-500">
-                            {(() => {
-                              const allDates = Object.keys(beautyPillarsProgress);
-                              return allDates.filter(date => {
-                                const dayProgress = beautyPillarsProgress[date];
-                                return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
-                              }).length;
-                            })()}
+                            <div className="text-xs text-gray-600 mt-1">
+                              {language === 'fr' ? 'Jours parfaits' : language === 'en' ? 'Perfect days' : 'Días perfectos'}
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-600 mt-1">
-                            {language === 'fr' ? 'Jours parfaits' : language === 'en' ? 'Perfect days' : 'Días perfectos'}
+                          <div className="text-center p-3 rounded-lg bg-gradient-to-br from-orange-50 to-pink-50">
+                            <div className="text-2xl font-bold text-orange-500">
+                              {(() => {
+                                const validatedDates = beautyValidatedDates;
+                                return validatedDates.length;
+                              })()}
+                            </div>
+                            <div className="text-xs text-gray-600 mt-1">
+                              {language === 'fr' ? 'Jours validés' : language === 'en' ? 'Validated days' : 'Días validados'}
+                            </div>
                           </div>
-                        </div>
-                        <div className="text-center p-3 rounded-lg bg-gradient-to-br from-orange-50 to-pink-50">
-                          <div className="text-2xl font-bold text-orange-500">
-                            {(() => {
-                              const validatedDates = beautyValidatedDates;
-                              return validatedDates.length;
-                            })()}
-                          </div>
-                          <div className="text-xs text-gray-600 mt-1">
-                            {language === 'fr' ? 'Jours validés' : language === 'en' ? 'Validated days' : 'Días validados'}
-                          </div>
-                        </div>
-                        <div className="text-center p-3 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50">
-                          <div className="text-2xl font-bold text-purple-500">
-                            {(() => {
-                              const validatedDates = Array.from(beautyValidatedDates).sort();
-                              let maxStreak = 0;
-                              let currentStreak = 0;
+                          <div className="text-center p-3 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50">
+                            <div className="text-2xl font-bold text-purple-500">
+                              {(() => {
+                                const validatedDates = Array.from(beautyValidatedDates).sort();
+                                let maxStreak = 0;
+                                let currentStreak = 0;
 
-                              for (let i = 0; i < validatedDates.length; i++) {
-                                if (i === 0) {
-                                  currentStreak = 1;
-                                } else {
-                                  const prevDate = new Date(validatedDates[i - 1]);
-                                  const currDate = new Date(validatedDates[i]);
-                                  const diffDays = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
-
-                                  if (diffDays === 1) {
-                                    currentStreak++;
-                                  } else {
-                                    maxStreak = Math.max(maxStreak, currentStreak);
+                                for (let i = 0; i < validatedDates.length; i++) {
+                                  if (i === 0) {
                                     currentStreak = 1;
+                                  } else {
+                                    const prevDate = new Date(validatedDates[i - 1]);
+                                    const currDate = new Date(validatedDates[i]);
+                                    const diffDays = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
+
+                                    if (diffDays === 1) {
+                                      currentStreak++;
+                                    } else {
+                                      maxStreak = Math.max(maxStreak, currentStreak);
+                                      currentStreak = 1;
+                                    }
                                   }
                                 }
-                              }
-                              return Math.max(maxStreak, currentStreak);
-                            })()}
-                          </div>
-                          <div className="text-xs text-gray-600 mt-1">
-                            {language === 'fr' ? 'Meilleure série' : language === 'en' ? 'Best streak' : 'Mejor racha'}
+                                return Math.max(maxStreak, currentStreak);
+                              })()}
+                            </div>
+                            <div className="text-xs text-gray-600 mt-1">
+                              {language === 'fr' ? 'Meilleure série' : language === 'en' ? 'Best streak' : 'Mejor racha'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      {/* Calendrier des 30 jours */}
-                      <div className="space-y-2 mb-6">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                          {language === 'fr' ? 'Calendrier de validation' : language === 'en' ? 'Validation calendar' : 'Calendario de validación'}
-                        </h3>
-                        <div className="grid grid-cols-7 gap-2">
-                          {Array.from({ length: 30 }, (_, i) => {
-                            const dayIndex = i + 1;
-                            // Créer une date fictive pour chaque jour
-                            const today = new Date();
-                            const startDate = new Date(today);
-                            startDate.setDate(today.getDate() - 15); // Commencer 15 jours avant aujourd'hui
-                            const thisDate = new Date(startDate);
-                            thisDate.setDate(startDate.getDate() + dayIndex - 1);
-                            const dateString = getLocalDateString(thisDate);
+                        {/* Calendrier des 30 jours */}
+                        <div className="space-y-2 mb-6">
+                          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                            {language === 'fr' ? 'Calendrier de validation' : language === 'en' ? 'Validation calendar' : 'Calendario de validación'}
+                          </h3>
+                          <div className="grid grid-cols-7 gap-2">
+                            {Array.from({ length: 30 }, (_, i) => {
+                              const dayIndex = i + 1;
+                              // Créer une date fictive pour chaque jour
+                              const today = new Date();
+                              const startDate = new Date(today);
+                              startDate.setDate(today.getDate() - 15); // Commencer 15 jours avant aujourd'hui
+                              const thisDate = new Date(startDate);
+                              thisDate.setDate(startDate.getDate() + dayIndex - 1);
+                              const dateString = getLocalDateString(thisDate);
 
-                            const isValidated = beautyValidatedDates.includes(dateString);
-                            const dayProgress = beautyPillarsProgress[dateString];
-                            const hasProgress = dayProgress && (dayProgress['walk-sport'] || dayProgress['water'] || dayProgress['self-care-choice']);
-                            const isToday = getLocalDateString(new Date()) === dateString;
+                              const isValidated = beautyValidatedDates.includes(dateString);
+                              const dayProgress = beautyPillarsProgress[dateString];
+                              const hasProgress = dayProgress && (dayProgress['walk-sport'] || dayProgress['water'] || dayProgress['self-care-choice']);
+                              const isToday = getLocalDateString(new Date()) === dateString;
 
-                            return (
-                              <div
-                                key={dayIndex}
-                                className={`
+                              return (
+                                <div
+                                  key={dayIndex}
+                                  className={`
                                   aspect-square rounded-lg flex items-center justify-center cursor-pointer transition-all text-xs font-semibold
                                   ${isToday ? 'ring-2 ring-rose-400' : ''}
                                   ${isValidated
-                                    ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-md'
-                                    : hasProgress
-                                      ? 'bg-rose-100 text-rose-500'
-                                      : 'bg-gray-100 text-gray-400'
-                                  }
+                                      ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white shadow-md'
+                                      : hasProgress
+                                        ? 'bg-rose-100 text-rose-500'
+                                        : 'bg-gray-100 text-gray-400'
+                                    }
                                   hover:scale-110
                                 `}
-                              >
-                                {isValidated && <Check className="w-4 h-4" />}
-                                {!isValidated && dayIndex}
+                                >
+                                  {isValidated && <Check className="w-4 h-4" />}
+                                  {!isValidated && dayIndex}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Détail par pilier */}
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-semibold text-gray-700">
+                            {language === 'fr' ? 'Détail par pilier' : language === 'en' ? 'Details by pillar' : 'Detalles por pilar'}
+                          </h3>
+
+                          {beautyPillars.map(pillar => {
+                            const completedDays = Object.keys(beautyPillarsProgress).filter(date => {
+                              const dayProgress = beautyPillarsProgress[date];
+                              return dayProgress && dayProgress[pillar.id];
+                            }).length;
+
+                            return (
+                              <div key={pillar.id} className="p-3 rounded-lg bg-gradient-to-r from-pink-50 to-rose-50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-2xl">{pillar.icon}</span>
+                                  <div className="flex-1">
+                                    <h4 className="text-sm font-semibold text-gray-800">{pillar.title[language]}</h4>
+                                    <p className="text-xs text-gray-600">{completedDays} / 30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}</p>
+                                  </div>
+                                </div>
+                                <div className="h-2 bg-white rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
+                                    style={{ width: `${(completedDays / 30) * 100}%` }}
+                                  />
+                                </div>
                               </div>
                             );
                           })}
                         </div>
-                      </div>
 
-                      {/* Détail par pilier */}
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-gray-700">
-                          {language === 'fr' ? 'Détail par pilier' : language === 'en' ? 'Details by pillar' : 'Detalles por pilar'}
-                        </h3>
-
-                        {beautyPillars.map(pillar => {
-                          const completedDays = Object.keys(beautyPillarsProgress).filter(date => {
-                            const dayProgress = beautyPillarsProgress[date];
-                            return dayProgress && dayProgress[pillar.id];
-                          }).length;
-
-                          return (
-                            <div key={pillar.id} className="p-3 rounded-lg bg-gradient-to-r from-pink-50 to-rose-50">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">{pillar.icon}</span>
-                                <div className="flex-1">
-                                  <h4 className="text-sm font-semibold text-gray-800">{pillar.title[language]}</h4>
-                                  <p className="text-xs text-gray-600">{completedDays} / 30 {language === 'fr' ? 'jours' : language === 'en' ? 'days' : 'días'}</p>
-                                </div>
-                              </div>
-                              <div className="h-2 bg-white rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500"
-                                  style={{ width: `${(completedDays / 30) * 100}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Stats globales */}
-                      <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">
-                            {Object.keys(newMeProgress).filter(day => {
-                              const dayProgress = newMeProgress[parseInt(day)];
-                              return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
-                            }).length} / 30 {t.newMe.daysCompleted}
-                          </span>
-                          <span className="text-2xl font-bold text-rose-400">
-                            {Math.round((Object.keys(newMeProgress).filter(day => {
-                              const dayProgress = newMeProgress[parseInt(day)];
-                              return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
-                            }).length / 30) * 100)}%
-                          </span>
-                        </div>
-                        <div className="h-3 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500 rounded-full"
-                            style={{
-                              width: `${(Object.keys(newMeProgress).filter(day => {
+                        {/* Stats globales */}
+                        <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium">
+                              {Object.keys(newMeProgress).filter(day => {
                                 const dayProgress = newMeProgress[parseInt(day)];
                                 return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
-                              }).length / 30) * 100}%`
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
-
-              {/* Tab 3: Badges & Encouragements */}
-              {newMeActiveTab === 'badges' && (
-                <>
-                  <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Award className="w-5 h-5 text-rose-400" />
-                        {language === 'fr' ? 'Badges' : language === 'en' ? 'Badges' : 'Insignias'}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {(() => {
-                        // Calculs pour le challenge beauté
-                        const validatedDays = beautyValidatedDates.length;
-                        const allDates = Object.keys(beautyPillarsProgress);
-
-                        const perfectDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
-                        }).length;
-
-                        const walkSportDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress['walk-sport'];
-                        }).length;
-
-                        const waterDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress['water'];
-                        }).length;
-
-                        const selfCareDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress['self-care-choice'];
-                        }).length;
-
-                        // Calcul de la série actuelle
-                        const sortedDates = beautyValidatedDates.sort();
-                        let currentStreak = 0;
-                        const today = getLocalDateString(new Date());
-
-                        for (let i = 0; i >= -29; i--) {
-                          const checkDate = new Date();
-                          checkDate.setDate(checkDate.getDate() + i);
-                          const checkDateString = getLocalDateString(checkDate);
-
-                          if (beautyValidatedDates.includes(checkDateString)) {
-                            currentStreak++;
-                          } else {
-                            break;
-                          }
-                        }
-
-                        const hasStarted = allDates.length > 0;
-
-                        // Calcul des jours avec choix spécifiques de beauté
-                        const skincareDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress.selectedChoice === 'skincare';
-                        }).length;
-
-                        const faceMassageDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress.selectedChoice === 'face-massage';
-                        }).length;
-
-                        const bodyCreamDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress.selectedChoice === 'body-cream';
-                        }).length;
-
-                        const lashesHairDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress.selectedChoice === 'lashes-hair';
-                        }).length;
-
-                        const dryBrushingDays = allDates.filter(date => {
-                          const dayProgress = beautyPillarsProgress[date];
-                          return dayProgress && dayProgress.selectedChoice === 'dry-brushing';
-                        }).length;
-
-                        const badges = [
-                          {
-                            condition: hasStarted,
-                            icon: '🌱',
-                            title: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso',
-                            desc: language === 'fr' ? 'Tu as commencé ton glow up !' : language === 'en' ? 'You started your glow up!' : '¡Comenzaste tu glow up!'
-                          },
-                          {
-                            condition: perfectDays >= 1,
-                            icon: '✨',
-                            title: language === 'fr' ? 'Journée Parfaite' : language === 'en' ? 'Perfect Day' : 'Día Perfecto',
-                            desc: language === 'fr' ? '3 piliers complétés en un jour' : language === 'en' ? '3 pillars completed in one day' : '3 pilares completados en un día'
-                          },
-                          {
-                            condition: currentStreak >= 3,
-                            icon: '🔥',
-                            title: language === 'fr' ? 'Série de 3' : language === 'en' ? 'Streak of 3' : 'Racha de 3',
-                            desc: language === 'fr' ? '3 jours consécutifs validés' : language === 'en' ? '3 consecutive days validated' : '3 días consecutivos validados'
-                          },
-                          {
-                            condition: waterDays >= 7,
-                            icon: '💧',
-                            title: language === 'fr' ? 'Hydratation Pro' : language === 'en' ? 'Hydration Pro' : 'Hidratación Pro',
-                            desc: language === 'fr' ? '7 jours d\'hydratation parfaite' : language === 'en' ? '7 days of perfect hydration' : '7 días de hidratación perfecta'
-                          },
-                          {
-                            condition: walkSportDays >= 7,
-                            icon: '🚶‍♀️',
-                            title: language === 'fr' ? 'Active Queen' : language === 'en' ? 'Active Queen' : 'Reina Activa',
-                            desc: language === 'fr' ? '7 jours de sport ou marche' : language === 'en' ? '7 days of sport or walk' : '7 días de deporte o caminata'
-                          },
-                          {
-                            condition: selfCareDays >= 7,
-                            icon: '💆‍♀️',
-                            title: language === 'fr' ? 'Self-Care Star' : language === 'en' ? 'Self-Care Star' : 'Estrella del Autocuidado',
-                            desc: language === 'fr' ? '7 gestes beauté pour toi' : language === 'en' ? '7 beauty gestures for you' : '7 gestos de belleza para ti'
-                          },
-                          {
-                            condition: currentStreak >= 7,
-                            icon: '🌟',
-                            title: language === 'fr' ? 'Semaine d\'Or' : language === 'en' ? 'Golden Week' : 'Semana de Oro',
-                            desc: language === 'fr' ? '7 jours consécutifs validés' : language === 'en' ? '7 consecutive days validated' : '7 días consecutivos validados'
-                          },
-                          {
-                            condition: perfectDays >= 14,
-                            icon: '🌸',
-                            title: language === 'fr' ? 'Glow Up en Vue' : language === 'en' ? 'Glow Up in Sight' : 'Glow Up a la Vista',
-                            desc: language === 'fr' ? '14 journées parfaites' : language === 'en' ? '14 perfect days' : '14 días perfectos'
-                          },
-                          {
-                            condition: currentStreak >= 14,
-                            icon: '💎',
-                            title: language === 'fr' ? 'Détermination Diamant' : language === 'en' ? 'Diamond Determination' : 'Determinación Diamante',
-                            desc: language === 'fr' ? '14 jours consécutifs validés' : language === 'en' ? '14 consecutive days validated' : '14 días consecutivos validados'
-                          },
-                          {
-                            condition: validatedDays >= 21,
-                            icon: '👑',
-                            title: language === 'fr' ? 'Reine du Glow Up' : language === 'en' ? 'Glow Up Queen' : 'Reina del Glow Up',
-                            desc: language === 'fr' ? '21 jours validés - nouvelle habitude !' : language === 'en' ? '21 days validated - new habit!' : '21 días validados - ¡nuevo hábito!'
-                          },
-                          {
-                            condition: currentStreak >= 30,
-                            icon: '🏆',
-                            title: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
-                            desc: language === 'fr' ? '30 jours consécutifs - transformation complète !' : language === 'en' ? '30 consecutive days - complete transformation!' : '30 días consecutivos - ¡transformación completa!'
-                          },
-                          {
-                            condition: perfectDays >= 30,
-                            icon: '✨',
-                            title: language === 'fr' ? 'Perfection Absolue' : language === 'en' ? 'Absolute Perfection' : 'Perfección Absoluta',
-                            desc: language === 'fr' ? '30 journées parfaites - tu es incroyable !' : language === 'en' ? '30 perfect days - you\'re incredible!' : '30 días perfectos - ¡eres increíble!'
-                          },
-                          {
-                            condition: skincareDays >= 8,
-                            icon: '🧼',
-                            title: language === 'fr' ? 'Expert Skincare' : language === 'en' ? 'Skincare Expert' : 'Experta en Skincare',
-                            desc: language === 'fr' ? '8 jours de routine skincare parfaite' : language === 'en' ? '8 days of perfect skincare routine' : '8 días de rutina skincare perfecta'
-                          },
-                          {
-                            condition: faceMassageDays >= 5,
-                            icon: '💆‍♀️',
-                            title: language === 'fr' ? 'Massage Pro' : language === 'en' ? 'Massage Pro' : 'Pro del Masaje',
-                            desc: language === 'fr' ? '5 jours de massage visage' : language === 'en' ? '5 days of face massage' : '5 días de masaje facial'
-                          },
-                          {
-                            condition: bodyCreamDays >= 5,
-                            icon: '🧴',
-                            title: language === 'fr' ? 'Peau Douce' : language === 'en' ? 'Soft Skin' : 'Piel Suave',
-                            desc: language === 'fr' ? '5 jours de crème corps' : language === 'en' ? '5 days of body cream' : '5 días de crema corporal'
-                          },
-                          {
-                            condition: lashesHairDays >= 4,
-                            icon: '👁️',
-                            title: language === 'fr' ? 'Cils & Cheveux Parfaits' : language === 'en' ? 'Perfect Lashes & Hair' : 'Pestañas y Cabello Perfectos',
-                            desc: language === 'fr' ? '4 jours de soins cils/cheveux' : language === 'en' ? '4 days of lashes/hair care' : '4 días de cuidado pestañas/cabello'
-                          },
-                          {
-                            condition: dryBrushingDays >= 3,
-                            icon: '🪥',
-                            title: language === 'fr' ? 'Brossage Expert' : language === 'en' ? 'Brushing Expert' : 'Experta en Cepillado',
-                            desc: language === 'fr' ? '3 jours de brossage à sec' : language === 'en' ? '3 days of dry brushing' : '3 días de cepillado en seco'
-                          }
-                        ];
-
-                        return badges.map((badge, index) => {
-                          const isUnlocked = badge.condition;
-                          return (
-                            <div
-                              key={index}
-                              className={`p-4 rounded-lg transition-all ${isUnlocked
-                                ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 shadow-lg'
-                                : theme === 'dark'
-                                  ? 'bg-stone-800/50 opacity-40'
-                                  : 'bg-stone-100 opacity-40'
-                                }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                <div className={`text-4xl ${!isUnlocked && 'grayscale'}`}>{badge.icon}</div>
-                                <div className="flex-1">
-                                  <h4 className={`font-semibold text-base ${isUnlocked ? 'text-white' : ''}`}>{badge.title}</h4>
-                                  <p className={`text-xs mt-1 ${isUnlocked ? 'text-white/90' : 'text-stone-600 dark:text-stone-400'}`}>{badge.desc}</p>
-                                </div>
-                                {isUnlocked && <Check className="w-6 h-6 text-white" />}
-                              </div>
-                            </div>
-                          );
-                        });
-                      })()}
-
-                      {/* Message d'encouragement de Glowee */}
-                      <div className={`p-4 rounded-lg mt-4 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/20 to-pink-900/20' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
-                        <div className="flex items-start gap-3">
-                          <div className="relative w-12 h-12 flex-shrink-0">
-                            <Image src="/Glowee/glowee-felicite.webp" alt="Glowee" fill className="object-contain" />
+                              }).length} / 30 {t.newMe.daysCompleted}
+                            </span>
+                            <span className="text-2xl font-bold text-rose-400">
+                              {Math.round((Object.keys(newMeProgress).filter(day => {
+                                const dayProgress = newMeProgress[parseInt(day)];
+                                return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                              }).length / 30) * 100)}%
+                            </span>
                           </div>
-                          <p className="text-sm italic text-gray-700 dark:text-stone-300">
-                            {(() => {
-                              const allDatesForMessage = Object.keys(beautyPillarsProgress);
-                              const perfectDaysCount = allDatesForMessage.filter(date => {
-                                const dayProgress = beautyPillarsProgress[date];
-                                return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
-                              }).length;
-
-                              if (perfectDaysCount >= 20) {
-                                return language === 'fr'
-                                  ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨"
-                                  : language === 'en'
-                                    ? "You're a real inspiration! Keep up this incredible pace ✨"
-                                    : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
-                              }
-                              if (perfectDaysCount >= 10) {
-                                return language === 'fr'
-                                  ? "Wow ! Tu brilles déjà tellement plus 🌟"
-                                  : language === 'en'
-                                    ? "Wow! You're already shining so much brighter 🌟"
-                                    : "¡Wow! Ya brillas mucho más 🌟";
-                              }
-                              if (perfectDaysCount >= 3) {
-                                return language === 'fr'
-                                  ? "Je suis fière de toi ! Chaque jour compte 💖"
-                                  : language === 'en'
-                                    ? "I'm proud of you! Every day counts 💖"
-                                    : "¡Estoy orgullosa de ti! Cada día cuenta 💖";
-                              }
-                              return language === 'fr'
-                                ? "Tu es au début d'un parcours magnifique. Je suis là pour toi ! 🌸"
-                                : language === 'en'
-                                  ? "You're at the start of a beautiful journey. I'm here for you! 🌸"
-                                  : "Estás al comienzo de un hermoso viaje. ¡Estoy aquí para ti! 🌸";
-                            })()}
-                          </p>
+                          <div className="h-3 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 transition-all duration-500 rounded-full"
+                              style={{
+                                width: `${(Object.keys(newMeProgress).filter(day => {
+                                  const dayProgress = newMeProgress[parseInt(day)];
+                                  return dayProgress && Object.values(dayProgress).filter(Boolean).length === 13;
+                                }).length / 30) * 100}%`
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
+                      </CardContent>
+                    </Card>
+                  </>
+                )}
+
+                {/* Tab 3: Badges & Encouragements */}
+                {newMeActiveTab === 'badges' && (
+                  <>
+                    <Card className={`border-none shadow-lg ${theme === 'dark' ? 'bg-stone-900' : 'bg-white'}`}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Award className="w-5 h-5 text-rose-400" />
+                          {language === 'fr' ? 'Badges' : language === 'en' ? 'Badges' : 'Insignias'}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        {(() => {
+                          // Calculs pour le challenge beauté
+                          const validatedDays = beautyValidatedDates.length;
+                          const allDates = Object.keys(beautyPillarsProgress);
+
+                          const perfectDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
+                          }).length;
+
+                          const walkSportDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress['walk-sport'];
+                          }).length;
+
+                          const waterDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress['water'];
+                          }).length;
+
+                          const selfCareDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress['self-care-choice'];
+                          }).length;
+
+                          // Calcul de la série actuelle
+                          const sortedDates = beautyValidatedDates.sort();
+                          let currentStreak = 0;
+                          const today = getLocalDateString(new Date());
+
+                          for (let i = 0; i >= -29; i--) {
+                            const checkDate = new Date();
+                            checkDate.setDate(checkDate.getDate() + i);
+                            const checkDateString = getLocalDateString(checkDate);
+
+                            if (beautyValidatedDates.includes(checkDateString)) {
+                              currentStreak++;
+                            } else {
+                              break;
+                            }
+                          }
+
+                          const hasStarted = allDates.length > 0;
+
+                          // Calcul des jours avec choix spécifiques de beauté
+                          const skincareDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress.selectedChoice === 'skincare';
+                          }).length;
+
+                          const faceMassageDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress.selectedChoice === 'face-massage';
+                          }).length;
+
+                          const bodyCreamDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress.selectedChoice === 'body-cream';
+                          }).length;
+
+                          const lashesHairDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress.selectedChoice === 'lashes-hair';
+                          }).length;
+
+                          const dryBrushingDays = allDates.filter(date => {
+                            const dayProgress = beautyPillarsProgress[date];
+                            return dayProgress && dayProgress.selectedChoice === 'dry-brushing';
+                          }).length;
+
+                          const badges = [
+                            {
+                              condition: hasStarted,
+                              icon: '🌱',
+                              title: language === 'fr' ? 'Premier Pas' : language === 'en' ? 'First Step' : 'Primer Paso',
+                              desc: language === 'fr' ? 'Tu as commencé ton glow up !' : language === 'en' ? 'You started your glow up!' : '¡Comenzaste tu glow up!'
+                            },
+                            {
+                              condition: perfectDays >= 1,
+                              icon: '✨',
+                              title: language === 'fr' ? 'Journée Parfaite' : language === 'en' ? 'Perfect Day' : 'Día Perfecto',
+                              desc: language === 'fr' ? '3 piliers complétés en un jour' : language === 'en' ? '3 pillars completed in one day' : '3 pilares completados en un día'
+                            },
+                            {
+                              condition: currentStreak >= 3,
+                              icon: '🔥',
+                              title: language === 'fr' ? 'Série de 3' : language === 'en' ? 'Streak of 3' : 'Racha de 3',
+                              desc: language === 'fr' ? '3 jours consécutifs validés' : language === 'en' ? '3 consecutive days validated' : '3 días consecutivos validados'
+                            },
+                            {
+                              condition: waterDays >= 7,
+                              icon: '💧',
+                              title: language === 'fr' ? 'Hydratation Pro' : language === 'en' ? 'Hydration Pro' : 'Hidratación Pro',
+                              desc: language === 'fr' ? '7 jours d\'hydratation parfaite' : language === 'en' ? '7 days of perfect hydration' : '7 días de hidratación perfecta'
+                            },
+                            {
+                              condition: walkSportDays >= 7,
+                              icon: '🚶‍♀️',
+                              title: language === 'fr' ? 'Active Queen' : language === 'en' ? 'Active Queen' : 'Reina Activa',
+                              desc: language === 'fr' ? '7 jours de sport ou marche' : language === 'en' ? '7 days of sport or walk' : '7 días de deporte o caminata'
+                            },
+                            {
+                              condition: selfCareDays >= 7,
+                              icon: '💆‍♀️',
+                              title: language === 'fr' ? 'Self-Care Star' : language === 'en' ? 'Self-Care Star' : 'Estrella del Autocuidado',
+                              desc: language === 'fr' ? '7 gestes beauté pour toi' : language === 'en' ? '7 beauty gestures for you' : '7 gestos de belleza para ti'
+                            },
+                            {
+                              condition: currentStreak >= 7,
+                              icon: '🌟',
+                              title: language === 'fr' ? 'Semaine d\'Or' : language === 'en' ? 'Golden Week' : 'Semana de Oro',
+                              desc: language === 'fr' ? '7 jours consécutifs validés' : language === 'en' ? '7 consecutive days validated' : '7 días consecutivos validados'
+                            },
+                            {
+                              condition: perfectDays >= 14,
+                              icon: '🌸',
+                              title: language === 'fr' ? 'Glow Up en Vue' : language === 'en' ? 'Glow Up in Sight' : 'Glow Up a la Vista',
+                              desc: language === 'fr' ? '14 journées parfaites' : language === 'en' ? '14 perfect days' : '14 días perfectos'
+                            },
+                            {
+                              condition: currentStreak >= 14,
+                              icon: '💎',
+                              title: language === 'fr' ? 'Détermination Diamant' : language === 'en' ? 'Diamond Determination' : 'Determinación Diamante',
+                              desc: language === 'fr' ? '14 jours consécutifs validés' : language === 'en' ? '14 consecutive days validated' : '14 días consecutivos validados'
+                            },
+                            {
+                              condition: validatedDays >= 21,
+                              icon: '👑',
+                              title: language === 'fr' ? 'Reine du Glow Up' : language === 'en' ? 'Glow Up Queen' : 'Reina del Glow Up',
+                              desc: language === 'fr' ? '21 jours validés - nouvelle habitude !' : language === 'en' ? '21 days validated - new habit!' : '21 días validados - ¡nuevo hábito!'
+                            },
+                            {
+                              condition: currentStreak >= 30,
+                              icon: '🏆',
+                              title: language === 'fr' ? 'Légende' : language === 'en' ? 'Legend' : 'Leyenda',
+                              desc: language === 'fr' ? '30 jours consécutifs - transformation complète !' : language === 'en' ? '30 consecutive days - complete transformation!' : '30 días consecutivos - ¡transformación completa!'
+                            },
+                            {
+                              condition: perfectDays >= 30,
+                              icon: '✨',
+                              title: language === 'fr' ? 'Perfection Absolue' : language === 'en' ? 'Absolute Perfection' : 'Perfección Absoluta',
+                              desc: language === 'fr' ? '30 journées parfaites - tu es incroyable !' : language === 'en' ? '30 perfect days - you\'re incredible!' : '30 días perfectos - ¡eres increíble!'
+                            },
+                            {
+                              condition: skincareDays >= 8,
+                              icon: '🧼',
+                              title: language === 'fr' ? 'Expert Skincare' : language === 'en' ? 'Skincare Expert' : 'Experta en Skincare',
+                              desc: language === 'fr' ? '8 jours de routine skincare parfaite' : language === 'en' ? '8 days of perfect skincare routine' : '8 días de rutina skincare perfecta'
+                            },
+                            {
+                              condition: faceMassageDays >= 5,
+                              icon: '💆‍♀️',
+                              title: language === 'fr' ? 'Massage Pro' : language === 'en' ? 'Massage Pro' : 'Pro del Masaje',
+                              desc: language === 'fr' ? '5 jours de massage visage' : language === 'en' ? '5 days of face massage' : '5 días de masaje facial'
+                            },
+                            {
+                              condition: bodyCreamDays >= 5,
+                              icon: '🧴',
+                              title: language === 'fr' ? 'Peau Douce' : language === 'en' ? 'Soft Skin' : 'Piel Suave',
+                              desc: language === 'fr' ? '5 jours de crème corps' : language === 'en' ? '5 days of body cream' : '5 días de crema corporal'
+                            },
+                            {
+                              condition: lashesHairDays >= 4,
+                              icon: '👁️',
+                              title: language === 'fr' ? 'Cils & Cheveux Parfaits' : language === 'en' ? 'Perfect Lashes & Hair' : 'Pestañas y Cabello Perfectos',
+                              desc: language === 'fr' ? '4 jours de soins cils/cheveux' : language === 'en' ? '4 days of lashes/hair care' : '4 días de cuidado pestañas/cabello'
+                            },
+                            {
+                              condition: dryBrushingDays >= 3,
+                              icon: '🪥',
+                              title: language === 'fr' ? 'Brossage Expert' : language === 'en' ? 'Brushing Expert' : 'Experta en Cepillado',
+                              desc: language === 'fr' ? '3 jours de brossage à sec' : language === 'en' ? '3 days of dry brushing' : '3 días de cepillado en seco'
+                            }
+                          ];
+
+                          return badges.map((badge, index) => {
+                            const isUnlocked = badge.condition;
+                            return (
+                              <div
+                                key={index}
+                                className={`p-4 rounded-lg transition-all ${isUnlocked
+                                  ? 'bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 shadow-lg'
+                                  : theme === 'dark'
+                                    ? 'bg-stone-800/50 opacity-40'
+                                    : 'bg-stone-100 opacity-40'
+                                  }`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className={`text-4xl ${!isUnlocked && 'grayscale'}`}>{badge.icon}</div>
+                                  <div className="flex-1">
+                                    <h4 className={`font-semibold text-base ${isUnlocked ? 'text-white' : ''}`}>{badge.title}</h4>
+                                    <p className={`text-xs mt-1 ${isUnlocked ? 'text-white/90' : 'text-stone-600 dark:text-stone-400'}`}>{badge.desc}</p>
+                                  </div>
+                                  {isUnlocked && <Check className="w-6 h-6 text-white" />}
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()}
+
+                        {/* Message d'encouragement de Glowee */}
+                        <div className={`p-4 rounded-lg mt-4 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/20 to-pink-900/20' : 'bg-gradient-to-br from-purple-50 to-pink-50'}`}>
+                          <div className="flex items-start gap-3">
+                            <div className="relative w-12 h-12 flex-shrink-0">
+                              <Image src="/Glowee/glowee-felicite.webp" alt="Glowee" fill className="object-contain" />
+                            </div>
+                            <p className="text-sm italic text-gray-700 dark:text-stone-300">
+                              {(() => {
+                                const allDatesForMessage = Object.keys(beautyPillarsProgress);
+                                const perfectDaysCount = allDatesForMessage.filter(date => {
+                                  const dayProgress = beautyPillarsProgress[date];
+                                  return dayProgress && dayProgress['walk-sport'] && dayProgress['water'] && dayProgress['self-care-choice'];
+                                }).length;
+
+                                if (perfectDaysCount >= 20) {
+                                  return language === 'fr'
+                                    ? "Tu es une vraie inspiration ! Continue ce rythme incroyable ✨"
+                                    : language === 'en'
+                                      ? "You're a real inspiration! Keep up this incredible pace ✨"
+                                      : "¡Eres una verdadera inspiración! Mantén este ritmo increíble ✨";
+                                }
+                                if (perfectDaysCount >= 10) {
+                                  return language === 'fr'
+                                    ? "Wow ! Tu brilles déjà tellement plus 🌟"
+                                    : language === 'en'
+                                      ? "Wow! You're already shining so much brighter 🌟"
+                                      : "¡Wow! Ya brillas mucho más 🌟";
+                                }
+                                if (perfectDaysCount >= 3) {
+                                  return language === 'fr'
+                                    ? "Je suis fière de toi ! Chaque jour compte 💖"
+                                    : language === 'en'
+                                      ? "I'm proud of you! Every day counts 💖"
+                                      : "¡Estoy orgullosa de ti! Cada día cuenta 💖";
+                                }
+                                return language === 'fr'
+                                  ? "Tu es au début d'un parcours magnifique. Je suis là pour toi ! 🌸"
+                                  : language === 'en'
+                                    ? "You're at the start of a beautiful journey. I'm here for you! 🌸"
+                                    : "Estás al comienzo de un hermoso viaje. ¡Estoy aquí para ti! 🌸";
+                              })()}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )
+        }
 
         {/* Bonus View - Refonte Glassmorphism */}
-        {currentView === 'bonus' && (
-          <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50">
-            {/* Header élégant */}
-            <div className="flex items-center gap-3 p-5 pb-4 max-w-3xl mx-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-gray-200/50 hover:bg-white"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <X className="w-5 h-5 text-gray-800" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent">{t.bonus.title}</h1>
-                <p className="text-xs text-gray-600 font-medium">{language === 'fr' ? 'Ton espace de développement' : language === 'en' ? 'Your development space' : 'Tu espacio de desarrollo'}</p>
-              </div>
-            </div>
-
-            <div className="px-5 space-y-5 max-w-3xl mx-auto">
-
-              {/* Sections Bonus Principales */}
-              <div className="space-y-4">
-                {bonusSections
-                  .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir' && section.id !== 'limites-paix' && section.id !== '50-choses-seule')
-                  .map((section) => {
-                    const weeklyCompletion = getSectionWeeklyCompletion(section.id);
-                    return (
-                      <Card
-                        key={section.id}
-                        onClick={() => setSelectedBonusSection(section)}
-                        className={`border-none shadow-xl shadow-gray-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
-                      >
-                        <CardContent className="p-5">
-                          <div className="flex items-center gap-4">
-                            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${section.color} flex items-center justify-center text-3xl shadow-lg flex-shrink-0`}>
-                              {section.icon}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-bold text-base text-gray-800">{section.title}</h3>
-                                {weeklyCompletion > 0 && (
-                                  <Badge variant="outline" className="text-[10px] px-2 py-0.5 bg-pink-50 text-pink-600 border-pink-200 font-semibold">
-                                    {weeklyCompletion}/4
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-gray-600 font-medium">{section.description}</p>
-                              <p className="text-xs text-gray-500 mt-1 italic">{section.duration}</p>
-                              {weeklyCompletion > 0 && (
-                                <div className="mt-2">
-                                  <Progress value={(weeklyCompletion / 4) * 100} className="h-2 bg-pink-100" />
-                                </div>
-                              )}
-                            </div>
-                            <ChevronRight className={`w-5 h-5 text-pink-400 flex-shrink-0`} />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-              </div>
-
-              {/* Checklists - Glassmorphism */}
-              <Card className="border-none shadow-xl shadow-gray-200/30 bg-white/80 backdrop-blur-md rounded-[1.5rem]">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-lg">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center shadow-lg">
-                      <ListChecks className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="font-bold text-gray-800">{t.bonus.checklists}</span>
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 font-medium ml-13">{t.bonus.practicalGuides}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {checklistsData.map((checklist) => {
-                    const isCompleted = bonusProgress.checklistsCompleted.includes(checklist.id);
-                    return (
-                      <div
-                        key={checklist.id}
-                        onClick={() => setSelectedChecklist(checklist)}
-                        className={`flex items-center justify-between p-4 rounded-xl cursor-pointer hover:scale-[1.02] transition-all shadow-md ${isCompleted
-                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400'
-                          : 'bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50'
-                          }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow-sm ${isCompleted ? 'bg-gradient-to-br from-green-400 to-emerald-400' : 'bg-gradient-to-br from-blue-400 to-cyan-400'
-                            }`}>
-                            {checklist.icon}
-                          </div>
-                          <div>
-                            <p className="font-bold text-sm text-gray-800">{checklist.title}</p>
-                            <p className="text-xs text-gray-600 font-medium">{checklist.items.length} {t.bonus.steps}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleChecklistCompleted(checklist.id);
-                            }}
-                            className={`w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-sm ${isCompleted
-                              ? 'bg-green-500 text-white'
-                              : 'bg-white border-2 border-gray-300 hover:border-blue-400'
-                              }`}
-                          >
-                            {isCompleted && <Check className="w-4 h-4" />}
-                          </div>
-                          <ChevronRight className={`w-5 h-5 ${isCompleted ? 'text-green-400' : 'text-blue-400'}`} />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-
-              {/* Mini-Guide Soft Life - Glassmorphism */}
-              <Card
-                onClick={() => setShowSoftLifeGuide(true)}
-                className="border-none shadow-xl shadow-gray-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem]"
-              >
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-lg">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center shadow-lg">
-                      <Sun className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="font-bold text-gray-800">{t.bonus.miniGuide}</span>
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 font-medium ml-13">{t.bonus.softLifeSteps}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-gray-600 font-medium">
-                      {t.bonus.discoverSoftLife}
-                    </p>
-                    <ChevronRight className="w-5 h-5 text-amber-400" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {/* Settings/Profil View - Design Moderne UX */}
-        {currentView === 'settings' && (
-          <ProfilePage
-            setShowAuthDialog={setShowAuthDialog}
-            setShowPlanSelection={setShowPlanSelection}
-          />
-        )}
-      </main>
-
-      {/* Bottom Navigation - Design moderne épuré */}
-      {currentView !== 'goal-details' && (
-        <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-lg z-50">
-          <div className="flex items-center gap-2">
-            {/* Nav items container */}
-            <div className="flex-1 bg-white rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] px-2 py-2 border border-gray-100/80">
-              <div className="flex items-center justify-around">
-                {/* Aujourd'hui */}
-                <button
-                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'dashboard'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                    }`}
+        {
+          currentView === 'bonus' && (
+            <div className="pb-24 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50">
+              {/* Header élégant */}
+              <div className="flex items-center gap-3 p-5 pb-4 max-w-3xl mx-auto">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full w-10 h-10 bg-white/80 backdrop-blur-md shadow-lg shadow-gray-200/50 hover:bg-white"
                   onClick={() => setCurrentView('dashboard')}
                 >
-                  <Home className="w-[22px] h-[22px]" strokeWidth={currentView === 'dashboard' ? 2.5 : 1.8} />
-                  <span className={`text-[10px] leading-tight ${currentView === 'dashboard' ? 'font-semibold' : 'font-medium'}`}>
-                    {language === 'fr' ? "Aujourd'hui" : language === 'en' ? 'Today' : 'Hoy'}
-                  </span>
-                </button>
+                  <X className="w-5 h-5 text-gray-800" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 bg-clip-text text-transparent">{t.bonus.title}</h1>
+                  <p className="text-xs text-gray-600 font-medium">{language === 'fr' ? 'Ton espace de développement' : language === 'en' ? 'Your development space' : 'Tu espacio de desarrollo'}</p>
+                </div>
+              </div>
 
-                {/* Habitudes */}
-                <button
-                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'trackers'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                  onClick={() => checkFeatureAccess('habitudes', () => setCurrentView('trackers'))}
-                >
-                  <Target className="w-[22px] h-[22px]" strokeWidth={currentView === 'trackers' ? 2.5 : 1.8} />
-                  <span className={`text-[10px] leading-tight ${currentView === 'trackers' ? 'font-semibold' : 'font-medium'}`}>
-                    {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
-                  </span>
-                </button>
+              <div className="px-5 space-y-5 max-w-3xl mx-auto">
 
-                {/* Ma Semaine */}
-                <button
-                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'routine'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                  onClick={() => setCurrentView('routine')}
-                >
-                  <Calendar className="w-[22px] h-[22px]" strokeWidth={currentView === 'routine' ? 2.5 : 1.8} />
-                  <span className={`text-[10px] leading-tight ${currentView === 'routine' ? 'font-semibold' : 'font-medium'}`}>
-                    {language === 'fr' ? 'Semaine' : language === 'en' ? 'Week' : 'Semana'}
-                  </span>
-                </button>
+                {/* Sections Bonus Principales */}
+                <div className="space-y-4">
+                  {bonusSections
+                    .filter((section) => section.id !== 'petits-succes' && section.id !== 'question-soir' && section.id !== 'limites-paix' && section.id !== '50-choses-seule')
+                    .map((section) => {
+                      const weeklyCompletion = getSectionWeeklyCompletion(section.id);
+                      return (
+                        <Card
+                          key={section.id}
+                          onClick={() => setSelectedBonusSection(section)}
+                          className={`border-none shadow-xl shadow-gray-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem] overflow-hidden`}
+                        >
+                          <CardContent className="p-5">
+                            <div className="flex items-center gap-4">
+                              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${section.color} flex items-center justify-center text-3xl shadow-lg flex-shrink-0`}>
+                                {section.icon}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="font-bold text-base text-gray-800">{section.title}</h3>
+                                  {weeklyCompletion > 0 && (
+                                    <Badge variant="outline" className="text-[10px] px-2 py-0.5 bg-pink-50 text-pink-600 border-pink-200 font-semibold">
+                                      {weeklyCompletion}/4
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-600 font-medium">{section.description}</p>
+                                <p className="text-xs text-gray-500 mt-1 italic">{section.duration}</p>
+                                {weeklyCompletion > 0 && (
+                                  <div className="mt-2">
+                                    <Progress value={(weeklyCompletion / 4) * 100} className="h-2 bg-pink-100" />
+                                  </div>
+                                )}
+                              </div>
+                              <ChevronRight className={`w-5 h-5 text-pink-400 flex-shrink-0`} />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                </div>
 
-                {/* Profil */}
-                <button
-                  className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'settings'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                  onClick={() => setCurrentView('settings')}
+                {/* Checklists - Glassmorphism */}
+                <Card className="border-none shadow-xl shadow-gray-200/30 bg-white/80 backdrop-blur-md rounded-[1.5rem]">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-3 text-lg">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center shadow-lg">
+                        <ListChecks className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="font-bold text-gray-800">{t.bonus.checklists}</span>
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 font-medium ml-13">{t.bonus.practicalGuides}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {checklistsData.map((checklist) => {
+                      const isCompleted = bonusProgress.checklistsCompleted.includes(checklist.id);
+                      return (
+                        <div
+                          key={checklist.id}
+                          onClick={() => setSelectedChecklist(checklist)}
+                          className={`flex items-center justify-between p-4 rounded-xl cursor-pointer hover:scale-[1.02] transition-all shadow-md ${isCompleted
+                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400'
+                            : 'bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50'
+                            }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow-sm ${isCompleted ? 'bg-gradient-to-br from-green-400 to-emerald-400' : 'bg-gradient-to-br from-blue-400 to-cyan-400'
+                              }`}>
+                              {checklist.icon}
+                            </div>
+                            <div>
+                              <p className="font-bold text-sm text-gray-800">{checklist.title}</p>
+                              <p className="text-xs text-gray-600 font-medium">{checklist.items.length} {t.bonus.steps}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleChecklistCompleted(checklist.id);
+                              }}
+                              className={`w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-sm ${isCompleted
+                                ? 'bg-green-500 text-white'
+                                : 'bg-white border-2 border-gray-300 hover:border-blue-400'
+                                }`}
+                            >
+                              {isCompleted && <Check className="w-4 h-4" />}
+                            </div>
+                            <ChevronRight className={`w-5 h-5 ${isCompleted ? 'text-green-400' : 'text-blue-400'}`} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+
+                {/* Mini-Guide Soft Life - Glassmorphism */}
+                <Card
+                  onClick={() => setShowSoftLifeGuide(true)}
+                  className="border-none shadow-xl shadow-gray-200/30 cursor-pointer hover:scale-[1.02] transition-all bg-white/80 backdrop-blur-md rounded-[1.5rem]"
                 >
-                  <Settings className="w-[22px] h-[22px]" strokeWidth={currentView === 'settings' ? 2.5 : 1.8} />
-                  <span className={`text-[10px] leading-tight ${currentView === 'settings' ? 'font-semibold' : 'font-medium'}`}>
-                    {language === 'fr' ? 'Profil' : language === 'en' ? 'Profile' : 'Perfil'}
-                  </span>
-                </button>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-3 text-lg">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center shadow-lg">
+                        <Sun className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="font-bold text-gray-800">{t.bonus.miniGuide}</span>
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 font-medium ml-13">{t.bonus.softLifeSteps}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-gray-600 font-medium">
+                        {t.bonus.discoverSoftLife}
+                      </p>
+                      <ChevronRight className="w-5 h-5 text-amber-400" />
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
+          )
+        }
 
-            {/* Bouton + noir */}
-            <button
-              onClick={() => {
-                if (currentView === 'journal') {
-                  setShowJournalEntryModal(true);
-                } else if (currentView === 'routine') {
-                  setShowAddTask(true);
-                } else {
-                  setShowAddMenu(true);
-                }
-              }}
-              className="flex-shrink-0 w-14 h-14 rounded-[1.75rem] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)] hover:scale-105 active:scale-95 transition-all duration-200"
-              style={{
-                background: 'linear-gradient(160deg, #1a1a1a 0%, #333 40%, #1a1a1a 100%)',
-              }}
-            >
-              <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
-            </button>
-          </div>
-        </nav>
-      )}
+        {/* Settings/Profil View - Design Moderne UX */}
+        {
+          currentView === 'settings' && (
+            <ProfilePage
+              setShowAuthDialog={setShowAuthDialog}
+              setShowPlanSelection={setShowPlanSelection}
+            />
+          )
+        }
+      </main >
+
+      {/* Bottom Navigation - Design moderne épuré */}
+      {
+        currentView !== 'goal-details' && (
+          <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-lg z-50">
+            <div className="flex items-center gap-2">
+              {/* Nav items container */}
+              <div className="flex-1 bg-white rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] px-2 py-2 border border-gray-100/80">
+                <div className="flex items-center justify-around">
+                  {/* Aujourd'hui */}
+                  <button
+                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'dashboard'
+                      ? 'text-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                    onClick={() => setCurrentView('dashboard')}
+                  >
+                    <Home className="w-[22px] h-[22px]" strokeWidth={currentView === 'dashboard' ? 2.5 : 1.8} />
+                    <span className={`text-[10px] leading-tight ${currentView === 'dashboard' ? 'font-semibold' : 'font-medium'}`}>
+                      {language === 'fr' ? "Aujourd'hui" : language === 'en' ? 'Today' : 'Hoy'}
+                    </span>
+                  </button>
+
+                  {/* Le Cercle */}
+                  <button
+                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'circle'
+                      ? 'text-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                    onClick={() => checkFeatureAccess('circle', () => setCurrentView('circle'))}
+                  >
+                    <Users className="w-[22px] h-[22px]" strokeWidth={currentView === 'circle' ? 2.5 : 1.8} />
+                    <span className={`text-[10px] leading-tight ${currentView === 'circle' ? 'font-semibold' : 'font-medium'}`}>
+                      {language === 'fr' ? 'Le Cercle' : language === 'en' ? 'The Circle' : 'El Círculo'}
+                    </span>
+                  </button>
+
+                  {/* Ma Semaine */}
+                  <button
+                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'routine'
+                      ? 'text-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                    onClick={() => setCurrentView('routine')}
+                  >
+                    <Calendar className="w-[22px] h-[22px]" strokeWidth={currentView === 'routine' ? 2.5 : 1.8} />
+                    <span className={`text-[10px] leading-tight ${currentView === 'routine' ? 'font-semibold' : 'font-medium'}`}>
+                      {language === 'fr' ? 'Semaine' : language === 'en' ? 'Week' : 'Semana'}
+                    </span>
+                  </button>
+
+                  {/* Profil */}
+                  <button
+                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'settings'
+                      ? 'text-gray-900'
+                      : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                    onClick={() => setCurrentView('settings')}
+                  >
+                    <Settings className="w-[22px] h-[22px]" strokeWidth={currentView === 'settings' ? 2.5 : 1.8} />
+                    <span className={`text-[10px] leading-tight ${currentView === 'settings' ? 'font-semibold' : 'font-medium'}`}>
+                      {language === 'fr' ? 'Profil' : language === 'en' ? 'Profile' : 'Perfil'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Bouton + noir */}
+              <button
+                onClick={() => {
+                  if (currentView === 'journal') {
+                    setShowJournalEntryModal(true);
+                  } else if (currentView === 'routine') {
+                    setShowAddTask(true);
+                  } else {
+                    setShowAddMenu(true);
+                  }
+                }}
+                className="flex-shrink-0 w-14 h-14 rounded-[1.75rem] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)] hover:scale-105 active:scale-95 transition-all duration-200"
+                style={{
+                  background: 'linear-gradient(160deg, #1a1a1a 0%, #333 40%, #1a1a1a 100%)',
+                }}
+              >
+                <Plus className="w-7 h-7 text-white" strokeWidth={2.5} />
+              </button>
+            </div>
+          </nav>
+        )
+      }
 
       {/* Drawer Message à moi */}
       <Drawer open={showTimeCapsuleDrawer} onOpenChange={setShowTimeCapsuleDrawer}>
@@ -5658,7 +5435,7 @@ PROCESO OBLIGATORIO:
           <DrawerHeader className="border-b">
             <div className="flex items-center justify-between">
               <DrawerTitle className="text-xl">
-                {currentView === 'trackers' 
+                {currentView === 'trackers'
                   ? (language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos')
                   : (language === 'fr' ? 'Que veux-tu ajouter ?' : language === 'en' ? 'What do you want to add?' : '¿Qué quieres añadir?')
                 }
@@ -6304,7 +6081,7 @@ PROCESO OBLIGATORIO:
                   <label className="text-sm font-semibold text-gray-700">
                     {language === 'fr' ? 'Destination' : language === 'en' ? 'Destination' : 'Destino'}
                   </label>
-                  
+
                   <p className="text-xs font-semibold text-stone-500">
                     {language === 'fr' ? 'Prochains jours' : language === 'en' ? 'Next days' : 'Próximos días'}
                   </p>
@@ -6492,10 +6269,10 @@ PROCESO OBLIGATORIO:
                             'deepseek/deepseek-r1-0528:free',
                             'arcee-ai/trinity-large-preview:free'
                           ];
-                          
+
                           let lastError = null;
                           let data = null;
-                          
+
                           for (const model of models) {
                             try {
                               const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -7093,119 +6870,123 @@ PROCESO OBLIGATORIO:
       />
 
       {/* Popup de série - Beauty Challenge */}
-      {showBeautyStreakPopup && (
-        <div className="fixed top-0 left-0 right-0 z-50 animate-in slide-in-from-top duration-500">
-          <div className="max-w-md mx-auto mt-4 px-4">
-            <Card className="border-none shadow-2xl bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-3xl overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  {/* Icône flamme */}
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 flex items-center justify-center shadow-lg">
-                      <span className="text-3xl">🔥</span>
+      {
+        showBeautyStreakPopup && (
+          <div className="fixed top-0 left-0 right-0 z-50 animate-in slide-in-from-top duration-500">
+            <div className="max-w-md mx-auto mt-4 px-4">
+              <Card className="border-none shadow-2xl bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-3xl overflow-hidden">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    {/* Icône flamme */}
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 via-pink-400 to-orange-300 flex items-center justify-center shadow-lg">
+                        <span className="text-3xl">🔥</span>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg font-bold shadow-md animate-in zoom-in duration-700">
+                        1
+                      </div>
                     </div>
-                    <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg font-bold shadow-md animate-in zoom-in duration-700">
-                      1
-                    </div>
-                  </div>
 
-                  {/* Texte et jours de la semaine */}
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      {language === 'fr' ? 'Votre série de fierté' : language === 'en' ? 'Your pride streak' : 'Tu serie de orgullo'}
-                    </h3>
-                    <div className="flex gap-1.5">
-                      {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => {
-                        const isToday = index === 0; // Premier jour pour la démonstration
-                        return (
-                          <div
-                            key={day}
-                            className={`flex flex-col items-center ${isToday ? 'animate-in zoom-in duration-700' : ''}`}
-                          >
-                            <span className="text-[9px] text-gray-500 mb-1">{day.slice(0, 3)}</span>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isToday
-                              ? 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-lg'
-                              : 'bg-gray-200'
-                              }`}>
-                              {isToday && <Check className="w-4 h-4 text-white animate-in zoom-in duration-1000" />}
+                    {/* Texte et jours de la semaine */}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        {language === 'fr' ? 'Votre série de fierté' : language === 'en' ? 'Your pride streak' : 'Tu serie de orgullo'}
+                      </h3>
+                      <div className="flex gap-1.5">
+                        {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => {
+                          const isToday = index === 0; // Premier jour pour la démonstration
+                          return (
+                            <div
+                              key={day}
+                              className={`flex flex-col items-center ${isToday ? 'animate-in zoom-in duration-700' : ''}`}
+                            >
+                              <span className="text-[9px] text-gray-500 mb-1">{day.slice(0, 3)}</span>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isToday
+                                ? 'bg-gradient-to-br from-purple-400 to-pink-400 shadow-lg'
+                                : 'bg-gray-200'
+                                }`}>
+                                {isToday && <Check className="w-4 h-4 text-white animate-in zoom-in duration-1000" />}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Bouton fermer */}
+                    <button
+                      onClick={() => setShowBeautyStreakPopup(false)}
+                      className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/50 transition-colors"
+                    >
+                      <X className="w-5 h-5 text-gray-600" />
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )
+      }
+
+      {/* Popup Glowee déçu - Journée incomplète */}
+      {
+        showBeautyIncompletePopup && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <Card className="border-none shadow-2xl bg-white rounded-3xl max-w-md w-full overflow-hidden animate-in zoom-in duration-300">
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  {/* Glowee déçu */}
+                  <div className="flex justify-center">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full blur-xl opacity-40"></div>
+                      <Image
+                        src="/Glowee/glowee-decu.webp"
+                        alt="Glowee déçu"
+                        width={120}
+                        height={130}
+                        className="object-contain relative z-10 drop-shadow-2xl"
+                      />
                     </div>
                   </div>
 
-                  {/* Bouton fermer */}
-                  <button
-                    onClick={() => setShowBeautyStreakPopup(false)}
-                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/50 transition-colors"
-                  >
-                    <X className="w-5 h-5 text-gray-600" />
-                  </button>
+                  {/* Message */}
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-bold text-gray-800">
+                      {language === 'fr' ? 'Hmm...' : language === 'en' ? 'Hmm...' : 'Hmm...'}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {language === 'fr'
+                        ? 'Es-tu sûr·e de vouloir valider cette journée incomplète ?'
+                        : language === 'en'
+                          ? 'Are you sure you want to validate this incomplete day?'
+                          : '¿Estás seguro de que quieres validar este día incompleto?'}
+                    </p>
+                  </div>
+
+                  {/* Boutons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowBeautyIncompletePopup(false)}
+                      className="flex-1 px-3 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition-all"
+                    >
+                      {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowBeautyIncompletePopup(false);
+                        // Pas d'ajout de croix ni de popup de série
+                      }}
+                      className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+                    >
+                      {language === 'fr' ? 'Valider quand même' : language === 'en' ? 'Validate anyway' : 'Validar de todos modos'}
+                    </button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-        </div>
-      )}
-
-      {/* Popup Glowee déçu - Journée incomplète */}
-      {showBeautyIncompletePopup && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="border-none shadow-2xl bg-white rounded-3xl max-w-md w-full overflow-hidden animate-in zoom-in duration-300">
-            <CardContent className="p-6">
-              <div className="text-center space-y-4">
-                {/* Glowee déçu */}
-                <div className="flex justify-center">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full blur-xl opacity-40"></div>
-                    <Image
-                      src="/Glowee/glowee-decu.webp"
-                      alt="Glowee déçu"
-                      width={120}
-                      height={130}
-                      className="object-contain relative z-10 drop-shadow-2xl"
-                    />
-                  </div>
-                </div>
-
-                {/* Message */}
-                <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-gray-800">
-                    {language === 'fr' ? 'Hmm...' : language === 'en' ? 'Hmm...' : 'Hmm...'}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {language === 'fr'
-                      ? 'Es-tu sûr·e de vouloir valider cette journée incomplète ?'
-                      : language === 'en'
-                        ? 'Are you sure you want to validate this incomplete day?'
-                        : '¿Estás seguro de que quieres validar este día incompleto?'}
-                  </p>
-                </div>
-
-                {/* Boutons */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setShowBeautyIncompletePopup(false)}
-                    className="flex-1 px-3 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition-all"
-                  >
-                    {language === 'fr' ? 'Annuler' : language === 'en' ? 'Cancel' : 'Cancelar'}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowBeautyIncompletePopup(false);
-                      // Pas d'ajout de croix ni de popup de série
-                    }}
-                    className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
-                  >
-                    {language === 'fr' ? 'Valider quand même' : language === 'en' ? 'Validate anyway' : 'Validar de todos modos'}
-                  </button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        )
+      }
 
       {/* Animation CSS pour fade out des habitudes complétées */}
       <style jsx global>{`
@@ -7220,301 +7001,305 @@ PROCESO OBLIGATORIO:
       `}</style>
 
       {/* Journal View */}
-      {currentView === 'journal' && canAccessFeature('journal') && (
-        <div className="fixed inset-0 z-40 pb-24 bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Header */}
-          <div className="px-4 pt-4 pb-0 bg-white">
-            <div className="flex items-center gap-3 mb-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-8 h-8"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <div className="flex-1">
-                <h1 className="text-lg font-bold flex items-center gap-2">
-                  {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
-                </h1>
+      {
+        currentView === 'journal' && canAccessFeature('journal') && (
+          <div className="fixed inset-0 z-40 pb-24 bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header */}
+            <div className="px-4 pt-4 pb-0 bg-white">
+              <div className="flex items-center gap-3 mb-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-8 h-8"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <div className="flex-1">
+                  <h1 className="text-lg font-bold flex items-center gap-2">
+                    {language === 'fr' ? 'Mon Journal' : language === 'en' ? 'My Journal' : 'Mi Diario'}
+                  </h1>
+                </div>
+              </div>
+
+              {/* Navigation Mois */}
+              <div className="flex items-center justify-center gap-4 mt-3">
+                <button
+                  onClick={() => changeJournalMonth('prev')}
+                  className="p-2 rounded-full hover:bg-gray-100"
+                >
+                  <ChevronLeft className="w-4 h-4 text-gray-400" />
+                </button>
+                <span className="text-base font-semibold text-gray-800 capitalize">
+                  {journalCurrentMonth.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
+                </span>
+                <button
+                  onClick={() => changeJournalMonth('next')}
+                  className="p-2 rounded-full hover:bg-gray-100"
+                >
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </button>
               </div>
             </div>
 
-            {/* Navigation Mois */}
-            <div className="flex items-center justify-center gap-4 mt-3">
-              <button
-                onClick={() => changeJournalMonth('prev')}
-                className="p-2 rounded-full hover:bg-gray-100"
-              >
-                <ChevronLeft className="w-4 h-4 text-gray-400" />
-              </button>
-              <span className="text-base font-semibold text-gray-800 capitalize">
-                {journalCurrentMonth.toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
-              </span>
-              <button
-                onClick={() => changeJournalMonth('next')}
-                className="p-2 rounded-full hover:bg-gray-100"
-              >
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </button>
-            </div>
-          </div>
+            {/* Liste des entrées */}
+            <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
+              {journalEntries.map((entry) => (
+                <div key={entry.id} className="bg-white rounded-2xl p-4 shadow-sm relative overflow-hidden transition-all hover:shadow-md border border-gray-50">
+                  {/* Bandeau couleur humeur */}
+                  <div className="absolute top-0 left-0 right-0 h-2 w-full" style={{ backgroundColor: entry.moodColor || '#fcd34d' }} />
 
-          {/* Liste des entrées */}
-          <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
-            {journalEntries.map((entry) => (
-              <div key={entry.id} className="bg-white rounded-2xl p-4 shadow-sm relative overflow-hidden transition-all hover:shadow-md border border-gray-50">
-                {/* Bandeau couleur humeur */}
-                <div className="absolute top-0 left-0 right-0 h-2 w-full" style={{ backgroundColor: entry.moodColor || '#fcd34d' }} />
-
-                {/* Header avec date et humeur */}
-                <div className="flex items-start justify-between mb-3 mt-1">
-                  <div className="flex items-center gap-3">
-                    {/* Emoji humeur */}
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-                      style={{ backgroundColor: entry.moodColor + '20' }}
-                    >
-                      {entry.mood === 'bien' || entry.mood === 'good' ? '😊' :
-                        entry.mood === 'super' || entry.mood === 'great' ? '😄' :
-                          entry.mood === 'triste' || entry.mood === 'sad' ? '😢' :
-                            entry.mood === 'fatigué' || entry.mood === 'tired' ? '😴' : '😐'}
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wide">
-                        {entry.date === new Date().toISOString().split('T')[0]
-                          ? (language === 'fr' ? 'Aujourd\'hui' : language === 'en' ? 'Today' : 'Hoy')
-                          : language === 'fr' ? 'Hier' : language === 'en' ? 'Yesterday' : 'Ayer'
-                        }, {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="text-lg font-semibold"
-                          style={{ color: entry.moodColor }}
-                        >
-                          {entry.mood}
-                        </span>
-                        <span className="text-xs text-gray-400">{entry.time}</span>
+                  {/* Header avec date et humeur */}
+                  <div className="flex items-start justify-between mb-3 mt-1">
+                    <div className="flex items-center gap-3">
+                      {/* Emoji humeur */}
+                      <div
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
+                        style={{ backgroundColor: entry.moodColor + '20' }}
+                      >
+                        {entry.mood === 'bien' || entry.mood === 'good' ? '😊' :
+                          entry.mood === 'super' || entry.mood === 'great' ? '😄' :
+                            entry.mood === 'triste' || entry.mood === 'sad' ? '😢' :
+                              entry.mood === 'fatigué' || entry.mood === 'tired' ? '😴' : '😐'}
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 uppercase tracking-wide">
+                          {entry.date === new Date().toISOString().split('T')[0]
+                            ? (language === 'fr' ? 'Aujourd\'hui' : language === 'en' ? 'Today' : 'Hoy')
+                            : language === 'fr' ? 'Hier' : language === 'en' ? 'Yesterday' : 'Ayer'
+                          }, {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="text-lg font-semibold"
+                            style={{ color: entry.moodColor }}
+                          >
+                            {entry.mood}
+                          </span>
+                          <span className="text-xs text-gray-400">{entry.time}</span>
+                        </div>
                       </div>
                     </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuEntryId(openMenuEntryId === entry.id ? null : entry.id);
+                        }}
+                        className="p-1 rounded-full hover:bg-gray-100"
+                      >
+                        <MoreHorizontal className="w-5 h-5 text-gray-400" />
+                      </button>
+
+                      {/* Menu déroulant */}
+                      {openMenuEntryId === entry.id && (
+                        <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 min-w-[140px]">
+                          <button
+                            onClick={() => {
+                              editJournalEntry(entry);
+                              setOpenMenuEntryId(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            {language === 'fr' ? 'Modifier' : language === 'en' ? 'Edit' : 'Editar'}
+                          </button>
+                          <button
+                            onClick={() => {
+                              deleteJournalEntry(entry.id);
+                              setOpenMenuEntryId(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            {language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="relative">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenMenuEntryId(openMenuEntryId === entry.id ? null : entry.id);
-                      }}
-                      className="p-1 rounded-full hover:bg-gray-100"
-                    >
-                      <MoreHorizontal className="w-5 h-5 text-gray-400" />
-                    </button>
 
-                    {/* Menu déroulant */}
-                    {openMenuEntryId === entry.id && (
-                      <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 min-w-[140px]">
-                        <button
-                          onClick={() => {
-                            editJournalEntry(entry);
-                            setOpenMenuEntryId(null);
-                          }}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                          {language === 'fr' ? 'Modifier' : language === 'en' ? 'Edit' : 'Editar'}
-                        </button>
-                        <button
-                          onClick={() => {
-                            deleteJournalEntry(entry.id);
-                            setOpenMenuEntryId(null);
-                          }}
-                          className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          {language === 'fr' ? 'Supprimer' : language === 'en' ? 'Delete' : 'Eliminar'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {entry.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Texte */}
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">
-                  {entry.text}
-                </p>
-
-                {/* Images si présentes */}
-                {entry.images && entry.images.length > 0 && (
-                  <div className="flex gap-2 overflow-x-auto pb-2">
-                    {entry.images.map((img, idx) => (
-                      <div key={idx} className="flex-shrink-0 w-24 h-24 rounded-xl bg-gray-100 overflow-hidden">
-                        <img src={img} alt="" className="w-full h-full object-cover" />
-                      </div>
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {entry.tags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        {tag}
+                      </span>
                     ))}
                   </div>
-                )}
-              </div>
-            ))}
 
-          </div>
-        </div>
-      )}
+                  {/* Texte */}
+                  <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                    {entry.text}
+                  </p>
 
-      {/* Glow Mirror View */}
-      {currentView === 'glow-mirror' && canAccessFeature('glow_mirror') && (
-        <div className="pb-24 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Header */}
-          <div className="p-4 pb-0 bg-white">
-            <div className="flex items-center gap-3 mb-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-8 h-8"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-              <div className="flex-1">
-                <h1 className="text-lg font-bold flex items-center gap-2">
-                  {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
-                </h1>
-                <p className="text-xs text-stone-600 dark:text-stone-400">
-                  {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-5 max-w-lg mx-auto">
-            {/* Description */}
-            <div className="mb-6 p-5 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl border border-violet-100">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </div>
-                <h2 className="text-lg font-bold text-violet-800">
-                  {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
-                </h2>
-              </div>
-              <p className="text-sm text-violet-700 leading-relaxed">
-                {language === 'fr'
-                  ? 'Glow Mirror analyse vos données sur 7 jours pour créer un reflet personnalisé de qui vous êtes en train de devenir.'
-                  : language === 'en'
-                    ? 'Glow Mirror analyzes your data over 7 days to create a personalized reflection of who you are becoming.'
-                    : 'Glow Mirror analiza tus datos durante 7 días para crear un reflejo personalizado de en quién te estás convirtiendo.'}
-              </p>
-            </div>
-
-            {/* Status message */}
-            {!isGlowMirrorReady ? (
-              <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center">
-                  <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">
-                  {language === 'fr' ? 'Patience...' : language === 'en' ? 'Patience...' : 'Paciencia...'}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  {language === 'fr'
-                    ? 'Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
-                    : language === 'en'
-                      ? 'Use the app for 7 days, then come back to see who you\'re becoming.'
-                      : 'Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
-                </p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
-                  <span className="text-sm font-medium text-gray-600">
-                    {language === 'fr' ? `Jour ${daysSinceFirstUse} sur 7` : language === 'en' ? `Day ${daysSinceFirstUse} of 7` : `Día ${daysSinceFirstUse} de 7`}
-                  </span>
-                </div>
-              </div>
-            ) : !canViewGlowMirror ? (
-              <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 flex items-center justify-center">
-                  <svg className="w-10 h-10 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">
-                  {language === 'fr' ? 'Prochain Glow Mirror' : language === 'en' ? 'Next Glow Mirror' : 'Próximo Glow Mirror'}
-                </h3>
-                <p className="text-gray-600">
-                  {language === 'fr'
-                    ? 'Votre prochain Glow Mirror sera disponible dans 7 jours.'
-                    : language === 'en'
-                      ? 'Your next Glow Mirror will be available in 7 days.'
-                      : 'Tu próximo Glow Mirror estará disponible en 7 días.'}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {/* History */}
-                {glowMirrorHistory.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-sm font-bold text-gray-700 mb-3">
-                      {language === 'fr' ? 'Historique' : language === 'en' ? 'History' : 'Historial'}
-                    </h3>
-                    <div className="space-y-2">
-                      {glowMirrorHistory.slice(0, 3).map((entry, idx) => (
-                        <div key={idx} className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                          <p className="text-xs text-gray-400 mb-2">
-                            {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
-                          </p>
-                          <p className="text-sm text-gray-700 line-clamp-3">{entry.message}</p>
+                  {/* Images si présentes */}
+                  {entry.images && entry.images.length > 0 && (
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                      {entry.images.map((img, idx) => (
+                        <div key={idx} className="flex-shrink-0 w-24 h-24 rounded-xl bg-gray-100 overflow-hidden">
+                          <img src={img} alt="" className="w-full h-full object-cover" />
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {/* Launch Button */}
-                <button
-                  onClick={() => generateGlowMirror()}
-                  disabled={glowMirrorLoading}
-                  className="w-full py-4 rounded-2xl font-bold text-white transition-all bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {glowMirrorLoading ? (
-                    <>
-                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span>{language === 'fr' ? 'Analyse en cours...' : language === 'en' ? 'Analyzing...' : 'Analizando...'}</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      <span>{language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror'}</span>
-                    </>
                   )}
-                </button>
-              </div>
-            )}
+                </div>
+              ))}
+
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+
+      {/* Glow Mirror View */}
+      {
+        currentView === 'glow-mirror' && canAccessFeature('glow_mirror') && (
+          <div className="pb-24 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header */}
+            <div className="p-4 pb-0 bg-white">
+              <div className="flex items-center gap-3 mb-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-8 h-8"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                <div className="flex-1">
+                  <h1 className="text-lg font-bold flex items-center gap-2">
+                    {language === 'fr' ? 'Glow Mirror' : language === 'en' ? 'Glow Mirror' : 'Glow Mirror'}
+                  </h1>
+                  <p className="text-xs text-stone-600 dark:text-stone-400">
+                    {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 max-w-lg mx-auto">
+              {/* Description */}
+              <div className="mb-6 p-5 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl border border-violet-100">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-lg font-bold text-violet-800">
+                    {language === 'fr' ? 'Qui êtes-vous en train de devenir ?' : language === 'en' ? 'Who are you becoming?' : '¿En quién te estás convirtiendo?'}
+                  </h2>
+                </div>
+                <p className="text-sm text-violet-700 leading-relaxed">
+                  {language === 'fr'
+                    ? 'Glow Mirror analyse vos données sur 7 jours pour créer un reflet personnalisé de qui vous êtes en train de devenir.'
+                    : language === 'en'
+                      ? 'Glow Mirror analyzes your data over 7 days to create a personalized reflection of who you are becoming.'
+                      : 'Glow Mirror analiza tus datos durante 7 días para crear un reflejo personalizado de en quién te estás convirtiendo.'}
+                </p>
+              </div>
+
+              {/* Status message */}
+              {!isGlowMirrorReady ? (
+                <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    {language === 'fr' ? 'Patience...' : language === 'en' ? 'Patience...' : 'Paciencia...'}
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    {language === 'fr'
+                      ? 'Utilisez l\'app pendant 7 jours, puis revenez voir qui vous devenez.'
+                      : language === 'en'
+                        ? 'Use the app for 7 days, then come back to see who you\'re becoming.'
+                        : 'Usa la app durante 7 días, luego vuelve para ver en quién te estás convirtiendo.'}
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+                    <span className="text-sm font-medium text-gray-600">
+                      {language === 'fr' ? `Jour ${daysSinceFirstUse} sur 7` : language === 'en' ? `Day ${daysSinceFirstUse} of 7` : `Día ${daysSinceFirstUse} de 7`}
+                    </span>
+                  </div>
+                </div>
+              ) : !canViewGlowMirror ? (
+                <div className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 text-center">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    {language === 'fr' ? 'Prochain Glow Mirror' : language === 'en' ? 'Next Glow Mirror' : 'Próximo Glow Mirror'}
+                  </h3>
+                  <p className="text-gray-600">
+                    {language === 'fr'
+                      ? 'Votre prochain Glow Mirror sera disponible dans 7 jours.'
+                      : language === 'en'
+                        ? 'Your next Glow Mirror will be available in 7 days.'
+                        : 'Tu próximo Glow Mirror estará disponible en 7 días.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* History */}
+                  {glowMirrorHistory.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="text-sm font-bold text-gray-700 mb-3">
+                        {language === 'fr' ? 'Historique' : language === 'en' ? 'History' : 'Historial'}
+                      </h3>
+                      <div className="space-y-2">
+                        {glowMirrorHistory.slice(0, 3).map((entry, idx) => (
+                          <div key={idx} className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <p className="text-xs text-gray-400 mb-2">
+                              {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'long' })}
+                            </p>
+                            <p className="text-sm text-gray-700 line-clamp-3">{entry.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Launch Button */}
+                  <button
+                    onClick={() => generateGlowMirror()}
+                    disabled={glowMirrorLoading}
+                    className="w-full py-4 rounded-2xl font-bold text-white transition-all bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {glowMirrorLoading ? (
+                      <>
+                        <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>{language === 'fr' ? 'Analyse en cours...' : language === 'en' ? 'Analyzing...' : 'Analizando...'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span>{language === 'fr' ? 'Voir mon Glow Mirror' : language === 'en' ? 'See my Glow Mirror' : 'Ver mi Glow Mirror'}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      }
+    </div >
   );
 }

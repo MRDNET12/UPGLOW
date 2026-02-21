@@ -1,9 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from './translations';
+import { validateActivity } from './firebase/circle-service';
 
-export type View = 'language-selection' | 'project-glow-intro' | 'presentation' | 'presentation-1' | 'presentation-2' | 'presentation-3' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-1' | 'flow-proposition' | 'flow-description' | 'flow-challenge';
+export type View = 'language-selection' | 'project-glow-intro' | 'presentation' | 'presentation-1' | 'presentation-2' | 'presentation-3' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-1' | 'flow-proposition' | 'flow-description' | 'flow-challenge' | 'circle';
 export type ChallengeType = 'mind-life' | 'beauty-body';
+
+export interface CircleMember {
+  uid: string;
+  name: string;
+  photoURL?: string;
+  hasValidatedToday: boolean;
+  lastActive: string;
+  streak: number;
+}
+
+export interface CircleState {
+  id: string | null;
+  name: string | null;
+  members: CircleMember[];
+  guardianUid: string | null;
+  fireIntensity: number; // 0-100
+  fireColor: string; // 'grey' | 'bright'
+}
+
 
 interface ChallengeProgress {
   completedDays: number[];
@@ -167,6 +187,8 @@ interface SubscriptionState {
 export type PlanType = 'none' | 'glow_start' | 'glow_plus';
 
 interface AppState {
+  currentUserUid: string | null;
+  setCurrentUserUid: (uid: string | null) => void;
   // Navigation
   currentView: View;
   setCurrentView: (view: View) => void;
@@ -282,7 +304,7 @@ interface AppState {
   getRemainingFreeDays: () => number;
   isTrialExpired: () => boolean;
   canAccessApp: () => boolean;
-  canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror') => boolean;
+  canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror' | 'circle') => boolean;
   hasExceededFreeTrial: () => boolean;
   subscribeToPlan: (planType: 'glow_start' | 'glow_plus', endDate: string) => void;
   markTrialPopupSeen: () => void;
@@ -318,7 +340,13 @@ interface AppState {
   continueFlow: () => Promise<void>;
   checkNeedsContinuation: () => boolean;
   checkAndUnlockNextDay: () => void;
+
+  // Circle (Le Cercle)
+  circle: CircleState;
+  setCircle: (circle: Partial<CircleState>) => void;
+  leaveCircle: () => void;
 }
+
 
 // Helper function to get week number
 function getWeekNumber(date: Date): number {
@@ -341,6 +369,8 @@ const defaultRoutine: RoutineItem = {
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
+      currentUserUid: null,
+      setCurrentUserUid: (uid: string | null) => set({ currentUserUid: uid }),
       // Navigation
       currentView: 'language-selection',
       setCurrentView: (view) => set({ currentView: view }),
@@ -736,12 +766,37 @@ export const useStore = create<AppState>()(
           date: today.toISOString().split('T')[0],
           weekNumber
         };
+        const { bonusProgress, circle } = get();
         set({
           bonusProgress: {
-            ...get().bonusProgress,
-            smallWins: [newWin, ...get().bonusProgress.smallWins]
+            ...bonusProgress,
+            smallWins: [newWin, ...bonusProgress.smallWins]
           }
         });
+
+        // Update circle activity if user is in a circle
+        if (circle.id) {
+          const uid = get().currentUserUid || '1';
+          const updatedMembers = circle.members.map(m =>
+            m.uid === uid ? { ...m, hasValidatedToday: true, lastActive: today.toISOString() } : m
+          );
+
+          // Calculate new intensity
+          const validatedCount = updatedMembers.filter(m => m.hasValidatedToday).length;
+          const newIntensity = Math.min(100, Math.round((validatedCount / updatedMembers.length) * 100));
+
+          set({
+            circle: {
+              ...circle,
+              members: updatedMembers,
+              fireIntensity: newIntensity,
+              fireColor: newIntensity > 0 ? 'bright' : 'grey'
+            }
+          });
+
+          // Sync with Firebase
+          validateActivity(uid, circle.id).catch(err => console.error('Error syncing circle activity:', err));
+        }
       },
       getSmallWinsThisWeek: () => {
         const currentWeek = getWeekNumber(new Date());
@@ -932,7 +987,7 @@ export const useStore = create<AppState>()(
       },
 
       // Vérifier l'accès aux fonctionnalités payantes
-      canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror') => {
+      canAccessFeature: (feature: 'message_a_moi' | 'petites_victoires' | 'habitudes' | 'journal' | 'glow_mirror' | 'circle') => {
         const { subscription } = get();
 
         // Si abonné Glow Plus, tout est accessible
@@ -987,7 +1042,6 @@ export const useStore = create<AppState>()(
       // Personalized Flow
       personalizedFlow: null,
       flowDescription: "",
-      isGeneratingFlow: false,
       isGeneratingFlowBackground: false,
 
       validateBeautyDate: (date) => {
@@ -1066,6 +1120,7 @@ export const useStore = create<AppState>()(
       },
 
       // Personalized Flow Functions
+      isGeneratingFlow: false, // Moved from above
       setPersonalizedFlow: (flow) => set({ personalizedFlow: flow }),
       setFlowDescription: (description) => set({ flowDescription: description }),
       setIsGeneratingFlow: (isGenerating) => set({ isGeneratingFlow: isGenerating }),
@@ -2668,8 +2723,32 @@ FORMAT JSON STRICT - Utilise uniquement des guillemets doubles.`;
           console.error('[Continue Flow] Error:', error);
           set({ isGeneratingFlow: false });
         }
-      }
+      },
+
+      // Circle (Le Cercle)
+      circle: {
+        id: null,
+        name: null,
+        members: [],
+        guardianUid: null,
+        fireIntensity: 0,
+        fireColor: 'grey'
+      },
+      setCircle: (circleUpdate) => set({
+        circle: { ...get().circle, ...circleUpdate }
+      }),
+      leaveCircle: () => set({
+        circle: {
+          id: null,
+          name: null,
+          members: [],
+          guardianUid: null,
+          fireIntensity: 0,
+          fireColor: 'grey'
+        }
+      })
     }),
+
     {
       name: 'glow-up-storage',
       version: 3,

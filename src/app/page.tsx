@@ -1602,7 +1602,7 @@ PROCESO OBLIGATORIO:
       'Ton potentiel est illimité.',
       'N\'abandonne pas, les meilleures choses prennent du temps.',
       'Sois fier(ère) du chemin que tu parcours.',
-      'La persévérance transforme les rêves en réalité.',
+      'Ta persévérance transformera tes rêves en réalité.',
       'Le meilleur reste à venir.',
       'Tu avances, même quand tu ne t\'en rends pas compte.',
       'Chaque effort compte, même les plus petits.',
@@ -1618,7 +1618,7 @@ PROCESO OBLIGATORIO:
       'Chaque pas te rapproche de ton objectif.',
       'Ta valeur ne dépend pas de l\'avis des autres.',
       'Respire, avance, réussis.',
-      'La constance crée des résultats extraordinaires.',
+      'Ta constance crée des résultats extraordinaires.',
       'Chaque journée apporte sa part de lumière.',
       'Fais-toi confiance, tu sais plus que tu ne le crois.',
       'Les grandes réussites commencent par un simple pas.',
@@ -1632,7 +1632,7 @@ PROCESO OBLIGATORIO:
       'Chaque difficulté prépare une victoire.',
       'Ta différence est ta plus grande richesse.',
       'Continue d\'essayer, c\'est ainsi qu\'on progresse.',
-      'La confiance se construit un jour à la fois.'
+      'Ta confiance se construit un jour à la fois.'
     ],
     en: [
       'Every day is a new chance to succeed.',
@@ -1643,7 +1643,7 @@ PROCESO OBLIGATORIO:
       'Your potential is unlimited.',
       'Don\'t give up, the best things take time.',
       'Be proud of the journey you\'re on.',
-      'Perseverance turns dreams into reality.',
+      'Your perseverance will turn your dreams into reality.',
       'The best is yet to come.',
       'You\'re moving forward, even when you don\'t realize it.',
       'Every effort counts, even the smallest ones.',
@@ -1659,7 +1659,7 @@ PROCESO OBLIGATORIO:
       'Every step brings you closer to your goal.',
       'Your worth doesn\'t depend on others\' opinions.',
       'Breathe, move forward, succeed.',
-      'Consistency creates extraordinary results.',
+      'Your consistency creates extraordinary results.',
       'Every day brings its share of light.',
       'Trust yourself, you know more than you think.',
       'Great achievements start with a single step.',
@@ -1673,7 +1673,7 @@ PROCESO OBLIGATORIO:
       'Every difficulty prepares a victory.',
       'Your difference is your greatest wealth.',
       'Keep trying, that\'s how you progress.',
-      'Confidence is built one day at a time.'
+      'Your confidence is built one day at a time.'
     ],
     es: [
       'Cada día es una nueva oportunidad para triunfar.',
@@ -1684,7 +1684,7 @@ PROCESO OBLIGATORIO:
       'Tu potencial es ilimitado.',
       'No te rindas, las mejores cosas llevan tiempo.',
       'Siéntete orgulloso del camino que recorres.',
-      'La perseverancia convierte los sueños en realidad.',
+      'Tu perseverancia convertirá tus sueños en realidad.',
       'Lo mejor está por venir.',
       'Avanzas, incluso cuando no te das cuenta.',
       'Cada esfuerzo cuenta, incluso los más pequeños.',
@@ -1700,7 +1700,7 @@ PROCESO OBLIGATORIO:
       'Cada paso te acerca a tu objetivo.',
       'Tu valor no depende de la opinión de otros.',
       'Respira, avanza, triunfa.',
-      'La constancia crea resultados extraordinarios.',
+      'Tu constancia crea resultados extraordinarios.',
       'Cada día trae su parte de luz.',
       'Confía en ti, sabes más de lo que crees.',
       'Los grandes logros empiezan con un simple paso.',
@@ -1714,7 +1714,7 @@ PROCESO OBLIGATORIO:
       'Cada dificultad prepara una victoria.',
       'Tu diferencia es tu mayor riqueza.',
       'Sigue intentando, así es como se progresa.',
-      'La confianza se construye día a día.'
+      'Tu confianza se construye día a día.'
     ]
   };
 

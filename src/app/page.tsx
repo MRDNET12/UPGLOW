@@ -217,7 +217,7 @@ export default function GlowUpChallengeApp() {
   const [showGloweePlanningWelcome, setShowGloweePlanningWelcome] = useState(false);
 
   // États pour le message Glowee avec effet typing et rotation toutes les 10 minutes
-  const [gloweeMessageIndex, setGloweeMessageIndex] = useState(0);
+  const [gloweeMessageIndex, setGloweeMessageIndex] = useState(() => Math.floor(Math.random() * 39)); // 39 messages au total
   const [displayedMessage, setDisplayedMessage] = useState('');
   const [isTyping, setIsTyping] = useState(true);
 
@@ -1743,12 +1743,12 @@ PROCESO OBLIGATORIO:
     return () => clearInterval(typingInterval);
   }, [isHydrated, gloweeMessageIndex, language]);
 
-  // Rotation des messages toutes les 10 minutes
+  // Rotation des messages toutes les 10 minutes (aléatoire)
   useEffect(() => {
     if (!isHydrated) return;
 
     const interval = setInterval(() => {
-      setGloweeMessageIndex(prev => prev + 1);
+      setGloweeMessageIndex(() => Math.floor(Math.random() * 39));
     }, 10 * 60 * 1000); // 10 minutes
 
     return () => clearInterval(interval);

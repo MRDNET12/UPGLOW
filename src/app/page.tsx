@@ -61,6 +61,7 @@ import { FAQSection } from '@/components/settings/FAQSection';
 import { usePlanningSync } from '@/hooks/useFirebaseSync';
 import { ProfilePage } from '@/components/ProfilePage';
 import { CirclePage } from '@/components/CirclePage';
+import { EnergyPage } from '@/components/EnergyPage';
 
 import { saveTask, deleteTask as deleteTaskFromFirebase, updateTaskCompletion } from '@/lib/firebase/user-data-sync';
 import { JournalEntryModal, JournalEntry } from '@/components/journal';
@@ -141,6 +142,10 @@ export default function GlowUpChallengeApp() {
     toggleBeautySubtask,
     getBeautyProgressForDate,
     validateBeautyDate,
+    // Energy System
+    energy,
+    consumeEnergy,
+    resetEnergyIfNeeded,
     // Trackers
     trackers,
     updateTracker,
@@ -1417,6 +1422,11 @@ PROCESO OBLIGATORIO:
     }
   }, [user, currentUserUid, setCurrentUserUid]);
 
+  // Reset Energy daily
+  useEffect(() => {
+    resetEnergyIfNeeded();
+  }, [resetEnergyIfNeeded]);
+
   // États pour Planning
   // Planning tab is now simplified to only 'my-tasks'
   const planningTab = 'my-tasks';
@@ -2020,11 +2030,18 @@ PROCESO OBLIGATORIO:
 
   const handleCompleteDay = () => {
     const wasCompleted = challengeProgress.completedDays.includes(currentDay);
+
+    if (!wasCompleted && energy <= 0) {
+      alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+      return;
+    }
+
     toggleDayCompletion(currentDay);
 
     // Afficher les félicitations seulement si on vient de compléter (pas de décompléter)
     if (!wasCompleted) {
       setShowCongratulations(true);
+      consumeEnergy(10);
     }
   };
 
@@ -3674,9 +3691,177 @@ PROCESO OBLIGATORIO:
           </div>
         )}
 
+        {/* Trackers View */}
+        {currentView === 'trackers' && (
+          <div className={`pb-24 bg-[#F7F8FA] relative min-h-screen ${energy <= 0 ? 'grayscale' : ''}`}>
+            {energy <= 0 && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-transparent backdrop-blur-[2px] pointer-events-auto">
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl text-center max-w-xs border border-gray-100 animate-in zoom-in duration-300">
+                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Lock className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Game Over Temporaire</h3>
+                  <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                    {language === 'fr'
+                      ? "Tes réserves de Mana sont épuisées. Recharge-toi pour continuer à construire."
+                      : "Your Mana is exhausted. Recharge to continue building."}
+                  </p>
+                  <Button
+                    onClick={() => setCurrentView('energy')}
+                    className="w-full h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                  >
+                    <Zap className="w-4 h-4 mr-2 fill-current" /> Se recharger
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <header className="bg-white border-b px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+              <h1 className="text-xl font-bold text-gray-900">
+                {language === 'fr' ? 'Mes habitudes' : 'My habits'}
+              </h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCurrentView('habit-progress')}
+                className="text-gray-500 font-medium"
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                {language === 'fr' ? 'Progression' : 'Progress'}
+              </Button>
+            </header>
+
+            <div className={`px-5 py-6 space-y-6 ${energy <= 0 ? 'pointer-events-none' : ''}`}>
+              {/* Add Habit */}
+              <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4">
+                  <input
+                    type="text"
+                    value={newHabitLabel}
+                    onChange={(e) => setNewHabitLabel(e.target.value)}
+                    placeholder={language === 'fr' ? 'Ajouter une habitude...' : 'Add a habit...'}
+                    className="flex-1 text-base text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-medium"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && newHabitLabel.trim()) {
+                        setCustomHabits([...customHabits, {
+                          id: `habit_${Date.now()}`,
+                          label: newHabitLabel.trim(),
+                          type: 'good'
+                        }]);
+                        setNewHabitLabel('');
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (newHabitLabel.trim()) {
+                        setCustomHabits([...customHabits, {
+                          id: `habit_${Date.now()}`,
+                          label: newHabitLabel.trim(),
+                          type: 'good'
+                        }]);
+                        setNewHabitLabel('');
+                      }
+                    }}
+                    disabled={!newHabitLabel.trim()}
+                    className="w-12 h-12 rounded-[1.2rem] bg-[#1C2C26] flex items-center justify-center hover:bg-[#2C3E36] transition-colors disabled:opacity-30 shadow-md"
+                  >
+                    <Plus className="w-6 h-6 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Habits List */}
+              <div className="space-y-3">
+                {customHabits.length === 0 ? (
+                  <div className="text-center py-12 bg-white rounded-[2rem] border border-dashed border-gray-200">
+                    <ListChecks className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+                    <p className="text-sm text-gray-400 font-medium">
+                      {language === 'fr' ? "Aucune habitude pour le moment" : "No habits yet"}
+                    </p>
+                  </div>
+                ) : (
+                  customHabits.map((habit) => {
+                    const today = getLocalDateString();
+                    const tracker = trackers.find(t => t.date === today);
+                    const isCompleted = tracker?.habits?.[habit.id] || false;
+
+                    return (
+                      <div
+                        key={habit.id}
+                        onClick={() => {
+                          const today = getLocalDateString();
+                          const isValidating = !isCompleted;
+
+                          if (isValidating && energy <= 0) {
+                            alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+                            return;
+                          }
+
+                          const existingTracker = trackers.find(t => t.date === today);
+                          if (existingTracker) {
+                            updateTracker(today, {
+                              habits: {
+                                ...existingTracker.habits,
+                                [habit.id]: isValidating
+                              }
+                            });
+                          } else {
+                            updateTracker(today, {
+                              habits: { [habit.id]: true }
+                            });
+                          }
+
+                          if (isValidating) {
+                            consumeEnergy(10);
+                          }
+                        }}
+                        className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                      >
+                        <div
+                          className={`w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all ${isCompleted
+                            ? 'bg-[#1C2C26] text-white shadow-md'
+                            : 'bg-[#F5F7F6] border-2 border-transparent'
+                            }`}
+                        >
+                          {isCompleted && <Check className="w-5 h-5" />}
+                        </div>
+                        <span className={`text-base font-bold flex-1 ${isCompleted ? 'text-gray-400 line-through' : 'text-[#1C2C26]'}`}>
+                          {habit.label}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Habit Progress View */}
         {currentView === 'habit-progress' && (
-          <div className="pb-24 bg-[#F7F8FA]">
+          <div className={`pb-24 bg-[#F7F8FA] relative ${energy <= 0 ? 'grayscale pointer-events-none' : ''}`}>
+            {energy <= 0 && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-gray-100/40 backdrop-blur-[2px] pointer-events-auto">
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl text-center max-w-xs border border-gray-100 animate-in zoom-in duration-300">
+                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Lock className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Game Over Temporaire</h3>
+                  <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                    {language === 'fr'
+                      ? "Tes réserves de Mana sont épuisées. Recharge-toi pour continuer à construire."
+                      : "Your Mana is empty. Recharge to continue building."}
+                  </p>
+                  <Button
+                    onClick={() => setCurrentView('energy')}
+                    className="w-full h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                  >
+                    <Zap className="w-4 h-4 mr-2 fill-current" /> Se recharger
+                  </Button>
+                </div>
+              </div>
+            )}
             {/* Header */}
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between">
@@ -4095,9 +4280,21 @@ PROCESO OBLIGATORIO:
                         <div key={task.id} className="group flex items-start gap-4 py-4 border-b border-gray-100 border-dashed last:border-0 hover:bg-stone-50/50 -mx-2 px-4 rounded-lg transition-colors cursor-pointer"
                           onClick={async () => {
                             const newCompleted = !task.completed;
+
+                            if (newCompleted && energy <= 0) {
+                              alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+                              return;
+                            }
+
                             setTasksWithDates(prev => prev.map(t =>
                               t.id === task.id ? { ...t, completed: newCompleted } : t
                             ));
+
+                            if (newCompleted) {
+                              const points = (task.goalId || task.generated) ? 20 : 5;
+                              consumeEnergy(points);
+                            }
+
                             if (user && task.id.startsWith('firebase_')) {
                               try {
                                 await updateTaskCompletion(task.id, newCompleted);
@@ -5307,6 +5504,12 @@ PROCESO OBLIGATORIO:
           )
         }
 
+        {
+          currentView === 'energy' && (
+            <EnergyPage />
+          )
+        }
+
         {/* Settings/Profil View - Design Moderne UX */}
         {
           currentView === 'settings' && (
@@ -5354,31 +5557,31 @@ PROCESO OBLIGATORIO:
                     </span>
                   </button>
 
-                  {/* Ma Semaine */}
+                  {/* Habitudes (Trackers) */}
                   <button
-                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'routine'
+                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'trackers'
                       ? 'text-gray-900'
                       : 'text-gray-400 hover:text-gray-600'
                       }`}
-                    onClick={() => setCurrentView('routine')}
+                    onClick={() => setCurrentView('trackers')}
                   >
-                    <Calendar className="w-[22px] h-[22px]" strokeWidth={currentView === 'routine' ? 2.5 : 1.8} />
-                    <span className={`text-[10px] leading-tight ${currentView === 'routine' ? 'font-semibold' : 'font-medium'}`}>
-                      {language === 'fr' ? 'Semaine' : language === 'en' ? 'Week' : 'Semana'}
+                    <ListChecks className="w-[22px] h-[22px]" strokeWidth={currentView === 'trackers' ? 2.5 : 1.8} />
+                    <span className={`text-[10px] leading-tight ${currentView === 'trackers' ? 'font-semibold' : 'font-medium'}`}>
+                      {language === 'fr' ? 'Habitudes' : language === 'en' ? 'Habits' : 'Hábitos'}
                     </span>
                   </button>
 
-                  {/* Profil */}
+                  {/* Energie */}
                   <button
-                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'settings'
+                    className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${currentView === 'energy'
                       ? 'text-gray-900'
                       : 'text-gray-400 hover:text-gray-600'
                       }`}
-                    onClick={() => setCurrentView('settings')}
+                    onClick={() => setCurrentView('energy')}
                   >
-                    <Settings className="w-[22px] h-[22px]" strokeWidth={currentView === 'settings' ? 2.5 : 1.8} />
-                    <span className={`text-[10px] leading-tight ${currentView === 'settings' ? 'font-semibold' : 'font-medium'}`}>
-                      {language === 'fr' ? 'Profil' : language === 'en' ? 'Profile' : 'Perfil'}
+                    <Zap className="w-[22px] h-[22px]" strokeWidth={currentView === 'energy' ? 2.5 : 1.8} />
+                    <span className={`text-[10px] leading-tight ${currentView === 'energy' ? 'font-semibold' : 'font-medium'}`}>
+                      {language === 'fr' ? 'Energie' : language === 'en' ? 'Energy' : 'Energía'}
                     </span>
                   </button>
                 </div>
@@ -5510,18 +5713,30 @@ PROCESO OBLIGATORIO:
                       <div
                         key={habit.id}
                         onClick={() => {
+                          const today = getLocalDateString();
+                          const isValidating = !isCompleted;
+
+                          if (isValidating && energy <= 0) {
+                            alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+                            return;
+                          }
+
                           const existingTracker = trackers.find(t => t.date === today);
                           if (existingTracker) {
                             updateTracker(today, {
                               habits: {
                                 ...existingTracker.habits,
-                                [habit.id]: !isCompleted
+                                [habit.id]: isValidating
                               }
                             });
                           } else {
                             updateTracker(today, {
                               habits: { [habit.id]: true }
                             });
+                          }
+
+                          if (isValidating) {
+                            consumeEnergy(10);
                           }
                         }}
                         className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
@@ -5733,13 +5948,24 @@ PROCESO OBLIGATORIO:
               onClick={() => {
                 if (selectedHabit) {
                   const isChecked = newMeProgress[newMeCurrentDay]?.[selectedHabit.id.toString()] || false;
+                  const isValidating = !isChecked;
+
+                  if (isValidating && energy <= 0) {
+                    alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+                    return;
+                  }
+
                   setNewMeProgress(prev => ({
                     ...prev,
                     [newMeCurrentDay]: {
                       ...(prev[newMeCurrentDay] || {}),
-                      [selectedHabit.id.toString()]: !isChecked
+                      [selectedHabit.id.toString()]: isValidating
                     }
                   }));
+
+                  if (isValidating) {
+                    consumeEnergy(10);
+                  }
                 }
               }}
             >

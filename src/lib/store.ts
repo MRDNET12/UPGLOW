@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { Language } from './translations';
 import { validateActivity } from './firebase/circle-service';
 
-export type View = 'language-selection' | 'project-glow-intro' | 'presentation' | 'presentation-1' | 'presentation-2' | 'presentation-3' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-1' | 'flow-proposition' | 'flow-description' | 'flow-challenge' | 'circle';
+export type View = 'language-selection' | 'project-glow-intro' | 'presentation' | 'presentation-1' | 'presentation-2' | 'presentation-3' | 'onboarding' | 'challenge-selection' | 'dashboard' | 'challenge' | 'journal' | 'trackers' | 'routine' | 'vision-board' | 'my-goals' | 'goal-details' | 'bonus' | 'new-me' | 'glowee-chat' | 'glow-mirror' | 'settings' | 'boundaries' | 'habit-progress' | 'goal-setup-5' | 'goal-setup-1' | 'flow-proposition' | 'flow-description' | 'flow-challenge' | 'circle' | 'energy';
 export type ChallengeType = 'mind-life' | 'beauty-body';
 
 export interface CircleMember {
@@ -189,6 +189,15 @@ export type PlanType = 'none' | 'glow_start' | 'glow_plus';
 interface AppState {
   currentUserUid: string | null;
   setCurrentUserUid: (uid: string | null) => void;
+  // Energy System
+  energy: number;
+  maxEnergy: number;
+  energyActions: Array<{ id: string, text: string, points: number, date: string, category: string }>;
+  lastEnergyReset: string | null;
+  consumeEnergy: (points: number) => void;
+  rechargeEnergy: (points: number, text: string, category: string) => void;
+  resetEnergyIfNeeded: () => void;
+
   // Navigation
   currentView: View;
   setCurrentView: (view: View) => void;
@@ -371,6 +380,41 @@ export const useStore = create<AppState>()(
     (set, get) => ({
       currentUserUid: null,
       setCurrentUserUid: (uid: string | null) => set({ currentUserUid: uid }),
+      // Energy System
+      energy: 100,
+      maxEnergy: 100,
+      energyActions: [],
+      lastEnergyReset: null,
+      consumeEnergy: (points) => {
+        const { energy } = get();
+        set({ energy: Math.max(0, energy - points) });
+      },
+      rechargeEnergy: (points, text, category) => {
+        const { energy, maxEnergy, energyActions } = get();
+        const newEnergy = Math.min(maxEnergy, energy + points);
+        const action = {
+          id: crypto.randomUUID(),
+          text,
+          points,
+          date: new Date().toISOString().split('T')[0],
+          category
+        };
+        set({
+          energy: newEnergy,
+          energyActions: [action, ...energyActions]
+        });
+      },
+      resetEnergyIfNeeded: () => {
+        const { lastEnergyReset } = get();
+        const today = new Date().toISOString().split('T')[0];
+        if (lastEnergyReset !== today) {
+          set({
+            energy: 100,
+            lastEnergyReset: today,
+            energyActions: [] // Optional: reset actions daily or keep history? Usually reset for daily display.
+          });
+        }
+      },
       // Navigation
       currentView: 'language-selection',
       setCurrentView: (view) => set({ currentView: view }),

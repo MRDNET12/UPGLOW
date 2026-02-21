@@ -384,11 +384,11 @@ export const translations: Record<Language, Translation> = {
       journal: 'Journal',
       glowee: 'Glowee',
       circle: 'Le Cercle',
-      routine: 'Routine',
+      routine: 'Habitudes',
       visionBoard: 'Vision Board',
 
       bonus: 'Bonus',
-      settings: 'Profil',
+      settings: 'Energie',
     },
     onboarding: {
       title: 'Glow Up Challenge',
@@ -724,11 +724,11 @@ export const translations: Record<Language, Translation> = {
       journal: 'Journal',
       glowee: 'Glowee',
       circle: 'The Circle',
-      routine: 'Routine',
+      routine: 'Habits',
       visionBoard: 'Vision Board',
 
       bonus: 'Bonus',
-      settings: 'Profile',
+      settings: 'Energy',
     },
     onboarding: {
       title: 'Glow Up Challenge',
@@ -1064,11 +1064,11 @@ export const translations: Record<Language, Translation> = {
       journal: 'Diario',
       glowee: 'Glowee',
       circle: 'El Círculo',
-      routine: 'Rutina',
+      routine: 'Hábitos',
       visionBoard: 'Tablero de Visión',
 
       bonus: 'Bonus',
-      settings: 'Perfil',
+      settings: 'Energía',
     },
     onboarding: {
       title: 'Desafío Glow Up',

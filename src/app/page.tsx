@@ -3717,9 +3717,17 @@ PROCESO OBLIGATORIO:
             )}
 
             <header className="bg-white border-b px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-              <h1 className="text-xl font-bold text-gray-900">
-                {language === 'fr' ? 'Mes habitudes' : 'My habits'}
-              </h1>
+              <div className="flex flex-col text-left">
+                <h1 className="text-xl font-bold text-gray-900">
+                  {language === 'fr' ? 'Mes habitudes' : 'My habits'}
+                </h1>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="w-2 h-2 rounded-full bg-blue-400" />
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                    {energy} Mana
+                  </span>
+                </div>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -3731,109 +3739,261 @@ PROCESO OBLIGATORIO:
               </Button>
             </header>
 
-            <div className={`px-5 py-6 space-y-6 ${energy <= 0 ? 'pointer-events-none' : ''}`}>
-              {/* Add Habit */}
-              <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4">
-                  <input
-                    type="text"
-                    value={newHabitLabel}
-                    onChange={(e) => setNewHabitLabel(e.target.value)}
-                    placeholder={language === 'fr' ? 'Ajouter une habitude...' : 'Add a habit...'}
-                    className="flex-1 text-base text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-medium"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      if (newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                      }
-                    }}
-                    disabled={!newHabitLabel.trim()}
-                    className="w-12 h-12 rounded-[1.2rem] bg-[#1C2C26] flex items-center justify-center hover:bg-[#2C3E36] transition-colors disabled:opacity-30 shadow-md"
-                  >
-                    <Plus className="w-6 h-6 text-white" />
-                  </button>
-                </div>
-              </div>
+            <div className={`px-5 py-6 space-y-8 ${energy <= 0 ? 'pointer-events-none' : ''}`}>
 
-              {/* Habits List */}
-              <div className="space-y-3">
-                {customHabits.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-[2rem] border border-dashed border-gray-200">
-                    <ListChecks className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                    <p className="text-sm text-gray-400 font-medium">
-                      {language === 'fr' ? "Aucune habitude pour le moment" : "No habits yet"}
-                    </p>
+              {/* SECTION ÉTAT */}
+              <section className="space-y-4">
+                <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1 text-left">
+                  {language === 'fr' ? 'État & Énergie' : 'State & Energy'}
+                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Eau */}
+                  <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100 flex flex-col justify-between h-32">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                        <Droplet className="w-4 h-4 text-blue-500" />
+                      </div>
+                      <span className="text-sm font-bold text-gray-800">{language === 'fr' ? 'Eau' : 'Water'}</span>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto">
+                      <button
+                        onClick={() => {
+                          const current = getTodayTracker().waterGlasses || 0;
+                          if (current > 0) updateTodayTracker({ waterGlasses: current - 1 });
+                        }}
+                        className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gray-100"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-xl font-black text-gray-900">{getTodayTracker().waterGlasses || 0}</span>
+                      <button
+                        onClick={() => {
+                          if (energy <= 0) {
+                            alert(language === 'fr' ? "Recharge-toi pour continuer." : "Recharge to continue.");
+                            return;
+                          }
+                          const current = getTodayTracker().waterGlasses || 0;
+                          updateTodayTracker({ waterGlasses: current + 1 });
+                          consumeEnergy(5);
+                        }}
+                        className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                ) : (
-                  customHabits.map((habit) => {
-                    const today = getLocalDateString();
-                    const tracker = trackers.find(t => t.date === today);
-                    const isCompleted = tracker?.habits?.[habit.id] || false;
 
+                  {/* Sommeil */}
+                  <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100 flex flex-col justify-between h-32">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
+                        <Moon className="w-4 h-4 text-indigo-500" />
+                      </div>
+                      <span className="text-sm font-bold text-gray-800">{language === 'fr' ? 'Sommeil' : 'Sleep'}</span>
+                    </div>
+                    <div className="flex items-end gap-1 mt-auto text-left">
+                      <input
+                        type="number"
+                        value={getTodayTracker().sleepHours || ''}
+                        placeholder="0"
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          updateTodayTracker({ sleepHours: isNaN(val) ? 0 : val });
+                        }}
+                        className="w-12 text-2xl font-black text-gray-900 bg-transparent focus:outline-none"
+                      />
+                      <span className="text-xs font-bold text-gray-400 pb-1">hrs</span>
+                    </div>
+                  </div>
+
+                  {/* Humeur */}
+                  <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100 col-span-2 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
+                        <Smile className="w-4 h-4 text-amber-500" />
+                      </div>
+                      <span className="text-sm font-bold text-gray-800 text-left">{language === 'fr' ? 'Humeur' : 'Mood'}</span>
+                    </div>
+                    <div className="flex justify-between px-2">
+                      {[1, 2, 3, 4, 5].map((m) => (
+                        <button
+                          key={m}
+                          onClick={() => {
+                            if (energy <= 0) {
+                              alert(language === 'fr' ? "Recharge-toi pour continuer." : "Recharge to continue.");
+                              return;
+                            }
+                            updateTodayTracker({ mood: m });
+                            consumeEnergy(5);
+                          }}
+                          className={`text-2xl transition-all ${getTodayTracker().mood === m ? 'scale-125 saturate-100' : 'grayscale opacity-40 hover:opacity-100'}`}
+                        >
+                          {m === 1 ? '😢' : m === 2 ? '😕' : m === 3 ? '😐' : m === 4 ? '😊' : '🌟'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION NEW ME */}
+              <section className="space-y-4">
+                <div className="flex items-center justify-between px-1">
+                  <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest text-left">
+                    New Me
+                  </h2>
+                  <span className="text-[10px] font-bold text-rose-400 bg-rose-50 px-2 py-0.5 rounded-full uppercase">
+                    {language === 'fr' ? `Jour ${newMeCurrentDay}` : `Day ${newMeCurrentDay}`}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {newMeHabits.map((habit) => {
+                    const isCompleted = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
                     return (
                       <div
                         key={habit.id}
                         onClick={() => {
-                          const today = getLocalDateString();
-                          const isValidating = !isCompleted;
-
-                          if (isValidating && energy <= 0) {
-                            alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+                          if (!isCompleted && energy <= 0) {
+                            alert(language === 'fr' ? "Recharge-toi pour continuer." : "Recharge to continue.");
                             return;
                           }
-
-                          const existingTracker = trackers.find(t => t.date === today);
-                          if (existingTracker) {
-                            updateTracker(today, {
-                              habits: {
-                                ...existingTracker.habits,
-                                [habit.id]: isValidating
-                              }
-                            });
-                          } else {
-                            updateTracker(today, {
-                              habits: { [habit.id]: true }
-                            });
-                          }
-
-                          if (isValidating) {
-                            consumeEnergy(10);
-                          }
+                          const isValidating = !isCompleted;
+                          setNewMeProgress(prev => ({
+                            ...prev,
+                            [newMeCurrentDay]: {
+                              ...(prev[newMeCurrentDay] || {}),
+                              [habit.id.toString()]: isValidating
+                            }
+                          }));
+                          if (isValidating) consumeEnergy(10);
                         }}
-                        className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                        className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left"
                       >
                         <div
                           className={`w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all ${isCompleted
-                            ? 'bg-[#1C2C26] text-white shadow-md'
-                            : 'bg-[#F5F7F6] border-2 border-transparent'
+                            ? 'bg-rose-400 text-white shadow-md'
+                            : 'bg-rose-50 border-2 border-transparent'
                             }`}
                         >
-                          {isCompleted && <Check className="w-5 h-5" />}
+                          {isCompleted ? <Check className="w-5 h-5" /> : <span className="text-lg">{habit.icon}</span>}
                         </div>
-                        <span className={`text-base font-bold flex-1 ${isCompleted ? 'text-gray-400 line-through' : 'text-[#1C2C26]'}`}>
+                        <span className={`text-base font-bold flex-1 ${isCompleted ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
                           {habit.label}
                         </span>
                       </div>
                     );
-                  })
-                )}
-              </div>
+                  })}
+                </div>
+              </section>
+
+              {/* SECTION MES HABITUDES */}
+              <section className="space-y-4 text-left">
+                <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
+                  {language === 'fr' ? 'Mes Habitudes' : 'My Habits'}
+                </h2>
+
+                {/* Add Habit Inline */}
+                <div className="bg-white rounded-[1.5rem] p-4 shadow-sm border border-gray-100 mb-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={newHabitLabel}
+                      onChange={(e) => setNewHabitLabel(e.target.value)}
+                      placeholder={language === 'fr' ? 'Nouvelle habitude...' : 'New habit...'}
+                      className="flex-1 text-sm text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-bold"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && newHabitLabel.trim()) {
+                          setCustomHabits([...customHabits, {
+                            id: `habit_${Date.now()}`,
+                            label: newHabitLabel.trim(),
+                            type: 'good'
+                          }]);
+                          setNewHabitLabel('');
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (newHabitLabel.trim()) {
+                          setCustomHabits([...customHabits, {
+                            id: `habit_${Date.now()}`,
+                            label: newHabitLabel.trim(),
+                            type: 'good'
+                          }]);
+                          setNewHabitLabel('');
+                        }
+                      }}
+                      disabled={!newHabitLabel.trim()}
+                      className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center disabled:opacity-30 shadow-md"
+                    >
+                      <Plus className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {customHabits.length === 0 ? (
+                    <div className="text-center py-8 bg-white/50 rounded-[2rem] border border-dashed border-gray-200">
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-tight">
+                        {language === 'fr' ? "Aucune habitude perso" : "No custom habits"}
+                      </p>
+                    </div>
+                  ) : (
+                    customHabits.map((habit) => {
+                      const today = getLocalDateString();
+                      const tracker = trackers.find(t => t.date === today);
+                      const isCompleted = tracker?.habits?.[habit.id] || false;
+
+                      return (
+                        <div
+                          key={habit.id}
+                          onClick={() => {
+                            const today = getLocalDateString();
+                            const isValidating = !isCompleted;
+
+                            if (isValidating && energy <= 0) {
+                              alert(language === 'fr' ? "Recharge-toi pour continuer." : "Recharge to continue.");
+                              return;
+                            }
+
+                            const existingTracker = trackers.find(t => t.date === today);
+                            if (existingTracker) {
+                              updateTracker(today, {
+                                habits: {
+                                  ...existingTracker.habits,
+                                  [habit.id]: isValidating
+                                }
+                              });
+                            } else {
+                              updateTracker(today, {
+                                habits: { [habit.id]: true }
+                              });
+                            }
+
+                            if (isValidating) {
+                              consumeEnergy(10);
+                            }
+                          }}
+                          className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                        >
+                          <div
+                            className={`w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all ${isCompleted
+                              ? 'bg-[#1C2C26] text-white shadow-md'
+                              : 'bg-[#F5F7F6] border-2 border-transparent'
+                              }`}
+                          >
+                            {isCompleted && <Check className="w-5 h-5" />}
+                          </div>
+                          <span className={`text-base font-bold flex-1 ${isCompleted ? 'text-gray-400 line-through' : 'text-[#1C2C26]'}`}>
+                            {habit.label}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
+
             </div>
           </div>
         )}
@@ -5634,210 +5794,194 @@ PROCESO OBLIGATORIO:
 
       {/* Drawer Menu Ajouter (+) - Slide du bas vers le haut */}
       <Drawer open={showAddMenu} onOpenChange={setShowAddMenu}>
-        <DrawerContent className="max-w-lg mx-auto bg-white">
-          <DrawerHeader className="border-b">
+        <DrawerContent className="max-w-lg mx-auto bg-white rounded-t-[3rem]">
+          <DrawerHeader className="border-b pb-4 text-left">
             <div className="flex items-center justify-between">
-              <DrawerTitle className="text-xl">
-                {currentView === 'trackers'
-                  ? (language === 'fr' ? 'Mes habitudes' : language === 'en' ? 'My habits' : 'Mis hábitos')
-                  : (language === 'fr' ? 'Que veux-tu ajouter ?' : language === 'en' ? 'What do you want to add?' : '¿Qué quieres añadir?')
-                }
+              <DrawerTitle className="text-xl font-black text-gray-900">
+                {language === 'fr' ? 'Actions Rapides' : 'Quick Actions'}
               </DrawerTitle>
               <DrawerClose asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <X className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100">
+                  <X className="w-5 h-5 text-gray-500" />
                 </Button>
               </DrawerClose>
             </div>
           </DrawerHeader>
 
-          {currentView === 'trackers' ? (
-            /* Contenu spécifique à la page Habitudes */
-            <div className="px-5 pb-8 space-y-5 pt-4">
-              {/* Carte Nouvelle habitude */}
-              <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4">
-                  <input
-                    type="text"
-                    value={newHabitLabel}
-                    onChange={(e) => setNewHabitLabel(e.target.value)}
-                    placeholder={language === 'fr' ? 'Ajouter une habitude...' : language === 'en' ? 'Add a habit...' : 'Añadir un hábito...'}
-                    className="flex-1 text-base text-[#1C2C26] placeholder-gray-400 bg-transparent focus:outline-none font-medium"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                        setShowAddMenu(false);
-                      }
-                    }}
-                  />
+          <div className="px-6 pb-10 pt-4 space-y-8 max-h-[80vh] overflow-y-auto text-left">
+
+            {/* SECTION AJOUT RAPIDE (SUCCESS/WIN) - Toujours visible */}
+            <section className="space-y-3">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
+                {language === 'fr' ? "Ma fierté du jour" : "My daily pride"}
+              </h3>
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={newWinText}
+                  onChange={(e) => setNewWinText(e.target.value)}
+                  placeholder={language === 'fr' ? 'Décris ton petit succès...' : 'Describe your small win...'}
+                  className="flex-1 px-5 py-3.5 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-pink-200 text-gray-700 placeholder-gray-400 font-medium"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newWinText.trim()) {
+                      addSmallWin(newWinText.trim());
+                      setNewWinText('');
+                      setShowAddMenu(false);
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    if (newWinText.trim()) {
+                      addSmallWin(newWinText.trim());
+                      setNewWinText('');
+                      setShowAddMenu(false);
+                    }
+                  }}
+                  disabled={!newWinText.trim()}
+                  className="w-12 h-12 rounded-2xl bg-pink-500 text-white flex items-center justify-center shadow-lg shadow-pink-100 disabled:opacity-30 disabled:shadow-none transition-all active:scale-95"
+                >
+                  <Plus className="w-6 h-6" />
+                </button>
+              </div>
+            </section>
+
+            {/* SECTION HABITUDES - Liste rapide */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between px-1">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  {language === 'fr' ? 'Habitudes à valider' : 'Habits to complete'}
+                </h3>
+                {currentView !== 'trackers' && (
                   <button
-                    onClick={() => {
-                      if (newHabitLabel.trim()) {
-                        setCustomHabits([...customHabits, {
-                          id: `habit_${Date.now()}`,
-                          label: newHabitLabel.trim(),
-                          type: 'good'
-                        }]);
-                        setNewHabitLabel('');
-                        setShowAddMenu(false);
-                      }
-                    }}
-                    disabled={!newHabitLabel.trim()}
-                    className="w-12 h-12 rounded-[1.2rem] bg-[#1C2C26] flex items-center justify-center hover:bg-[#2C3E36] transition-colors disabled:opacity-30 shadow-md"
+                    onClick={() => { setShowAddMenu(false); setCurrentView('trackers'); }}
+                    className="text-[10px] font-bold text-blue-500 hover:underline"
                   >
-                    <Plus className="w-6 h-6 text-white" />
+                    {language === 'fr' ? 'Tout voir' : 'See all'}
                   </button>
-                </div>
+                )}
               </div>
 
-              {/* Liste des habitudes */}
               <div className="space-y-3">
-                {customHabits.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-sm text-gray-500 font-medium">
-                      {language === 'fr' ? "Commencez par ajouter une habitude" : language === 'en' ? "Start by adding a habit" : 'Comience añadiendo un hábito'}
-                    </p>
-                  </div>
-                ) : (
-                  customHabits.map((habit) => {
-                    const today = getLocalDateString();
-                    const tracker = trackers.find(t => t.date === today);
-                    const isCompleted = tracker?.habits?.[habit.id] || false;
-
+                {/* 1. New Me Habits */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-rose-300 uppercase tracking-tighter px-1">New Me</p>
+                  {newMeHabits.map((habit) => {
+                    const isCompleted = newMeProgress[newMeCurrentDay]?.[habit.id.toString()] || false;
                     return (
                       <div
                         key={habit.id}
                         onClick={() => {
-                          const today = getLocalDateString();
-                          const isValidating = !isCompleted;
-
-                          if (isValidating && energy <= 0) {
-                            alert(language === 'fr' ? "Recharge-toi pour continuer à construire." : "Recharge to continue building.");
+                          if (!isCompleted && energy <= 0) {
+                            alert(language === 'fr' ? "Recharge-toi pour continuer." : "Recharge to continue.");
                             return;
                           }
-
-                          const existingTracker = trackers.find(t => t.date === today);
-                          if (existingTracker) {
-                            updateTracker(today, {
-                              habits: {
-                                ...existingTracker.habits,
-                                [habit.id]: isValidating
-                              }
-                            });
-                          } else {
-                            updateTracker(today, {
-                              habits: { [habit.id]: true }
-                            });
-                          }
-
-                          if (isValidating) {
-                            consumeEnergy(10);
-                          }
+                          const isValidating = !isCompleted;
+                          setNewMeProgress(prev => ({
+                            ...prev,
+                            [newMeCurrentDay]: {
+                              ...(prev[newMeCurrentDay] || {}),
+                              [habit.id.toString()]: isValidating
+                            }
+                          }));
+                          if (isValidating) consumeEnergy(10);
                         }}
-                        className="bg-white rounded-[1.5rem] p-4 flex items-center gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                        className="bg-gray-50/50 rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-all border border-transparent hover:border-rose-100"
                       >
-                        <div
-                          className={`w-10 h-10 rounded-[1rem] flex items-center justify-center transition-all ${isCompleted
-                            ? 'bg-[#1C2C26] text-white shadow-md'
-                            : 'bg-[#F5F7F6] border-2 border-transparent hover:border-emerald-100'
-                            }`}
-                        >
-                          {isCompleted && <Check className="w-5 h-5" />}
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${isCompleted ? 'bg-rose-400 text-white' : 'bg-white shadow-sm text-rose-400'}`}>
+                          {isCompleted ? <Check className="w-4 h-4" /> : <span className="text-sm">{habit.icon}</span>}
                         </div>
-                        <span className={`text-base font-medium flex-1 ${isCompleted ? 'text-gray-400 line-through decoration-gray-300' : 'text-[#1C2C26]'}`}>
+                        <span className={`text-sm font-bold flex-1 ${isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
                           {habit.label}
                         </span>
                       </div>
                     );
-                  })
+                  })}
+                </div>
+
+                {/* 2. Custom Habits */}
+                {customHabits.length > 0 && (
+                  <div className="space-y-2 pt-2">
+                    <p className="text-[10px] font-black text-gray-300 uppercase tracking-tighter px-1">{language === 'fr' ? 'Mes Habits' : 'My Habits'}</p>
+                    {customHabits.map((habit) => {
+                      const today = getLocalDateString();
+                      const tracker = trackers.find(t => t.date === today);
+                      const isCompleted = tracker?.habits?.[habit.id] || false;
+                      return (
+                        <div
+                          key={habit.id}
+                          onClick={() => {
+                            const today = getLocalDateString();
+                            const isValidating = !isCompleted;
+                            if (isValidating && energy <= 0) {
+                              alert(language === 'fr' ? "Recharge-toi pour continuer." : "Recharge to continue.");
+                              return;
+                            }
+                            const existingTracker = trackers.find(t => t.date === today);
+                            if (existingTracker) {
+                              updateTracker(today, { habits: { ...existingTracker.habits, [habit.id]: isValidating } });
+                            } else {
+                              updateTracker(today, { habits: { [habit.id]: true } });
+                            }
+                            if (isValidating) consumeEnergy(10);
+                          }}
+                          className="bg-gray-50/50 rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
+                        >
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${isCompleted ? 'bg-gray-900 text-white' : 'bg-white shadow-sm text-gray-400'}`}>
+                            {isCompleted && <Check className="w-4 h-4" />}
+                          </div>
+                          <span className={`text-sm font-bold flex-1 ${isCompleted ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+                            {habit.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
-              </div>
-            </div>
-          ) : (
-            /* Contenu général pour les autres pages */
-            <div className="p-6 space-y-6">
-              {/* Section Célèbre tes petits succès */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-gray-800 text-lg">
-                  {language === 'fr' ? "Ma fierté du jour !" : language === 'en' ? "My pride of the day!" : '¡Mi orgullo del día!'}
-                </h3>
 
-                {/* Champ de saisie avec bouton + */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      value={newWinText}
-                      onChange={(e) => setNewWinText(e.target.value)}
-                      placeholder={language === 'fr' ? 'Décris ton petit succès...' : language === 'en' ? 'Describe your small win...' : 'Describe tu pequeño éxito...'}
-                      className="w-full px-4 py-3 rounded-2xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none text-gray-700 placeholder-gray-400 bg-white"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && newWinText.trim()) {
-                          checkFeatureAccess('petites_victoires', () => {
-                            addSmallWin(newWinText.trim());
-                            setNewWinText('');
-                            setShowAddMenu(false);
-                          });
-                        }
-                      }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => {
-                      if (newWinText.trim()) {
-                        checkFeatureAccess('petites_victoires', () => {
-                          addSmallWin(newWinText.trim());
-                          setNewWinText('');
-                          setShowAddMenu(false);
-                        });
-                      }
-                    }}
-                    disabled={!newWinText.trim()}
-                    className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-                  >
-                    <Plus className="w-6 h-6 text-white" />
-                  </button>
-                </div>
+                {/* Shortcut to add new custom habit */}
+                <button
+                  onClick={() => { setShowAddMenu(false); setCurrentView('trackers'); }}
+                  className="w-full py-4 rounded-2xl border-2 border-dashed border-gray-100 text-gray-400 text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-3 h-3" />
+                  {language === 'fr' ? "Ajouter une autre habitude" : "Add another habit"}
+                </button>
               </div>
+            </section>
 
-              {/* Carte Mon Journal */}
+            {/* SECTION MENU PRINCIPAL - NAVIGATION RAPIDE */}
+            <section className="grid grid-cols-2 gap-3">
+              {/* Journal */}
               <div
-                onClick={() => {
-                  setShowAddMenu(false);
-                  checkFeatureAccess('journal', () => setCurrentView('journal'));
-                }}
-                className="w-full bg-[#E9D8FD] rounded-[2rem] p-5 relative h-[160px] overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-98 shadow-sm group"
+                onClick={() => { setShowAddMenu(false); setCurrentView('journal'); }}
+                className="bg-purple-50 rounded-3xl p-5 flex flex-col gap-3 group cursor-pointer transition-all hover:scale-[1.02]"
               >
-                <h3 className="text-lg font-bold text-[#2D2a2e] max-w-[60%] leading-snug relative z-10">
-                  {language === 'fr' ? 'Raconte ta journée et libère ton esprit' : language === 'en' ? 'Tell your day and free your mind' : 'Cuéntanos tu día y libera tu mente'}
-                </h3>
-
-                <div className="absolute bottom-[-15px] left-[-5px] transform rotate-[-5deg] transition-transform group-hover:rotate-0 duration-500">
-                  <svg width="120" height="120" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M30 80 C 20 40, 60 20, 80 30 C 110 40, 130 70, 120 100 C 110 130, 60 140, 40 130 C 10 120, 20 100, 30 80 Z" fill="#F0ABFC" />
-                    <circle cx="65" cy="85" r="3.5" fill="#000" />
-                    <circle cx="95" cy="85" r="3.5" fill="#000" />
-                    <path d="M68 100 Q 80 115 92 100" stroke="#000" strokeWidth="3.5" strokeLinecap="round" />
-                    <path d="M50 45 Q 40 25 60 30" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-                    <path d="M55 40 Q 50 20 65 25" stroke="#000" strokeWidth="3.5" strokeLinecap="round" fill="none" transform="translate(10, -5) rotate(20)" />
-                    <circle cx="58" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
-                    <circle cx="102" cy="92" r="5" fill="#FAA2C1" opacity="0.6" />
-                  </svg>
+                <div className="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                  <BookText className="w-5 h-5 text-purple-500" />
                 </div>
-
-                <div className="absolute bottom-4 right-4">
-                  <div className="bg-black text-white text-xs font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2 group-hover:scale-105 transition-transform">
-                    {language === 'fr' ? 'Écrire' : language === 'en' ? 'Write' : 'Escribir'}
-                  </div>
+                <div>
+                  <h4 className="font-black text-gray-900 text-sm">{language === 'fr' ? 'Journal' : 'Journal'}</h4>
+                  <p className="text-[10px] font-bold text-gray-500">{language === 'fr' ? 'Écris tes pensées' : 'Write your thoughts'}</p>
                 </div>
               </div>
-            </div>
-          )}
+
+              {/* Profil/Paramètres */}
+              <div
+                onClick={() => { setShowAddMenu(false); setCurrentView('settings'); }}
+                className="bg-rose-50 rounded-3xl p-5 flex flex-col gap-3 group cursor-pointer transition-all hover:scale-[1.02]"
+              >
+                <div className="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                  <User className="w-5 h-5 text-rose-500" />
+                </div>
+                <div>
+                  <h4 className="font-black text-gray-900 text-sm">{language === 'fr' ? 'Mon Profil' : 'My Profile'}</h4>
+                  <p className="text-[10px] font-bold text-gray-500">{language === 'fr' ? 'Gère ton compte' : 'Manage account'}</p>
+                </div>
+              </div>
+            </section>
+
+          </div>
         </DrawerContent>
       </Drawer>
 
